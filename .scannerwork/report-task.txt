@@ -1,0 +1,6 @@
+projectKey=energy-management-admin
+serverUrl=https://sonarqube.geniuscarbon.cn
+serverVersion=10.1.0.73491
+dashboardUrl=https://sonarqube.geniuscarbon.cn/dashboard?id=energy-management-admin
+ceTaskId=AY6i1RK51dCcBn5zJh7v
+ceTaskUrl=https://sonarqube.geniuscarbon.cn/api/ce/task?id=AY6i1RK51dCcBn5zJh7v

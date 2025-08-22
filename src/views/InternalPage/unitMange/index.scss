@@ -1,0 +1,40 @@
+.table-box {
+  position: relative;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  .filter-box {
+    padding: 20px 20px 0;
+    border-bottom: 1px solid #eeeeee;
+  }
+  .btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 20px;
+    > span {
+      font-size: 16px;
+    }
+  }
+  .table-list {
+    height: calc(100% - 240px);
+    overflow: auto;
+    .date-sort {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  .demo-pagination-block {
+    position: absolute;
+    right: 12px;
+    bottom: 20px;
+  }
+}
+.img-box {
+  margin: 0 auto;
+  > img {
+    width: 400px;
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "path": "/home/index",
+      "name": "home",
+      "component": "/home/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "首页",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/systemAuthority/index",
+      "name": "systemAuthority",
+      "component": "/systemAuthority/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "碳科内部页面",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/InternalPage/tenantManagement",
+          "name": "tenantManagement",
+          "component": "/InternalPage/tenantManagement/index",
+          "meta": {
+            "icon": "Odometer",
+            "title": "合作方管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/InternalPage/tenantManageAccount",
+          "name": "InternalPage",
+          "component": "/InternalPage/tenantManageAccount/index",
+          "meta": {
+            "icon": "Odometer",
+            "title": "合作方账号管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/InternalPage/tenantAccount",
+          "name": "tenantAccount",
+          "component": "/InternalPage/tenantAccount/index",
+          "meta": {
+            "icon": "Odometer",
+            "title": "数据字典",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/InternalPage/apiModule",
+          "name": "apiModule",
+          "component": "/InternalPage/apiModule/index",
+          "meta": {
+            "icon": "Odometer",
+            "title": "后台接口",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/systemAuthority/menuCreate/index",
+          "name": "menuCreate",
+          "component": "/systemAuthority/menuCreate/index",
+          "meta": {
+            "icon": "Odometer",
+            "title": "菜单管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    }
+  ],
+  "msg": "成功"
+}

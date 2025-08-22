@@ -1,0 +1,203 @@
+/* flex */
+.flx-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flx-justify-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flx-align-center {
+  display: flex;
+  align-items: center;
+}
+
+/* clearfix */
+.clearfix::after {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+  content: "";
+}
+
+/* 文字单行省略号 */
+.sle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 文字多行省略号 */
+.mle {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* 文字多了自动換行 */
+.break-word {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all 0.2s;
+}
+.fade-transform-enter-from {
+  opacity: 0;
+  transition: all 0.2s;
+  transform: translateX(-30px);
+}
+.fade-transform-leave-to {
+  opacity: 0;
+  transition: all 0.2s;
+  transform: translateX(30px);
+}
+
+/* breadcrumb-transform */
+.breadcrumb-enter-active {
+  transition: all 0.2s;
+}
+.breadcrumb-enter-from,
+.breadcrumb-leave-active {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+/* scroll bar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--el-border-color-darker);
+  border-radius: 20px;
+}
+
+/* nprogress */
+#nprogress .bar {
+  background: var(--el-color-primary) !important;
+}
+#nprogress .spinner-icon {
+  border-top-color: var(--el-color-primary) !important;
+  border-left-color: var(--el-color-primary) !important;
+}
+#nprogress .peg {
+  box-shadow:
+    0 0 10px var(--el-color-primary),
+    0 0 5px var(--el-color-primary) !important;
+}
+
+/* 外边距、内边距全局样式 */
+@for $i from 0 through 100 {
+  .mt#{$i} {
+    margin-top: #{$i}px !important;
+  }
+  .mr#{$i} {
+    margin-right: #{$i}px !important;
+  }
+  .mb#{$i} {
+    margin-bottom: #{$i}px !important;
+  }
+  .ml#{$i} {
+    margin-left: #{$i}px !important;
+  }
+  .pt#{$i} {
+    padding-top: #{$i}px !important;
+  }
+  .pr#{$i} {
+    padding-right: #{$i}px !important;
+  }
+  .pb#{$i} {
+    padding-bottom: #{$i}px !important;
+  }
+  .pl#{$i} {
+    padding-left: #{$i}px !important;
+  }
+}
+.el-loading-spinner {
+  height: 50px;
+  background: url("@/assets/images/common/loading.gif") no-repeat center;
+  background-size: 30px 30px;
+  .circular {
+    display: none !important;
+  }
+}
+.el-button {
+  padding: 7px 20px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+.el-button:hover {
+  color: #606266;
+  border: none;
+}
+.el-button--primary {
+  background: #0ec69a;
+  border: none;
+}
+.el-button--primary:hover {
+  color: #ffffff;
+  background: #0ec69a;
+  border: none;
+}
+.el-button--primary:focus,
+.el-button--primary:active {
+  background-color: #0ec69a;
+  outline: none;
+}
+.el-dialog {
+  border-radius: 10px;
+}
+.el-dialog__header {
+  margin: 0;
+  background: red;
+  background: url("@/assets/images/common/headerbg.png") no-repeat;
+  background-size: 100% 100%;
+}
+.el-dialog__body {
+  padding: 20px 35px 10px;
+}
+.table-box .el-table .el-table__header th {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #8894b3 !important;
+  background: #f9fafb !important;
+}
+
+/* 如果你想要修改所有的Checkbox边框颜色 */
+.el-table .el-checkbox__inner {
+  border-color: #8894b3;
+}
+
+// /* 如果你只想修改某个特定表格中的Checkbox边框颜色 */
+// .el-table.my-custom-table .el-checkbox__inner {
+//   border-color: red; /* 例如: #ff0000 */
+// }
+
+// 公用样式
+.table-btn {
+  display: flex;
+  justify-content: space-around;
+  > div {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #0ec69a;
+    cursor: pointer;
+  }
+}
+.message-box {
+  z-index: 9999;
+}
+.grid-background {
+  background-image: linear-gradient(90deg, #1f3c32 1px, transparent 1px), linear-gradient(#1f3c32 1px, transparent 1px);
+  background-position: -1px;
+  background-size: 18px 18px; /* 网格大小 */
+}

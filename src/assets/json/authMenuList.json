@@ -1,0 +1,651 @@
+{
+  "code": 200,
+  "data": [],
+  "systemData": [
+    {
+      "path": "/systemAuthority/index",
+      "name": "systemAuthority",
+      "component": "/systemAuthority/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "校园管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/InternalPage/schoolAdmin",
+          "name": "schoolAdmin",
+          "component": "/InternalPage/schoolAdmin/index",
+          "meta": {
+            "icon": "",
+            "title": "学校管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/grade",
+          "name": "grade",
+          "component": "/InternalPage/grade/index",
+          "meta": {
+            "icon": "",
+            "title": "年级管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/class",
+          "name": "class",
+          "component": "/InternalPage/class/index",
+          "meta": {
+            "icon": "",
+            "title": "班级管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/teacherAdmin",
+          "name": "teacherAdmin",
+          "component": "/systemAuthority/teacherAdmin/index",
+          "meta": {
+            "icon": "",
+            "title": "教师管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/studentAdmin",
+          "name": "studentAdmin",
+          "component": "/systemAuthority/studentAdmin/index",
+          "meta": {
+            "icon": "",
+            "title": "学生管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/parentAdmin",
+          "name": "parentAdmin",
+          "component": "/systemAuthority/parentAdmin/index",
+          "meta": {
+            "icon": "",
+            "title": "家长信息",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/billList",
+          "name": "billList",
+          "component": "/systemAuthority/billList/index",
+          "meta": {
+            "icon": "",
+            "title": "账单管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/refund",
+          "name": "refund",
+          "component": "/systemAuthority/refund/index",
+          "meta": {
+            "icon": "",
+            "title": "退费管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/dataScreening",
+          "name": "dataScreening",
+          "component": "/dataScreening/index",
+          "meta": {
+            "icon": "",
+            "title": "数据总览",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/fund",
+      "name": "fund",
+      "component": "/fund/index",
+      "meta": {
+        "icon": "FolderChecked",
+        "title": "资金管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      },
+      "children": [
+        {
+          "path": "/fund/record",
+          "name": "record",
+          "component": "/fund/record/index",
+          "meta": {
+            "icon": "",
+            "title": "充值记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/fund/consumption",
+          "name": "consumption",
+          "component": "/fund/consumption/index",
+          "meta": {
+            "icon": "",
+            "title": "消费记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/fund/refund",
+          "name": "refund",
+          "component": "/fund/refund/index",
+          "meta": {
+            "icon": "",
+            "title": "退费管理",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/device",
+      "name": "device",
+      "component": "/device/index",
+      "meta": {
+        "icon": "Iphone",
+        "title": "设备管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      },
+      "children": [
+        {
+          "path": "/device/grouping",
+          "name": "grouping",
+          "component": "/device/grouping/index",
+          "meta": {
+            "icon": "",
+            "title": "公话分组",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/device/deviceControl",
+          "name": "deviceControl",
+          "component": "/device/deviceControl/index",
+          "meta": {
+            "icon": "",
+            "title": "公话管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/device/rate",
+          "name": "rate",
+          "component": "/device/rate/index",
+          "meta": {
+            "icon": "",
+            "title": "费率配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/device/dialControl",
+          "name": "dialControl",
+          "component": "/device/dialControl/index",
+          "meta": {
+            "icon": "",
+            "title": "公话配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/operationLog",
+      "name": "operationLog",
+      "component": "/operationLog/index",
+      "meta": {
+        "icon": "Notebook",
+        "title": "操作日志",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    }
+  ],
+  "isOperator": [
+    {
+      "path": "/systemAuthority/index",
+      "name": "systemAuthority",
+      "component": "/systemAuthority/index",
+      "meta": {
+        "icon": "Avatar",
+        "title": "运维",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/InternalPage/tenantManagement",
+          "name": "tenantManagement",
+          "component": "/InternalPage/tenantManagement/index",
+          "meta": {
+            "icon": "",
+            "title": "创建学校信息",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemAuthority/adminCreateRoler",
+          "name": "adminCreateRoler",
+          "component": "/systemAuthority/createRoler/index",
+          "meta": {
+            "icon": "",
+            "title": "合作方角色",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/tenantManageAccount",
+          "name": "tenantManageAccount",
+          "component": "/InternalPage/tenantManageAccount/index",
+          "meta": {
+            "icon": "",
+            "title": "账号",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/systemSetting",
+          "name": "systemSetting",
+          "component": "/systemSetting/index",
+          "meta": {
+            "icon": "",
+            "title": "系统设置",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/InternalPage/index",
+      "name": "InternalPage",
+      "component": "/InternalPage/index",
+      "meta": {
+        "icon": "GoodsFilled",
+        "title": "因子库",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/InternalPage/factorLibrary",
+          "name": "factorLibrary",
+          "component": "/InternalPage/factorLibrary/index",
+          "meta": {
+            "icon": "",
+            "title": "因子库",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/emissionProcess",
+          "name": "emissionProcess",
+          "component": "/InternalPage/emissionProcess/index",
+          "meta": {
+            "icon": "",
+            "title": "排放过程字段",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/unit",
+          "name": "unit",
+          "component": "/InternalPage/unit/index",
+          "meta": {
+            "icon": "",
+            "title": "品种管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/guideMange",
+          "name": "guideMange",
+          "component": "/InternalPage/guideMange/index",
+          "meta": {
+            "icon": "",
+            "title": "指南管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/industry",
+          "name": "industry",
+          "component": "/InternalPage/industry/index",
+          "meta": {
+            "icon": "",
+            "title": "指南-品种管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/electricityPrice",
+          "name": "electricityPrice",
+          "component": "/InternalPage/electricityPrice/index",
+          "meta": {
+            "icon": "",
+            "title": "电价管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/unitMange",
+          "name": "unitMange",
+          "component": "/InternalPage/unitMange/index",
+          "meta": {
+            "icon": "",
+            "title": "单位管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/InternalPage/unitSwitch",
+          "name": "unitSwitch",
+          "component": "/InternalPage/unitSwitch/index",
+          "meta": {
+            "icon": "",
+            "title": "单位转换",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/IotManagement/index",
+      "name": "IotManagement",
+      "component": "/IotManagement/index",
+      "meta": {
+        "icon": "Monitor",
+        "title": "物联管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/IotManagement/instrument",
+          "name": "instrument",
+          "component": "/IotManagement/instrument/index",
+          "meta": {
+            "icon": "",
+            "title": "计量器具",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/currentLink",
+          "name": "currentLink",
+          "component": "/IotManagement/currentLink/index",
+          "meta": {
+            "icon": "",
+            "title": "网关助手",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/equitmentAdmin",
+          "name": "equitmentAdmin",
+          "component": "/IotManagement/equitmentAdmin/index",
+          "meta": {
+            "icon": "",
+            "title": "网关设备",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/manufacturer",
+          "name": "manufacturer",
+          "component": "/IotManagement/manufacturer/index",
+          "meta": {
+            "icon": "",
+            "title": "厂商管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/model",
+          "name": "model",
+          "component": "/IotManagement/model/index",
+          "meta": {
+            "icon": "",
+            "title": "型号配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/diviceConfig",
+          "name": "diviceConfig",
+          "component": "/IotManagement/diviceConfig/index",
+          "meta": {
+            "icon": "",
+            "title": "寄存器配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/diviceConfigTemplate",
+          "name": "diviceConfigTemplate",
+          "component": "/IotManagement/diviceConfigTemplate/index",
+          "meta": {
+            "icon": "",
+            "title": "寄存器模板",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/agreement",
+          "name": "agreement",
+          "component": "/IotManagement/agreement/index",
+          "meta": {
+            "icon": "",
+            "title": "采集协议模板",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/IotManagement/electricityMeter",
+          "name": "electricityMeter",
+          "component": "/IotManagement/electricityMeter/index",
+          "meta": {
+            "icon": "",
+            "title": "计量器具配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/notification",
+      "name": "notification",
+      "component": "/notification/index",
+      "meta": {
+        "icon": "Bell",
+        "title": "通知管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    }
+  ],
+  "msg": "成功"
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="56px" viewBox="0 0 34 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 2备份 9</title>
+    <defs>
+        <linearGradient x1="50%" y1="1.73732517%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#045945" offset="0%"></stop>
+            <stop stop-color="#078A6A" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="能碳大屏" transform="translate(-573.000000, -187.000000)">
+            <g id="编组-19" transform="translate(538.000000, 120.000000)">
+                <g id="编组-2备份-9" transform="translate(36.000000, 68.000000)">
+                    <rect id="矩形" fill="url(#linearGradient-1)" x="1" y="1" width="30" height="52"></rect>
+                    <path d="M0,4 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 L31,0 C31.5522847,-1.01453063e-16 32,0.44771525 32,1 L32,4 L32,4" id="路径-19" stroke="#10C69A"></path>
+                    <path d="M0,54 L0,51 C-6.76353751e-17,50.4477153 0.44771525,50 1,50 L31,50 C31.5522847,50 32,50.4477153 32,51 L32,54 L32,54" id="路径-19备份" stroke="#10C69A" transform="translate(16.000000, 52.000000) scale(1, -1) translate(-16.000000, -52.000000) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

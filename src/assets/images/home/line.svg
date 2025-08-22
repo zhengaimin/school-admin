@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>折线</title>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="折线">
+            <rect id="矩形备份-38" x="0" y="0" width="28" height="28"></rect>
+            <path d="M1,20 L6.77726568,10.3038898 C7.34265215,9.35498939 8.57022419,9.04408995 9.51912456,9.60947642 C9.6850648,9.70834914 9.83580632,9.8307399 9.96665277,9.97283559 L17.4554377,18.1054527 C18.2036603,18.9180022 19.4689161,18.9701494 20.2814656,18.2219267 C20.4043353,18.1087842 20.5125479,17.9806956 20.6035759,17.8406525 L27,8 L27,8" id="路径-2" stroke="#16C89D" stroke-width="1.5" stroke-linecap="round"></path>
+        </g>
+    </g>
+</svg>

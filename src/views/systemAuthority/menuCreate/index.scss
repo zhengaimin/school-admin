@@ -1,0 +1,56 @@
+.table-box {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 10px;
+  .btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 20px;
+    > div {
+      font-size: 16px;
+      > span {
+        margin-left: 20px;
+        font-size: 15px;
+        color: #0ec69a;
+        cursor: pointer;
+        &:hover {
+          color: #0ec69a;
+        }
+      }
+    }
+  }
+  .table-list {
+    display: flex;
+    justify-content: space-between;
+    height: calc(100% - 58px);
+    overflow: auto;
+  }
+  .demo-pagination-block {
+    position: absolute;
+    right: 12px;
+    bottom: 20px;
+  }
+}
+.img-box {
+  margin: 0 auto;
+  > img {
+    width: 400px;
+  }
+}
+.el-row {
+  margin-bottom: 20px;
+}
+.el-row:last-child {
+  margin-bottom: 0;
+}
+.el-col-4,
+.el-col-20 {
+  word-wrap: break-word;
+  > img {
+    width: 100%;
+  }
+}

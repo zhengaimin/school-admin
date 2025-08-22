@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>普通信息</title>
+    <defs>
+        <circle id="path-1" cx="24" cy="24" r="24"></circle>
+        <filter x="-14.6%" y="-10.4%" width="129.2%" height="129.2%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.212293029   0 0 0 0 0.687921822   0 0 0 0 0.981567681  0 0 0 0.45 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#FFFFFF" stop-opacity="0.641799607" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.333096591" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="通知管理-普通用户" transform="translate(-284.000000, -297.000000)">
+            <g id="编组-83备份" transform="translate(276.000000, 283.000000)">
+                <g id="普通信息" transform="translate(12.000000, 16.000000)">
+                    <g id="椭圆形">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#37AFFA" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <g id="icon" transform="translate(10.000000, 10.000000)">
+                        <rect id="矩形" x="0" y="0" width="28" height="28"></rect>
+                        <rect id="Rectangle-45-Copy-13" x="0" y="0" width="28" height="28"></rect>
+                        <path d="M14,1.75 C14.4832492,1.75 14.875,2.14175084 14.875,2.625 L14.8756167,3.54813088 C18.8127765,3.98367503 21.875,7.3217272 21.875,11.375 L21.875,21.875 L6.125,21.875 L6.125,11.375 C6.125,7.32138385 9.18774237,3.9831095 13.1253838,3.54802026 L13.125,2.625 C13.125,2.14175084 13.5167508,1.75 14,1.75 Z" id="形状结合" fill="url(#linearGradient-3)"></path>
+                        <path d="M5.25,23.625 C4.76675084,23.625 4.375,23.2332492 4.375,22.75 C4.375,22.2667508 4.76675084,21.875 5.25,21.875 L22.75,21.875 C23.2332492,21.875 23.625,22.2667508 23.625,22.75 C23.625,23.2332492 23.2332492,23.625 22.75,23.625 L15.75,23.625 L15.75,24.5 C15.75,25.4664983 14.9664983,26.25 14,26.25 C13.0335017,26.25 12.25,25.4664983 12.25,24.5 L12.25,23.625 L5.25,23.625 Z" id="形状结合" fill="url(#linearGradient-4)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

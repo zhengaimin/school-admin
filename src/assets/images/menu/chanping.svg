@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/regular/c-2</title>
+    <g id="icon/regular/c-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="矩形" transform="translate(512.000000, 512.000000) scale(-1, 1) translate(-512.000000, -512.000000) " x="0" y="0" width="1024" height="1024"></rect>
+        <path d="M512,160 C648.575264,160 761.640448,260.658622 781.055219,391.835535 C884.032092,418.84185 960,512.549297 960,624 C960,756.54834 852.54834,864 720,864 L304,864 C171.45166,864 64,756.54834 64,624 C64,512.549297 139.967908,418.84185 242.946653,391.834729 C262.359552,260.658622 375.424736,160 512,160 Z" id="路径" fill="#4A5975"></path>
+    </g>
+</svg>

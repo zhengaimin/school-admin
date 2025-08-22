@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>重要信息</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#1EE891" offset="0%"></stop>
+            <stop stop-color="#0DCD58" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="24" cy="24" r="24"></circle>
+        <filter x="-14.6%" y="-10.4%" width="129.2%" height="129.2%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.0901960784   0 0 0 0 0.866666667   0 0 0 0 0.478431373  0 0 0 0.447579764 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="100%" y1="50%" x2="0%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.64" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="50%" x2="-1.078998e-12%" y2="50%" id="linearGradient-5">
+            <stop stop-color="#FFFFFF" stop-opacity="0.33" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="通知管理-普通用户" transform="translate(-284.000000, -481.000000)">
+            <g id="编组-83备份-3" transform="translate(276.000000, 467.000000)">
+                <g id="重要信息" transform="translate(12.000000, 16.000000)">
+                    <g id="椭圆形">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    </g>
+                    <g id="icon" transform="translate(10.000000, 10.000000)">
+                        <rect id="矩形" transform="translate(14.000000, 14.000000) scale(-1, 1) translate(-14.000000, -14.000000) " x="0" y="0" width="28" height="28"></rect>
+                        <path d="M17.5,1.75 C18.9497475,1.75 20.125,2.92525253 20.125,4.375 L20.125,26.25 L5.25,26.25 C3.80025253,26.25 2.625,25.0747475 2.625,23.625 L2.625,4.375 C2.625,2.92525253 3.80025253,1.75 5.25,1.75 Z M14.875,12.25 L7.875,12.25 C7.39175084,12.25 7,12.6417508 7,13.125 C7,13.6082492 7.39175084,14 7.875,14 L14.875,14 C15.3582492,14 15.75,13.6082492 15.75,13.125 C15.75,12.6417508 15.3582492,12.25 14.875,12.25 Z M11.375,7 L7.875,7 C7.39175084,7 7,7.39175084 7,7.875 C7,8.35824916 7.39175084,8.75 7.875,8.75 L11.375,8.75 C11.8582492,8.75 12.25,8.35824916 12.25,7.875 C12.25,7.39175084 11.8582492,7 11.375,7 Z" id="形状结合" fill="url(#linearGradient-4)" fill-rule="nonzero"></path>
+                        <path d="M22.75,12.25 L20.125,12.25 L20.125,26.25 L22.75,26.25 C24.1997475,26.25 25.375,25.0747475 25.375,23.625 L25.375,14.875 C25.375,13.4252525 24.1997475,12.25 22.75,12.25 Z" id="路径" fill="url(#linearGradient-5)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

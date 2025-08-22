@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>其他</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#1EE891" offset="0%"></stop>
+            <stop stop-color="#0DCD58" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02-3-1企业设置-能源品种" transform="translate(-312.000000, -628.000000)">
+            <g id="编组-12备份-23" transform="translate(288.000000, 608.000000)">
+                <g id="其他" transform="translate(24.000000, 20.000000)">
+                    <circle id="椭圆形" fill="url(#linearGradient-1)" cx="24" cy="24" r="24"></circle>
+                    <g id="icon/regular/add-circle-2" transform="translate(12.000000, 12.000000)">
+                        <rect id="矩形" x="0" y="0" width="24" height="24"></rect>
+                        <path d="M19.875,7.5 C20.7034271,7.5 21.375,8.17157288 21.375,9 L21.375,19.875 C21.375,20.7034271 20.7034271,21.375 19.875,21.375 L9,21.375 C8.17157288,21.375 7.5,20.7034271 7.5,19.875 L7.5,9 C7.5,8.17157288 8.17157288,7.5 9,7.5 L19.875,7.5 Z M14.9765625,2.625 C15.8179338,2.625 16.5,3.3070662 16.5,4.1484375 L16.5,6 L9,6 C7.34314575,6 6,7.34314575 6,9 L6,16.5 L4.1484375,16.5 C3.3070662,16.5 2.625,15.8179338 2.625,14.9765625 L2.625,4.1484375 C2.625,3.3070662 3.3070662,2.625 4.1484375,2.625 L14.9765625,2.625 Z" id="形状结合" fill="#FFFFFF"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

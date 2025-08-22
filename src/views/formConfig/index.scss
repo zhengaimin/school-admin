@@ -1,0 +1,28 @@
+.table-box {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  .nav-box {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 1px solid #ebeef5;
+    span {
+      height: 40px;
+      padding: 0 20px;
+      font-size: 14px;
+      line-height: 40px;
+      cursor: pointer;
+      &:hover {
+        color: #409eff;
+      }
+    }
+    .active {
+      font-weight: bold;
+      color: #409eff;
+      border-bottom: 2px solid #409eff;
+    }
+  }
+  .section {
+    height: calc(100% - 50px);
+  }
+}

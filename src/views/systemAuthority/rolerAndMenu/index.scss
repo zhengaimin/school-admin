@@ -1,0 +1,94 @@
+.table-box {
+  position: relative;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  .role-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 10px 0;
+    background-color: var(--el-bg-color-page);
+    .role-box {
+      background: #ffffff;
+      > span {
+        display: inline-block;
+        height: 40px;
+        padding: 0 15px;
+        font-size: 15px;
+        line-height: 40px;
+      }
+      .active {
+        color: #ffffff;
+        background: #0ec69a;
+      }
+    }
+  }
+  .btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 20px;
+    > span {
+      font-size: 16px;
+    }
+  }
+  .table-list {
+    height: calc(100% - 80px);
+    overflow: auto;
+    .oneLevel {
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+    .twoLevel {
+      display: flex;
+      align-items: center;
+      padding-left: 40px;
+      font-size: 16px;
+    }
+    .threeLevel {
+      padding-left: 60px;
+      font-size: 14px;
+      color: #666666;
+      > div {
+        display: flex;
+        align-items: center;
+        > span {
+          display: inline-block;
+          margin-right: 30px;
+          color: #409eff;
+          cursor: pointer;
+        }
+        :deep(.el-checkbox) {
+          margin: 0 10px 0 0;
+        }
+      }
+    }
+  }
+  .demo-pagination-block {
+    position: absolute;
+    right: 12px;
+    bottom: 20px;
+  }
+}
+.img-box {
+  margin: 0 auto;
+  > img {
+    width: 400px;
+  }
+}
+.el-row {
+  margin-bottom: 20px;
+}
+.el-row:last-child {
+  margin-bottom: 0;
+}
+.el-col-4,
+.el-col-20 {
+  word-wrap: break-word;
+  > img {
+    width: 100%;
+  }
+}
