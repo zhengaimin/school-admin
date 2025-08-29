@@ -1,28 +1,45 @@
 <template>
   <div class="table-box">
-    <!-- <div class="filter-box"></div> -->
+    <div class="filter-box">
+      <label for="name">学生关键词</label>
+      <el-input style="width: 200px" v-model="filterForm.studentKeyword"></el-input>
+      <label for="name">订单号</label>
+      <el-input style="width: 200px" v-model="filterForm.orderNo"></el-input>
+      <label for="name">开始时间</label>
+      <el-date-picker v-model="filterForm.startDate" type="date" value-format="YYYY-MM-DD" format="YYYY-MM-DD" />
+      <label for="name">结束时间</label>
+      <el-date-picker v-model="filterForm.endDate" type="date" value-format="YYYY-MM-DD" format="YYYY-MM-DD" />
+
+      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
+      <el-button type="primary" @click="fetchTenantList">查询</el-button>
+    </div>
     <div class="btn-box">
-      <span>充值管理</span>
+      <span>充值记录</span>
       <div></div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
-        <el-table-column label="充值人员" prop="name"> </el-table-column>
-        <el-table-column label="充值金额（元）" prop="jine"> </el-table-column>
-        <el-table-column label="充值时间" prop="time"> </el-table-column>
-        <el-table-column label="充值单号" prop="number"> </el-table-column>
-        <el-table-column label="操作" align="center" width="220" fixed="right">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="订单号" prop="orderNo" width="160"> </el-table-column>
+        <el-table-column label="学生" prop="studentName"> </el-table-column>
+        <el-table-column label="学号" prop="studentCode"> </el-table-column>
+        <el-table-column label="充值金额" prop="amount"> </el-table-column>
+        <el-table-column label="支付方式" prop="paymentMethod"> </el-table-column>
+        <el-table-column label="支付人" prop="userName"> </el-table-column>
+        <el-table-column label="支付状态">
+          <template #default="{ row }">
+            {{ ["待支付", "支付成功", "支付失败", "已退款", "已取消", "已过期"][row.status] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态文本" prop="statusText" width="170"> </el-table-column>
+        <el-table-column label="第三方交易流水号" prop="transactionId" width="170"> </el-table-column>
+        <el-table-column label="支付时间" prop="payTime" width="170"> </el-table-column>
+        <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
+        <el-table-column label="操作" align="center" width="110" fixed="right">
           <template #default="scope">
             <div class="table-btn">
               <div @click="editRow(scope.row)">
                 <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
-              </div>
-              <div @click="deleteRow(scope.row)">
-                <img
-                  src="@/assets/images/common/delete-circle-2.svg"
-                  alt=""
-                  style="width: 16px; height: 16px; margin-right: 3px"
-                />
               </div>
             </div>
           </template>
@@ -32,7 +49,7 @@
     <div class="demo-pagination-block">
       <el-pagination
         v-model:current-page="page"
-        v-model:page-size="page_size"
+        v-model:page-size="pageSize"
         :page-sizes="[10, 20, 50, 100, 200]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -45,45 +62,45 @@
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="18">
-              <el-form-item label="设备名称" prop="sbname">
-                <el-input v-model="form.sbname"></el-input>
+            <el-col :span="23">
+              <el-form-item label="设备名称" prop="name">
+                <el-input v-model="form.name"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="设备型号" prop="xinhao">
-                <el-input v-model="form.xinhao"></el-input>
+              <el-form-item label="终端Key" prop="terminalKey">
+                <el-input v-model="form.terminalKey"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="设备状态" prop="status">
-                <el-select v-model="form.status" placeholder="请选择">
-                  <el-option v-for="item in typeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              <el-form-item label="设备SN号" prop="terminalSn">
+                <el-input v-model="form.terminalSn"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="设备MAC地址" prop="terminalMac">
+                <el-input v-model="form.terminalMac"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="设备组" prop="deviceGroupId">
+                <el-select v-model="form.deviceGroupId">
+                  <el-option v-for="v in devicegroupsList" :key="v.id" :label="v.name" :value="v.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="设备编号" prop="bianhao">
-                <el-input v-model="form.bianhao"></el-input>
+            <el-col :span="23">
+              <el-form-item label="设备地址" prop="location">
+                <el-input v-model="form.location"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="备注" prop="description">
-                <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <!-- <el-row>
-            <el-col :span="23">
-              <el-form-item label="菜单权限分配" prop="description"> </el-form-item>
-            </el-col>
-          </el-row> -->
         </el-form>
         <el-row :gutter="23">
           <el-col :span="23">
@@ -98,126 +115,108 @@
   </div>
 </template>
 <script>
-import { tenantList, tenantDelete } from "@/api/modules/InternalPage.js";
-import { ElMessageBox } from "element-plus";
+import { paymentsList, paymentsDetail } from "@/api/modules/InternalPage.js";
+import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      filterForm: {
+        studentKeyword: "",
+        orderNo: "",
+        startDate: "",
+        endDate: ""
+      },
+      statusList: [
+        { id: "1", name: "在线" },
+        { id: "0", name: "离线" }
+      ],
       //新增权限系统
       dialogVisibleAdd: false,
-      form: {},
-      linkRules: {
-        sbname: [{ required: true, message: "必填项", trigger: "blur" }],
-        xinhao: [{ required: true, message: "必填项", trigger: "blur" }],
-        status: [{ required: true, message: "必填项", trigger: "change" }],
-        bianhao: [{ required: true, message: "必填项", trigger: "change" }]
+      devicegroupsList: [],
+      form: {
+        name: "",
+        terminalKey: "",
+        terminalSn: "",
+        terminalMac: "",
+        location: "",
+        deviceGroupId: ""
       },
-      typeList: [
-        {
-          id: 1,
-          name: "在线"
-        },
-        {
-          id: 2,
-          name: "离线"
-        },
-        {
-          id: 2,
-          name: "维修中"
-        }
-      ],
-      carbonCk_list: [
-        {
-          id: 1,
-          name: "同学一",
-          jine: "500",
-          status: "在线",
-          bianhao: "Y6478374347387434",
-          time: "2024-02-01 10:00:00",
-          number: "76384909340850943"
-        }
-      ],
+      linkRules: {
+        name: [{ required: true, message: "必填项", trigger: "blur" }],
+        terminalKey: [{ required: true, message: "必填项", trigger: "blur" }],
+        terminalSn: [{ required: true, message: "必填项", trigger: "blur" }],
+        terminalMac: [{ required: true, message: "必填项", trigger: "blur" }]
+      },
+      //  列表
+      carbonCk_list: [],
       total: 0,
       page: 1,
-      page_size: 10
+      pageSize: 10
     };
   },
+  computed: {
+    userInfo() {
+      return useUserStore().userInfo;
+    },
+    schoolId() {
+      return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    }
+  },
+  watch: {
+    schoolId: {
+      handler(newVal) {
+        if (newVal) {
+          this.fetchTenantList();
+        }
+      },
+      immediate: true
+    }
+  },
   mounted() {
-    return;
     this.fetchTenantList();
   },
   methods: {
+    reset() {
+      this.filterForm.studentKeyword = "";
+      this.filterForm.orderNo = "";
+      this.filterForm.startDate = "";
+      this.filterForm.endDate = "";
+      this.fetchTenantList();
+    },
     fetchTenantList() {
-      let str = "";
-      for (let key in this.formFilter) {
-        if (this.formFilter[key]) {
-          str += `&${key}=${this.formFilter[key]}`;
+      let params = `studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}`;
+      paymentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.carbonCk_list = res.data.list;
+          this.total = res.data.total;
+        } else {
+          this.carbonCk_list = [];
+          this.total = 0;
         }
-      }
-      let params = `page=${this.page}&page_size=${this.page_size}${str}`;
-      tenantList(params).then(res => {
-        return;
-        this.carbonCk_list = res.data.list;
-        this.carbonCk_list.map(v => {
-          v.status = v.status == 1 ? true : false;
-        });
-        this.total = res.data.total;
       });
     },
     //获取表单数据
     handleSizeChange(val) {
       this.page = 1;
-      this.page_size = val;
+      this.pageSize = val;
       this.fetchTenantList();
     },
     handleCurrentChange(val) {
       this.page = val;
       this.fetchTenantList();
     },
-    //筛选
-    getFormDataFilter() {
-      this.fetchTenantList();
-    },
-    handleResetFilter() {
-      this.fetchTenantList();
-    },
-    //新增
-    openAddDialog() {
-      delete this.form.id;
-      this.form = {};
-      this.dialogVisibleAdd = true;
-    },
-    handleReset() {
-      this.dialogVisibleAdd = false;
-    },
+
     editRow(row) {
       this.dialogVisibleAdd = true;
-      for (let key in row) {
-        this.form[key] = row[key];
-      }
-      this.form.id = row.id;
-    },
-    changeStatus(row) {
-      this.getFormData(row);
-    },
-
-    deleteRow(row) {
-      ElMessageBox.confirm("确定删除该条数据吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          tenantDelete({ id: row.id }).then(res => {
-            if (res && res.code == 0) {
-              this.$message.success("删除成功");
-              this.fetchTenantList();
-            }
-          });
-        })
-        .catch(() => {
-          console.log("取消删除");
-        });
+      paymentsDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          for (let key in res.data) {
+            this.form[key] = res.data[key];
+          }
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
     }
   }
 };

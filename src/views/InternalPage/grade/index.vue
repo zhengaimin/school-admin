@@ -23,6 +23,7 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="年级名称" prop="name"> </el-table-column>
         <el-table-column label="入学年份" prop="enrollYear"> </el-table-column>
         <el-table-column label="是否毕业" prop="principal">
@@ -217,7 +218,6 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          this.form.schoolId = this.schoolId;
           this.form.enrollYear = Number(this.form.enrollYear);
           if (this.form.id) {
             gradesUpdate(this.form).then(res => {
@@ -229,6 +229,7 @@ export default {
             });
             return;
           }
+          this.form.schoolId = this.schoolId;
           gradesAdd(this.form).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;

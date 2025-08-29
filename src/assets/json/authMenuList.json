@@ -45,6 +45,20 @@
           }
         },
         {
+          "path": "/InternalPage/department",
+          "name": "department",
+          "component": "/InternalPage/department/index",
+          "meta": {
+            "icon": "",
+            "title": "级部管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
           "path": "/InternalPage/class",
           "name": "class",
           "component": "/InternalPage/class/index",
@@ -94,7 +108,7 @@
             "icon": "",
             "title": "家长信息",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": false
@@ -159,6 +173,20 @@
       },
       "children": [
         {
+          "path": "/fund/recordAll",
+          "name": "recordAll",
+          "component": "/fund/recordAll/index",
+          "meta": {
+            "icon": "",
+            "title": "充值统计",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
           "path": "/fund/record",
           "name": "record",
           "component": "/fund/record/index",
@@ -180,6 +208,20 @@
             "icon": "",
             "title": "消费记录",
             "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/fund/phoneList",
+          "name": "phoneList",
+          "component": "/fund/phoneList/index",
+          "meta": {
+            "icon": "",
+            "title": "通话记录",
+            "isLink": "",
             "isHide": false,
             "isFull": false,
             "isAffix": false,
@@ -192,9 +234,9 @@
           "component": "/fund/refund/index",
           "meta": {
             "icon": "",
-            "title": "退费管理",
+            "title": "退款管理",
             "isLink": "",
-            "isHide": true,
+            "isHide": false,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": false
@@ -231,6 +273,20 @@
           }
         },
         {
+          "path": "/device/devicetags",
+          "name": "devicetags",
+          "component": "/device/devicetags/index",
+          "meta": {
+            "icon": "",
+            "title": "设备标签",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
           "path": "/device/deviceControl",
           "name": "deviceControl",
           "component": "/device/deviceControl/index",
@@ -245,12 +301,26 @@
           }
         },
         {
+          "path": "/device/command",
+          "name": "command",
+          "component": "/device/command/index",
+          "meta": {
+            "icon": "",
+            "title": "设备命令",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
           "path": "/device/rate",
           "name": "rate",
           "component": "/device/rate/index",
           "meta": {
             "icon": "",
-            "title": "费率配置",
+            "title": "套餐配置",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -271,8 +341,50 @@
             "isAffix": false,
             "isKeepAlive": false
           }
+        },
+        {
+          "path": "/device/SOSControl",
+          "name": "SOSControl",
+          "component": "/device/SOSControl/index",
+          "meta": {
+            "icon": "",
+            "title": "SOS电话配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/device/TimeControl",
+          "name": "TimeControl",
+          "component": "/device/TimeControl/index",
+          "meta": {
+            "icon": "",
+            "title": "时间段配置",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
         }
       ]
+    },
+    {
+      "path": "/companyControl",
+      "name": "companyControl",
+      "component": "/companyControl/index",
+      "meta": {
+        "icon": "Notebook",
+        "title": "商户号配置",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
     },
     {
       "path": "/operationLog",
@@ -282,7 +394,7 @@
         "icon": "Notebook",
         "title": "操作日志",
         "isLink": "",
-        "isHide": false,
+        "isHide": true,
         "isFull": false,
         "isAffix": false,
         "isKeepAlive": false

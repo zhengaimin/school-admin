@@ -139,17 +139,18 @@
   border: none;
 }
 .el-button--primary {
-  background: #0ec69a;
+  // background: #0ec69a;
   border: none;
 }
 .el-button--primary:hover {
   color: #ffffff;
-  background: #0ec69a;
+
+  // background: #0ec69a;
   border: none;
 }
 .el-button--primary:focus,
 .el-button--primary:active {
-  background-color: #0ec69a;
+  // background-color: #0ec69a;
   outline: none;
 }
 .el-dialog {

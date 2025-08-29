@@ -3,8 +3,8 @@
     <div class="filter-box">
       <label for="name">班级名称</label>
       <el-input style="width: 250px" v-model="filterForm.name"></el-input>
-      <label for="name">年级</label>
-      <el-select style="width: 250px" v-model="filterForm.gradeId">
+      <label for="name">级部</label>
+      <el-select style="width: 250px" v-model="filterForm.departmentId">
         <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
       </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
@@ -25,7 +25,9 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="班级名称" prop="name"> </el-table-column>
+        <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="描述" prop="description"> </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
@@ -70,8 +72,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="所属年级" prop="gradeId">
-                <el-select v-model="form.gradeId">
+              <el-form-item label="级部" prop="departmentId">
+                <el-select v-model="form.departmentId">
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -98,7 +100,14 @@
   </div>
 </template>
 <script>
-import { gradesList, classesAdd, classesUpdate, classesList, classesDelete, classesDetail } from "@/api/modules/InternalPage.js";
+import {
+  departmentsList,
+  classesAdd,
+  classesUpdate,
+  classesList,
+  classesDelete,
+  classesDetail
+} from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 export default {
@@ -106,21 +115,21 @@ export default {
     return {
       filterForm: {
         name: "",
-        gradeId: ""
+        departmentId: ""
       },
       //新增权限系统
       dialogVisibleAdd: false,
       gradesList: [],
       form: {
         name: "",
-        gradeId: "",
+        departmentId: "",
         schoolId: "",
         description: "",
         teacherId: -1
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
-        gradeId: [{ required: true, message: "必填项", trigger: "blur" }],
+        departmentId: [{ required: true, message: "必填项", trigger: "blur" }],
         description: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       //  列表
@@ -155,8 +164,8 @@ export default {
   },
   methods: {
     getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
-      gradesList(params).then(res => {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=-1`;
+      departmentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.gradesList = res.data.list;
         } else {
@@ -166,12 +175,12 @@ export default {
     },
     reset() {
       this.filterForm.name = "";
-      this.filterForm.gradeId = "";
+      this.filterForm.departmentId = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}`;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&departmentId=${departmentId}`;
       classesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -217,7 +226,6 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          this.form.schoolId = this.schoolId;
           if (this.form.id) {
             classesUpdate(this.form).then(res => {
               if (res.code == 0) {
@@ -228,6 +236,7 @@ export default {
             });
             return;
           }
+          this.form.schoolId = this.schoolId;
           classesAdd(this.form).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;

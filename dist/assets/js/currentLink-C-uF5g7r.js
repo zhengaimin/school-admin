@@ -1,0 +1,1 @@
+import{k as t}from"./index-BwJqrv0D.js";const d=e=>t.get(`/admin/device/list?${e}`),s=e=>t.put("/admin/device/update",e),n=e=>t.put(`/admin/device/send_register_config/${e.id}`);export{s as a,d,n as s};

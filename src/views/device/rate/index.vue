@@ -1,17 +1,15 @@
 <template>
   <div class="table-box">
     <div class="filter-box">
-      <!-- <label for="name">年级</label>
-      <el-input style="width: 250px" v-model="filterForm.name"></el-input> -->
-      <label for="code">年级</label>
-      <el-select style="width: 250px" v-model="filterForm.status" placeholder="请选择">
-        <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+      <label for="name">年级</label>
+      <el-select style="width: 250px" v-model="filterForm.gradeId">
+        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
       </el-select>
-      <el-button style="margin-left: 20px">重置</el-button>
-      <el-button type="primary">查询</el-button>
+      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
+      <el-button type="primary" @click="fetchTenantList">查询</el-button>
     </div>
     <div class="btn-box">
-      <span>设备组</span>
+      <span>套餐列表</span>
       <div>
         <el-button type="primary" class="search-btn" @click="openAddDialog">
           <img
@@ -25,10 +23,40 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
-        <el-table-column label="年级" prop="sbname"> </el-table-column>
-        <el-table-column label="创建时间" prop="created_at"> </el-table-column>
-        <el-table-column label="更新时间" prop="updated_at"> </el-table-column>
-        <el-table-column label="操作" align="center" width="150" fixed="right">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="年级" prop="gradeName"> </el-table-column>
+        <el-table-column label="套餐名称" prop="packageName"> </el-table-column>
+        <el-table-column label="套餐类型" prop="packageType"> </el-table-column>
+        <el-table-column label="基础价格（元）" prop="basePrice"> </el-table-column>
+        <el-table-column label="套餐开始时间" prop="startTime"> </el-table-column>
+        <el-table-column label="套餐结束时间" prop="endTime"> </el-table-column>
+        <el-table-column label="通话语音分钟数">
+          <template #default="{ row }">
+            {{ row.packageContent.voice_call_minutes }}
+          </template>
+        </el-table-column>
+        <el-table-column label="视频通话分钟数">
+          <template #default="{ row }">
+            {{ row.packageContent.video_call_minutes }}
+          </template>
+        </el-table-column>
+        <el-table-column label="有效期（天）" prop="validityDays"> </el-table-column>
+        <el-table-column label="时长分配类型" prop="durationType"> </el-table-column>
+        <el-table-column label="是否按月重置" prop="monthlyReset"> </el-table-column>
+        <el-table-column label="是否启用">
+          <template #default="{ row }">
+            {{ row.status == 1 ? "启用" : "禁用" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="是否为默认套餐">
+          <template #default="{ row }">
+            {{ row.isDefault ? "是" : "否" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="排序权重" prop="sortOrder"> </el-table-column>
+        <el-table-column label="套餐描述" prop="description"> </el-table-column>
+        <el-table-column label="规则说明" prop="usageRules"> </el-table-column>
+        <el-table-column label="操作" align="center" width="110" fixed="right">
           <template #default="scope">
             <div class="table-btn">
               <div @click="editRow(scope.row)">
@@ -49,7 +77,7 @@
     <div class="demo-pagination-block">
       <el-pagination
         v-model:current-page="page"
-        v-model:page-size="page_size"
+        v-model:page-size="pageSize"
         :page-sizes="[10, 20, 50, 100, 200]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -59,180 +87,212 @@
     </div>
     <!-- 新增 -->
     <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="800">
-      <div style="padding-left: 20px">
+      <div v-if="form.isDefault" style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="18">
-              <el-form-item label="设备组名称" prop="sbname">
-                <el-input v-model="form.sbname"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="最大设备数（台）" prop="xinhao">
-                <el-input v-model="form.xinhao"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="设备状态" prop="status">
-                <el-select v-model="form.status" placeholder="请选择">
-                  <el-option v-for="item in typeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
+            <el-col :span="23">
+              <el-form-item label="基础价格(元)-最小0.1元" prop="basePrice">
+                <el-input min="0.1" type="number" v-model.number="form.basePrice"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="23">
-              <el-form-item label="描述" prop="description">
-                <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
+              <el-form-item label="套餐描述" prop="description">
+                <el-input v-model="form.description"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="使用规则说明" prop="usageRules">
+                <el-input v-model="form.usageRules"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: right">
-              <el-button @click="dialogVisibleAdd = false">取消</el-button>
-              <el-button type="primary" @click="confirmAdd">确定</el-button>
-            </div>
-          </el-col>
-        </el-row>
       </div>
-    </el-dialog>
-    <!-- 费率配置 -->
-    <el-dialog v-model="dialogVisibleFL" :close-on-click-modal="false" title="设置费率" :width="700">
-      <div style="padding-left: 20px">
-        <el-form ref="linkFormRef" :model="flform" :rules="linkRules" class="demo-ruleForm" label-position="top">
+      <div v-else style="padding-left: 20px">
+        <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="23">
-              <el-form-item label="年级" prop="deviceGroupId">
-                <el-select v-model="form.gradeId">
+            <el-col :span="11">
+              <el-form-item label="年级" prop="gradeId">
+                <el-select :disabled="form.id" v-model="form.gradeId">
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row style="margin-bottom: 15px">
-            <el-col :span="23">
-              <el-radio-group v-model="flform.radio">
-                <el-radio :value="1">时间计费</el-radio>
-                <el-radio :value="2">学期计费</el-radio>
-                <el-radio :value="3">年计费</el-radio>
-              </el-radio-group>
-            </el-col>
-          </el-row>
-          <el-row v-if="flform.radio == 1">
-            <el-col :span="23">
-              <el-form-item label="每分钟价格(元)" prop="price">
-                <el-input type="number" v-model="flform.price"></el-input>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="套餐名称" prop="packageName">
+                <el-input v-model="form.packageName"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="flform.radio == 2">
-            <el-col :span="23">
-              <el-form-item label="一学期价格(元)" prop="price">
-                <el-input type="number" v-model="flform.price"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row v-if="flform.radio == 2">
+          <el-row>
             <el-col :span="11">
-              <el-form-item label="开始时间" prop="price">
-                <el-date-picker style="width: 100%" v-model="form.start_time" value-format="x" :type="dateType" />
+              <el-form-item label="套餐类型" prop="packageType">
+                <el-select :disabled="form.id" v-model="form.packageType">
+                  <el-option v-for="v in packageTypeList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="结束时间" prop="price">
-                <el-date-picker style="width: 100%" v-model="form.end_time" value-format="x" :type="dateType" />
+              <el-form-item label="基础价格(元)-最小0.1元" prop="basePrice">
+                <el-input min="0.1" type="number" v-model.number="form.basePrice"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="flform.radio == 3">
-            <el-col :span="23">
-              <el-form-item label="一年价格(元)" prop="price">
-                <el-input type="number" v-model="flform.price"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row v-if="flform.radio == 3">
+          <el-row>
             <el-col :span="11">
-              <el-form-item label="开始时间" prop="price">
-                <el-date-picker style="width: 100%" v-model="form.start_time" value-format="x" :type="dateType" />
+              <el-form-item label="套餐开始时间" prop="startTime">
+                <el-date-picker
+                  style="width: 100%"
+                  v-model="form.startTime"
+                  type="date"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="结束时间" prop="price">
-                <el-date-picker style="width: 100%" v-model="form.end_time" value-format="x" :type="dateType" />
+              <el-form-item label="套餐结束时间" prop="endTime">
+                <el-date-picker
+                  style="width: 100%"
+                  v-model="form.endTime"
+                  type="date"
+                  value-format="YYYY-MM-DD HH:mm:ss"
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="排序" prop="sortOrder">
+                <el-input type="number" v-model.number="form.sortOrder"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="时长分配类型" prop="durationType">
+                <el-select :disabled="form.id" v-model="form.durationType">
+                  <el-option v-for="v in durationTypeList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="套餐描述" prop="description">
+                <el-input v-model="form.description"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="使用规则说明" prop="usageRules">
+                <el-input v-model="form.usageRules"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="语音通话分钟数" prop="voiceCallMinutes">
+                <el-input :disabled="form.packageType == 'VIDEO'" type="number" v-model.number="form.voiceCallMinutes"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="视频通话分钟数" prop="videoCallMinutes">
+                <el-input :disabled="form.packageType == 'VOICE'" type="number" v-model.number="form.videoCallMinutes"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="是否按月重置" prop="monthlyReset">
+                <el-select :disabled="form.id" v-model="form.monthlyReset">
+                  <el-option v-for="v in monthlyResetList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: right">
-              <el-button @click="dialogVisibleFL = false">取消</el-button>
-              <el-button type="primary" @click="confirmAdd">确定</el-button>
-            </div>
-          </el-col>
-        </el-row>
       </div>
+      <el-row :gutter="23">
+        <el-col :span="23">
+          <div style="margin-top: 20px; text-align: right">
+            <el-button @click="dialogVisibleAdd = false">取消</el-button>
+            <el-button type="primary" @click="confirmAdd">确定</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
 <script>
-import { gradesList, tenantList, tenantDelete } from "@/api/modules/InternalPage.js";
+import {
+  gradesList,
+  packagesAdd,
+  packagesUpdate,
+  packagesList,
+  packagesDelete,
+  packagesDetail
+} from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
-
 import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
-      filterForm: {},
-      statusList: [
-        { id: 1, name: "2024级" },
-        { id: 2, name: "2025级" }
-      ],
+      filterForm: {
+        name: "",
+        gradeId: ""
+      },
       //新增权限系统
       dialogVisibleAdd: false,
       gradesList: [],
-      form: {},
-      linkRules: {
-        sbname: [{ required: true, message: "必填项", trigger: "blur" }],
-        xinhao: [{ required: true, message: "必填项", trigger: "blur" }],
-        status: [{ required: true, message: "必填项", trigger: "change" }],
-        bianhao: [{ required: true, message: "必填项", trigger: "change" }]
+      packageTypeList: [
+        { id: "VOICE", name: "语音" },
+        { id: "VIDEO", name: "视频" }
+      ],
+      durationTypeList: [
+        { id: "MONTHLY", name: "按月" },
+        { id: "ONETIME", name: "一次性" }
+      ],
+      monthlyResetList: [
+        { id: true, name: "是" },
+        { id: false, name: "否" }
+      ],
+      form: {
+        tenantId: "",
+        schoolId: "",
+        gradeId: "",
+        packageName: "",
+        packageType: "",
+        basePrice: "",
+        startTime: "",
+        endTime: "",
+        description: "",
+        usageRules: "",
+        sortOrder: "",
+        durationType: "",
+        monthlyReset: false,
+        voiceCallMinutes: 0,
+        videoCallMinutes: 0
       },
-      typeList: [
-        { id: 1, name: "启用" },
-        { id: 2, name: "不启用" }
-      ],
-      carbonCk_list: [
-        {
-          id: 1,
-          sbname: "xxx高中",
-          xinhao: "5",
-          status: "50",
-          bianhao: "Y6478374347387434",
-          address: "开启",
-          created_at: "2022-02-01 10:00:00",
-          updated_at: "2022-02-01 10:00:00"
-        }
-      ],
+      linkRules: {
+        tenantId: [{ required: true, message: "必填项", trigger: "blur" }],
+        gradeId: [{ required: true, message: "必填项", trigger: "blur" }],
+        packageName: [{ required: true, message: "必填项", trigger: "blur" }],
+        packageType: [{ required: true, message: "必填项", trigger: "blur" }],
+        basePrice: [{ required: true, message: "必填项", trigger: "blur" }],
+        startTime: [{ required: true, message: "必填项", trigger: "blur" }],
+        endTime: [{ required: true, message: "必填项", trigger: "blur" }],
+        durationType: [{ required: true, message: "必填项", trigger: "blur" }]
+      },
+      //  列表
+      carbonCk_list: [],
       total: 0,
       page: 1,
-      page_size: 10,
-      // 配置费率
-      dialogVisibleFL: false,
-      flform: {
-        radio: 1,
-        price: ""
-      },
-      // 拨号控制
-      bohaoVisible: false,
-      bohaoform: {
-        radio: 1
-      }
+      pageSize: 10
     };
   },
   computed: {
@@ -248,7 +308,7 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.getGradesList();
-          // this.fetchTenantList();
+          this.fetchTenantList();
         }
       },
       immediate: true
@@ -256,7 +316,7 @@ export default {
   },
   mounted() {
     this.getGradesList();
-    // this.fetchTenantList();
+    this.fetchTenantList();
   },
   methods: {
     getGradesList() {
@@ -269,58 +329,86 @@ export default {
         }
       });
     },
+    reset() {
+      this.filterForm.name = "";
+      this.filterForm.gradeId = "";
+      this.fetchTenantList();
+    },
     fetchTenantList() {
-      let str = "";
-      for (let key in this.formFilter) {
-        if (this.formFilter[key]) {
-          str += `&${key}=${this.formFilter[key]}`;
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let params = `tenantId=${this.userInfo.tenantId}&schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}`;
+      packagesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.carbonCk_list = res.data.list;
+          this.total = res.data.total;
+        } else {
+          this.carbonCk_list = [];
+          this.total = 0;
         }
-      }
-      let params = `page=${this.page}&page_size=${this.page_size}${str}`;
-      tenantList(params).then(res => {
-        return;
-        this.carbonCk_list = res.data.list;
-        this.carbonCk_list.map(v => {
-          v.status = v.status == 1 ? true : false;
-        });
-        this.total = res.data.total;
       });
     },
     //获取表单数据
     handleSizeChange(val) {
       this.page = 1;
-      this.page_size = val;
+      this.pageSize = val;
       this.fetchTenantList();
     },
     handleCurrentChange(val) {
       this.page = val;
       this.fetchTenantList();
     },
-    //筛选
-    getFormDataFilter() {
-      this.fetchTenantList();
-    },
-    handleResetFilter() {
-      this.fetchTenantList();
-    },
+
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       delete this.form.id;
-      this.form = {};
-      this.dialogVisibleFL = true;
-    },
-    handleReset() {
-      this.dialogVisibleAdd = false;
+      this.dialogVisibleAdd = true;
+      this.$nextTick(() => {
+        this.$refs.linkFormRef.resetFields();
+      });
     },
     editRow(row) {
       this.dialogVisibleAdd = true;
-      for (let key in row) {
-        this.form[key] = row[key];
-      }
+      packagesDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          for (let key in res.data) {
+            this.form[key] = res.data[key];
+          }
+          this.form.voiceCallMinutes = res.data.packageContent.voice_call_minutes;
+          this.form.videoCallMinutes = res.data.packageContent.video_call_minutes;
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
       this.form.id = row.id;
     },
-    changeStatus(row) {
-      this.getFormData(row);
+    confirmAdd() {
+      this.$refs.linkFormRef.validate(valid => {
+        if (valid) {
+          if (this.form.id) {
+            packagesUpdate(this.form).then(res => {
+              if (res.code == 0) {
+                this.dialogVisibleAdd = false;
+                this.$message.success("编辑成功");
+                this.fetchTenantList();
+              }
+            });
+            return;
+          }
+          this.form.tenantId = this.userInfo.tenantId;
+          this.form.schoolId = this.schoolId;
+          packagesAdd(this.form).then(res => {
+            if (res.code == 0) {
+              this.dialogVisibleAdd = false;
+              this.$message.success("添加成功");
+              this.fetchTenantList();
+            }
+          });
+        }
+      });
     },
 
     deleteRow(row) {
@@ -330,7 +418,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          tenantDelete({ id: row.id }).then(res => {
+          packagesDelete({ id: row.id }).then(res => {
             if (res && res.code == 0) {
               this.$message.success("删除成功");
               this.fetchTenantList();
@@ -340,9 +428,6 @@ export default {
         .catch(() => {
           console.log("取消删除");
         });
-    },
-    addbohao() {
-      this.bohaoVisible = true;
     }
   }
 };

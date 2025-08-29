@@ -22,10 +22,9 @@
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
         <el-table-column label="学校" prop="name" width="180"> </el-table-column>
-        <el-table-column label="校徽" width="180" v-if="false">
+        <el-table-column label="校徽" width="70" align="center">
           <template #default="{ row }">
-            {{ row.badge }}
-            <img :src="row.badge" alt="" srcset="" />
+            <img style="width: 60px; height: 60px" :src="row.badge" alt="" srcset="" />
           </template>
         </el-table-column>
         <el-table-column label="学校地址" prop="address" width="200"> </el-table-column>
@@ -98,8 +97,8 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="false">
-            <el-col :span="11">
+          <el-row>
+            <el-col :span="5">
               <el-form-item label="校徽">
                 <el-upload
                   style="width: 100%"
@@ -115,17 +114,20 @@
                   :limit="1"
                   :show-file-list="false"
                 >
-                  <div class="upload-box">
+                  <div v-if="!form.badge" class="upload-box">
                     <el-icon style="font-size: 30px"><Plus /></el-icon>
                   </div>
+                  <img
+                    @click="clearFile"
+                    v-if="form.badge"
+                    style="width: 100px; height: 100px"
+                    :src="form.badge"
+                    alt=""
+                    srcset=""
+                  />
                 </el-upload>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="11" :offset="1">
-              <el-form-item label="联系方式" prop="phone">
-                <el-input v-model="form.phone"></el-input>
-              </el-form-item>
-            </el-col> -->
           </el-row>
           <el-row>
             <el-col :span="23">
@@ -235,9 +237,11 @@ export default {
     //新增
     openAddDialog() {
       delete this.form.id;
+      this.form.badge = "";
       this.dialogVisibleAdd = true;
       this.$nextTick(() => {
         this.$refs.linkFormRef.resetFields();
+        this.$refs.uploadFile.clearFiles();
       });
     },
     editRow(row) {
@@ -254,11 +258,13 @@ export default {
       this.form.id = row.id;
     },
     beforeAvatarUpload() {
-      // this.$refs.uploadFile.clearFiles();
+      return true;
+    },
+    clearFile() {
+      this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
-      this.form.badge = res.data.fileUrl;
-      console.log(res);
+      this.form.badge = "http://47.120.20.136:8085" + res.data.thumbnailUrl;
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {

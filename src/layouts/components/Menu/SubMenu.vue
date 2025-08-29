@@ -55,7 +55,8 @@ const handleClickMenu = (subItem: Menu.MenuOptions) => {
   .is-active {
     .el-sub-menu__title {
       color: #ffffff !important;
-      background-color: var(--el-color-primary) !important;
+
+      // background-color: var(--el-color-primary) !important;
     }
   }
 }

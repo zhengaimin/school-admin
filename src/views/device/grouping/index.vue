@@ -25,6 +25,7 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="设备组名称" prop="name" width="150"> </el-table-column>
         <el-table-column label="当前设备数（台）" prop="currentDeviceCount" width="140"> </el-table-column>
         <el-table-column label="最大设备数（台）" prop="maxDeviceCount" width="140"> </el-table-column>
@@ -204,6 +205,10 @@ export default {
 
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择右上角的学校");
+        return;
+      }
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.$nextTick(() => {
@@ -225,7 +230,7 @@ export default {
     },
     changeStatus(row) {
       let params = {
-        schoolId: this.schoolId,
+        schoolId: row.schoolId,
         id: row.id,
         status: row.status,
         isVoipGroup: row.isVoipGroup
@@ -240,7 +245,6 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          this.form.schoolId = this.schoolId;
           if (this.form.id) {
             devicegroupsUpdate(this.form).then(res => {
               if (res.code == 0) {
@@ -251,6 +255,7 @@ export default {
             });
             return;
           }
+          this.form.schoolId = this.schoolId;
           devicegroupsAdd(this.form).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;

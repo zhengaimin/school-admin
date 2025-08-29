@@ -1,0 +1,1 @@
+import{k as a}from"./index-BwJqrv0D.js";const o=n=>a.post("/admin/organization/add",n),i=()=>a.get("/admin/organization/list"),r=n=>a.post("/admin/organization/update",n),e=n=>a.post("/admin/organization/delete",n),s=n=>a.get(`/admin/organization?${n}`),d=n=>a.get(`/admin/organization/info?id=${n.id}`);export{s as a,i as b,r as c,o as d,e,d as o};

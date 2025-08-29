@@ -42,12 +42,14 @@ export default {
       schoolsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.schoolList = res.data.list;
+          // 在第一位添加一个元素
+          this.schoolList.unshift({ id: "-1", name: "全部" });
           this.school = this.schoolList[0].id;
           this.userStore.setSchoolMsg({ schoolId: this.school });
         } else {
-          this.userStore.setSchoolMsg({ schoolId: "" });
-          this.schoolList = [];
-          this.$message.warning("请先创建学校");
+          this.schoolList = [{ id: "-1", name: "全部学校" }];
+          this.userStore.setSchoolMsg({ schoolId: "-1" });
+          this.$message.warning("请创建学校");
         }
       });
     },

@@ -1,31 +1,48 @@
 <template>
   <div class="table-box">
     <div class="filter-box">
-      <!-- <label for="name">学生姓名</label>
-      <el-input style="width: 250px" v-model="filterForm.name"></el-input> -->
-      <!-- <label for="name">年级</label>
-      <el-select style="width: 250px" v-model="filterForm.gradeId">
-        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select> -->
+      <label for="name">设备组名称</label>
+      <el-input style="width: 250px" v-model="filterForm.name"></el-input>
+      <label for="name">启用状态</label>
+      <el-select style="width: 250px" v-model="filterForm.status">
+        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+      </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
     </div>
     <div class="btn-box">
-      <span>家长信息</span>
+      <span>设备组</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
+        <el-button type="primary" class="search-btn" @click="openAddDialog">
+          <img
+            src="@/assets/images/common/add-circle-2.svg"
+            alt=""
+            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
+          />
+          新增
+        </el-button>
       </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
-        <el-table-column label="班级" prop="name"> </el-table-column>
-        <el-table-column label="学生" prop="sex"> </el-table-column>
-        <el-table-column label="称谓" prop="idCard" width="200"> </el-table-column>
-        <el-table-column label="亲情号" prop="cardNumber" width="180"> </el-table-column>
-        <el-table-column label="是否主联系人" prop="phone" width="150"> </el-table-column>
-        <el-table-column label="家长微信" prop="address"> </el-table-column>
-        <el-table-column label="微信绑定时间" prop="guardianName"> </el-table-column>
-        <el-table-column label="操作" align="center" width="220" fixed="right">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="设备组名称" prop="name" width="150"> </el-table-column>
+        <el-table-column label="当前设备数（台）" prop="currentDeviceCount" width="140"> </el-table-column>
+        <el-table-column label="最大设备数（台）" prop="maxDeviceCount" width="140"> </el-table-column>
+        <el-table-column label="是否VOIP组" width="100">
+          <template #default="{ row }">
+            {{ row.isVoipGroup ? "是" : "否" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态">
+          <template #default="{ row }">
+            <el-switch @change="changeStatus(row)" v-model="row.status" :active-value="1" :inactive-value="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="描述" prop="description" width="220"> </el-table-column>
+        <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
+        <el-table-column label="更新时间" prop="updatedAt" width="170"> </el-table-column>
+        <el-table-column label="操作" align="center" width="110" fixed="right">
           <template #default="scope">
             <div class="table-btn">
               <div @click="editRow(scope.row)">
@@ -38,7 +55,6 @@
                   style="width: 16px; height: 16px; margin-right: 3px"
                 />
               </div>
-              <div style="color: red">解除微信绑定</div>
             </div>
           </template>
         </el-table-column>
@@ -60,25 +76,26 @@
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="学生" prop="name">
-                <el-select filterable v-model="form.sex">
-                  <el-option v-for="v in carbonCk_list" :key="v.id" :label="v.name" :value="v.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="称谓" prop="sex">
-                <el-select v-model="form.sex">
-                  <el-option v-for="v in genderList" :key="v.id" :label="v.name" :value="v.id"></el-option>
-                </el-select>
+            <el-col :span="23">
+              <el-form-item label="设备组名称" prop="name">
+                <el-input v-model="form.name"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="23">
-              <el-form-item label="亲情号" prop="phone">
-                <el-input v-model="form.phone"></el-input>
+              <el-form-item label="是否VOIP组" prop="isVoipGroup">
+                <el-radio-group v-model="form.isVoipGroup">
+                  <el-radio :value="true">是</el-radio>
+                  <el-radio :value="false">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="描述" prop="description">
+                <el-input type="textarea" :rows="3" v-model="form.description"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -97,12 +114,11 @@
 </template>
 <script>
 import {
-  classesList,
-  studentsAdd,
-  studentsUpdate,
-  studentsList,
-  studentsDelete
-  // classesDetail
+  familycontactsAdd,
+  familycontactsUpdate,
+  familycontactsList,
+  familycontactsDelete,
+  familycontactsDetail
 } from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -111,8 +127,12 @@ export default {
     return {
       filterForm: {
         name: "",
-        gradeId: ""
+        status: ""
       },
+      gradesList: [
+        { id: "1", name: "启用" },
+        { id: "0", name: "禁用" }
+      ],
       //新增权限系统
       dialogVisibleAdd: false,
       genderList: [
@@ -127,31 +147,23 @@ export default {
         { id: "9", name: "其它一" },
         { id: "10", name: "其它二" }
       ],
-      typeList: [
-        { id: "BOARDING", name: "寄宿生" },
-        { id: "DAY", name: "走读生" }
-      ],
-      gradesList: [],
+
       form: {
-        name: "",
-        sex: "",
-        idCard: "",
-        cardNumber: "",
+        studentId: "",
+        relationship: "",
+        nickname: "",
         phone: "",
-        address: "",
-        guardianName: "",
-        guardianPhone: "",
-        studentType: "",
-        classId: "",
-        studentCode: ""
+        isPrimary: "",
+        sortOrder: ""
       },
       linkRules: {
-        name: [{ required: true, message: "必填项", trigger: "blur" }],
-        sex: [{ required: true, message: "必填项", trigger: "blur" }],
-        studentType: [{ required: true, message: "必填项", trigger: "blur" }],
-        classId: [{ required: true, message: "必填项", trigger: "blur" }]
+        relationship: [{ required: true, message: "必填项", trigger: "blur" }],
+        isVoipGroup: [{ required: true, message: "必填项", trigger: "blur" }],
+        nickname: [{ required: true, message: "必填项", trigger: "blur" }],
+        phone: [{ required: true, message: "必填项", trigger: "blur" }],
+        isPrimary: [{ required: true, message: "必填项", trigger: "blur" }],
+        sortOrder: [{ required: true, message: "必填项", trigger: "blur" }]
       },
-
       //  列表
       carbonCk_list: [],
       total: 0,
@@ -171,38 +183,25 @@ export default {
     schoolId: {
       handler(newVal) {
         if (newVal) {
-          this.getGradesList();
-          // this.fetchTenantList();
+          this.fetchTenantList();
         }
       },
       immediate: true
     }
   },
   mounted() {
-    this.getGradesList();
-    // this.fetchTenantList();
+    this.fetchTenantList();
   },
   methods: {
-    // 获取班级
-    getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200`;
-      classesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.gradesList = res.data.list;
-        } else {
-          this.gradesList = [];
-        }
-      });
-    },
     reset() {
       this.filterForm.name = "";
-      this.filterForm.gradeId = "";
+      this.filterForm.status = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}`;
-      studentsList(params).then(res => {
+      let status = this.filterForm.status ? this.filterForm.status : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&status=${status}`;
+      familycontactsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
           this.total = res.data.total;
@@ -225,6 +224,10 @@ export default {
 
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择右上角的学校");
+        return;
+      }
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.$nextTick(() => {
@@ -233,29 +236,36 @@ export default {
     },
     editRow(row) {
       this.dialogVisibleAdd = true;
-      // classesDetail({ id: row.id }).then(res => {
-      //   if (res.code == 0 && res.data) {
-      //     for (let key in res.data) {
-      //       this.form[key] = res.data[key];
-      //     }
-      //   } else {
-      //     this.$message.error("获取信息失败");
-      //   }
-      // });
-      for (let key in row) {
-        this.form[key] = row[key];
-      }
+      familycontactsDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          for (let key in res.data) {
+            this.form[key] = res.data[key];
+          }
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
       this.form.id = row.id;
+    },
+    changeStatus(row) {
+      let params = {
+        schoolId: row.schoolId,
+        id: row.id,
+        status: row.status,
+        isVoipGroup: row.isVoipGroup
+      };
+      familycontactsUpdate(params).then(res => {
+        if (res.code == 0) {
+          this.$message.success("状态修改成功");
+          this.fetchTenantList();
+        }
+      });
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          if (!this.form.idCard && !this.form.studentCode) {
-            this.$message.warning("身份证号和学号不能同时为空");
-            return;
-          }
           if (this.form.id) {
-            studentsUpdate(this.form).then(res => {
+            familycontactsUpdate(this.form).then(res => {
               if (res.code == 0) {
                 this.dialogVisibleAdd = false;
                 this.$message.success("编辑成功");
@@ -264,7 +274,8 @@ export default {
             });
             return;
           }
-          studentsAdd(this.form).then(res => {
+          this.form.schoolId = this.schoolId;
+          familycontactsAdd(this.form).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;
               this.$message.success("添加成功");
@@ -282,7 +293,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          studentsDelete({ id: row.id }).then(res => {
+          familycontactsDelete({ id: row.id }).then(res => {
             if (res && res.code == 0) {
               this.$message.success("删除成功");
               this.fetchTenantList();

@@ -1,219 +1,501 @@
 <template>
-  <div class="dial">
-    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-      <el-tab-pane label="基础配置" name="first">
-        <el-form ref="linkFormRef" :model="flform" :rules="linkRules" class="demo-ruleForm" label-position="top">
-          <el-form-item label="禁拨号码" prop="price">
-            <el-input type="textarea" style="width: 60%" v-model="flform.price"></el-input>
-          </el-form-item>
-          <div style="font-size: 12px; color: red">提示：多个号码用“,”分隔，例如：110,120,119</div>
-          <div style="margin-top: 20px; text-align: left">
-            <el-button type="primary" @click="confirmAdd">保存</el-button>
-          </div>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="通话时间段" name="second" style="width: 100%">
-        <div class="table-box">
-          <div class="btn-box" style="margin-bottom: 10px">
-            <span></span>
-            <div>
-              <el-button type="primary" class="search-btn" @click="openAddDialog">
+  <div class="table-box">
+    <!-- <div class="filter-box">
+      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
+      <el-button type="primary" @click="fetchTenantList">查询</el-button>
+    </div> -->
+    <div class="btn-box">
+      <span>公话配置</span>
+      <div>
+        <el-button type="primary" class="search-btn" @click="openAddDialog">
+          <img
+            src="@/assets/images/common/add-circle-2.svg"
+            alt=""
+            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
+          />
+          新增
+        </el-button>
+      </div>
+    </div>
+    <div class="table-list">
+      <el-table class="my-custom-table" :data="carbonCk_list">
+        <el-table-column label="学校名称" prop="schoolName" width="160"> </el-table-column>
+        <el-table-column label="心跳时间（ms）" prop="heartbeatFrequency"> </el-table-column>
+        <el-table-column label="单次通话限定时长（分钟）" prop="callTime"> </el-table-column>
+        <el-table-column label="定时开机时间" prop="powerOnTime"> </el-table-column>
+        <el-table-column label="定时关机时间" prop="powerOffTime"> </el-table-column>
+        <el-table-column label="禁拨号码" prop="forbidPhone"> </el-table-column>
+        <el-table-column label="拨号类型" prop="phoneType"> </el-table-column>
+        <el-table-column label="是否显示留言按钮">
+          <template #default="{ row }">
+            {{ { Y: "是", N: "否" }[row.messageFlag] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="是否全量同步人脸">
+          <template #default="{ row }">
+            {{ { Y: "是", N: "否" }[row.downloadUserFlag] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="开启语音留言">
+          <template #default="{ row }">
+            {{ { Y: "是", N: "否" }[row.messageSoundFlag] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="心理咨询身份认证">
+          <template #default="{ row }">
+            {{ { Y: "是", N: "否" }[row.mhcFlag] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="刷脸记录人员信息">
+          <template #default="{ row }">
+            {{ { Y: "是", N: "否" }[row.addPunchFace] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="150" fixed="right">
+          <template #default="scope">
+            <div class="table-btn">
+              <div @click="detail(scope.row)">详情</div>
+              <div @click="editRow(scope.row)">
+                <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
+              </div>
+              <div @click="deleteRow(scope.row)">
                 <img
-                  src="@/assets/images/common/add-circle-2.svg"
+                  src="@/assets/images/common/delete-circle-2.svg"
                   alt=""
-                  style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
+                  style="width: 16px; height: 16px; margin-right: 3px"
                 />
-                新增
-              </el-button>
+              </div>
             </div>
-          </div>
-          <div class="table-list">
-            <el-table class="my-custom-table" :data="carbonCk_list">
-              <el-table-column label="星期" prop="sbname"> </el-table-column>
-              <el-table-column label="开始时间" prop="created_at"> </el-table-column>
-              <el-table-column label="结束时间" prop="updated_at"> </el-table-column>
-              <el-table-column label="操作" align="center" width="150" fixed="right">
-                <template #default="scope">
-                  <div class="table-btn">
-                    <div @click="editRow(scope.row)">
-                      <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
-                    </div>
-                    <div @click="deleteRow(scope.row)">
-                      <img
-                        src="@/assets/images/common/delete-circle-2.svg"
-                        alt=""
-                        style="width: 16px; height: 16px; margin-right: 3px"
-                      />
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <div class="demo-pagination-block">
-            <el-pagination
-              v-model:current-page="page"
-              v-model:page-size="page_size"
-              :page-sizes="[10, 20, 50, 100, 200]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
-          </div>
-          <!-- 新增 -->
-          <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="600">
-            <div style="padding-left: 20px">
-              <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
-                <el-row>
-                  <el-col :span="23">
-                    <el-form-item label="星期" prop="sbname">
-                      <el-select v-model="form.status" placeholder="请选择">
-                        <el-option v-for="item in xingqiList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="11">
-                    <el-form-item label="开始时间" prop="price">
-                      <el-date-picker style="width: 100%" v-model="form.start_time" value-format="x" :type="dateType" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="11" :offset="1">
-                    <el-form-item label="结束时间" prop="price">
-                      <el-date-picker style="width: 100%" v-model="form.end_time" value-format="x" :type="dateType" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="23">
-                    <el-radio-group v-model="flform.radio">
-                      <el-radio :value="1">启用</el-radio>
-                      <el-radio :value="2">不启用</el-radio>
-                    </el-radio-group>
-                  </el-col>
-                </el-row>
-              </el-form>
-              <el-row :gutter="23">
-                <el-col :span="23">
-                  <div style="margin-top: 20px; text-align: right">
-                    <el-button @click="dialogVisibleAdd = false">取消</el-button>
-                    <el-button type="primary" @click="confirmAdd">确定</el-button>
-                  </div>
-                </el-col>
-              </el-row>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="demo-pagination-block">
+      <el-pagination
+        v-model:current-page="page"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 50, 100, 200]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+    <!-- 新增 -->
+    <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="800">
+      <div style="padding-left: 20px">
+        <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
+          <el-row>
+            <el-col :span="16">
+              <el-form-item label="心跳时间（ms）" prop="heartbeatFrequency">
+                <el-input type="number" v-model="form.heartbeatFrequency"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="单次通话限定时长（分钟）" prop="callTime">
+                <el-input type="number" v-model="form.callTime"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="拨号类型" prop="phoneType">
+                <el-select v-model="form.phoneType" placeholder="请选择拨号类型" style="width: 100%">
+                  <el-option label="全部" value="all"></el-option>
+                  <el-option label="VIDEO" value="video"></el-option>
+                  <el-option label="SIM" value="sim"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="定时开机时间" prop="powerOnTime">
+                <el-time-select v-model="form.powerOnTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="定时关机时间" prop="powerOffTime">
+                <el-time-select v-model="form.powerOffTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="是否显示留言按钮" prop="messageFlag">
+                <el-radio-group v-model="form.messageFlag">
+                  <el-radio value="Y">是</el-radio>
+                  <el-radio value="N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="是否全量同步人脸" prop="downloadUserFlag">
+                <el-radio-group v-model="form.downloadUserFlag">
+                  <el-radio value="Y">是</el-radio>
+                  <el-radio value="N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
+                <el-radio-group v-model="form.messageSoundFlag">
+                  <el-radio value="Y">是</el-radio>
+                  <el-radio value="N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="心理咨询身份认证" prop="mhcFlag">
+                <el-radio-group v-model="form.mhcFlag">
+                  <el-radio value="Y">是</el-radio>
+                  <el-radio value="N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="刷脸记录人员信息" prop="addPunchFace">
+                <el-radio-group v-model="form.addPunchFace">
+                  <el-radio value="Y">是</el-radio>
+                  <el-radio value="N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="禁拨号码" prop="forbidPhone">
+                <el-input type="textarea" v-model="form.forbidPhone"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <div style="margin-bottom: 10px; font-size: 12px; color: red">提示：多个号码用“,”分隔，例如：110,120,119</div>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="">
+                禁拨时间 <el-button style="margin-left: 10px" @click="AddItem"> + 新增</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-for="(item, i) in form.forbidCallTimesAry" :key="i">
+            <el-col :span="10">
+              <el-form-item label="禁拨开始时间">
+                <el-time-select v-model="item.fstTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" style="margin: 0 15px">
+              <el-form-item label="禁拨结束时间">
+                <el-time-select v-model="item.fendTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">
+              <el-form-item label="&nbsp">
+                <img
+                  v-if="form.forbidCallTimesAry.length > 1"
+                  @click="deleteItem(i)"
+                  src="@/assets/images/common/delete-circle-2.svg"
+                  alt=""
+                  style="width: 23px; height: 23px; margin-top: 3px"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: right">
+              <el-button @click="dialogVisibleAdd = false">取消</el-button>
+              <el-button type="primary" @click="confirmAdd">确定</el-button>
             </div>
-          </el-dialog>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="dialogVisibleDetail" :close-on-click-modal="false" title="详情" :width="800">
+      <div style="padding-left: 20px">
+        <el-form ref="linkFormRef" :model="detailForm" :rules="linkRules" class="demo-ruleForm" label-position="left">
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="学校：" prop="">
+                <span>{{ detailForm.schoolName }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="心跳时间（ms）：" prop="heartbeatFrequency">
+                <span>{{ detailForm.heartbeatFrequency }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="单次通话限定时长（分钟）：" prop="callTime">
+                <span>{{ detailForm.callTime }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="拨号类型：" prop="phoneType">
+                <span>{{ detailForm.phoneType }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="定时开机时间：" prop="powerOnTime">
+                <span>{{ detailForm.powerOnTime }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="定时关机时间：" prop="powerOffTime">
+                <span>{{ detailForm.powerOffTime }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="是否显示留言按钮：" prop="messageFlag">
+                <span>{{ detailForm.messageFlag }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="是否全量同步人脸：" prop="downloadUserFlag">
+                <span>{{ detailForm.downloadUserFlag }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="是否启用语音留言：" prop="messageSoundFlag">
+                <span>{{ detailForm.messageSoundFlag }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="心理咨询身份认证：" prop="mhcFlag">
+                <span>{{ detailForm.mhcFlag }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="刷脸记录人员信息：" prop="addPunchFace">
+                <span>{{ detailForm.addPunchFace }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="禁拨号码：" prop="forbidPhone">
+                <span>{{ detailForm.forbidPhone }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="禁拨时间段：" prop="forbidCallTimes">
+                <span>{{ detailForm.forbidCallTimes }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="dialogVisibleDetail = false">关闭</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { tenantList, tenantDelete } from "@/api/modules/InternalPage.js";
+import {
+  deviceconfigAdd,
+  deviceconfigUpdate,
+  deviceconfigList,
+  deviceconfigDelete,
+  deviceconfigDetail
+} from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
+import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
-      activeName: "first",
-      flform: {},
       filterForm: {},
       statusList: [
-        { id: 1, name: "2024级" },
-        { id: 2, name: "2025级" }
+        { id: "1", name: "在线" },
+        { id: "0", name: "离线" }
       ],
       //新增权限系统
       dialogVisibleAdd: false,
-      form: {},
-      linkRules: {
-        sbname: [{ required: true, message: "必填项", trigger: "blur" }],
-        xinhao: [{ required: true, message: "必填项", trigger: "blur" }],
-        status: [{ required: true, message: "必填项", trigger: "change" }],
-        bianhao: [{ required: true, message: "必填项", trigger: "change" }]
+      schoolsList: [],
+      fstTime: "",
+      fendTime: "",
+      form: {
+        schoolId: "",
+        heartbeatFrequency: "",
+        callTime: "",
+        powerOnTime: "",
+        powerOffTime: "",
+        forbidPhone: "",
+        phoneType: "all",
+        messageFlag: "N",
+        downloadUserFlag: "N",
+        messageSoundFlag: "N",
+        mhcFlag: "N",
+        addPunchFace: "N",
+        forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
+        forbidCallTimes: ""
       },
-      xingqiList: [
-        { id: 1, name: "星期一" },
-        { id: 2, name: "星期二" },
-        { id: 3, name: "星期三" },
-        { id: 4, name: "星期四" },
-        { id: 5, name: "星期五" },
-        { id: 6, name: "星期六" },
-        { id: 7, name: "星期日" }
-      ],
-      carbonCk_list: [
-        {
-          id: 1,
-          sbname: "星期一",
-          xinhao: "5",
-          status: "50",
-          bianhao: "Y6478374347387434",
-          address: "开启",
-          created_at: "06:00:00",
-          updated_at: "20:00:00"
-        }
-      ],
+      linkRules: {},
+      // 详情
+      dialogVisibleDetail: false,
+      detailForm: {},
+      //  列表
+      carbonCk_list: [],
       total: 0,
       page: 1,
-      page_size: 10
+      pageSize: 10
     };
   },
+  computed: {
+    userInfo() {
+      return useUserStore().userInfo;
+    },
+    schoolId() {
+      return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    }
+  },
+  watch: {
+    schoolId: {
+      handler(newVal) {
+        if (newVal) {
+          this.fetchTenantList();
+        }
+      },
+      immediate: true
+    }
+  },
+  mounted() {
+    this.fetchTenantList();
+  },
   methods: {
-    handleClick() {
-      console.log(this.activeName);
+    reset() {
+      this.fetchTenantList();
     },
     fetchTenantList() {
-      let str = "";
-      for (let key in this.formFilter) {
-        if (this.formFilter[key]) {
-          str += `&${key}=${this.formFilter[key]}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}`;
+      deviceconfigList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.carbonCk_list = res.data.list;
+          this.total = res.data.total;
+        } else {
+          this.carbonCk_list = [];
+          this.total = 0;
         }
-      }
-      let params = `page=${this.page}&page_size=${this.page_size}${str}`;
-      tenantList(params).then(res => {
-        return;
-        this.carbonCk_list = res.data.list;
-        this.carbonCk_list.map(v => {
-          v.status = v.status == 1 ? true : false;
-        });
-        this.total = res.data.total;
       });
     },
     //获取表单数据
     handleSizeChange(val) {
       this.page = 1;
-      this.page_size = val;
+      this.pageSize = val;
       this.fetchTenantList();
     },
     handleCurrentChange(val) {
       this.page = val;
       this.fetchTenantList();
     },
-    //筛选
-    getFormDataFilter() {
-      this.fetchTenantList();
-    },
-    handleResetFilter() {
-      this.fetchTenantList();
-    },
+
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择右上角的学校");
+        return;
+      }
       delete this.form.id;
-      this.form = {};
       this.dialogVisibleAdd = true;
-    },
-    handleReset() {
-      this.dialogVisibleAdd = false;
+      this.form.forbidCallTimesAry = [];
+      this.$nextTick(() => {
+        this.$refs.linkFormRef.resetFields();
+      });
     },
     editRow(row) {
       this.dialogVisibleAdd = true;
-      for (let key in row) {
-        this.form[key] = row[key];
-      }
+      deviceconfigDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          this.form.forbidCallTimesAry = [];
+          for (let key in res.data) {
+            if (key == "forbidCallTimes") {
+              let ary = res.data["forbidCallTimes"].split(",");
+              console.log(ary);
+              ary.map(v => {
+                let arr = v.split("-");
+                this.form.forbidCallTimesAry.push({ fstTime: arr[0], fendTime: arr[1] });
+              });
+              return;
+            }
+            this.form[key] = res.data[key];
+          }
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
       this.form.id = row.id;
     },
-    changeStatus(row) {
-      this.getFormData(row);
+    detail(row) {
+      this.dialogVisibleDetail = true;
+      deviceconfigDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          this.detailForm = res.data;
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
+    },
+    AddItem() {
+      this.form.forbidCallTimesAry.push({
+        fstTime: "",
+        fendTime: ""
+      });
+    },
+    deleteItem(index) {
+      this.form.forbidCallTimesAry.splice(index, 1);
+    },
+    confirmAdd() {
+      this.$refs.linkFormRef.validate(valid => {
+        if (valid) {
+          this.form.heartbeatFrequency = Number(this.form.heartbeatFrequency);
+          this.form.callTime = Number(this.form.callTime);
+          let ary = [];
+          this.form.forbidCallTimesAry.map(v => {
+            let str = v.fstTime + "-" + v.fendTime;
+            ary.push(str);
+          });
+          this.form.forbidCallTimes = ary.join(",");
+
+          if (this.form.id) {
+            deviceconfigUpdate(this.form).then(res => {
+              if (res.code == 0) {
+                this.dialogVisibleAdd = false;
+                this.$message.success("编辑成功");
+                this.fetchTenantList();
+              }
+            });
+            return;
+          }
+          this.form.schoolId = this.schoolId;
+          deviceconfigAdd(this.form).then(res => {
+            if (res.code == 0) {
+              this.dialogVisibleAdd = false;
+              this.$message.success("添加成功");
+              this.fetchTenantList();
+            }
+          });
+        }
+      });
     },
 
     deleteRow(row) {
@@ -223,7 +505,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          tenantDelete({ id: row.id }).then(res => {
+          deviceconfigDelete({ id: row.id }).then(res => {
             if (res && res.code == 0) {
               this.$message.success("删除成功");
               this.fetchTenantList();
@@ -233,12 +515,6 @@ export default {
         .catch(() => {
           console.log("取消删除");
         });
-    },
-    addFl() {
-      this.dialogVisibleFL = true;
-    },
-    addbohao() {
-      this.bohaoVisible = true;
     }
   }
 };

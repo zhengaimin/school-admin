@@ -199,6 +199,22 @@ export const gradesDelete = params => {
 export const gradesDetail = params => {
   return http.get(`/admin/grades/${params.id}`);
 };
+// 级部
+export const departmentsAdd = params => {
+  return http.post(`/admin/departments`, params);
+};
+export const departmentsUpdate = params => {
+  return http.put(`/admin/departments/${params.id}`, params);
+};
+export const departmentsList = params => {
+  return http.get(`/admin/departments?${params}`);
+};
+export const departmentsDelete = params => {
+  return http.delete(`/admin/departments/${params.id}`);
+};
+export const departmentsDetail = params => {
+  return http.get(`/admin/departments/${params.id}`);
+};
 // 班级
 export const classesAdd = params => {
   return http.post(`/admin/classes`, params);
@@ -228,6 +244,9 @@ export const studentsUpdate = params => {
 export const studentsDelete = params => {
   return http.delete(`/admin/students/${params.id}`);
 };
+export const studentsDetail = params => {
+  return http.get(`/admin/students/${params.id}`);
+};
 // export const classesDetail = params => {
 //   return http.get(`/admin/students/${params.id}`);
 // };
@@ -247,8 +266,35 @@ export const devicegroupsDelete = params => {
 export const devicegroupsDetail = params => {
   return http.get(`/admin/device-groups/${params.id}`);
 };
-
-// 设备 127.0.0.1:8686/admin/devices
+// 标签
+export const devicetagsAdd = params => {
+  return http.post(`/admin/device-tags`, params);
+};
+export const devicetagsUpdate = params => {
+  return http.put(`/admin/device-tags/${params.id}`, params);
+};
+export const devicetagsList = params => {
+  return http.get(`/admin/device-tags?${params}`);
+};
+export const devicetagsListSelect = params => {
+  return http.get(`/admin/device-tags/select-options?${params}`);
+};
+export const devicetagsDelete = params => {
+  return http.delete(`/admin/device-tags/${params.id}`);
+};
+export const devicetagsDetail = params => {
+  return http.get(`/admin/device-tags/${params.id}`);
+};
+export const devicetagsbatchassign = params => {
+  return http.post(`/admin/device-tags/batch-assign`, params);
+};
+export const devicetagsbatchcontrol = params => {
+  return http.post(`/admin/device-tags/batch-control`, params);
+};
+export const devicetagsbatchschedule = params => {
+  return http.post(`/admin/device-tags/batch-schedule`, params);
+};
+// 设备
 export const devicesAdd = params => {
   return http.post(`/admin/devices`, params);
 };
@@ -263,4 +309,125 @@ export const devicesDelete = params => {
 };
 export const devicesDetail = params => {
   return http.get(`/admin/devices/${params.id}`);
+};
+export const devicesbatchcontrol = params => {
+  return http.post(`/admin/devices/batch-control`, params);
+};
+// 充值记录
+export const paymentsList = params => {
+  return http.get(`/admin/payments?${params}`);
+};
+export const paymentsDetail = params => {
+  return http.get(`/admin/payments/${params.id}`);
+};
+
+export const paymentsStatisticsList = params => {
+  return http.get(`/admin/payments/statistics?${params}`);
+};
+// 学校公话配置 127.0.0.1:8686/admin/device-config
+export const deviceconfigAdd = params => {
+  return http.post(`/admin/device-config`, params);
+};
+export const deviceconfigUpdate = params => {
+  return http.put(`/admin/device-config/${params.id}`, params);
+};
+export const deviceconfigList = params => {
+  return http.get(`/admin/device-config?${params}`);
+};
+export const deviceconfigDelete = params => {
+  return http.delete(`/admin/device-config/${params.id}`);
+};
+export const deviceconfigDetail = params => {
+  return http.get(`/admin/device-config/${params.id}`);
+};
+// SOS 电话配置
+export const schoolsosAdd = params => {
+  return http.post(`/admin/school-sos`, params);
+};
+export const schoolsosUpdate = params => {
+  return http.put(`/admin/school-sos/${params.id}`, params);
+};
+export const schoolsosList = params => {
+  return http.get(`/admin/school-sos?${params}`);
+};
+export const schoolsosDelete = params => {
+  return http.delete(`/admin/school-sos/${params.id}`);
+};
+export const schoolsosDetail = params => {
+  return http.get(`/admin/school-sos/${params.id}`);
+};
+// 通话时间段配置
+export const callTimeAdd = params => {
+  return http.post(`/admin/school-call-time`, params);
+};
+export const callTimeUpdate = params => {
+  return http.put(`/admin/school-call-time/${params.id}`, params);
+};
+export const callTimeList = params => {
+  return http.get(`/admin/school-call-time?${params}`);
+};
+export const callTimeDelete = params => {
+  return http.delete(`/admin/school-call-time/${params.id}`);
+};
+export const callTimeDetail = params => {
+  return http.get(`/admin/school-call-time/${params.id}`);
+};
+// 退款管理
+export const refundsList = params => {
+  return http.get(`/admin/refunds?${params}`);
+};
+export const refundsDetail = params => {
+  return http.get(`/admin/refunds/${params.id}`);
+};
+export const refundscheck = params => {
+  return http.post(`/admin/refunds/${params.refundApplicationId}/audit`, params);
+};
+// 设备命令
+export const devicecommandsList = params => {
+  return http.get(`/admin/device-commands?${params}`);
+};
+export const devicecommandsDelete = params => {
+  return http.delete(`/admin/device-commands/${params.id}`);
+};
+export const devicecommandsDetail = params => {
+  return http.get(`/admin/device-commands/${params.id}`);
+};
+// 亲情号
+export const familycontactsAdd = params => {
+  return http.post(`/admin/family-contacts`, params);
+};
+export const familycontactsUpdate = params => {
+  return http.put(`/admin/family-contacts/${params.id}`, params);
+};
+export const familycontactsList = params => {
+  return http.get(`/admin/family-contacts?${params}`);
+};
+export const familycontactsDelete = params => {
+  return http.delete(`/admin/family-contacts/${params.id}`);
+};
+export const familycontactsDetail = params => {
+  return http.get(`/admin/family-contacts/${params.id}`);
+};
+// 商户号
+export const wechatputConfig = params => {
+  return http.put(`/admin/wechat-merchant-configs/tenant/${params.tenantId}`, params);
+};
+export const wechatConfig = params => {
+  return http.get(`/admin/wechat-merchant-configs/tenant/${params.tenantId}`);
+};
+// 套餐配置
+export const packagesAdd = params => {
+  return http.post(`/admin/packages`, params);
+};
+export const packagesUpdate = params => {
+  return http.put(`/admin/packages/${params.id}`, params);
+};
+export const packagesList = params => {
+  return http.get(`/admin/packages?${params}`);
+};
+export const packagesDelete = params => {
+  return http.delete(`/admin/packages/${params.id}`);
+};
+export const packagesDetail = params => {
+  return http.get(`/admin/packages/${params.id}`);
 };

@@ -13,19 +13,29 @@
     <div class="btn-box">
       <span>学生信息</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="uploadFile"> 导入 </el-button>
-        <el-button type="primary" class="search-btn" @click="loadFileTemple"> 下载导入模板 </el-button>
         <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
+        <el-button type="primary" class="search-btn" @click="uploadFile(1)"> 导入学生信息 </el-button>
+        <el-button type="primary" class="search-btn" @click="loadFileTemple"> 下载导入模板 </el-button>
+        <el-button type="primary" class="search-btn" @click="exportStudentInfo"> 批量导出学生信息 </el-button>
+        <el-button type="primary" class="search-btn" @click="uploadFile(2)"> 批量导入更新学生信息 </el-button>
       </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" :data="carbonCk_list">
         <el-table-column label="学生姓名" prop="name"> </el-table-column>
+        <el-table-column label="图片" width="90" align="center">
+          <template #default="{ row }">
+            <img style="width: 60px; height: 60px" :src="row.faceImageUrl" alt="" srcset="" />
+          </template>
+        </el-table-column>
+        <el-table-column label="年级" prop="gradeName"> </el-table-column>
+        <el-table-column label="级部" prop="departmentName"> </el-table-column>
+        <el-table-column label="班级" prop="className"> </el-table-column>
+        <el-table-column label="学号" prop="studentCode"> </el-table-column>
         <el-table-column label="性别" prop="sex"> </el-table-column>
         <el-table-column label="身份证" prop="idCard" width="200"> </el-table-column>
         <el-table-column label="IC卡号" prop="cardNumber" width="180"> </el-table-column>
         <el-table-column label="电话" prop="phone" width="150"> </el-table-column>
-        <el-table-column label="家庭住址" prop="address"> </el-table-column>
         <el-table-column label="监护人" prop="guardianName"> </el-table-column>
         <el-table-column label="监护人电话" prop="guardianPhone"> </el-table-column>
         <el-table-column label="学生类型">
@@ -33,12 +43,16 @@
             {{ row.studentType == "BOARDING" ? "寄宿生" : "走读生" }}
           </template>
         </el-table-column>
-        <el-table-column label="年级" prop="gradeName"> </el-table-column>
-        <el-table-column label="班级" prop="className"> </el-table-column>
-        <el-table-column label="学号" prop="studentCode"> </el-table-column>
-        <el-table-column label="操作" align="center" width="110" fixed="right">
+        <el-table-column label="状态">
+          <template #default="{ row }">
+            {{ ["停用", "在读", "毕业", "转学"][row.status] }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" align="center" width="160" fixed="right">
           <template #default="scope">
             <div class="table-btn">
+              <div @click="addParent(scope.row)">亲情号</div>
               <div @click="editRow(scope.row)">
                 <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
               </div>
@@ -66,7 +80,7 @@
       />
     </div>
     <!-- 新增 -->
-    <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="800">
+    <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="880">
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
@@ -92,9 +106,25 @@
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="班级" prop="classId">
-                <el-select v-model="form.classId">
+              <el-form-item label="年级" prop="gradeId">
+                <el-select v-model="form.gradeId">
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="级部" prop="departmentId">
+                <el-select v-model="form.departmentId" @focus="getdepartmentsList">
+                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="班级" prop="classId">
+                <el-select v-model="form.classId" @focus="getClassList">
+                  <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -118,8 +148,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="家庭住址" prop="address">
-                <el-input v-model="form.address"></el-input>
+              <el-form-item label="IC卡号" prop="cardNumber">
+                <el-input v-model="form.cardNumber"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -136,9 +166,45 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="IC卡号" prop="cardNumber">
-                <el-input v-model="form.cardNumber"></el-input>
+            <el-col :span="7">
+              <el-form-item label="个人图片">
+                <el-upload
+                  style="width: 100%"
+                  class="upload-demo"
+                  ref="uploadFileface"
+                  :action="activeUrlFile"
+                  :data="{
+                    businessType: 'AVATAR'
+                  }"
+                  :headers="{ Authorization: token }"
+                  :before-upload="beforeAvatarUploadfile"
+                  :on-success="handleSuccessfile"
+                  :limit="1"
+                  :show-file-list="false"
+                >
+                  <div
+                    v-if="!form.faceImageUrl"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-around;
+                      width: 100px;
+                      height: 100px;
+                      padding: 0;
+                    "
+                    class="upload-box"
+                  >
+                    <el-icon style="font-size: 30px"><Plus /></el-icon>
+                  </div>
+                  <img
+                    @click="clearFile"
+                    v-if="form.faceImageUrl"
+                    style="width: 100px; height: 100px"
+                    :src="form.faceImageUrl"
+                    alt=""
+                    srcset=""
+                  />
+                </el-upload>
               </el-form-item>
             </el-col>
           </el-row>
@@ -154,7 +220,7 @@
       </div>
     </el-dialog>
     <!-- 导入 -->
-    <el-dialog v-model="strumentsloadFlag" :close-on-click-modal="false" title="导入计量器具" :width="800">
+    <el-dialog v-model="strumentsloadFlag" :close-on-click-modal="false" title="导入" :width="800">
       <div style="min-height: 100px; text-align: center">
         <el-row v-if="!falseFlag">
           <el-col :span="24">
@@ -162,7 +228,7 @@
               style="width: 100%"
               class="upload-demo"
               ref="uploadFile"
-              :action="activeUrl"
+              :action="typeflag == 1 ? activeUrl : uploadStudentUrl"
               :data="{
                 tenantId: userInfo.tenantId,
                 schoolId: schoolId
@@ -199,17 +265,156 @@
         </div>
       </div>
     </el-dialog>
+    <!-- 亲情号 -->
+    <el-dialog v-model="parentDialog" :close-on-click-modal="false" title="亲情号" :width="900">
+      <div>
+        <div style="margin: 10px; text-align: right">
+          <el-button @click="addInnerDialog" type="primary">新增</el-button>
+        </div>
+        <el-table class="my-custom-table" :data="parentList">
+          <el-table-column label="关系" prop="relationshipName"> </el-table-column>
+          <el-table-column label="显示排序" prop="sortOrder"> </el-table-column>
+          <el-table-column label="别称" prop="nickname"> </el-table-column>
+          <el-table-column label="手机号" prop="phone"> </el-table-column>
+          <el-table-column label="是否主联系人" prop="isPrimary">
+            <template #default="{ row }">
+              {{ row.isPrimary ? "是" : "否" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="120" fixed="right">
+            <template #default="scope">
+              <div class="table-btn">
+                <div @click="editRowParent(scope.row)">
+                  <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
+                </div>
+                <div @click="deleteRowparent(scope.row)">
+                  <img
+                    src="@/assets/images/common/delete-circle-2.svg"
+                    alt=""
+                    style="width: 16px; height: 16px; margin-right: 3px"
+                  />
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <el-dialog v-model="parentDialog_add" :close-on-click-modal="false" width="700" title="设置亲情号" append-to-body>
+        <div style="padding-left: 20px">
+          <el-form
+            ref="linkFormRefparent"
+            :model="parentForm"
+            :rules="parentlinkRules"
+            class="demo-ruleForm"
+            label-position="top"
+          >
+            <el-row>
+              <el-col :span="16">
+                <el-form-item label="关系" prop="relationship">
+                  <el-select v-model.number="parentForm.relationship">
+                    <el-option v-for="v in relationList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="11">
+                <el-form-item label="别称" prop="nickname">
+                  <el-input v-model="parentForm.nickname"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="11" :offset="1">
+                <el-form-item label="手机号" prop="phone">
+                  <el-input v-model="parentForm.phone"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="11">
+                <el-form-item label="是否主联系人" prop="isPrimary">
+                  <el-select v-model="parentForm.isPrimary">
+                    <el-option label="是" :value="true"></el-option>
+                    <el-option label="否" :value="false"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="11" :offset="1">
+                <el-form-item label="显示排序" prop="sortOrder">
+                  <el-input type="number" v-model.number="parentForm.sortOrder"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <el-row :gutter="23">
+            <el-col :span="23">
+              <div style="margin-top: 20px; text-align: right">
+                <el-button @click="parentDialog_add = false">取消</el-button>
+                <el-button type="primary" @click="parentconfirmAdd">确定</el-button>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-dialog>
+    </el-dialog>
+    <!-- 批量导出学生信息 -->
+    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="800">
+      <div style="padding-left: 20px">
+        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="top">
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="年级" prop="gradeId">
+                <el-select v-model="exportForm.gradeId">
+                  <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="级部" prop="departmentId">
+                <el-select v-model="exportForm.departmentId" @focus="getdepartmentsList">
+                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="班级" prop="classId">
+                <el-select v-model="exportForm.classId" @focus="getClassList">
+                  <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: right">
+              <el-button @click="exportDialog = false">取消</el-button>
+              <el-button type="primary" @click="confirmexport">导出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import axios from "axios";
 import {
+  gradesList,
+  departmentsList,
   classesList,
   studentsAdd,
   studentsUpdate,
   studentsList,
-  studentsDelete
-  // classesDetail
+  studentsDelete,
+  studentsDetail,
+  familycontactsAdd,
+  familycontactsUpdate,
+  familycontactsList,
+  familycontactsDetail,
+  familycontactsDelete
 } from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -231,6 +436,8 @@ export default {
         { id: "DAY", name: "走读生" }
       ],
       gradesList: [],
+      departmentsList: [],
+      classList: [],
       form: {
         name: "",
         sex: "",
@@ -241,24 +448,67 @@ export default {
         guardianName: "",
         guardianPhone: "",
         studentType: "",
+        gradeId: "",
+        departmentId: "",
         classId: "",
-        studentCode: ""
+        studentCode: "",
+        faceImageUrl: ""
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
         sex: [{ required: true, message: "必填项", trigger: "blur" }],
         studentType: [{ required: true, message: "必填项", trigger: "blur" }],
+        gradeId: [{ required: true, message: "必填项", trigger: "blur" }],
+        departmentId: [{ required: true, message: "必填项", trigger: "blur" }],
         classId: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       // 导入
       strumentsloadFlag: false,
+      typeflag: "",
       falseFlag: false,
       errorData: {},
       //  列表
       carbonCk_list: [],
       total: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      // 亲情号
+      parentDialog: false,
+      parentList: [],
+      parentDialog_add: false,
+      relationList: [
+        { id: 1, name: "爸爸" },
+        { id: 2, name: "妈妈" },
+        { id: 3, name: "爷爷" },
+        { id: 4, name: "奶奶" },
+        { id: 5, name: "外公" },
+        { id: 6, name: "外婆" },
+        { id: 7, name: "姐姐" },
+        { id: 8, name: "哥哥" },
+        { id: 9, name: "其它一" }
+      ],
+      parentForm: {
+        studentId: "",
+        relationship: "",
+        nickname: "",
+        phone: "",
+        isPrimary: "",
+        sortOrder: ""
+      },
+      parentlinkRules: {
+        relationship: [{ required: true, message: "必填项", trigger: "blur" }],
+        nickname: [{ required: true, message: "必填项", trigger: "blur" }],
+        phone: [{ required: true, message: "必填项", trigger: "blur" }],
+        isPrimary: [{ required: true, message: "必填项", trigger: "blur" }],
+        sortOrder: [{ required: true, message: "必填项", trigger: "blur" }]
+      },
+      // 批量导出
+      exportDialog: false,
+      exportForm: {
+        gradeId: "",
+        departmentId: "",
+        classId: ""
+      }
     };
   },
   computed: {
@@ -275,11 +525,32 @@ export default {
         return `/admin/students/template`;
       }
     },
+    activeUrlFile() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/common/files/upload`;
+      } else {
+        return `/common/files/upload`;
+      }
+    },
     activeUrl() {
       if (process.env.NODE_ENV == "development") {
         return `/api/admin/students/import-excel`;
       } else {
         return `/admin/students/import-excel`;
+      }
+    },
+    exportStudentUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/students/export`;
+      } else {
+        return `/admin/students/export`;
+      }
+    },
+    uploadStudentUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/students/update-excel`;
+      } else {
+        return `/admin/students/update-excel`;
       }
     },
     token() {
@@ -302,10 +573,9 @@ export default {
     this.fetchTenantList();
   },
   methods: {
-    // 获取班级
     getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200`;
-      classesList(params).then(res => {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.gradesList = res.data.list;
         } else {
@@ -313,6 +583,28 @@ export default {
         }
       });
     },
+    getdepartmentsList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${this.form.gradeId}`;
+      departmentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.departmentsList = res.data.list;
+        } else {
+          this.departmentsList = [];
+        }
+      });
+    },
+    // 获取班级
+    getClassList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${this.form.gradeId}&departmentId=${this.form.departmentId}`;
+      classesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.classList = res.data.list;
+        } else {
+          this.classList = [];
+        }
+      });
+    },
+
     reset() {
       this.filterForm.name = "";
       this.filterForm.gradeId = "";
@@ -346,25 +638,27 @@ export default {
     openAddDialog() {
       delete this.form.id;
       this.dialogVisibleAdd = true;
+      this.form.faceImageUrl = "";
       this.$nextTick(() => {
         this.$refs.linkFormRef.resetFields();
+        this.$refs.uploadFileface.clearFiles();
       });
     },
     editRow(row) {
       this.dialogVisibleAdd = true;
-      // classesDetail({ id: row.id }).then(res => {
-      //   if (res.code == 0 && res.data) {
-      //     for (let key in res.data) {
-      //       this.form[key] = res.data[key];
-      //     }
-      //   } else {
-      //     this.$message.error("获取信息失败");
-      //   }
-      // });
-      for (let key in row) {
-        this.form[key] = row[key];
-      }
-      this.form.id = row.id;
+      this.form.faceImageUrl = "";
+      studentsDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          for (let key in res.data) {
+            this.form[key] = res.data[key];
+          }
+          this.getdepartmentsList();
+          this.getClassList();
+          this.form.id = row.id;
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
@@ -383,6 +677,7 @@ export default {
             });
             return;
           }
+          this.form.schoolId = this.schoolId;
           studentsAdd(this.form).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;
@@ -393,7 +688,6 @@ export default {
         }
       });
     },
-
     deleteRow(row) {
       ElMessageBox.confirm("确定删除该条数据吗?", "提示", {
         confirmButtonText: "确定",
@@ -436,7 +730,8 @@ export default {
           window.URL.revokeObjectURL(url);
         });
     },
-    uploadFile() {
+    uploadFile(val) {
+      this.typeflag = val;
       this.strumentsloadFlag = true;
       this.falseFlag = false;
       this.$nextTick(() => {
@@ -455,6 +750,115 @@ export default {
         this.falseFlag = true;
       }
       this.fetchTenantList();
+    },
+    // 头像
+    beforeAvatarUploadfile() {
+      return true;
+    },
+    clearFile() {
+      this.$refs.uploadFileface.clearFiles();
+    },
+    handleSuccessfile(res) {
+      this.form.faceImageUrl = "http://47.120.20.136:8085" + res.data.thumbnailUrl;
+    },
+    // 亲情号
+    addParent(row) {
+      this.parentForm.studentId = row.id;
+      let params = `page=1&pageSize=150&studentId=${row.id}`;
+      this.parentDialog = true;
+      familycontactsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.parentList = res.data.list;
+        } else {
+          this.parentList = [];
+        }
+      });
+    },
+    addInnerDialog() {
+      delete this.parentForm.id;
+      this.parentDialog_add = true;
+      this.$nextTick(() => {
+        this.$refs.linkFormRefparent.resetFields();
+      });
+    },
+    editRowParent(row) {
+      this.parentDialog_add = true;
+      familycontactsDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          for (let key in res.data) {
+            this.parentForm[key] = res.data[key];
+          }
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
+      this.parentForm.id = row.id;
+    },
+    parentconfirmAdd() {
+      this.$refs.linkFormRefparent.validate(valid => {
+        if (valid) {
+          if (this.parentForm.id) {
+            familycontactsUpdate(this.parentForm).then(res => {
+              if (res.code == 0) {
+                this.parentDialog_add = false;
+                this.$message.success("编辑成功");
+                this.addParent({ id: this.parentForm.studentId });
+              }
+            });
+            return;
+          }
+          familycontactsAdd(this.parentForm).then(res => {
+            if (res.code == 0) {
+              this.parentDialog_add = false;
+              this.$message.success("添加成功");
+              this.addParent({ id: this.parentForm.studentId });
+            }
+          });
+        }
+      });
+    },
+    deleteRowparent(row) {
+      familycontactsDelete({ id: row.id }).then(res => {
+        if (res && res.code == 0) {
+          this.$message.success("删除成功");
+          this.addParent({ id: this.parentForm.studentId });
+        }
+      });
+    },
+    // 批量导出学生信息
+    exportStudentInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      this.exportDialog = true;
+      this.$nextTick(() => {
+        this.$refs.exportlinkFormRef.resetFields();
+      });
+    },
+    confirmexport() {
+      this.exportForm.schoolId = this.schoolId;
+      axios
+        .post(this.exportStudentUrl, this.exportForm, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "学生信息.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+        });
     }
   }
 };

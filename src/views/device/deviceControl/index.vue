@@ -5,13 +5,48 @@
       <el-input style="width: 250px" v-model="filterForm.name"></el-input>
       <label for="name">启用状态</label>
       <el-select style="width: 250px" v-model="filterForm.status">
-        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+        <el-option v-for="v in statusList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+      </el-select>
+      <label for="name">设备组</label>
+      <el-select style="width: 250px" v-model="filterForm.deviceGroupId">
+        <el-option v-for="v in devicegroupsList" :key="v.id" :label="v.name" :value="v.id"></el-option>
       </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
     </div>
     <div class="btn-box">
-      <span>公话管理</span>
+      <span>
+        <el-button :disabled="!(multipleSelection.length > 0)" type="primary" class="search-btn" @click="updateStatus('restart')">
+          重启
+        </el-button>
+        <el-button
+          :disabled="!(multipleSelection.length > 0)"
+          type="primary"
+          class="search-btn"
+          @click="updateStatus('shutdown')"
+        >
+          关机
+        </el-button>
+        <el-button
+          :disabled="!(multipleSelection.length > 0)"
+          type="primary"
+          class="search-btn"
+          @click="updateStatus('update_config')"
+        >
+          更新配置
+        </el-button>
+        <el-button
+          :disabled="!(multipleSelection.length > 0)"
+          type="primary"
+          class="search-btn"
+          @click="updateStatus('sync_user_old')"
+        >
+          同步人员信息
+        </el-button>
+        <el-button :disabled="!(multipleSelection.length > 0)" type="primary" class="search-btn" @click="bindTag">
+          绑定标签
+        </el-button>
+      </span>
       <div>
         <el-button type="primary" class="search-btn" @click="openAddDialog">
           <img
@@ -24,13 +59,20 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" :data="carbonCk_list" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="设备名称" prop="name" width="160"> </el-table-column>
         <el-table-column label="终端Key" prop="terminalKey"> </el-table-column>
         <el-table-column label="设备SN号" prop="terminalSn"> </el-table-column>
         <el-table-column label="设备MAC地址" prop="terminalMac"> </el-table-column>
         <el-table-column label="设备地址" prop="location"> </el-table-column>
-        <el-table-column label="设备组" prop="maxDeviceCount"> </el-table-column>
+        <el-table-column label="设备组" prop="deviceGroupName"> </el-table-column>
+        <el-table-column label="状态" prop="status">
+          <template #default="{ row }">
+            {{ ["离线", "在线"][row.status] }}
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
         <el-table-column label="更新时间" prop="updatedAt" width="170"> </el-table-column>
         <el-table-column label="操作" align="center" width="110" fixed="right">
@@ -117,6 +159,30 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 绑定标签 -->
+    <el-dialog v-model="dialogtag" :close-on-click-modal="false" title="绑定标签" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="taglinkFormRef" :model="tagform" :rules="taglinkRules" class="demo-ruleForm" label-position="top">
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="标签" prop="deviceTagId">
+                <el-select v-model="tagform.deviceTagId">
+                  <el-option v-for="v in devicetagsListSelect" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: right">
+              <el-button @click="dialogtag = false">取消</el-button>
+              <el-button type="primary" @click="confirmAddtag">确定</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -126,7 +192,10 @@ import {
   devicesUpdate,
   devicesList,
   devicesDelete,
-  devicesDetail
+  devicesDetail,
+  devicesbatchcontrol,
+  devicetagsListSelect,
+  devicetagsbatchassign
 } from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -135,14 +204,16 @@ export default {
     return {
       filterForm: {
         name: "",
-        status: ""
+        status: "",
+        deviceGroupId: ""
       },
-      gradesList: [
-        { id: "1", name: "启用" },
-        { id: "0", name: "禁用" }
+      statusList: [
+        { id: "1", name: "在线" },
+        { id: "0", name: "离线" }
       ],
       //新增权限系统
       dialogVisibleAdd: false,
+      devicegroupsList: [],
       form: {
         name: "",
         terminalKey: "",
@@ -161,7 +232,17 @@ export default {
       carbonCk_list: [],
       total: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      multipleSelection: [],
+      // 绑定标签
+      dialogtag: false,
+      devicetagsListSelect: [],
+      tagform: {
+        deviceTagId: ""
+      },
+      taglinkRules: {
+        deviceTagId: [{ required: true, message: "必填项", trigger: "blur" }]
+      }
     };
   },
   computed: {
@@ -176,7 +257,7 @@ export default {
     schoolId: {
       handler(newVal) {
         if (newVal) {
-          this.devicegroupsList();
+          this.getdevicegroupsList();
           this.fetchTenantList();
         }
       },
@@ -184,11 +265,12 @@ export default {
     }
   },
   mounted() {
-    this.devicegroupsList();
+    this.getdevicegroupsList();
     this.fetchTenantList();
   },
   methods: {
-    devicegroupsList() {
+    // 设备组
+    getdevicegroupsList() {
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&name=&status=-1`;
       devicegroupsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -202,10 +284,13 @@ export default {
     reset() {
       this.filterForm.name = "";
       this.filterForm.status = "";
+      this.filterForm.deviceGroupId = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&name=&status=-1`;
+      let status = this.filterForm.status ? this.filterForm.status : -1;
+      let deviceGroupId = this.filterForm.deviceGroupId ? this.filterForm.deviceGroupId : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&status=${status}&terminalSn=&deviceGroupId=${deviceGroupId}`;
       devicesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -226,9 +311,62 @@ export default {
       this.page = val;
       this.fetchTenantList();
     },
-
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    updateStatus(val) {
+      let deviceIds = [];
+      this.multipleSelection.map(v => {
+        deviceIds.push(v.id);
+      });
+      devicesbatchcontrol({ deviceIds: deviceIds, action: val }).then(res => {
+        if (res.code == 0) {
+          this.$message.success(res.data.message);
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    bindTag() {
+      this.dialogtag = true;
+      this.tagform.deviceTagId = "";
+      this.getdevicetagsListSelect();
+    },
+    getdevicetagsListSelect() {
+      let params = `schoolId=${this.schoolId}&status=-1`;
+      devicetagsListSelect(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.devicetagsListSelect = res.data.list;
+        } else {
+          this.devicetagsListSelect = [];
+        }
+      });
+    },
+    confirmAddtag() {
+      this.$refs.taglinkFormRef.validate(valid => {
+        if (valid) {
+          let deviceIds = [];
+          this.multipleSelection.map(v => {
+            deviceIds.push(v.id);
+          });
+          devicetagsbatchassign({ deviceIds: deviceIds, deviceTagId: this.tagform.deviceTagId }).then(res => {
+            if (res.code == 0) {
+              let msg = `成功绑定${res.data.successCount}, 失败${res.data.failCount}`;
+              this.$message.success(msg);
+              this.dialogtag = false;
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        }
+      });
+    },
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.$nextTick(() => {
@@ -248,24 +386,10 @@ export default {
       });
       this.form.id = row.id;
     },
-    changeStatus(row) {
-      let params = {
-        schoolId: this.schoolId,
-        id: row.id,
-        status: row.status,
-        isVoipGroup: row.isVoipGroup
-      };
-      devicesUpdate(params).then(res => {
-        if (res.code == 0) {
-          this.$message.success("状态修改成功");
-          this.fetchTenantList();
-        }
-      });
-    },
+
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          // this.form.schoolId = this.schoolId;
           if (this.form.id) {
             devicesUpdate(this.form).then(res => {
               if (res.code == 0) {
