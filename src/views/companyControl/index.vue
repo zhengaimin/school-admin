@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="7" :offset="1">
             <el-form-item label="微信商户密钥" prop="merchantSecret">
-              <el-input v-model="form.merchantSecret"></el-input>
+              <el-input v-model="form.merchantSecret" type="password" show-password></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
@@ -22,7 +22,7 @@
         <el-row>
           <el-col :span="7">
             <el-form-item label="微信应用密钥" prop="appSecret">
-              <el-input v-model="form.appSecret"></el-input>
+              <el-input v-model="form.appSecret" type="password" show-password></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
@@ -33,13 +33,21 @@
         </el-row>
         <el-row>
           <el-col :span="7">
-            <el-form-item label="最小金额" prop="minAmount">
-              <el-input type="number" v-model.number="form.minAmount"></el-input>
+            <el-form-item label="最小金额（1元）" prop="minAmount">
+              <el-input-number style="width: 100%" v-model.number="form.minAmount" :min="1" :max="1000">
+                <template #prefix>
+                  <span>￥</span>
+                </template>
+              </el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-form-item label="最大金额" prop="maxAmount">
-              <el-input type="number" v-model.number="form.maxAmount"></el-input>
+            <el-form-item label="最大金额(10000元)" prop="maxAmount">
+              <el-input-number style="width: 100%" v-model.number="form.maxAmount" :min="1" :max="10000">
+                <template #prefix>
+                  <span>￥</span>
+                </template>
+              </el-input-number>
             </el-form-item>
           </el-col>
         </el-row>

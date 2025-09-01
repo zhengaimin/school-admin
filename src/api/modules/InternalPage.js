@@ -431,3 +431,62 @@ export const packagesDelete = params => {
 export const packagesDetail = params => {
   return http.get(`/admin/packages/${params.id}`);
 };
+// 学校费率配置
+export const schoolcallratedata = params => {
+  return http.get(`/admin/school-rates/${params.schoolId}/call-rate`);
+};
+export const schoolcallrate = params => {
+  return http.put(`/admin/school-rates/${params.schoolId}/call-rate`, params);
+};
+export const schoolmessageratedata = params => {
+  return http.get(`/admin/school-rates/${params.schoolId}/message-rate`);
+};
+export const schoolmessagerate = params => {
+  return http.put(`/admin/school-rates/${params.schoolId}/message-rate`, params);
+};
+export const schoolgeneraldata = params => {
+  return http.get(`/admin/school-packages/${params.schoolId}/general`);
+};
+export const schoolgeneral = params => {
+  return http.put(`/admin/school-packages/${params.schoolId}/general`, params);
+};
+export const schoolfixeddata = params => {
+  return http.get(`/admin/school-packages/${params.schoolId}/fixed`);
+};
+export const schoolfixed = params => {
+  return http.put(`/admin/school-packages/${params.schoolId}/fixed`, params);
+};
+
+// 年级通话费率配置
+export const gradecallratesAdd = params => {
+  return http.post(`/admin/grade-call-rates`, params);
+};
+export const gradecallratesUpdate = params => {
+  return http.put(`/admin/grade-call-rates/${params.rateTemplateID}`, params);
+};
+export const gradecallratesList = params => {
+  return http.get(`/admin/grade-call-rates?${params}`);
+};
+export const gradecallratesDelete = params => {
+  return http.delete(`/admin/grade-call-rates/${params.id}`);
+};
+export const gradecallratesDetail = params => {
+  return http.get(`/admin/grade-call-rates/${params.rateTemplateID}`);
+};
+
+// 年级留言费率配置
+export const grademessageratesAdd = params => {
+  return http.post(`/admin/grade-message-rates`, params);
+};
+export const grademessageratesUpdate = params => {
+  return http.put(`/admin/grade-message-rates/${params.rateTemplateID}`, params);
+};
+export const grademessageratesList = params => {
+  return http.get(`/admin/grade-message-rates?${params}`);
+};
+export const grademessageratesDelete = params => {
+  return http.delete(`/admin/grade-message-rates/${params.id}`);
+};
+export const grademessageratesDetail = params => {
+  return http.get(`/admin/grade-message-rates/${params.rateTemplateID}`);
+};
