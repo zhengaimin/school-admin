@@ -196,6 +196,10 @@ export default {
 
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.$nextTick(() => {

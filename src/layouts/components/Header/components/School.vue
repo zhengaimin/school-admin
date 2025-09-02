@@ -43,8 +43,8 @@ export default {
         if (res.code == 0 && res.data && res.data.list) {
           this.schoolList = res.data.list;
           // 在第一位添加一个元素
-          this.schoolList.unshift({ id: "-1", name: "全部" });
-          this.school = this.schoolList[0].id;
+          this.schoolList.unshift({ id: "-1", name: "全部学校" });
+          this.school = this.schoolList[1].id;
           this.userStore.setSchoolMsg({ schoolId: this.school });
         } else {
           this.schoolList = [{ id: "-1", name: "全部学校" }];

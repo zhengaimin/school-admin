@@ -135,22 +135,29 @@
   border-radius: 6px;
 }
 .el-button:hover {
-  color: #606266;
+  // color: #606266;
+  color: #409eff !important;
+  background: #dcf1fd !important;
   border: none;
 }
 .el-button--primary {
+  color: #ffffff !important;
+
   // background: #0ec69a;
+  background: #409eff !important;
   border: none;
 }
 .el-button--primary:hover {
-  color: #ffffff;
+  color: #ffffff !important;
 
   // background: #0ec69a;
+  background: #67bef4 !important;
   border: none;
 }
 .el-button--primary:focus,
 .el-button--primary:active {
   // background-color: #0ec69a;
+  background: #409eff !important;
   outline: none;
 }
 .el-dialog {

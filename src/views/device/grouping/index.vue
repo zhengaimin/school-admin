@@ -84,6 +84,13 @@
           </el-row>
           <el-row>
             <el-col :span="23">
+              <el-form-item label="设备组编码" prop="code">
+                <el-input v-model="form.code"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
               <el-form-item label="是否VOIP组" prop="isVoipGroup">
                 <el-radio-group v-model="form.isVoipGroup">
                   <el-radio :value="true">是</el-radio>
@@ -137,12 +144,14 @@ export default {
       dialogVisibleAdd: false,
       form: {
         name: "",
+        code: "",
         isVoipGroup: false,
         schoolId: "",
         description: ""
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
+        code: [{ required: true, message: "必填项", trigger: "blur" }],
         isVoipGroup: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       //  列表

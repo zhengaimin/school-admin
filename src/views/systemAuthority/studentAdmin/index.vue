@@ -636,6 +636,10 @@ export default {
 
     //新增
     openAddDialog() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.form.faceImageUrl = "";
@@ -708,6 +712,10 @@ export default {
     },
     // 下载导入模板
     loadFileTemple() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       let url = this.loadTemple + `?tenantId=${this.userInfo.tenantId}&schoolId=${this.schoolId}`;
       axios
         .get(url, {
@@ -759,7 +767,7 @@ export default {
       this.$refs.uploadFileface.clearFiles();
     },
     handleSuccessfile(res) {
-      this.form.faceImageUrl = "http://47.120.20.136:8085" + res.data.thumbnailUrl;
+      this.form.faceImageUrl = "https://golanghub.top" + res.data.thumbnailUrl;
     },
     // 亲情号
     addParent(row) {

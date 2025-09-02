@@ -2,7 +2,7 @@
   <div class="login-container flx-center">
     <div class="login-box">
       <SwitchDark class="dark" v-if="false" />
-      <div class="login-left">
+      <div class="login-left" v-if="false">
         <img class="login-left-img" src="@/assets/images/common/loginIcon.svg" alt="login" />
       </div>
       <div class="login-form">

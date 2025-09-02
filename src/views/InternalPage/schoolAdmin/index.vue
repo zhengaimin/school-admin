@@ -264,7 +264,7 @@ export default {
       this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
-      this.form.badge = "http://47.120.20.136:8085" + res.data.thumbnailUrl;
+      this.form.badge = "https://golanghub.top" + res.data.thumbnailUrl;
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
