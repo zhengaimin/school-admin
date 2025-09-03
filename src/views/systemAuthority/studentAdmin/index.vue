@@ -25,7 +25,7 @@
         <el-table-column label="学生姓名" prop="name"> </el-table-column>
         <el-table-column label="图片" width="90" align="center">
           <template #default="{ row }">
-            <img style="width: 60px; height: 60px" :src="row.faceImageUrl" alt="" srcset="" />
+            <img style="width: 70px; max-height: 70px; border-radius: 50%" :src="row.faceImageUrl" alt="" srcset="" />
           </template>
         </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
@@ -144,7 +144,7 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="电话" prop="phone">
-                <el-input v-model="form.phone"></el-input>
+                <el-input v-model="form.phone" @blur="checkPhone"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
@@ -325,7 +325,7 @@
               </el-col>
               <el-col :span="11" :offset="1">
                 <el-form-item label="手机号" prop="phone">
-                  <el-input v-model="parentForm.phone"></el-input>
+                  <el-input v-model="parentForm.phone" @blur="checkPhonep"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -573,6 +573,18 @@ export default {
     this.fetchTenantList();
   },
   methods: {
+    checkPhone() {
+      if (!/^1[3456789]\d{9}$/.test(this.form.phone)) {
+        this.form.phone = "";
+        this.$message.warning("请输入正确的手机号");
+      }
+    },
+    checkPhonep() {
+      if (!/^1[3456789]\d{9}$/.test(this.parentForm.phone)) {
+        this.parentForm.phone = "";
+        this.$message.warning("请输入正确的手机号");
+      }
+    },
     getGradesList() {
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
       gradesList(params).then(res => {
@@ -767,7 +779,7 @@ export default {
       this.$refs.uploadFileface.clearFiles();
     },
     handleSuccessfile(res) {
-      this.form.faceImageUrl = "https://golanghub.top" + res.data.thumbnailUrl;
+      this.form.faceImageUrl = window.location.origin + res.data.thumbnailUrl;
     },
     // 亲情号
     addParent(row) {

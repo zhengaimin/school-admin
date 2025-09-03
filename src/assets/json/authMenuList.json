@@ -163,7 +163,7 @@
       "name": "fund",
       "component": "/fund/index",
       "meta": {
-        "icon": "FolderChecked",
+        "icon": "List",
         "title": "资金管理",
         "isLink": "",
         "isHide": false,
@@ -234,7 +234,21 @@
           "component": "/fund/refund/index",
           "meta": {
             "icon": "",
-            "title": "退款管理",
+            "title": "余额退款",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/fund/packagerefund",
+          "name": "packagerefund",
+          "component": "/fund/packagerefund/index",
+          "meta": {
+            "icon": "",
+            "title": "套餐退款",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -249,7 +263,7 @@
       "name": "device",
       "component": "/device/index",
       "meta": {
-        "icon": "Iphone",
+        "icon": "UploadFilled",
         "title": "设备管理",
         "isLink": "",
         "isHide": false,
@@ -377,7 +391,7 @@
       "name": "setmenu",
       "component": "/setmenu/index",
       "meta": {
-        "icon": "Calendar",
+        "icon": "Menu",
         "title": "套餐配置",
         "isLink": "",
         "isHide": false,
@@ -427,6 +441,48 @@
             "isAffix": false,
             "isKeepAlive": false
           }
+        },
+        {
+          "path": "/setmenu/gradegeneral",
+          "name": "gradegeneral",
+          "component": "/setmenu/gradegeneral/index",
+          "meta": {
+            "icon": "",
+            "title": "年级通用套餐",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/setmenu/gradefixedMeal",
+          "name": "gradefixedMeal",
+          "component": "/setmenu/gradefixedMeal/index",
+          "meta": {
+            "icon": "",
+            "title": "年级固定套餐",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/setmenu/giftTime",
+          "name": "giftTime",
+          "component": "/setmenu/giftTime/index",
+          "meta": {
+            "icon": "",
+            "title": "赠送时间",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
         }
       ]
     },
@@ -435,7 +491,7 @@
       "name": "companyControl",
       "component": "/companyControl/index",
       "meta": {
-        "icon": "Notebook",
+        "icon": "Tools",
         "title": "商户号配置",
         "isLink": "",
         "isHide": false,

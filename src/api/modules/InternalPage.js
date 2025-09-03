@@ -490,3 +490,53 @@ export const grademessageratesDelete = params => {
 export const grademessageratesDetail = params => {
   return http.get(`/admin/grade-message-rates/${params.rateTemplateID}`);
 };
+
+// 年级通用套餐配置
+export const gradegeneralpackagesAdd = params => {
+  return http.post(`/admin/grade-general-packages`, params);
+};
+export const gradegeneralpackagesUpdate = params => {
+  return http.put(`/admin/grade-general-packages/${params.packageTemplateId}`, params);
+};
+export const gradegeneralpackagesList = params => {
+  return http.get(`/admin/grade-general-packages?${params}`);
+};
+export const gradegeneralpackagesDelete = params => {
+  return http.delete(`/admin/grade-general-packages/${params.id}`);
+};
+export const gradegeneralpackagesDetail = params => {
+  return http.get(`/admin/grade-general-packages/${params.packageTemplateId}`);
+};
+// 年级固定套餐配置
+export const gradefixedpackagesAdd = params => {
+  return http.post(`/admin/grade-fixed-packages`, params);
+};
+export const gradefixedpackagesUpdate = params => {
+  return http.put(`/admin/grade-fixed-packages/${params.packageTemplateId}`, params);
+};
+export const gradefixedpackagesList = params => {
+  return http.get(`/admin/grade-fixed-packages?${params}`);
+};
+export const gradefixedpackagesDelete = params => {
+  return http.delete(`/admin/grade-fixed-packages/${params.id}`);
+};
+export const gradefixedpackagesDetail = params => {
+  return http.get(`/admin/grade-fixed-packages/${params.packageTemplateId}`);
+};
+// 查询未配置费率年级
+export const gradeunconfiguredList = params => {
+  return http.get(`/admin/grade-config/unconfigured?${params}`);
+};
+// 赠送时间
+
+export const giftsbatch = params => {
+  return http.post(`/admin/gifts/batch`, params);
+};
+
+export const giftsList = params => {
+  return http.get(`/admin/gifts?${params}`);
+};
+
+export const giftsDelete = params => {
+  return http.delete(`/admin/gifts/${params.id}`);
+};

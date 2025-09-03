@@ -41,7 +41,7 @@
   <div class="login-btn">
     <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="login(loginFormRef)"> 登录 </el-button>
   </div>
-  <div class="private-tip">登录即代表同意《武汉碳科数智技术有限公司隐私政策》</div>
+  <div class="private-tip"></div>
 </template>
 
 <script setup lang="ts">

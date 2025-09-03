@@ -135,6 +135,9 @@ export default {
     },
     token() {
       return useUserStore().token;
+    },
+    localhost() {
+      return process.env.VUE_APP_BASE_API;
     }
   },
   mounted() {
@@ -198,7 +201,7 @@ export default {
       this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
-      this.form.badge = "https://golanghub.top" + res.data.thumbnailUrl;
+      this.form.badge = window.location.origin + res.data.thumbnailUrl;
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {

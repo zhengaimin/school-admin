@@ -13,14 +13,8 @@
     <div class="btn-box">
       <span>设备组</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog">
-          <img
-            src="@/assets/images/common/add-circle-2.svg"
-            alt=""
-            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
-          />
-          新增
-        </el-button>
+        <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
+        <el-button type="primary" class="search-btn" @click="uploadFile()"> 导入 </el-button>
       </div>
     </div>
     <div class="table-list">
@@ -117,6 +111,52 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 导入 -->
+    <el-dialog v-model="strumentsloadFlag" :close-on-click-modal="false" title="导入" :width="800">
+      <div style="min-height: 100px; text-align: center">
+        <el-row v-if="!falseFlag">
+          <el-col :span="24">
+            <el-upload
+              style="width: 100%"
+              class="upload-demo"
+              ref="uploadFile"
+              :action="activeUrl"
+              :data="{
+                schoolId: schoolId
+              }"
+              :headers="{ Authorization: token }"
+              :before-upload="beforeAvatarUpload"
+              :on-success="handleSuccess"
+              :limit="1"
+              :show-file-list="false"
+            >
+              <div class="upload-box">
+                <el-icon style="font-size: 25px; color: #cccccc"><UploadFilled /></el-icon>
+                <p>请上传</p>
+              </div>
+            </el-upload>
+          </el-col>
+        </el-row>
+        <div v-else>
+          <el-row>
+            <h1 class="errorMath">
+              导入失败数量：<span style="font-weight: bold; color: red">{{ errorData.errorCount }}</span>
+            </h1>
+          </el-row>
+          <el-row>
+            <el-table class="my-custom-table" :data="errorData.errorList">
+              <el-table-column label="Excel行号" prop="row" align="left"> </el-table-column>
+              <el-table-column label="姓名" prop="name" align="left"> </el-table-column>
+              <el-table-column label="状态" prop="status" align="left"> </el-table-column>
+              <el-table-column label="失败原因" prop="message" align="left"> </el-table-column>
+            </el-table>
+          </el-row>
+        </div>
+        <div style="margin: 20px 0; text-align: center">
+          <el-button @click="strumentsloadFlag = false">关闭</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -158,7 +198,12 @@ export default {
       carbonCk_list: [],
       total: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      // 导入
+      strumentsloadFlag: false,
+      typeflag: "",
+      falseFlag: false,
+      errorData: {}
     };
   },
   computed: {
@@ -167,6 +212,16 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    activeUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/device-groups/import-excel`;
+      } else {
+        return `/admin/device-groups/import-excel`;
+      }
+    },
+    token() {
+      return useUserStore().token;
     }
   },
   watch: {
@@ -293,6 +348,29 @@ export default {
         .catch(() => {
           console.log("取消删除");
         });
+    },
+    // 导入
+    uploadFile() {
+      this.strumentsloadFlag = true;
+      this.falseFlag = false;
+      this.$nextTick(() => {
+        this.$refs.uploadFile.clearFiles();
+      });
+    },
+    beforeAvatarUpload() {
+      // this.$refs.uploadFile.clearFiles();
+    },
+    handleSuccess(res) {
+      if (res.code == 0 && res.data.errorCount == 0) {
+        this.$message.success("导入成功");
+        this.strumentsloadFlag = false;
+      } else {
+        let ary = res.data.results.filter(v => v.status == "失败");
+        this.errorData = res.data;
+        this.errorData.errorList = ary;
+        this.falseFlag = true;
+      }
+      this.fetchTenantList();
     }
   }
 };

@@ -2,13 +2,12 @@
   <div class="tool-bar-ri">
     <div class="header-icon">
       <!-- <AssemblySize id="assemblySize" /> -->
-
       <School id="school" ref="school" />
       <Language id="language" v-if="false" />
       <SwitchDark id="language" v-if="false" />
       <SearchMenu />
       <!-- <ThemeSetting id="themeSetting" /> -->
-      <Message id="message" />
+      <Message id="message" v-if="false" />
       <Fullscreen id="fullscreen" />
     </div>
     <span class="username" v-if="true">{{ name }}</span>

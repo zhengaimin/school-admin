@@ -38,11 +38,11 @@
         <el-table-column label="申请时间" prop="applyTime" width="140"> </el-table-column>
         <el-table-column label="审核时间" prop="auditTime" width="140"> </el-table-column>
         <el-table-column label="完成时间" prop="completeTime" width="140"> </el-table-column>
-        <el-table-column label="操作" align="center" width="110" fixed="right">
+        <el-table-column label="操作" align="center" width="150" fixed="right">
           <template #default="scope">
             <div class="table-btn">
               <div v-if="scope.row.status == 0" @click="editRow(scope.row)">审核</div>
-              <div @click="detail(scope.row)">详情</div>
+              <div @click="detail(scope.row)">退款详情</div>
             </div>
           </template>
         </el-table-column>
@@ -80,6 +80,13 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <!-- <el-row>
+            <el-col :span="23">
+              <el-form-item label="退款金额（如何不填则以用户申请金额为准）" prop="actualAmount">
+                <el-input type="number" :min="0" style="width: 100%" v-model.number="form.actualAmount" />
+              </el-form-item>
+            </el-col>
+          </el-row> -->
         </el-form>
         <el-row :gutter="23">
           <el-col :span="23">
@@ -92,13 +99,19 @@
       </div>
     </el-dialog>
     <!-- 详情 -->
-    <el-dialog v-model="dialogVisibledetail" :close-on-click-modal="false" title="详情" width="80%">
+    <el-dialog v-model="dialogVisibledetail" :close-on-click-modal="false" title="退款详情" width="80%">
       <div style="padding-left: 20px">
-        <div v-if="detailObj.studentInfo">
-          <div>学生信息：</div>
+        <div v-if="detailObj.studentInfo" style="margin-bottom: 10px">
+          <div>学生信息</div>
           <el-row>
-            <el-col :span="11"> 学生姓名：{{ detailObj.studentInfo.studentName }} </el-col>
-            <el-col :span="11"> 当前余额：{{ detailObj.studentInfo.balance }} </el-col>
+            <el-col :span="7"> 学生姓名：{{ detailObj.studentInfo.studentName }} </el-col>
+            <el-col :span="7"> 学号：{{ detailObj.studentInfo.studentCode }} </el-col>
+            <el-col :span="7"> 当前余额：{{ detailObj.studentInfo.balance }} </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="7"> 年级：{{ detailObj.studentInfo.gradeName }} </el-col>
+            <el-col :span="7"> 级部：{{ detailObj.studentInfo.departmentName }} </el-col>
+            <el-col :span="7"> 班级：{{ detailObj.studentInfo.className }} </el-col>
           </el-row>
         </div>
         <div v-if="detailObj.refundDetails">
@@ -155,6 +168,7 @@ export default {
         refundApplicationId: "",
         approved: true,
         adminRemark: ""
+        // actualAmount: ""
       },
       linkRules: {
         approved: [{ required: true, message: "必填项", trigger: "blur" }]
@@ -198,7 +212,7 @@ export default {
     },
     fetchTenantList() {
       let status = this.filterForm.status ? this.filterForm.status : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&studentKeyword=${this.filterForm.studentKeyword}&status=${status}`;
+      let params = `schoolId=${this.schoolId}&refundType=FULL&page=${this.page}&pageSize=${this.pageSize}&studentKeyword=${this.filterForm.studentKeyword}&status=${status}`;
       refundsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -228,6 +242,15 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
+          // if (this.form.actualAmount < 0 || this.form.actualAmount == 0) {
+          //   this.$message.error("实际退款金额必须大于0");
+          //   return;
+          // }
+          // if (this.form.actualAmount == "") {
+          //   delete this.form.actualAmount;
+          // } else {
+          //   this.form.actualAmount = Number(this.form.actualAmount);
+          // }
           if (this.form.refundApplicationId) {
             refundscheck(this.form).then(res => {
               if (res.code == 0) {
@@ -245,7 +268,6 @@ export default {
     detail(row) {
       this.dialogVisibledetail = true;
       refundsDetail({ id: row.id }).then(res => {
-        console.log(res);
         if (res.code == 0 && res.data) {
           this.detailObj = res.data;
         }

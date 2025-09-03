@@ -108,7 +108,7 @@
 </template>
 <script>
 import {
-  gradesList,
+  gradeunconfiguredList,
   grademessageratesAdd,
   grademessageratesUpdate,
   grademessageratesList,
@@ -170,10 +170,10 @@ export default {
   },
   methods: {
     getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
-      gradesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.gradesList = res.data.list;
+      let params = `schoolId=${this.schoolId}&configType=rate&serviceType=MESSAGE`;
+      gradeunconfiguredList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.grades) {
+          this.gradesList = res.data.grades;
         } else {
           this.gradesList = [];
         }

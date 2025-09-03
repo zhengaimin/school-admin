@@ -184,7 +184,7 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let params = `studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}`;
+      let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}`;
       paymentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;

@@ -4,8 +4,8 @@
     <h1>
       <span :class="{ active: flag === 1 }" @click="featch(1)">通话费率</span>
       <span :class="{ active: flag === 2 }" @click="featch(2)">留言费率</span>
-      <span :class="{ active: flag === 3 }" @click="featch(3)">通用套餐</span>
-      <span :class="{ active: flag === 4 }" @click="featch(4)">固定套餐</span>
+      <!-- <span :class="{ active: flag === 3 }" @click="featch(3)">通用套餐</span>
+      <span :class="{ active: flag === 4 }" @click="featch(4)">固定套餐</span> -->
     </h1>
     <div style="padding: 20px">
       <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
@@ -35,10 +35,10 @@
             </el-col>
           </el-row>
         </div>
-        <div v-if="flag == 3">
+        <div v-if="flag == 5">
           <el-row>
             <el-col :span="10">
-              <el-form-item label="语音通话时长（分钟）" prop="videoCallMinutes">
+              <el-form-item label="语音通话时长（分钟/月）" prop="videoCallMinutes">
                 <el-input-number style="width: 100%" v-model.number="form.videoCallMinutes" :min="1">
                   <template #prefix>
                     <span>
@@ -49,7 +49,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
-              <el-form-item label="基础价格（元）" prop="basePrice">
+              <el-form-item label="基础价格（元/月）" prop="basePrice">
                 <el-input-number style="width: 100%" v-model.number="form.basePrice" :min="0">
                   <template #prefix>
                     <span>￥</span>
@@ -73,7 +73,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="false">
             <el-col :span="10">
               <el-form-item label="年级">
                 <el-select multiple clearable style="width: 100%" v-model="form.gradeIds">
@@ -103,10 +103,10 @@
             </el-col>
           </el-row>
         </div>
-        <div v-if="flag == 4">
+        <div v-if="flag == 5">
           <el-row>
             <el-col :span="10">
-              <el-form-item label="语音通话时长（分钟）" prop="videoCallMinutes">
+              <el-form-item label="语音通话时长（分钟/月）" prop="videoCallMinutes">
                 <el-input-number style="width: 100%" v-model.number="form.videoCallMinutes" :min="1">
                   <template #prefix>
                     <span>
@@ -117,7 +117,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
-              <el-form-item label="基础价格（元）" prop="basePrice">
+              <el-form-item label="基础价格（元/月）" prop="basePrice">
                 <el-input-number style="width: 100%" v-model.number="form.basePrice" :min="0">
                   <template #prefix>
                     <span>￥</span>
@@ -168,7 +168,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="false">
             <el-col :span="10">
               <el-form-item label="年级">
                 <el-select multiple clearable style="width: 100%" v-model="form.gradeIds">
@@ -364,8 +364,10 @@ export default {
         this.$message.warning("请先选择学校");
         return;
       }
+
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
+          this.form.packageContent.videoCallMinutes = this.form.videoCallMinutes;
           this.form.schoolId = this.schoolId;
           if (this.flag == 1) {
             schoolcallrate(this.form).then(res => {

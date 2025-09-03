@@ -86,7 +86,7 @@
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="联系方式" prop="phone">
-                <el-input v-model="form.phone"></el-input>
+                <el-input v-model="form.phone" @blur="checkPhone"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -207,6 +207,12 @@ export default {
     this.fetchTenantList();
   },
   methods: {
+    checkPhone() {
+      if (!/^1[3456789]\d{9}$/.test(this.form.phone)) {
+        this.form.phone = "";
+        this.$message.warning("请输入正确的手机号");
+      }
+    },
     reset() {
       this.filterForm.name = "";
       this.fetchTenantList();
@@ -264,7 +270,7 @@ export default {
       this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
-      this.form.badge = "https://golanghub.top" + res.data.thumbnailUrl;
+      this.form.badge = window.location.origin + res.data.thumbnailUrl;
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {

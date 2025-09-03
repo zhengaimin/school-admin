@@ -10,7 +10,7 @@
       </transition>
     </router-view>
   </el-main>
-  <el-footer v-show="footer">
+  <el-footer v-show="footer && false">
     <Footer />
   </el-footer>
 </template>

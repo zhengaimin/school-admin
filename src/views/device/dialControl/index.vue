@@ -430,14 +430,13 @@ export default {
           for (let key in res.data) {
             if (key == "forbidCallTimes") {
               let ary = res.data["forbidCallTimes"].split(",");
-              console.log(ary);
               ary.map(v => {
                 let arr = v.split("-");
                 this.form.forbidCallTimesAry.push({ fstTime: arr[0], fendTime: arr[1] });
               });
-              return;
+            } else {
+              this.form[key] = res.data[key];
             }
-            this.form[key] = res.data[key];
           }
         } else {
           this.$message.error("获取信息失败");

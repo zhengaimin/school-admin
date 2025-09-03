@@ -1,1 +1,0 @@
-import{k as t}from"./index-B45wLO1b.js";const s=n=>t.post("/admin/menu/add",n),a=n=>t.get(`/admin/menu?${n}`),m=n=>t.post("/admin/menu/update",n),u=n=>t.post("/admin/menu/delete",n),d=n=>t.get(`/admin/menu/api_list?${n}`),r=()=>t.get("/admin/system/info");export{d as a,m as b,s as c,a as d,u as m,r as s};
