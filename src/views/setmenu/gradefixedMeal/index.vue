@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="语音通话时长（分钟/月）" prop="videoCallMinutes" width="190"> </el-table-column>
         <el-table-column label="基础价格（元/月）" prop="basePrice"> </el-table-column>
@@ -77,8 +77,8 @@
           <el-row>
             <el-col :span="23">
               <el-form-item label="年级" prop="gradeIds">
-                <el-select multiple v-model="form.gradeIds">
-                  <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                <el-select :disabled="form.packageTemplateId" multiple v-model="form.gradeIds">
+                  <el-option v-for="v in editgradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -182,6 +182,7 @@
 </template>
 <script>
 import {
+  gradesList,
   gradeunconfiguredList,
   gradefixedpackagesAdd,
   gradefixedpackagesUpdate,
@@ -201,6 +202,7 @@ export default {
       //新增权限系统
       dialogVisibleAdd: false,
       gradesList: [],
+      ungradesList: [],
       form: {
         schoolId: "",
         gradeIds: [],
@@ -234,6 +236,12 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    editgradesList() {
+      if (this.form.packageTemplateId) {
+        return this.gradesList;
+      }
+      return this.ungradesList;
     }
   },
   watch: {
@@ -241,6 +249,7 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.getGradesList();
+          this.ungetGradesList();
           this.fetchTenantList();
         }
       },
@@ -249,16 +258,27 @@ export default {
   },
   mounted() {
     this.getGradesList();
+    this.ungetGradesList();
     this.fetchTenantList();
   },
   methods: {
     getGradesList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.gradesList = res.data.list;
+        } else {
+          this.gradesList = [];
+        }
+      });
+    },
+    ungetGradesList() {
       let params = `schoolId=${this.schoolId}&configType=package&packageType=FIXED`;
       gradeunconfiguredList(params).then(res => {
         if (res.code == 0 && res.data && res.data.grades) {
-          this.gradesList = res.data.grades;
+          this.ungradesList = res.data.grades;
         } else {
-          this.gradesList = [];
+          this.ungradesList = [];
         }
       });
     },

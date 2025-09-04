@@ -3,7 +3,7 @@
     <div class="filter-box">
       <label for="name">状态</label>
       <el-select style="width: 250px" v-model="filterForm.status">
-        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        <el-option v-for="v in statusList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
       </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="总赠送分钟数" prop="totalMinutes"> </el-table-column>
         <el-table-column label="已使用分钟数" prop="usedMinutes"> </el-table-column>
@@ -31,14 +31,14 @@
         <el-table-column label="过期时间" prop="expireDate"> </el-table-column>
         <el-table-column label="状态" align="center">
           <template #default="scope">
-            {{ ["有效", "已用完", "已过期", "已取消"][scope.row.status] }}
+            {{ ["", "有效", "已用完", "已过期", "已取消"][scope.row.status] }}
           </template>
         </el-table-column>
         <el-table-column label="描述" prop="description"> </el-table-column>
-        <el-table-column label="操作" align="center" width="80" fixed="right">
+        <el-table-column label="操作" align="center" width="90" fixed="right">
           <template #default="scope">
             <div class="table-btn">
-              <div @click="deleteRow(scope.row)">取消赠送</div>
+              <div v-if="scope.row.status == 1" @click="deleteRow(scope.row)">取消赠送</div>
             </div>
           </template>
         </el-table-column>
@@ -92,24 +92,45 @@
           <el-row>
             <el-col :span="23">
               <el-form-item label="添加学生">
-                <el-button type="primary" @click="addStudent">添加</el-button>
-                <span style="margin-left: 10px">已选择学生数：{{ form.studentIds.length }}</span>
+                <div>
+                  <div><el-button type="primary" @click="addStudent">添加</el-button><br /></div>
+                  <div>
+                    <el-tag
+                      v-for="tag in form.studentIds"
+                      @close="handleClose(tag)"
+                      :key="tag.name"
+                      closable
+                      type="primary"
+                      style="margin-right: 10px"
+                    >
+                      {{ tag.name }}
+                    </el-tag>
+                  </div>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </div>
-      <el-dialog v-model="innerDialog" width="800" title="学生" append-to-body>
-        <div class="table-list" style="padding: 20px 10px">
+      <el-dialog v-model="innerDialog" width="900" title="学生" append-to-body>
+        <div class="table-list" style="padding: 0 10px">
+          <div style="margin: 0 10px 10px 0">
+            <el-select placeholder="年级" style="width: 200px; margin-right: 10px" v-model="filterForm_s.gradeId">
+              <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+            </el-select>
+            <el-button type="primary" @click="fetchstudentsList()">查询</el-button>
+          </div>
           <el-table class="my-custom-table" :data="student_list" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" />
             <el-table-column label="学生姓名" prop="name"> </el-table-column>
+            <el-table-column label="学校" prop="schoolName"> </el-table-column>
             <el-table-column label="年级" prop="gradeName"> </el-table-column>
             <el-table-column label="级部" prop="departmentName"> </el-table-column>
             <el-table-column label="班级" prop="className"> </el-table-column>
             <el-table-column label="学号" prop="studentCode"> </el-table-column>
             <el-table-column label="性别" prop="sex"> </el-table-column>
             <el-table-column label="身份证" prop="idCard"> </el-table-column>
+            <el-table-column label="学号" prop="studentCode"> </el-table-column>
           </el-table>
           <div class="demo-pagination-block" style="padding: 10px 0">
             <el-pagination
@@ -124,14 +145,7 @@
           </div>
         </div>
         <div style="text-align: right">
-          <el-button
-            @click="
-              innerDialog = false;
-              multipleSelection = [];
-            "
-          >
-            取消
-          </el-button>
+          <el-button @click="innerDialog = false"> 取消 </el-button>
           <el-button type="primary" @click="confirmAdd_s">确认</el-button>
         </div>
       </el-dialog>
@@ -149,13 +163,13 @@
   </div>
 </template>
 <script>
-import { giftsbatch, giftsList, studentsList, giftsDelete } from "@/api/modules/InternalPage.js";
+import { giftsbatch, giftsList, studentsList, giftsDelete, gradesList } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox } from "element-plus";
 export default {
   data() {
     return {
-      gradesList: [
+      statusList: [
         { id: 1, name: "有效" },
         { id: 2, name: "已用完" },
         { id: 3, name: "已过期" },
@@ -180,6 +194,10 @@ export default {
       },
       // 学生
       innerDialog: false,
+      filterForm_s: {
+        gradeId: ""
+      },
+      gradesList: [],
       student_list: [],
       multipleSelection: [],
       s_total: 0,
@@ -214,32 +232,8 @@ export default {
     this.fetchTenantList();
   },
   methods: {
-    // 学生列表
-    fetchstudentsList() {
-      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=&gradeId=-1`;
-      studentsList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.student_list = res.data.list;
-          this.s_total = res.data.total;
-        } else {
-          this.student_list = [];
-          this.s_total = 0;
-        }
-      });
-    },
-    //获取表单数据
-    s_handleSizeChange(val) {
-      this.s_page = 1;
-      this.s_pageSize = val;
-      this.fetchstudentsList();
-    },
-    s_handleCurrentChange(val) {
-      this.s_page = val;
-      this.fetchstudentsList();
-    },
     reset() {
-      this.filterForm.name = "";
-      this.filterForm.gradeId = "";
+      this.filterForm.status = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
@@ -269,9 +263,46 @@ export default {
     //新增
     openAddDialog() {
       this.dialogVisibleAdd = true;
+      this.getGradesList();
       this.$nextTick(() => {
         this.$refs.linkFormRef.resetFields();
+        this.multipleSelection = [];
+        this.form.studentIds = [];
       });
+    },
+    getGradesList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.gradesList = res.data.list;
+        } else {
+          this.gradesList = [];
+        }
+      });
+    },
+    // 学生列表
+    fetchstudentsList() {
+      let gradeId = this.filterForm_s.gradeId ? this.filterForm_s.gradeId : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=&gradeId=${gradeId}`;
+      studentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.student_list = res.data.list;
+          this.s_total = res.data.total;
+        } else {
+          this.student_list = [];
+          this.s_total = 0;
+        }
+      });
+    },
+    //获取表单数据
+    s_handleSizeChange(val) {
+      this.s_page = 1;
+      this.s_pageSize = val;
+      this.fetchstudentsList();
+    },
+    s_handleCurrentChange(val) {
+      this.s_page = val;
+      this.fetchstudentsList();
     },
     addStudent() {
       this.innerDialog = true;
@@ -280,17 +311,29 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-
     confirmAdd_s() {
       this.multipleSelection.map(v => {
-        this.form.studentIds.push(v.id);
+        this.form.studentIds.push(v);
       });
       this.innerDialog = false;
+    },
+    handleClose(tag) {
+      this.form.studentIds.splice(this.form.studentIds.indexOf(tag), 1);
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          giftsbatch(this.form).then(res => {
+          let studentIds = [];
+          this.form.studentIds.map(v => {
+            studentIds.push(v.id);
+          });
+          let params = {
+            studentIds: studentIds,
+            minutes: this.form.minutes,
+            expireDate: this.form.expireDate,
+            description: this.form.description
+          };
+          giftsbatch(params).then(res => {
             if (res.code == 0) {
               this.dialogVisibleAdd = false;
               this.$message.success("添加成功");

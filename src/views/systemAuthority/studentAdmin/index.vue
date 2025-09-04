@@ -21,9 +21,9 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
-        <el-table-column label="学生姓名" prop="name"> </el-table-column>
-        <el-table-column label="图片" width="90" align="center">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
+        <el-table-column label="学生姓名" prop="name" width="95"> </el-table-column>
+        <el-table-column label="图片" width="95" align="center">
           <template #default="{ row }">
             <img style="width: 70px; max-height: 70px; border-radius: 50%" :src="row.faceImageUrl" alt="" srcset="" />
           </template>
@@ -36,9 +36,9 @@
         <el-table-column label="身份证" prop="idCard" width="200"> </el-table-column>
         <el-table-column label="IC卡号" prop="cardNumber" width="180"> </el-table-column>
         <el-table-column label="电话" prop="phone" width="150"> </el-table-column>
-        <el-table-column label="监护人" prop="guardianName"> </el-table-column>
-        <el-table-column label="监护人电话" prop="guardianPhone"> </el-table-column>
-        <el-table-column label="学生类型">
+        <el-table-column label="监护人" prop="guardianName" width="110"> </el-table-column>
+        <el-table-column label="监护人电话" prop="guardianPhone" width="95"> </el-table-column>
+        <el-table-column label="学生类型" width="110">
           <template #default="{ row }">
             {{ row.studentType == "BOARDING" ? "寄宿生" : "走读生" }}
           </template>
@@ -115,14 +115,14 @@
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="级部" prop="departmentId">
+              <el-form-item label="级部" prop="">
                 <el-select v-model="form.departmentId" @focus="getdepartmentsList">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="班级" prop="classId">
+              <el-form-item label="班级" prop="">
                 <el-select v-model="form.classId" @focus="getClassList">
                   <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
@@ -780,6 +780,7 @@ export default {
     },
     handleSuccessfile(res) {
       this.form.faceImageUrl = window.location.origin + res.data.thumbnailUrl;
+      // this.form.faceImageUrl = "https://golanghub.top" + res.data.thumbnailUrl;
     },
     // 亲情号
     addParent(row) {

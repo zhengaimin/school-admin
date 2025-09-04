@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="电话号码" prop="phoneNumber"> </el-table-column>
         <el-table-column label="称呼" prop="salutation"> </el-table-column>

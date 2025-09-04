@@ -15,25 +15,25 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="退款申请单号" prop="refundNo" width="150"> </el-table-column>
         <el-table-column label="退款状态" prop="status" width="130">
           <template #default="{ row }">
             {{ ["待审核", "审核通过", "退款中", "全部退款完成", "部分退款完成", "审核不通过", "用户取消"][row.status] }}
           </template>
         </el-table-column>
-        <el-table-column label="申请退款金额（元）" prop="applyAmount" width="150"> </el-table-column>
+        <el-table-column label="申请退款金额（元）" prop="applyAmount" width="155"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
-        <el-table-column label="学号" prop="studentCode"> </el-table-column>
+        <el-table-column label="学号" prop="studentCode" width="140"> </el-table-column>
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="申请人" prop="applicantName"> </el-table-column>
-        <el-table-column label="退款类型" prop="refundType">
+        <el-table-column label="退款类型" prop="refundType" width="120">
           <template #default="{ row }">
             {{ { FULL: "全额退款", SINGLE: "部分退款" }[row.refundType] }}
           </template>
         </el-table-column>
-        <el-table-column label="申请退款金额（元）" prop="applyAmount" width="150"> </el-table-column>
-        <el-table-column label="实际退款金额（元）" prop="actualAmount" width="150"> </el-table-column>
+        <el-table-column label="申请退款金额（元）" prop="applyAmount" width="155"> </el-table-column>
+        <el-table-column label="实际退款金额（元）" prop="actualAmount" width="155"> </el-table-column>
         <el-table-column label="申请原因" prop="applyReason" width="200"> </el-table-column>
         <el-table-column label="申请时间" prop="applyTime" width="140"> </el-table-column>
         <el-table-column label="审核时间" prop="auditTime" width="140"> </el-table-column>
@@ -102,17 +102,14 @@
     <el-dialog v-model="dialogVisibledetail" :close-on-click-modal="false" title="退款详情" width="80%">
       <div style="padding-left: 20px">
         <div v-if="detailObj.studentInfo" style="margin-bottom: 10px">
-          <div>学生信息</div>
-          <el-row>
-            <el-col :span="7"> 学生姓名：{{ detailObj.studentInfo.studentName }} </el-col>
-            <el-col :span="7"> 学号：{{ detailObj.studentInfo.studentCode }} </el-col>
-            <el-col :span="7"> 当前余额：{{ detailObj.studentInfo.balance }} </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="7"> 年级：{{ detailObj.studentInfo.gradeName }} </el-col>
-            <el-col :span="7"> 级部：{{ detailObj.studentInfo.departmentName }} </el-col>
-            <el-col :span="7"> 班级：{{ detailObj.studentInfo.className }} </el-col>
-          </el-row>
+          <el-descriptions border title="学生信息" style="margin-bottom: 20px">
+            <el-descriptions-item label="学生姓名">{{ detailObj.studentInfo.studentName }}</el-descriptions-item>
+            <el-descriptions-item label="学号">{{ detailObj.studentInfo.studentCode }}</el-descriptions-item>
+            <el-descriptions-item label="当前余额">{{ detailObj.studentInfo.balance }}</el-descriptions-item>
+            <el-descriptions-item label="年级">{{ detailObj.studentInfo.gradeName }}</el-descriptions-item>
+            <el-descriptions-item label="级部">{{ detailObj.studentInfo.departmentName }}</el-descriptions-item>
+            <el-descriptions-item label="班级">{{ detailObj.studentInfo.className }}</el-descriptions-item>
+          </el-descriptions>
         </div>
         <div v-if="detailObj.refundDetails">
           <el-table class="my-custom-table" :data="detailObj.refundDetails">

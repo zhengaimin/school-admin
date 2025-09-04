@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list" @selection-change="handleSelectionChange">
+      <el-table class="my-custom-table" border :data="carbonCk_list" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" /> -->
         <el-table-column label="标签名称" prop="name" width="150"> </el-table-column>
         <el-table-column label="学校" prop="schoolName"> </el-table-column>

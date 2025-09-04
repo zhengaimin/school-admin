@@ -3,9 +3,20 @@
     <div class="filter-box">
       <label for="name">班级名称</label>
       <el-input style="width: 250px" v-model="filterForm.name"></el-input>
+      <label for="name">年级</label>
+      <el-select
+        @change="
+          getdepartmentsList();
+          filterForm.departmentId = '';
+        "
+        style="width: 250px"
+        v-model="filterForm.gradeId"
+      >
+        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+      </el-select>
       <label for="name">级部</label>
       <el-select style="width: 250px" v-model="filterForm.departmentId">
-        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
       </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
@@ -24,7 +35,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="班级名称" prop="name"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
@@ -73,8 +84,8 @@
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="级部" prop="departmentId">
-                <el-select v-model="form.departmentId">
-                  <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                <el-select @focus="getdepartmentsList" v-model="form.departmentId">
+                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -101,6 +112,7 @@
 </template>
 <script>
 import {
+  gradesList,
   departmentsList,
   classesAdd,
   classesUpdate,
@@ -115,11 +127,13 @@ export default {
     return {
       filterForm: {
         name: "",
+        gradeId: "",
         departmentId: ""
       },
       //新增权限系统
       dialogVisibleAdd: false,
       gradesList: [],
+      departmentsList: [],
       form: {
         name: "",
         departmentId: "",
@@ -151,6 +165,9 @@ export default {
     schoolId: {
       handler(newVal) {
         if (newVal) {
+          this.filterForm.name = "";
+          this.filterForm.gradeId = "";
+          this.filterForm.departmentId = "";
           this.getGradesList();
           this.fetchTenantList();
         }
@@ -164,8 +181,8 @@ export default {
   },
   methods: {
     getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=-1`;
-      departmentsList(params).then(res => {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.gradesList = res.data.list;
         } else {
@@ -173,14 +190,27 @@ export default {
         }
       });
     },
+    getdepartmentsList() {
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${gradeId}`;
+      departmentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.departmentsList = res.data.list;
+        } else {
+          this.departmentsList = [];
+        }
+      });
+    },
     reset() {
       this.filterForm.name = "";
+      this.filterForm.gradeId = "";
       this.filterForm.departmentId = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&departmentId=${departmentId}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}&departmentId=${departmentId}`;
       classesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;

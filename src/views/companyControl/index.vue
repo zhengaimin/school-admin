@@ -43,7 +43,7 @@
           </el-col>
           <el-col :span="7" :offset="1">
             <el-form-item label="最大金额(10000元)" prop="maxAmount">
-              <el-input-number style="width: 100%" v-model.number="form.maxAmount" :min="1" :max="10000">
+              <el-input-number style="width: 100%" v-model.number="form.maxAmount" :precision="2" :min="1" :max="10000">
                 <template #prefix>
                   <span>￥</span>
                 </template>

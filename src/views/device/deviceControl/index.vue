@@ -59,7 +59,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list" @selection-change="handleSelectionChange">
+      <el-table class="my-custom-table" border :data="carbonCk_list" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="设备名称" prop="name" width="160"> </el-table-column>
@@ -68,6 +68,7 @@
         <el-table-column label="设备MAC地址" prop="terminalMac"> </el-table-column>
         <el-table-column label="设备地址" prop="location"> </el-table-column>
         <el-table-column label="设备组" prop="deviceGroupName"> </el-table-column>
+        <el-table-column label="已绑定标签" prop=""> </el-table-column>
         <el-table-column label="状态" prop="status">
           <template #default="{ row }">
             {{ ["离线", "在线"][row.status] }}
@@ -354,6 +355,7 @@ export default {
               let msg = `成功绑定${res.data.successCount}, 失败${res.data.failCount}`;
               this.$message.success(msg);
               this.dialogtag = false;
+              this.fetchTenantList();
             } else {
               this.$message.error(res.data.message);
             }

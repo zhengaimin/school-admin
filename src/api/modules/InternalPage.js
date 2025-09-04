@@ -540,3 +540,10 @@ export const giftsList = params => {
 export const giftsDelete = params => {
   return http.delete(`/admin/gifts/${params.id}`);
 };
+// 通话记录
+export const callrecordsList = params => {
+  return http.get(`/admin/call-records?${params}`);
+};
+export const callrecordsDetail = params => {
+  return http.get(`/admin/call-records/${params.id}`);
+};

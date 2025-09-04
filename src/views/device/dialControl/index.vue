@@ -18,35 +18,35 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="学校名称" prop="schoolName" width="160"> </el-table-column>
         <el-table-column label="心跳时间（ms）" prop="heartbeatFrequency"> </el-table-column>
         <el-table-column label="单次通话限定时长（分钟）" prop="callTime"> </el-table-column>
         <el-table-column label="定时开机时间" prop="powerOnTime"> </el-table-column>
         <el-table-column label="定时关机时间" prop="powerOffTime"> </el-table-column>
-        <el-table-column label="禁拨号码" prop="forbidPhone"> </el-table-column>
+        <el-table-column label="禁拨号码" prop="forbidPhone" v-if="false"> </el-table-column>
         <el-table-column label="拨号类型" prop="phoneType"> </el-table-column>
         <el-table-column label="是否显示留言按钮">
           <template #default="{ row }">
             {{ { Y: "是", N: "否" }[row.messageFlag] }}
           </template>
         </el-table-column>
-        <el-table-column label="是否全量同步人脸">
+        <el-table-column label="是否全量同步人脸" v-if="false">
           <template #default="{ row }">
             {{ { Y: "是", N: "否" }[row.downloadUserFlag] }}
           </template>
         </el-table-column>
-        <el-table-column label="开启语音留言">
+        <el-table-column label="开启语音留言" v-if="false">
           <template #default="{ row }">
             {{ { Y: "是", N: "否" }[row.messageSoundFlag] }}
           </template>
         </el-table-column>
-        <el-table-column label="心理咨询身份认证">
+        <el-table-column label="心理咨询身份认证" v-if="false">
           <template #default="{ row }">
             {{ { Y: "是", N: "否" }[row.mhcFlag] }}
           </template>
         </el-table-column>
-        <el-table-column label="刷脸记录人员信息">
+        <el-table-column label="刷脸记录人员信息" v-if="false">
           <template #default="{ row }">
             {{ { Y: "是", N: "否" }[row.addPunchFace] }}
           </template>
@@ -215,91 +215,40 @@
         </el-row>
       </div>
     </el-dialog>
-    <el-dialog v-model="dialogVisibleDetail" :close-on-click-modal="false" title="详情" :width="800">
+    <!-- 详情 -->
+    <el-dialog v-model="dialogVisibleDetail" :close-on-click-modal="false" title="配置详情" :width="800">
       <div style="padding-left: 20px">
-        <el-form ref="linkFormRef" :model="detailForm" :rules="linkRules" class="demo-ruleForm" label-position="left">
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="学校：" prop="">
-                <span>{{ detailForm.schoolName }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="心跳时间（ms）：" prop="heartbeatFrequency">
-                <span>{{ detailForm.heartbeatFrequency }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="单次通话限定时长（分钟）：" prop="callTime">
-                <span>{{ detailForm.callTime }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="拨号类型：" prop="phoneType">
-                <span>{{ detailForm.phoneType }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="定时开机时间：" prop="powerOnTime">
-                <span>{{ detailForm.powerOnTime }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="定时关机时间：" prop="powerOffTime">
-                <span>{{ detailForm.powerOffTime }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="是否显示留言按钮：" prop="messageFlag">
-                <span>{{ detailForm.messageFlag }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="是否全量同步人脸：" prop="downloadUserFlag">
-                <span>{{ detailForm.downloadUserFlag }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="是否启用语音留言：" prop="messageSoundFlag">
-                <span>{{ detailForm.messageSoundFlag }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="心理咨询身份认证：" prop="mhcFlag">
-                <span>{{ detailForm.mhcFlag }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="刷脸记录人员信息：" prop="addPunchFace">
-                <span>{{ detailForm.addPunchFace }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="禁拨号码：" prop="forbidPhone">
-                <span>{{ detailForm.forbidPhone }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="禁拨时间段：" prop="forbidCallTimes">
-                <span>{{ detailForm.forbidCallTimes }}</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
+        <div>
+          <el-descriptions column="2" border title="">
+            <el-descriptions-item label="学校">{{ detailForm.schoolName }}</el-descriptions-item>
+            <el-descriptions-item label="心跳时间（ms）">{{ detailForm.heartbeatFrequency }}</el-descriptions-item>
+            <el-descriptions-item label="单次通话限定时长（分钟）">{{ detailForm.callTime }}</el-descriptions-item>
+            <el-descriptions-item label="拨号类型">{{ detailForm.phoneType }}</el-descriptions-item>
+            <el-descriptions-item label="定时开机时间">{{ detailForm.powerOnTime }}</el-descriptions-item>
+            <el-descriptions-item label="定时关机时间">{{ detailForm.powerOffTime }}</el-descriptions-item>
+            <el-descriptions-item label="是否显示留言按钮">
+              {{ detailForm.messageFlag == "Y" ? "是" : "否" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="是否全量同步人脸">
+              {{ detailForm.downloadUserFlag == "Y" ? "是" : "否" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="是否启用语音留言">
+              {{ detailForm.messageSoundFlag == "Y" ? "是" : "否" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="心理咨询身份认证">
+              {{ detailForm.mhcFlag == "Y" ? "是" : "否" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="刷脸记录人员信息">
+              {{ detailForm.addPunchFace == "Y" ? "是" : "否" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="禁拨号码">
+              {{ detailForm.forbidPhone }}
+            </el-descriptions-item>
+            <el-descriptions-item label="禁拨时间段">
+              {{ detailForm.forbidCallTimes }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
         <el-row :gutter="23">
           <el-col :span="23">
             <div style="margin-top: 20px; text-align: center">

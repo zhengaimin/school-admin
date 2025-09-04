@@ -9,7 +9,7 @@
           <el-icon><User /></el-icon>{{ $t("header.personalData") }}
         </el-dropdown-item>
         <el-dropdown-item>
-          <el-icon><Memo /></el-icon>版本号：Version1.0.1
+          <el-icon><Memo /></el-icon>版本号：Version1.0.2
         </el-dropdown-item>
         <el-dropdown-item divided @click="setLogo" v-if="false && userInfo['is_admin']">
           <el-icon><Setting /></el-icon>系统设置

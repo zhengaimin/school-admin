@@ -18,7 +18,7 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" :data="carbonCk_list">
+      <el-table class="my-custom-table" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="订单号" prop="orderNo" width="160"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
@@ -35,7 +35,7 @@
         <el-table-column label="第三方交易流水号" prop="transactionId" width="170"> </el-table-column>
         <el-table-column label="支付时间" prop="payTime" width="170"> </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
-        <el-table-column label="操作" align="center" width="110" fixed="right">
+        <el-table-column label="操作" align="center" width="110" fixed="right" v-if="false">
           <template #default="scope">
             <div class="table-btn">
               <div @click="editRow(scope.row)">
