@@ -64,7 +64,8 @@ export default {
 ::v-deep(.el-select__placeholder) {
   font-family: cursive;
   font-size: 20px;
-  color: #37affa !important;
+  font-weight: bold;
+  color: #627292 !important;
   border: none !important;
 }
 ::v-deep(.el-select__wrapper) {

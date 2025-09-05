@@ -106,7 +106,9 @@
           <el-descriptions-item label="学生姓名">{{ detailForm.studentName }}</el-descriptions-item>
           <el-descriptions-item label="UUID">{{ detailForm.studentUuid }}</el-descriptions-item>
           <el-descriptions-item label="物理卡号">{{ detailForm.cardNumber }}</el-descriptions-item>
-          <el-descriptions-item label="通话类型">{{ detailForm.callType }}</el-descriptions-item>
+          <el-descriptions-item label="通话类型">{{
+            { VIDEO: "视频通话", SPEECH: "语音通话" }[detailForm.callType]
+          }}</el-descriptions-item>
           <el-descriptions-item label="通道类型">{{ detailForm.channelType }}</el-descriptions-item>
           <el-descriptions-item label="被呼叫号码">{{ detailForm.phoneNumber }}</el-descriptions-item>
           <el-descriptions-item label="联系人称呼">{{ detailForm.contactName }}</el-descriptions-item>
@@ -121,15 +123,17 @@
           <el-descriptions-item label="单价">{{ detailForm.unitPrice }}</el-descriptions-item>
           <el-descriptions-item label="实际扣费金额">{{ detailForm.amount }}</el-descriptions-item>
           <el-descriptions-item label="扣费时间">{{ detailForm.consumeTime }}</el-descriptions-item>
-          <el-descriptions-item label="是否使用套餐">{{ detailForm.isPackageUsage }}</el-descriptions-item>
+          <el-descriptions-item label="是否使用套餐">{{ detailForm.isPackageUsage ? "是" : "否" }}</el-descriptions-item>
           <el-descriptions-item label="使用类型">{{ detailForm.usageTypeText }}</el-descriptions-item>
-          <el-descriptions-item label="是否免费使用">{{ detailForm.isFreeUsage }}</el-descriptions-item>
+          <el-descriptions-item label="是否免费使用">{{ detailForm.isFreeUsage ? "是" : "否" }}</el-descriptions-item>
           <el-descriptions-item label="使用的赠送分钟数">{{ detailForm.giftMinutesUsed }}</el-descriptions-item>
           <el-descriptions-item label="使用的套餐分钟数">{{ detailForm.packageMinutesUsed }}</el-descriptions-item>
           <el-descriptions-item label="使用的余额分钟数">{{ detailForm.balanceMinutesUsed }}</el-descriptions-item>
           <el-descriptions-item label="描述">{{ detailForm.distributionText }}</el-descriptions-item>
           <el-descriptions-item label="套餐名称">{{ detailForm.packageName }}</el-descriptions-item>
-          <el-descriptions-item label="套餐类型">{{ detailForm.packageType }}</el-descriptions-item>
+          <el-descriptions-item label="套餐类型">
+            {{ { FIXED: "固定套餐", GENERAL: "通用套餐" }[detailForm.packageType] }}
+          </el-descriptions-item>
           <el-descriptions-item label="套餐购买价格">{{ detailForm.purchasePrice }}</el-descriptions-item>
           <el-descriptions-item label="套餐开始日期">{{ detailForm.packageStartDate }}</el-descriptions-item>
           <el-descriptions-item label="套餐结束日期">{{ detailForm.packageEndDate }}</el-descriptions-item>

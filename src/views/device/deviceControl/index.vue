@@ -16,20 +16,15 @@
     </div>
     <div class="btn-box">
       <span>
-        <el-button :disabled="!(multipleSelection.length > 0)" type="primary" class="search-btn" @click="updateStatus('restart')">
-          重启
+        <el-button :disabled="!(multipleSelection.length > 0)" type="warning" class="search-btn" @click="updateStatus('restart')">
+          <el-icon style="margin-right: 5px"><Loading /></el-icon> 重启
+        </el-button>
+        <el-button :disabled="!(multipleSelection.length > 0)" type="danger" class="search-btn" @click="updateStatus('shutdown')">
+          <el-icon style="margin-right: 5px"><TurnOff /></el-icon> 关机
         </el-button>
         <el-button
           :disabled="!(multipleSelection.length > 0)"
-          type="primary"
-          class="search-btn"
-          @click="updateStatus('shutdown')"
-        >
-          关机
-        </el-button>
-        <el-button
-          :disabled="!(multipleSelection.length > 0)"
-          type="primary"
+          type="success"
           class="search-btn"
           @click="updateStatus('update_config')"
         >
@@ -37,25 +32,18 @@
         </el-button>
         <el-button
           :disabled="!(multipleSelection.length > 0)"
-          type="primary"
+          type="success"
           class="search-btn"
           @click="updateStatus('sync_user_old')"
         >
           同步人员信息
         </el-button>
-        <el-button :disabled="!(multipleSelection.length > 0)" type="primary" class="search-btn" @click="bindTag">
+        <el-button :disabled="!(multipleSelection.length > 0)" type="success" class="search-btn" @click="bindTag">
           绑定标签
         </el-button>
       </span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog">
-          <img
-            src="@/assets/images/common/add-circle-2.svg"
-            alt=""
-            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
-          />
-          新增
-        </el-button>
+        <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
       </div>
     </div>
     <div class="table-list">

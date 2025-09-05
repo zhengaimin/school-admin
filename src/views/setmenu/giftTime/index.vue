@@ -9,7 +9,7 @@
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
     </div>
     <div class="btn-box">
-      <span>年级固定套餐列表</span>
+      <span>赠送时长信息</span>
       <div>
         <el-button type="primary" class="search-btn" @click="openAddDialog">
           <img
@@ -115,8 +115,19 @@
       <el-dialog v-model="innerDialog" width="900" title="学生" append-to-body>
         <div class="table-list" style="padding: 0 10px">
           <div style="margin: 0 10px 10px 0">
-            <el-select placeholder="年级" style="width: 200px; margin-right: 10px" v-model="filterForm_s.gradeId">
+            <el-select placeholder="年级" @change="getdepartmentsList" style="width: 200px" v-model="filterForm_s.gradeId">
               <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+            </el-select>
+            <el-select
+              placeholder="级部"
+              @change="getClassList"
+              style="width: 200px; margin: 0 10px"
+              v-model="filterForm_s.departmentId"
+            >
+              <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+            </el-select>
+            <el-select placeholder="班级" style="width: 200px; margin-right: 10px" v-model="filterForm_s.classId">
+              <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
             </el-select>
             <el-button type="primary" @click="fetchstudentsList()">查询</el-button>
           </div>
@@ -163,7 +174,15 @@
   </div>
 </template>
 <script>
-import { giftsbatch, giftsList, studentsList, giftsDelete, gradesList } from "@/api/modules/InternalPage.js";
+import {
+  giftsbatch,
+  giftsList,
+  studentsList,
+  giftsDelete,
+  gradesList,
+  departmentsList,
+  classesList
+} from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox } from "element-plus";
 export default {
@@ -195,9 +214,13 @@ export default {
       // 学生
       innerDialog: false,
       filterForm_s: {
-        gradeId: ""
+        gradeId: "",
+        departmentId: "",
+        classId: ""
       },
       gradesList: [],
+      departmentsList: [],
+      classList: [],
       student_list: [],
       multipleSelection: [],
       s_total: 0,
@@ -263,7 +286,6 @@ export default {
     //新增
     openAddDialog() {
       this.dialogVisibleAdd = true;
-      this.getGradesList();
       this.$nextTick(() => {
         this.$refs.linkFormRef.resetFields();
         this.multipleSelection = [];
@@ -271,6 +293,9 @@ export default {
       });
     },
     getGradesList() {
+      this.filterForm_s.gradeId = "";
+      this.filterForm_s.departmentId = "";
+      this.filterForm_s.classId = "";
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
       gradesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -280,10 +305,36 @@ export default {
         }
       });
     },
+    getdepartmentsList() {
+      this.filterForm_s.departmentId = "";
+      this.filterForm_s.classId = "";
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${this.filterForm_s.gradeId}`;
+      departmentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.departmentsList = res.data.list;
+        } else {
+          this.departmentsList = [];
+        }
+      });
+    },
+    // 获取班级
+    getClassList() {
+      this.filterForm_s.classId = "";
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${this.filterForm_s.gradeId}&departmentId=${this.filterForm_s.departmentId}`;
+      classesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.classList = res.data.list;
+        } else {
+          this.classList = [];
+        }
+      });
+    },
     // 学生列表
     fetchstudentsList() {
       let gradeId = this.filterForm_s.gradeId ? this.filterForm_s.gradeId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=&gradeId=${gradeId}`;
+      let departmentId = this.filterForm_s.departmentId ? this.filterForm_s.departmentId : -1;
+      let classId = this.filterForm_s.classId ? this.filterForm_s.classId : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       studentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.student_list = res.data.list;
@@ -306,6 +357,7 @@ export default {
     },
     addStudent() {
       this.innerDialog = true;
+      this.getGradesList();
       this.fetchstudentsList();
     },
     handleSelectionChange(val) {

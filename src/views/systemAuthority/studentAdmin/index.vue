@@ -2,11 +2,19 @@
   <div class="table-box">
     <div class="filter-box">
       <label for="name">学生姓名</label>
-      <el-input style="width: 250px" v-model="filterForm.name"></el-input>
-      <!-- <label for="name">年级</label>
-      <el-select style="width: 250px" v-model="filterForm.gradeId">
+      <el-input style="width: 150px" v-model="filterForm.name"></el-input>
+      <label for="">年级</label>
+      <el-select placeholder="年级" @change="getdepartmentsList" style="width: 150px" v-model="filterForm.gradeId">
         <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select> -->
+      </el-select>
+      <label for="">级部</label>
+      <el-select placeholder="级部" @change="getClassList" style="width: 150px" v-model="filterForm.departmentId">
+        <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+      </el-select>
+      <label for="">班级</label>
+      <el-select placeholder="班级" style="width: 150px" v-model="filterForm.classId">
+        <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+      </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
     </div>
@@ -107,7 +115,7 @@
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="年级" prop="gradeId">
-                <el-select v-model="form.gradeId">
+                <el-select @change="getdepartmentsList" v-model="form.gradeId">
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -116,14 +124,14 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="级部" prop="">
-                <el-select v-model="form.departmentId" @focus="getdepartmentsList">
+                <el-select v-model="form.departmentId" @change="getClassList">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="班级" prop="">
-                <el-select v-model="form.classId" @focus="getClassList">
+                <el-select v-model="form.classId">
                   <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -355,6 +363,13 @@
           </el-row>
         </div>
       </el-dialog>
+      <el-row :gutter="23">
+        <el-col :span="23">
+          <div style="margin-top: 20px; text-align: center">
+            <el-button @click="parentDialog = false">关闭</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-dialog>
     <!-- 批量导出学生信息 -->
     <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="800">
@@ -363,14 +378,14 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="年级" prop="gradeId">
-                <el-select v-model="exportForm.gradeId">
+                <el-select @change="getdepartmentsList" v-model="exportForm.gradeId">
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="级部" prop="departmentId">
-                <el-select v-model="exportForm.departmentId" @focus="getdepartmentsList">
+                <el-select v-model="exportForm.departmentId" @change="getClassList">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -380,7 +395,7 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="班级" prop="classId">
-                <el-select v-model="exportForm.classId" @focus="getClassList">
+                <el-select v-model="exportForm.classId">
                   <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -423,7 +438,9 @@ export default {
     return {
       filterForm: {
         name: "",
-        gradeId: ""
+        gradeId: "",
+        departmentId: "",
+        classId: ""
       },
       //新增权限系统
       dialogVisibleAdd: false,
@@ -563,6 +580,9 @@ export default {
         if (newVal) {
           this.getGradesList();
           this.fetchTenantList();
+          this.filterForm.gradeId = "";
+          this.filterForm.departmentId = "";
+          this.filterForm.classId = "";
         }
       },
       immediate: true
@@ -596,6 +616,13 @@ export default {
       });
     },
     getdepartmentsList() {
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
+      this.form.departmentId = "";
+      this.form.classId = "";
+      this.exportForm.departmentId = "";
+      this.exportForm.classId = "";
+
       let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${this.form.gradeId}`;
       departmentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -607,6 +634,9 @@ export default {
     },
     // 获取班级
     getClassList() {
+      this.filterForm.classId = "";
+      this.form.classId = "";
+      this.exportForm.classId = "";
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${this.form.gradeId}&departmentId=${this.form.departmentId}`;
       classesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -620,11 +650,15 @@ export default {
     reset() {
       this.filterForm.name = "";
       this.filterForm.gradeId = "";
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}`;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let classId = this.filterForm.classId ? this.filterForm.classId : -1;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       studentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;

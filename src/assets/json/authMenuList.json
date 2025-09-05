@@ -476,7 +476,7 @@
           "component": "/setmenu/giftTime/index",
           "meta": {
             "icon": "",
-            "title": "赠送时间",
+            "title": "赠送时长",
             "isLink": "",
             "isHide": false,
             "isFull": false,

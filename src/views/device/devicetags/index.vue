@@ -22,10 +22,10 @@
     <div class="table-list">
       <el-table class="my-custom-table" border :data="carbonCk_list" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" /> -->
+        <el-table-column label="学校" prop="schoolName" width="150"> </el-table-column>
         <el-table-column label="标签名称" prop="name" width="150"> </el-table-column>
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="排序" prop="sort" width="140"> </el-table-column>
-        <el-table-column label="描述" prop="description" width="220"> </el-table-column>
+        <el-table-column label="描述" prop="description"> </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
         <el-table-column label="更新时间" prop="updatedAt" width="170"> </el-table-column>
         <el-table-column label="操作" align="center" width="250" fixed="right">

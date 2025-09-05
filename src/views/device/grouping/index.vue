@@ -19,7 +19,7 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" border :data="carbonCk_list">
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="学校" prop="schoolName" width="150"> </el-table-column>
         <el-table-column label="设备组名称" prop="name" width="150"> </el-table-column>
         <el-table-column label="当前设备数（台）" prop="currentDeviceCount" width="140"> </el-table-column>
         <el-table-column label="最大设备数（台）" prop="maxDeviceCount" width="140"> </el-table-column>

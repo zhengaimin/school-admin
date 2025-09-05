@@ -16,7 +16,12 @@
       </el-select>
       <label for="name">级部</label>
       <el-select style="width: 250px" v-model="filterForm.departmentId">
-        <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)">
+          <span style="float: left">{{ v.name }}</span>
+          <span style="float: right; font-size: 13px; color: var(--el-text-color-secondary)">
+            {{ v.gradeName }}
+          </span>
+        </el-option>
       </el-select>
       <el-button style="margin-left: 20px" @click="reset">重置</el-button>
       <el-button type="primary" @click="fetchTenantList">查询</el-button>
@@ -85,7 +90,12 @@
             <el-col :span="11" :offset="1">
               <el-form-item label="级部" prop="departmentId">
                 <el-select @focus="getdepartmentsList" v-model="form.departmentId">
-                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)">
+                    <span style="float: left">{{ v.name }}</span>
+                    <span style="float: right; font-size: 13px; color: var(--el-text-color-secondary)">
+                      {{ v.gradeName }}
+                    </span>
+                  </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
