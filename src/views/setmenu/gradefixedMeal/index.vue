@@ -23,6 +23,7 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="语音通话时长（分钟/月）" prop="videoCallMinutes" width="190"> </el-table-column>
         <el-table-column label="基础价格（元/月）" prop="basePrice"> </el-table-column>

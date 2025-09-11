@@ -23,6 +23,7 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="总赠送分钟数" prop="totalMinutes"> </el-table-column>
         <el-table-column label="已使用分钟数" prop="usedMinutes"> </el-table-column>

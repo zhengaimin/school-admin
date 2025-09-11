@@ -28,12 +28,12 @@
             {{ row.isVoipGroup ? "是" : "否" }}
           </template>
         </el-table-column>
-        <el-table-column label="状态">
+        <el-table-column label="状态" width="120">
           <template #default="{ row }">
             <el-switch @change="changeStatus(row)" v-model="row.status" :active-value="1" :inactive-value="0" />
           </template>
         </el-table-column>
-        <el-table-column label="描述" prop="description" width="220"> </el-table-column>
+        <el-table-column label="描述" prop="description"> </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
         <el-table-column label="更新时间" prop="updatedAt" width="170"> </el-table-column>
         <el-table-column label="操作" align="center" width="110" fixed="right">

@@ -23,9 +23,9 @@
         <el-table-column label="订单号" prop="orderNo" width="160"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
-        <el-table-column label="充值金额" prop="amount"> </el-table-column>
+        <el-table-column label="充值金额（元）" prop="amount"> </el-table-column>
         <el-table-column label="支付方式" prop="paymentMethod"> </el-table-column>
-        <el-table-column label="支付人" prop="userName"> </el-table-column>
+        <el-table-column label="支付人" prop="payerName"> </el-table-column>
         <el-table-column label="支付状态">
           <template #default="{ row }">
             {{ ["待支付", "支付成功", "支付失败", "已退款", "已取消", "已过期"][row.status] }}
@@ -184,6 +184,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
+      this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
       let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}`;
       paymentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {

@@ -23,8 +23,9 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
-        <el-table-column label="费率值（元/分钟）" prop="rate"> </el-table-column>
+        <el-table-column label="费率值（元/条）" prop="rate"> </el-table-column>
         <el-table-column label="套餐描述" prop="description"> </el-table-column>
         <el-table-column label="操作" align="center" width="110" fixed="right">
           <template #default="scope">
@@ -75,8 +76,8 @@
           </el-row>
           <el-row>
             <el-col :span="23">
-              <el-form-item label="费率值（元/分钟）" prop="rate">
-                <el-input-number style="width: 100%" v-model.number="form.rate" :min="0.01">
+              <el-form-item label="费率值（元/条）" prop="rate">
+                <el-input-number style="width: 100%" v-model.number="form.rate" :min="0">
                   <template #prefix>
                     <span>
                       <el-icon><Microphone /></el-icon>
@@ -132,7 +133,7 @@ export default {
       form: {
         schoolId: "",
         gradeIds: [],
-        rate: "",
+        rate: 0,
         description: ""
       },
       linkRules: {

@@ -149,7 +149,7 @@
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="心理咨询身份认证" prop="mhcFlag">
-                <el-radio-group v-model="form.mhcFlag">
+                <el-radio-group disabled v-model="form.mhcFlag">
                   <el-radio value="Y">是</el-radio>
                   <el-radio value="N">否</el-radio>
                 </el-radio-group>

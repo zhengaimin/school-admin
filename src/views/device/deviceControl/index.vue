@@ -38,6 +38,22 @@
         >
           同步人员信息
         </el-button>
+        <el-button
+          :disabled="!(multipleSelection.length > 0)"
+          type="success"
+          class="search-btn"
+          @click="updateStatus('clear_user')"
+        >
+          清除人员数据
+        </el-button>
+        <el-button
+          :disabled="!(multipleSelection.length > 0)"
+          type="success"
+          class="search-btn"
+          @click="updateStatus('count_user')"
+        >
+          查询人员数据
+        </el-button>
         <el-button :disabled="!(multipleSelection.length > 0)" type="success" class="search-btn" @click="bindTag">
           绑定标签
         </el-button>
@@ -56,7 +72,19 @@
         <el-table-column label="设备MAC地址" prop="terminalMac"> </el-table-column>
         <el-table-column label="设备地址" prop="location"> </el-table-column>
         <el-table-column label="设备组" prop="deviceGroupName"> </el-table-column>
-        <el-table-column label="已绑定标签" prop=""> </el-table-column>
+        <el-table-column label="已绑定标签" width="130">
+          <template #default="{ row }">
+            <div v-if="row.tags">
+              <div
+                style="padding: 0 5px; margin-bottom: 5px; border: 1px solid #cccccc; border-radius: 3px"
+                v-for="v in row.tags"
+                :key="v.id"
+              >
+                {{ v.name }}
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="状态" prop="status">
           <template #default="{ row }">
             {{ ["离线", "在线"][row.status] }}

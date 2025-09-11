@@ -201,6 +201,20 @@
           }
         },
         {
+          "path": "/fund/packagePurchase",
+          "name": "packagePurchase",
+          "component": "/fund/packagePurchase/index",
+          "meta": {
+            "icon": "",
+            "title": "套餐购买记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
           "path": "/fund/consumption",
           "name": "consumption",
           "component": "/fund/consumption/index",
@@ -214,20 +228,7 @@
             "isKeepAlive": false
           }
         },
-        {
-          "path": "/fund/phoneList",
-          "name": "phoneList",
-          "component": "/fund/phoneList/index",
-          "meta": {
-            "icon": "",
-            "title": "通话记录",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": false
-          }
-        },
+
         {
           "path": "/fund/refund",
           "name": "refund",
@@ -370,6 +371,7 @@
             "isKeepAlive": false
           }
         },
+
         {
           "path": "/device/TimeControl",
           "name": "TimeControl",
@@ -485,6 +487,64 @@
           }
         }
       ]
+    },
+    {
+      "path": "/messagesall",
+      "name": "messagesall",
+      "component": "/messagesall/index",
+      "meta": {
+        "icon": "Comment",
+        "title": "日志管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      },
+      "children": [
+        {
+          "path": "/fund/phoneList",
+          "name": "phoneList",
+          "component": "/fund/phoneList/index",
+          "meta": {
+            "icon": "",
+            "title": "通话记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        },
+        {
+          "path": "/device/messages",
+          "name": "messages",
+          "component": "/device/messages/index",
+          "meta": {
+            "icon": "",
+            "title": "留言记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/moduleControl",
+      "name": "moduleControl",
+      "component": "/moduleControl/index",
+      "meta": {
+        "icon": "Grid",
+        "title": "小程序模块配置",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
     },
     {
       "path": "/companyControl",

@@ -19,17 +19,18 @@
         <el-table-column label="退款申请单号" prop="refundNo" width="150"> </el-table-column>
         <el-table-column label="退款状态" prop="status" width="130">
           <template #default="{ row }">
-            {{ ["待审核", "审核通过", "退款中", "全部退款完成", "部分退款完成", "审核不通过", "用户取消"][row.status] }}
+            {{
+              ["待审核", "审核通过", "退款中", "全部退款完成", "部分退款完成", "审核不通过", "用户取消", "全部失败"][row.status]
+            }}
           </template>
         </el-table-column>
-        <el-table-column label="申请退款金额（元）" prop="applyAmount" width="155"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
-        <el-table-column label="申请人" prop="applicantName"> </el-table-column>
-        <el-table-column label="退款类型" prop="refundType" width="140">
+        <el-table-column label="学校" prop="schoolName" width="110"> </el-table-column>
+        <el-table-column label="申请人" prop="applicantName" width="110"> </el-table-column>
+        <el-table-column label="退款类型" width="140">
           <template #default="{ row }">
-            {{ { FULL: "全额退款", SINGLE: "部分退款" }[row.refundType] }}
+            {{ { FULL: "全额退款", SINGLE: "部分退款", PACKAGE: "套餐退款" }[row.refundType] }}
           </template>
         </el-table-column>
         <el-table-column label="申请退款金额（元）" prop="applyAmount" width="155"> </el-table-column>
@@ -80,11 +81,10 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.approved">
             <el-col :span="23">
-              <el-form-item label="退款金额（如何不填则以用户申请金额为准）" prop="actualAmount">
-                <!-- <el-input type="number" style="width: 100%" v-model.number="form.actualAmount" /> -->
-                <el-input-number style="width: 100%" :precision="2" v-model.number="form.actualAmount" :min="0" :max="10000">
+              <el-form-item label="退款金额（如何不填则以用户申请金额为准,最多两位小数）" prop="actualAmount">
+                <el-input-number style="width: 100%" :precision="2" v-model.number="form.actualAmount" :min="0">
                   <template #prefix>
                     <span>￥</span>
                   </template>
@@ -162,7 +162,8 @@ export default {
         { id: "3", name: "全部退款完成" },
         { id: "4", name: "部分退款完成" },
         { id: "5", name: "审核不通过" },
-        { id: "6", name: "用户取消" }
+        { id: "6", name: "用户取消" },
+        { id: "7", name: "全部失败" }
       ],
       //新增权限系统
       dialogVisibleAdd: false,
@@ -238,20 +239,26 @@ export default {
 
     //审核
     editRow(row) {
+      this.row = row;
       this.dialogVisibleAdd = true;
       this.form.refundApplicationId = row.id;
+      this.form.actualAmount = Number(row.applyAmount);
     },
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          if (this.form.actualAmount < 0 || this.form.actualAmount == 0) {
-            this.$message.error("实际退款金额必须大于0");
-            return;
-          }
-          if (this.form.actualAmount == "") {
-            delete this.form.actualAmount;
+          if (this.form.approved) {
+            if (this.form.actualAmount == "" || !this.form.actualAmount) {
+              delete this.form.actualAmount;
+            } else {
+              this.form.actualAmount = Number(this.form.actualAmount);
+            }
+            // if (this.form.actualAmount > Number(this.row.applyAmount)) {
+            //   this.$message.error("实际退款金额不能大于申请退款金额");
+            //   return;
+            // }
           } else {
-            this.form.actualAmount = Number(this.form.actualAmount);
+            delete this.form.actualAmount;
           }
           if (this.form.refundApplicationId) {
             refundscheck(this.form).then(res => {

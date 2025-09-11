@@ -320,6 +320,13 @@ export const paymentsList = params => {
 export const paymentsDetail = params => {
   return http.get(`/admin/payments/${params.id}`);
 };
+// 套餐购买记录
+export const packagerecordsList = params => {
+  return http.get(`/admin/package-records?${params}`);
+};
+export const packagerecordsDetail = params => {
+  return http.get(`/admin/package-records/${params.id}`);
+};
 
 export const paymentsStatisticsList = params => {
   return http.get(`/admin/payments/statistics?${params}`);
@@ -546,4 +553,21 @@ export const callrecordsList = params => {
 };
 export const callrecordsDetail = params => {
   return http.get(`/admin/call-records/${params.id}`);
+};
+// 留言记录
+export const messagesList = params => {
+  return http.get(`/admin/messages?${params}`);
+};
+export const messagesDetail = params => {
+  return http.get(`/admin/messages/${params.id}`);
+};
+// 模板
+export const modulesassign = params => {
+  return http.post(`/admin/miniapp-modules/assign`, params);
+};
+export const availableList = params => {
+  return http.get(`/admin/miniapp-modules/available?${params}`);
+};
+export const modulesList = params => {
+  return http.get(`/admin/miniapp-modules?${params}`);
 };

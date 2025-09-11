@@ -36,12 +36,18 @@
             <img style="width: 70px; max-height: 70px; border-radius: 50%" :src="row.faceImageUrl" alt="" srcset="" />
           </template>
         </el-table-column>
+        <el-table-column label="人脸核验" width="95">
+          <template #default="{ row }">
+            {{ ["未采集", "已采集", "审核中", "审核通过", "审核失败"][row.faceStatus] }}
+          </template>
+        </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="班级" prop="className"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
         <el-table-column label="性别" prop="sex"> </el-table-column>
         <el-table-column label="身份证" prop="idCard" width="200"> </el-table-column>
+        <el-table-column label="UUID" prop="uuid" width="180"> </el-table-column>
         <el-table-column label="IC卡号" prop="cardNumber" width="180"> </el-table-column>
         <el-table-column label="电话" prop="phone" width="150"> </el-table-column>
         <el-table-column label="监护人" prop="guardianName" width="110"> </el-table-column>

@@ -19,13 +19,15 @@
         <el-table-column label="退款申请单号" prop="refundNo" width="150"> </el-table-column>
         <el-table-column label="退款状态" prop="status" width="130">
           <template #default="{ row }">
-            {{ ["待审核", "审核通过", "退款中", "全部退款完成", "部分退款完成", "审核不通过", "用户取消"][row.status] }}
+            {{
+              ["待审核", "审核通过", "退款中", "全部退款完成", "部分退款完成", "审核不通过", "用户取消", "全部失败"][row.status]
+            }}
           </template>
         </el-table-column>
         <el-table-column label="申请退款金额（元）" prop="applyAmount" width="155"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="学号" prop="studentCode" width="140"> </el-table-column>
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="学校" prop="schoolName" width="140"> </el-table-column>
         <el-table-column label="申请人" prop="applicantName"> </el-table-column>
         <el-table-column label="退款类型" prop="refundType" width="120">
           <template #default="{ row }">
@@ -157,7 +159,8 @@ export default {
         { id: "3", name: "全部退款完成" },
         { id: "4", name: "部分退款完成" },
         { id: "5", name: "审核不通过" },
-        { id: "6", name: "用户取消" }
+        { id: "6", name: "用户取消" },
+        { id: "7", name: "全部失败" }
       ],
       //新增权限系统
       dialogVisibleAdd: false,

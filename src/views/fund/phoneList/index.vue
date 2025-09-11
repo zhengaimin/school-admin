@@ -33,6 +33,8 @@
         <el-table-column label="班级" prop="className"> </el-table-column>
         <el-table-column label="实际扣费金额（元）" prop="amount" width="160"> </el-table-column>
         <el-table-column label="通话时长" prop="callDurationFormatted" width="90"> </el-table-column>
+        <el-table-column label="通话开始时间" prop="callStartTime" width="140"> </el-table-column>
+        <el-table-column label="通话结束时间" prop="callEndTime" width="140"> </el-table-column>
         <el-table-column label="联系人称呼" prop="contactName" width="120"> </el-table-column>
         <el-table-column label="被呼叫号码" prop="phoneNumber" width="120"> </el-table-column>
         <el-table-column label="物理卡号" prop="cardNumber" width="150"> </el-table-column>
@@ -60,7 +62,7 @@
         <el-table-column label="套餐留言剩余条数" align="center" width="150">
           <template #default="{ row }">
             <span v-if="row.studentBalance">
-              {{ row.studentBalance.packageMessageCount }}
+              {{ row.studentBalance.packageMessageCount == -1 ? "不限数量" : row.studentBalance.packageMessageCount }}
             </span>
           </template>
         </el-table-column>
@@ -95,7 +97,7 @@
             <el-descriptions-item label="赠送通话剩余分钟数">{{ detailForm.studentBalance.giftMinutes }}</el-descriptions-item>
             <el-descriptions-item label="套餐通话剩余分钟数">{{ detailForm.studentBalance.packageMinutes }}</el-descriptions-item>
             <el-descriptions-item label="套餐留言剩余条数">{{
-              detailForm.studentBalance.packageMessageCount
+              detailForm.studentBalance.packageMessageCount == -1 ? "不限数量" : detailForm.studentBalance.packageMessageCount
             }}</el-descriptions-item>
             <el-descriptions-item label="状态">{{
               detailForm.studentBalance.status == 1 ? "正常" : "冻结"
