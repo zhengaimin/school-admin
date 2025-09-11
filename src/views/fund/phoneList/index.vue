@@ -25,9 +25,9 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName" width="130"> </el-table-column>
         <el-table-column label="学生" prop="studentName"> </el-table-column>
-        <el-table-column label="学校" prop="schoolName" width="150"> </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="班级" prop="className"> </el-table-column>

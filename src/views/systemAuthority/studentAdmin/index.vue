@@ -1,22 +1,36 @@
 <template>
   <div class="table-box">
     <div class="filter-box">
-      <label for="name">学生姓名</label>
-      <el-input style="width: 150px" v-model="filterForm.name"></el-input>
-      <label for="">年级</label>
-      <el-select placeholder="年级" @change="getdepartmentsList" style="width: 150px" v-model="filterForm.gradeId">
-        <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select>
-      <label for="">级部</label>
-      <el-select placeholder="级部" @change="getClassList" style="width: 150px" v-model="filterForm.departmentId">
-        <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select>
-      <label for="">班级</label>
-      <el-select placeholder="班级" style="width: 150px" v-model="filterForm.classId">
-        <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select>
-      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
-      <el-button type="primary" @click="fetchTenantList">查询</el-button>
+      <div>
+        <label for="name">学生姓名</label>
+        <el-input v-model="filterForm.name" style="width: calc(100% - 90px)"></el-input>
+      </div>
+      <div>
+        <label for="name">学号</label>
+        <el-input v-model="filterForm.studentCode" style="width: calc(100% - 90px)"></el-input>
+      </div>
+      <div>
+        <label for="">年级</label>
+        <el-select placeholder="年级" @change="getdepartmentsList" style="width: calc(100% - 60px)" v-model="filterForm.gradeId">
+          <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">级部</label>
+        <el-select placeholder="级部" @change="getClassList" style="width: calc(100% - 70px)" v-model="filterForm.departmentId">
+          <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">班级</label>
+        <el-select placeholder="班级" style="width: calc(100% - 90px)" v-model="filterForm.classId">
+          <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <el-button @click="reset" style="margin-left: 20px">重置</el-button>
+        <el-button type="primary" @click="fetchTenantList">查询</el-button>
+      </div>
     </div>
     <div class="btn-box">
       <span>学生信息</span>
@@ -29,7 +43,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" border height="100%" :data="carbonCk_list">
         <el-table-column label="学生姓名" prop="name" width="95"> </el-table-column>
         <el-table-column label="图片" width="95" align="center">
           <template #default="{ row }">
@@ -98,25 +112,16 @@
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="学生姓名" prop="name">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="性别" prop="sex">
-                <el-select v-model="form.sex">
-                  <el-option v-for="v in genderList" :key="v.id" :label="v.name" :value="v.id"></el-option>
-                </el-select>
-              </el-form-item>
+            <el-col :span="23">
+              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+              </div>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="学生类型" prop="studentType">
-                <el-select v-model="form.studentType">
-                  <el-option v-for="v in typeList" :key="v.id" :label="v.name" :value="v.id"></el-option>
-                </el-select>
+              <el-form-item label="学生姓名" prop="name">
+                <el-input v-model="form.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
@@ -129,14 +134,14 @@
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="级部" prop="">
+              <el-form-item label="级部" prop="departmentId">
                 <el-select v-model="form.departmentId" @change="getClassList">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
-              <el-form-item label="班级" prop="">
+              <el-form-item label="班级" prop="classId">
                 <el-select v-model="form.classId">
                   <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
@@ -145,13 +150,29 @@
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="身份证号(身份证和学号至少填一个)" prop="idCard">
+              <el-form-item label="身份证号(备注:身份证和学号至少填一个)" prop="idCard">
                 <el-input v-model="form.idCard"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="学号" prop="studentCode">
                 <el-input v-model="form.studentCode"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="学生类型" prop="studentType">
+                <el-select v-model="form.studentType">
+                  <el-option v-for="v in typeList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="性别" prop="sex">
+                <el-select v-model="form.sex">
+                  <el-option v-for="v in genderList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -236,6 +257,13 @@
     <!-- 导入 -->
     <el-dialog v-model="strumentsloadFlag" :close-on-click-modal="false" title="导入" :width="800">
       <div style="min-height: 100px; text-align: center">
+        <el-row>
+          <el-col :span="23">
+            <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+              学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+            </div>
+          </el-col>
+        </el-row>
         <el-row v-if="!falseFlag">
           <el-col :span="24">
             <el-upload
@@ -382,6 +410,13 @@
       <div style="padding-left: 20px">
         <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="top">
           <el-row>
+            <el-col :span="23">
+              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item label="年级" prop="gradeId">
                 <el-select @change="getdepartmentsList" v-model="exportForm.gradeId">
@@ -444,6 +479,7 @@ export default {
     return {
       filterForm: {
         name: "",
+        studentCode: "",
         gradeId: "",
         departmentId: "",
         classId: ""
@@ -479,8 +515,6 @@ export default {
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
-        sex: [{ required: true, message: "必填项", trigger: "blur" }],
-        studentType: [{ required: true, message: "必填项", trigger: "blur" }],
         gradeId: [{ required: true, message: "必填项", trigger: "blur" }],
         departmentId: [{ required: true, message: "必填项", trigger: "blur" }],
         classId: [{ required: true, message: "必填项", trigger: "blur" }]
@@ -540,6 +574,9 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    schoolName() {
+      return useUserStore().schoolMsg.schoolName;
     },
     loadTemple() {
       if (process.env.NODE_ENV == "development") {
@@ -655,6 +692,7 @@ export default {
 
     reset() {
       this.filterForm.name = "";
+      this.filterForm.studentCode = "";
       this.filterForm.gradeId = "";
       this.filterForm.departmentId = "";
       this.filterForm.classId = "";
@@ -664,7 +702,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&studentCode=${this.filterForm.studentCode}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       studentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;

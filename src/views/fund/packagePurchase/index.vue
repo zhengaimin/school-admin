@@ -18,7 +18,7 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName" width="160"> </el-table-column>
         <el-table-column label="学生" prop="studentName" width="110"> </el-table-column>
         <el-table-column label="购买人" prop="purchaserName" width="110"> </el-table-column>

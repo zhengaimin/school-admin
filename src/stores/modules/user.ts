@@ -7,7 +7,7 @@ export const useUserStore = defineStore({
   state: (): UserState => ({
     token: "",
     userInfo: { name: "" },
-    schoolMsg: { schoolId: "" },
+    schoolMsg: { schoolId: "", schoolName: "" },
     count: 0
   }),
   getters: {},

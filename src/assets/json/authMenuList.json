@@ -316,20 +316,6 @@
           }
         },
         {
-          "path": "/device/command",
-          "name": "command",
-          "component": "/device/command/index",
-          "meta": {
-            "icon": "",
-            "title": "设备命令",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": false
-          }
-        },
-        {
           "path": "/device/rate",
           "name": "rate",
           "component": "/device/rate/index",
@@ -408,7 +394,7 @@
           "component": "/setmenu/schoolrate/index",
           "meta": {
             "icon": "",
-            "title": "学校费率及套餐",
+            "title": "学校费率",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -529,6 +515,20 @@
             "isAffix": false,
             "isKeepAlive": false
           }
+        },
+        {
+          "path": "/device/command",
+          "name": "command",
+          "component": "/device/command/index",
+          "meta": {
+            "icon": "",
+            "title": "命令记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
         }
       ]
     },
@@ -553,6 +553,20 @@
       "meta": {
         "icon": "Tools",
         "title": "商户号配置",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "path": "/paymentConfig",
+      "name": "paymentConfig",
+      "component": "/paymentConfig/index",
+      "meta": {
+        "icon": "WalletFilled",
+        "title": "支付金额配置",
         "isLink": "",
         "isHide": false,
         "isFull": false,

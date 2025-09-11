@@ -11,18 +11,13 @@
     <div class="btn-box">
       <span>年级管理</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog">
-          <img
-            src="@/assets/images/common/add-circle-2.svg"
-            alt=""
-            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
-          />
-          新增
-        </el-button>
+        <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
+        <el-button type="primary" class="search-btn"> 导入-no </el-button>
+        <el-button type="primary" class="search-btn"> 导出-no </el-button>
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="年级名称" prop="name"> </el-table-column>
         <el-table-column label="入学年份" prop="enrollYear"> </el-table-column>
@@ -68,7 +63,14 @@
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
           <el-row>
-            <el-col :span="16">
+            <el-col :span="23">
+              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
               <el-form-item label="年级名称" prop="name">
                 <el-input v-model="form.name"></el-input>
               </el-form-item>
@@ -148,6 +150,9 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    schoolName() {
+      return useUserStore().schoolMsg.schoolName;
     }
   },
   // 监听schoolId的变化

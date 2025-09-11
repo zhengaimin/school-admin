@@ -15,7 +15,7 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="退款申请单号" prop="refundNo" width="150"> </el-table-column>
         <el-table-column label="退款状态" prop="status" width="130">
           <template #default="{ row }">

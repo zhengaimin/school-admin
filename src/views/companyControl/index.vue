@@ -13,48 +13,11 @@
               <el-input v-model="form.merchantSecret" type="password" show-password></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="7" :offset="1">
-            <el-form-item label="微信应用ID" prop="appId">
-              <el-input v-model="form.appId"></el-input>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="7">
-            <el-form-item label="微信应用密钥" prop="appSecret">
-              <el-input v-model="form.appSecret" type="password" show-password></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="7" :offset="1">
-            <el-form-item label="证书序列号" prop="serialNumber">
-              <el-input v-model="form.serialNumber"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="7">
-            <el-form-item label="最小金额（1元）" prop="minAmount">
-              <el-input-number style="width: 100%" v-model.number="form.minAmount" :min="1" :max="1000">
-                <template #prefix>
-                  <span>￥</span>
-                </template>
-              </el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="7" :offset="1">
-            <el-form-item label="最大金额(10000元)" prop="maxAmount">
-              <el-input-number style="width: 100%" v-model.number="form.maxAmount" :precision="2" :min="1" :max="10000">
-                <template #prefix>
-                  <span>￥</span>
-                </template>
-              </el-input-number>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="23">
+          <el-col :span="15">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark"></el-input>
+              <el-input type="textarea" v-model="form.remark"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -96,16 +59,14 @@ export default {
         tenantId: "",
         merchantId: "",
         merchantSecret: "",
-        appId: "",
-        appSecret: "",
-        serialNumber: "",
         remark: "",
         certFile: "",
-        keyFile: "",
-        minAmount: 1,
-        maxAmount: 5000
+        keyFile: ""
       },
-      linkRules: {}
+      linkRules: {
+        merchantId: [{ required: true, message: "请输入微信商户号", trigger: "blur" }],
+        merchantSecret: [{ required: true, message: "请输入微信商户密钥", trigger: "blur" }]
+      }
     };
   },
   computed: {
@@ -151,13 +112,7 @@ export default {
       fb.append("keyFile", file1);
       fb.append("merchantId", this.form.merchantId);
       fb.append("merchantSecret", this.form.merchantSecret);
-      fb.append("appId", this.form.appId);
-      fb.append("appSecret", this.form.appSecret);
-      fb.append("serialNumber", this.form.serialNumber);
       fb.append("remark", this.form.remark);
-      fb.append("minAmount", Number(this.form.minAmount));
-      fb.append("maxAmount", Number(this.form.maxAmount));
-
       let url = this.wechatputConfig + "/" + this.userInfo.tenantId;
       axios
         .put(url, fb, {

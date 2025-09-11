@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName"> </el-table-column>
         <el-table-column label="电话号码" prop="phoneNumber"> </el-table-column>
         <el-table-column label="称呼" prop="salutation"> </el-table-column>
@@ -70,6 +70,13 @@
     <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="600">
       <div style="padding-left: 20px">
         <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
+          <el-row>
+            <el-col :span="23">
+              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+              </div>
+            </el-col>
+          </el-row>
           <el-row>
             <el-col :span="23">
               <el-form-item label="电话号码" prop="phoneNumber">
@@ -165,6 +172,9 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    schoolName() {
+      return useUserStore().schoolMsg.schoolName;
     }
   },
   watch: {

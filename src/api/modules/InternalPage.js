@@ -571,3 +571,10 @@ export const availableList = params => {
 export const modulesList = params => {
   return http.get(`/admin/miniapp-modules?${params}`);
 };
+// 金额配置
+export const paymentconfigstenant = params => {
+  return http.get(`/admin/payment-configs/tenant/${params.tenantId}`);
+};
+export const paymentconfigsadd = params => {
+  return http.put(`/admin/payment-configs/tenant/${params.tenantId}`, params);
+};

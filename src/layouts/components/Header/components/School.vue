@@ -35,18 +35,19 @@ export default {
     }
   },
   mounted() {
-    this.fetchTenantList();
+    this.fetchTenantList("load");
   },
   methods: {
-    fetchTenantList() {
+    fetchTenantList(val) {
       let params = `page=1&pageSize=200`;
       schoolsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.schoolList = res.data.list;
-          // 在第一位添加一个元素
           this.schoolList.unshift({ id: "-1", name: "全部学校" });
-          this.school = this.schoolList[1].id;
-          this.userStore.setSchoolMsg({ schoolId: this.school });
+          if (val == "load") {
+            this.school = this.schoolList[1].id;
+            this.userStore.setSchoolMsg({ schoolId: this.school, schoolName: this.schoolList[1].name });
+          }
         } else {
           this.schoolList = [{ id: "-1", name: "全部学校" }];
           this.userStore.setSchoolMsg({ schoolId: "-1" });
@@ -55,7 +56,8 @@ export default {
       });
     },
     selectSchool() {
-      this.userStore.setSchoolMsg({ schoolId: this.school });
+      let ary = this.schoolList.filter(item => item.id == this.school);
+      this.userStore.setSchoolMsg({ schoolId: this.school, schoolName: ary[0].name });
     }
   }
 };

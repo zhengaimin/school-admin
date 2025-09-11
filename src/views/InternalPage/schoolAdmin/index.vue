@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="学校" prop="name" width="180"> </el-table-column>
         <el-table-column label="校徽" width="85" align="center">
           <template #default="{ row }">

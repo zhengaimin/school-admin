@@ -29,7 +29,7 @@ export interface GlobalState {
 export interface UserState {
   token: string;
   userInfo: { name: string };
-  schoolMsg: { schoolId: string };
+  schoolMsg: { schoolId: string; schoolName: string };
   count: Number;
 }
 

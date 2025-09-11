@@ -15,8 +15,8 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" border :data="carbonCk_list">
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName" width="130"> </el-table-column>
         <el-table-column label="命令UUID" prop="cmdUuid" width="150"> </el-table-column>
         <el-table-column label="设备ID" prop="deviceId" width="140"> </el-table-column>
         <el-table-column label="设备名称" prop="deviceName" width="140"> </el-table-column>

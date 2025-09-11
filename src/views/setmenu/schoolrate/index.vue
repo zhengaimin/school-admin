@@ -10,8 +10,15 @@
         <div v-if="flag == 1 || flag == 2">
           <el-row>
             <el-col :span="10">
+              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
+                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">
               <el-form-item label="费率值（元/分钟）" prop="rate">
-                <el-input-number style="width: 100%" v-model.number="form.rate" :min="0" :max="1000">
+                <el-input-number style="width: 100%" :step="0.05" v-model.number="form.rate" :min="0" :max="1000">
                   <template #prefix>
                     <span>￥</span>
                   </template>
@@ -82,6 +89,9 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    schoolName() {
+      return useUserStore().schoolMsg.schoolName;
     }
   },
   watch: {
