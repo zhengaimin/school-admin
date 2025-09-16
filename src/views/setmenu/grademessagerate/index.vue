@@ -84,12 +84,7 @@
           <el-row>
             <el-col :span="23">
               <el-form-item label="费率值（元/条）" prop="rate">
-                <el-input-number style="width: 100%" v-model.number="form.rate" :min="0">
-                  <template #prefix>
-                    <span>
-                      <el-icon><Microphone /></el-icon>
-                    </span>
-                  </template>
+                <el-input-number style="width: 100%" v-model.number="form.rate" :precision="2" :min="0" :max="100">
                 </el-input-number>
               </el-form-item>
             </el-col>

@@ -403,6 +403,9 @@ export const devicecommandsDetail = params => {
 export const familycontactsAdd = params => {
   return http.post(`/admin/family-contacts`, params);
 };
+export const studentsdevicecontrol = params => {
+  return http.post(`/admin/students/device-control`, params);
+};
 export const familycontactsUpdate = params => {
   return http.put(`/admin/family-contacts/${params.id}`, params);
 };

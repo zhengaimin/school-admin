@@ -59,7 +59,8 @@
         </el-button>
       </span>
       <div>
-        <el-button type="primary" class="search-btn" @click="uploadFile()" v-if="false"> 设备导入 </el-button>
+        <el-button type="primary" class="search-btn" @click="loadFileTemple"> 下载导入模板 </el-button>
+        <el-button type="primary" class="search-btn" @click="uploadFile()"> 设备导入 </el-button>
         <el-button type="primary" class="search-btn" @click="confirmexport"> 设备导出 </el-button>
         <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
       </div>
@@ -94,9 +95,10 @@
         </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" width="170"> </el-table-column>
         <el-table-column label="更新时间" prop="updatedAt" width="170"> </el-table-column>
-        <el-table-column label="操作" align="center" width="110" fixed="right">
+        <el-table-column label="操作" align="center" width="150" fixed="right">
           <template #default="scope">
             <div class="table-btn">
+              <div @click="detail(scope.row)">详情</div>
               <div @click="editRow(scope.row)">
                 <img src="@/assets/images/common/edit-circle-2.svg" alt="" style="width: 16px; height: 16px" />
               </div>
@@ -367,7 +369,6 @@
               ref="uploadFile"
               :action="activeUrl"
               :data="{
-                tenantId: userInfo.tenantId,
                 schoolId: schoolId
               }"
               :headers="{ Authorization: token }"
@@ -392,7 +393,6 @@
           <el-row>
             <el-table class="my-custom-table" :data="errorData.failList">
               <el-table-column label="Excel行号" prop="index" align="left"> </el-table-column>
-              <el-table-column label="姓名" prop="name" align="left"> </el-table-column>
               <el-table-column label="失败原因" prop="reason" align="left"> </el-table-column>
             </el-table>
           </el-row>
@@ -400,6 +400,73 @@
         <div style="margin: 20px 0; text-align: center">
           <el-button @click="strumentsloadFlag = false">取消</el-button>
         </div>
+      </div>
+    </el-dialog>
+    <!-- 详情 -->
+    <el-dialog v-model="dialogVisibleDetail" :close-on-click-modal="false" title="配置详情" :width="800">
+      <div style="padding-left: 20px">
+        <div>
+          <el-descriptions column="2" border title="">
+            <el-descriptions-item label="学校">{{ detailForm.schoolName }}</el-descriptions-item>
+            <el-descriptions-item label="设备名称">{{ detailForm.name }}</el-descriptions-item>
+            <el-descriptions-item label="设备终端key">{{ detailForm.terminalKey }}</el-descriptions-item>
+            <el-descriptions-item label="设备SN号">{{ detailForm.terminalSn }}</el-descriptions-item>
+            <el-descriptions-item label="设备Mac地址">{{ detailForm.terminalMac }}</el-descriptions-item>
+            <el-descriptions-item label="设备组">{{ detailForm.deviceGroupName }}</el-descriptions-item>
+            <el-descriptions-item label="设备位置">{{ detailForm.location }}</el-descriptions-item>
+            <el-descriptions-item label="心跳时间（ms）">{{ detailForm.heartbeatFrequency }}</el-descriptions-item>
+            <el-descriptions-item label="单次通话限定时长（分钟）">{{ detailForm.callTime }}</el-descriptions-item>
+            <el-descriptions-item label="拨号类型">{{ detailForm.phoneType }}</el-descriptions-item>
+            <el-descriptions-item label="定时开机时间">{{ detailForm.powerOnTime }}</el-descriptions-item>
+            <el-descriptions-item label="定时关机时间">{{ detailForm.powerOffTime }}</el-descriptions-item>
+            <el-descriptions-item label="是否显示留言按钮">
+              <span v-if="detailForm.messageFlag">
+                {{ detailForm.messageFlag == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="是否全量同步人脸">
+              <span v-if="detailForm.downloadUserFlag">
+                {{ detailForm.downloadUserFlag == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="是否启用语音留言">
+              <span v-if="detailForm.messageSoundFlag">
+                {{ detailForm.messageSoundFlag == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="心理咨询身份认证">
+              <span v-if="detailForm.mhcFlag">
+                {{ detailForm.mhcFlag == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="刷脸记录人员信息">
+              <span v-if="detailForm.addPunchFace">
+                {{ detailForm.addPunchFace == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="禁拨号码">
+              <span v-if="detailForm.forbidPhone">
+                {{ detailForm.forbidPhone == "Y" ? "是" : "否" }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item label="计费模式">
+              {{ { "0": "免费", Y: "音视频分开计费", N: "合并计费" }[detailForm.billMode] }}
+            </el-descriptions-item>
+            <el-descriptions-item label="预警通话时长（分钟）">
+              {{ detailForm.warnCallTime }}
+            </el-descriptions-item>
+            <el-descriptions-item label="禁拨时间段">
+              {{ detailForm.forbidCallTimes }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="dialogVisibleDetail = false">关闭</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </div>
     </el-dialog>
   </div>
@@ -481,7 +548,10 @@ export default {
       // 导入
       strumentsloadFlag: false,
       falseFlag: false,
-      errorData: {}
+      errorData: {},
+      // 详情
+      dialogVisibleDetail: false,
+      detailForm: {}
     };
   },
   computed: {
@@ -494,13 +564,6 @@ export default {
     schoolName() {
       return useUserStore().schoolMsg.schoolName;
     },
-    activeUrl() {
-      if (process.env.NODE_ENV == "development") {
-        return `/api/admin/students/import-excel`;
-      } else {
-        return `/admin/students/import-excel`;
-      }
-    },
     devicesexport() {
       if (process.env.NODE_ENV == "development") {
         return `/api/admin/devices/export`;
@@ -510,6 +573,20 @@ export default {
     },
     token() {
       return useUserStore().token;
+    },
+    loadTemple() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/devices/template`;
+      } else {
+        return `/admin/devices/template`;
+      }
+    },
+    activeUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/devices/import`;
+      } else {
+        return `/admin/devices/import`;
+      }
     }
   },
   watch: {
@@ -649,12 +726,21 @@ export default {
               this.form[key] = res.data[key];
             }
           }
-          console.log(this.form);
         } else {
           this.$message.error("获取信息失败");
         }
       });
       this.form.id = row.id;
+    },
+    detail(row) {
+      this.dialogVisibleDetail = true;
+      devicesDetail({ id: row.id }).then(res => {
+        if (res.code == 0 && res.data) {
+          this.detailForm = res.data;
+        } else {
+          this.$message.error("获取信息失败");
+        }
+      });
     },
     AddItem() {
       this.form.forbidCallTimesAry.push({
@@ -716,6 +802,34 @@ export default {
         })
         .catch(() => {
           console.log("取消删除");
+        });
+    },
+    // 下载导入模板
+    loadFileTemple() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      let url = this.loadTemple + `?schoolId=${this.schoolId}`;
+      axios
+        .get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "设备导入模板.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
         });
     },
     uploadFile() {

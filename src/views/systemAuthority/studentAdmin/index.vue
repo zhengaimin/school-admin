@@ -58,6 +58,7 @@
     <div class="table-list">
       <el-table class="my-custom-table" border height="100%" :data="carbonCk_list">
         <el-table-column label="学生姓名" prop="name" width="95"> </el-table-column>
+        <el-table-column label="唯一号" prop="uuid" width="180"> </el-table-column>
         <el-table-column label="图片" width="95" align="center">
           <template #default="{ row }">
             <img style="width: 70px; max-height: 70px; border-radius: 50%" :src="row.faceImageUrl" alt="" srcset="" />
@@ -71,7 +72,6 @@
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="班级" prop="className"> </el-table-column>
-        <el-table-column label="唯一号" prop="uuid" width="180"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
         <el-table-column label="身份证" prop="idCard" width="200"> </el-table-column>
         <el-table-column label="赠送通话剩余分钟数" prop="giftMinutes" align="center" width="160"> </el-table-column>
@@ -93,7 +93,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" width="160" fixed="right">
+        <el-table-column label="操作" align="center" width="220" fixed="right">
           <template #default="scope">
             <div class="table-btn">
               <div @click="addParent(scope.row)">亲情号</div>
@@ -107,6 +107,7 @@
                   style="width: 16px; height: 16px; margin-right: 3px"
                 />
               </div>
+              <div @click="updateFace(scope.row)">人脸下发</div>
             </div>
           </template>
         </el-table-column>
@@ -487,6 +488,30 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 批量控制 -->
+    <el-dialog v-model="dialogtag" :close-on-click-modal="false" title="人脸信息同步" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="taglinkFormRef" :model="tagform" :rules="taglinkRules" class="demo-ruleForm" label-position="top">
+          <el-row>
+            <el-col :span="23">
+              <el-form-item label="操作" prop="action">
+                <el-select v-model="tagform.action">
+                  <el-option v-for="v in controlList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: right">
+              <el-button @click="dialogtag = false">取消</el-button>
+              <el-button type="primary" @click="controlControl">确定</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -504,7 +529,8 @@ import {
   familycontactsUpdate,
   familycontactsList,
   familycontactsDetail,
-  familycontactsDelete
+  familycontactsDelete,
+  studentsdevicecontrol
 } from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -600,6 +626,17 @@ export default {
         gradeId: "",
         departmentId: "",
         classId: ""
+      },
+      // 人脸信息
+      dialogtag: false,
+      controlList: [
+        { id: "add_user_info", name: "新增人脸信息到设备" },
+        { id: "update_user_info", name: "更新人脸到设备" },
+        { id: "delete_user_info", name: "删除人脸" }
+      ],
+      tagform: {
+        studentId: "",
+        action: "update_user_info"
       }
     };
   },
@@ -794,10 +831,6 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          // if (!this.form.idCard && !this.form.studentCode) {
-          //   this.$message.warning("身份证号和学号不能同时为空");
-          //   return;
-          // }
           this.form.departmentId = this.form.departmentId ? this.form.departmentId : -1;
           if (this.form.id) {
             studentsUpdate(this.form).then(res => {
@@ -1005,6 +1038,18 @@ export default {
           window.URL.revokeObjectURL(url);
           this.exportDialog = false;
         });
+    },
+    updateFace(row) {
+      this.dialogtag = true;
+      this.tagform.studentId = row.id;
+    },
+    controlControl() {
+      studentsdevicecontrol(this.tagform).then(res => {
+        if (res.code == 0) {
+          this.$message.success("操作成功");
+          this.dialogtag = false;
+        }
+      });
     }
   }
 };

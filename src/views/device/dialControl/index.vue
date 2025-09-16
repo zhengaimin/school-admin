@@ -1,20 +1,9 @@
 <template>
   <div class="table-box">
-    <!-- <div class="filter-box">
-      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
-      <el-button type="primary" @click="fetchTenantList">查询</el-button>
-    </div> -->
     <div class="btn-box">
       <span>公话配置</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog">
-          <img
-            src="@/assets/images/common/add-circle-2.svg"
-            alt=""
-            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
-          />
-          新增
-        </el-button>
+        <el-button v-if="total == 0" type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
       </div>
     </div>
     <div class="table-list">

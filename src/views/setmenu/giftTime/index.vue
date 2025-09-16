@@ -11,14 +11,7 @@
     <div class="btn-box">
       <span>赠送时长信息</span>
       <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog">
-          <img
-            src="@/assets/images/common/add-circle-2.svg"
-            alt=""
-            style="width: 18px; height: 18px; margin-right: 3px; color: #ffffff"
-          />
-          新增
-        </el-button>
+        <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
       </div>
     </div>
     <div class="table-list">

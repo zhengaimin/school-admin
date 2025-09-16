@@ -22,7 +22,15 @@
             <div class="table-module">
               <div v-for="v in scope.row.moduleList" :key="v.moduleKey" :class="{ show: v.isHidden === 1 }">
                 <span :title="v.moduleName">
-                  <span v-show="v.sort != 0">{{ v.sort }}</span>
+                  <span
+                    v-show="
+                      v.moduleKey != 'recharge' &&
+                      v.moduleKey !== 'select_recharge_amount' &&
+                      v.moduleKey !== 'input_recharge_amount' &&
+                      v.moduleKey !== 'package_minutes'
+                    "
+                    >{{ v.sort }}
+                  </span>
                   {{ v.moduleName }}
                 </span>
               </div>
@@ -74,7 +82,17 @@
               <span>{{ v.name }}</span>
             </el-col>
             <el-col :span="6">
-              <el-input v-if="v.key !== 'recharge'" style="width: 90px" type="text" v-model="v.defaultSort" />
+              <el-input
+                v-if="
+                  v.key !== 'recharge' &&
+                  v.key !== 'select_recharge_amount' &&
+                  v.key !== 'input_recharge_amount' &&
+                  v.key !== 'package_minutes'
+                "
+                style="width: 90px"
+                type="text"
+                v-model="v.defaultSort"
+              />
             </el-col>
             <el-col :span="9">
               <el-radio-group v-model="v.isHidden">

@@ -24,7 +24,7 @@
         <el-table-column label="学校" prop="name" width="180"> </el-table-column>
         <el-table-column label="校徽" width="85" align="center">
           <template #default="{ row }">
-            <img style="width: 60px; height: 60px" :src="row.badge" alt="" srcset="" />
+            <img v-if="row.badge" style="width: 60px; height: 60px" :src="row.badge" alt="" srcset="" />
           </template>
         </el-table-column>
         <el-table-column label="学校地址" prop="address" width="200"> </el-table-column>
@@ -93,7 +93,7 @@
           <el-row>
             <el-col :span="23">
               <el-form-item label="学校校训" prop="motto">
-                <el-input v-model="form.motto"></el-input>
+                <el-input v-model="form.motto" :maxlength="100" show-word-limit></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -132,7 +132,7 @@
           <el-row>
             <el-col :span="23">
               <el-form-item label="学校简介" prop="description">
-                <el-input type="textarea" :rows="3" v-model="form.description"></el-input>
+                <el-input type="textarea" :rows="3" v-model="form.description" :maxlength="1000" show-word-limit></el-input>
               </el-form-item>
             </el-col>
           </el-row>

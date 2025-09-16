@@ -92,21 +92,13 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="语音通话时长（分钟/月）" prop="videoCallMinutes">
-                <el-input-number style="width: 100%" v-model.number="form.videoCallMinutes" :min="1">
-                  <template #prefix>
-                    <span>
-                      <el-icon><Microphone /></el-icon>
-                    </span>
-                  </template>
+                <el-input-number style="width: 100%" v-model.number="form.videoCallMinutes" :precision="0" :min="1" :max="10000">
                 </el-input-number>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="基础价格（元/月）" prop="basePrice">
-                <el-input-number style="width: 100%" v-model.number="form.basePrice" :min="0.01">
-                  <template #prefix>
-                    <span>￥</span>
-                  </template>
+                <el-input-number style="width: 100%" v-model.number="form.basePrice" :precision="2" :min="0.01" :max="10000">
                 </el-input-number>
               </el-form-item>
             </el-col>
@@ -114,7 +106,8 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="套餐总月数" prop="totalMonths">
-                <el-input-number style="width: 100%" v-model.number="form.totalMonths" :min="1"> </el-input-number>
+                <el-input-number style="width: 100%" v-model.number="form.totalMonths" :precision="0" :min="1" :max="10000">
+                </el-input-number>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">

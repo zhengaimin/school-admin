@@ -14,8 +14,8 @@
       <span>级部管理</span>
       <div>
         <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
-        <el-button type="primary" class="search-btn"> 导入-no </el-button>
-        <el-button type="primary" class="search-btn"> 导出-no </el-button>
+        <el-button type="primary" class="search-btn" v-if="false"> 导入-no </el-button>
+        <el-button type="primary" class="search-btn" v-if="false"> 导出-no </el-button>
       </div>
     </div>
     <div class="table-list">
