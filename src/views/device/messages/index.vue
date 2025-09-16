@@ -1,34 +1,77 @@
 <template>
   <div class="table-box">
-    <div class="filter-box">
-      <label for="name">学生姓名</label>
-      <el-input style="width: 180px" v-model="filterForm.studentName"></el-input>
+    <!-- <div class="filter-box">
       <label for="name">留言方向</label>
       <el-select style="width: 180px" v-model="filterForm.messageDirection">
         <el-option v-for="v in messageToList" :key="v.id" :label="v.name" :value="v.id"></el-option>
       </el-select>
-      <label for="name">开始时间</label>
-      <el-date-picker
-        style="width: 180px"
-        v-model="filterForm.startTime"
-        type="date"
-        value-format="YYYY-MM-DD"
-        format="YYYY-MM-DD"
-      />
-      <label for="name">结束时间</label>
-      <el-date-picker
-        style="width: 180px"
-        v-model="filterForm.endTime"
-        type="date"
-        value-format="YYYY-MM-DD"
-        format="YYYY-MM-DD"
-      />
-      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
-      <el-button type="primary" @click="fetchTenantList">查询</el-button>
+    </div> -->
+    <div class="filter-box">
+      <div>
+        <label for="name">学生姓名</label>
+        <el-input v-model="filterForm.studentName" style="width: calc(100% - 90px)"></el-input>
+      </div>
+      <div>
+        <label for="">年级</label>
+        <el-select
+          placeholder="年级"
+          @change="
+            getdepartmentsList(1);
+            getClassList(1);
+          "
+          style="width: calc(100% - 90px)"
+          v-model="filterForm.gradeId"
+        >
+          <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">级部</label>
+        <el-select
+          placeholder="级部"
+          @change="getClassList(1)"
+          style="width: calc(100% - 70px)"
+          v-model="filterForm.departmentId"
+        >
+          <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">班级</label>
+        <el-select placeholder="班级" style="width: calc(100% - 90px)" v-model="filterForm.classId">
+          <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="name">开始时间</label>
+        <el-date-picker
+          v-model="filterForm.startTime"
+          type="datetime"
+          :value-format="'YYYY-MM-DD HH:mm:ss'"
+          :format="'YYYY-MM-DD HH:mm:ss'"
+          style="width: calc(100% - 90px)"
+        />
+      </div>
+      <div>
+        <label for="name">结束时间</label>
+        <el-date-picker
+          v-model="filterForm.endTime"
+          type="datetime"
+          :value-format="'YYYY-MM-DD HH:mm:ss'"
+          :format="'YYYY-MM-DD HH:mm:ss'"
+          style="width: calc(100% - 90px)"
+        />
+      </div>
+      <div>
+        <el-button @click="reset" style="margin-left: 20px">重置</el-button>
+        <el-button type="primary" @click="fetchTenantList">查询</el-button>
+      </div>
     </div>
     <div class="btn-box">
       <span>留言记录</span>
-      <div></div>
+      <div>
+        <el-button type="primary" @click="exportInfo">导出</el-button>
+      </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
@@ -81,7 +124,6 @@
         @current-change="handleCurrentChange"
       />
     </div>
-
     <!-- 详情 -->
     <el-dialog v-model="dialogVisibledetail" :close-on-click-modal="false" title="详情" width="809">
       <div style="padding-left: 20px">
@@ -119,10 +161,45 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 批量导出 -->
+    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="left">
+          <el-form-item label="">
+            <div style="">
+              <div style="margin-top: 20px; font-size: 16px">请选择导出页码（每次最多导出一万条）：</div>
+              <el-pagination
+                v-model:current-page="pageInfo"
+                v-model:page-size="pageSizeInfo"
+                :page-sizes="[10000]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalInfo"
+              />
+            </div>
+          </el-form-item>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="exportDialog = false">取消</el-button>
+              <el-button type="primary" @click="confirmexport">导出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { messagesList, messagesDetail } from "@/api/modules/InternalPage.js";
+import axios from "axios";
+import {
+  gradesList,
+  departmentsList,
+  classesList,
+  messagesList,
+  messagesDetail,
+  messagesListExportInfo
+} from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
@@ -134,6 +211,9 @@ export default {
       filterForm: {
         studentName: "",
         messageDirection: "",
+        gradeId: "",
+        departmentId: "",
+        classId: "",
         startTime: "",
         endTime: ""
       },
@@ -141,6 +221,9 @@ export default {
         { id: "1", name: "在线" },
         { id: "0", name: "离线" }
       ],
+      gradesList: [],
+      departmentsList: [],
+      classList: [],
       //新增权限系统
       dialogVisibledetail: false,
       detailObj: { packageContent: {} },
@@ -148,7 +231,13 @@ export default {
       carbonCk_list: [],
       total: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      // 批量导出
+      exportDialog: false,
+      totalInfo: 0,
+      pageInfo: 1,
+      pageSizeInfo: 10000,
+      exportForm: {}
     };
   },
   computed: {
@@ -157,25 +246,80 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    token() {
+      return useUserStore().token;
+    },
+    exportmessageUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/messages/export`;
+      } else {
+        return `/admin/messages/export`;
+      }
     }
   },
   watch: {
     schoolId: {
       handler(newVal) {
         if (newVal) {
+          this.getGradesList();
           this.fetchTenantList();
+          this.filterForm.gradeId = "";
+          this.filterForm.departmentId = "";
+          this.filterForm.classId = "";
         }
       },
       immediate: true
     }
   },
   mounted() {
+    this.getGradesList();
     this.fetchTenantList();
   },
   methods: {
+    getGradesList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.gradesList = res.data.list;
+        } else {
+          this.gradesList = [];
+        }
+      });
+    },
+    getdepartmentsList() {
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
+      let gradeId = this.filterForm.gradeId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${gradeId}`;
+      departmentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.departmentsList = res.data.list;
+        } else {
+          this.departmentsList = [];
+        }
+      });
+    },
+    // 获取班级
+    getClassList() {
+      this.filterForm.classId = "";
+      let gradeId = this.filterForm.gradeId;
+      let departmentId = this.filterForm.departmentId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${gradeId}&departmentId=${departmentId}`;
+      classesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.classList = res.data.list;
+        } else {
+          this.classList = [];
+        }
+      });
+    },
     reset() {
       this.filterForm.studentName = "";
       this.filterForm.messageDirection = "";
+      this.filterForm.gradeId = "";
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
       this.filterForm.startTime = "";
       this.filterForm.endTime = "";
       this.fetchTenantList();
@@ -183,7 +327,7 @@ export default {
     fetchTenantList() {
       this.filterForm.startTime = this.filterForm.startTime ? this.filterForm.startTime : "";
       this.filterForm.endTime = this.filterForm.endTime ? this.filterForm.endTime : "";
-      let params = `schoolId=${this.schoolId}&studentName=${this.filterForm.studentName}&messageDirection=${this.filterForm.messageDirection}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}&page=${this.page}&pageSize=${this.pageSize}`;
+      let params = `schoolId=${this.schoolId}&studentName=${this.filterForm.studentName}&messageDirection=${this.filterForm.messageDirection}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}`;
       messagesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -212,6 +356,44 @@ export default {
           this.detailObj = res.data;
         }
       });
+    },
+    // 批量导出
+    exportInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      this.exportDialog = true;
+      let params = `schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      messagesListExportInfo(params).then(res => {
+        if (res.code == 0 && res.data) {
+          this.totalInfo = res.data.totalRecords;
+        }
+      });
+    },
+    confirmexport() {
+      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      axios
+        .get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "留言记录.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+        });
     }
   }
 };

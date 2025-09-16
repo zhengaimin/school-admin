@@ -5,16 +5,25 @@
   border-radius: 10px;
   .filter-box {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    padding: 20px 0;
+    padding: 20px;
     background: #ffffff;
     border-bottom: 1px solid #eeeeee;
     border-radius: 10px;
-    > label {
-      margin: 0 10px 0 20px;
-      font-size: 14px;
-      color: #4a5975;
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 24%;
+      margin-bottom: 5px;
+      > label {
+        width: 90px;
+        font-size: 14px;
+        color: #4a5975;
+        text-align: center;
+      }
     }
   }
   .btn-box {
@@ -28,7 +37,7 @@
     }
   }
   .table-list {
-    height: calc(100% - 180px);
+    height: calc(100% - 220px);
     overflow: auto;
     .date-sort {
       display: flex;
@@ -39,7 +48,7 @@
   .demo-pagination-block {
     position: absolute;
     right: 12px;
-    bottom: 20px;
+    bottom: 10px;
   }
 }
 .img-box {

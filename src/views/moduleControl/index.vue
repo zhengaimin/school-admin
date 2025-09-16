@@ -21,7 +21,7 @@
           <template #default="scope">
             <div class="table-module">
               <div v-for="v in scope.row.moduleList" :key="v.moduleKey" :class="{ show: v.isHidden === 1 }">
-                <span>
+                <span :title="v.moduleName">
                   <span v-show="v.sort != 0">{{ v.sort }}</span>
                   {{ v.moduleName }}
                 </span>

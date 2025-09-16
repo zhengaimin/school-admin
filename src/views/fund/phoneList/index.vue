@@ -1,54 +1,85 @@
 <template>
   <div class="table-box">
     <div class="filter-box">
-      <label for="name">学生姓名</label>
-      <el-input v-model="filterForm.studentName" style="width: 200px" />
-      <label for="name">开始时间</label>
-      <el-date-picker
-        v-model="filterForm.startTime"
-        type="datetime"
-        :value-format="'YYYY-MM-DD HH:mm:ss'"
-        :format="'YYYY-MM-DD HH:mm:ss'"
-      />
-      <label for="name">结束时间</label>
-      <el-date-picker
-        v-model="filterForm.endTime"
-        type="datetime"
-        :value-format="'YYYY-MM-DD HH:mm:ss'"
-        :format="'YYYY-MM-DD HH:mm:ss'"
-      />
-      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
-      <el-button type="primary" @click="fetchTenantList">查询</el-button>
+      <div>
+        <label for="name">学生姓名</label>
+        <el-input v-model="filterForm.studentName" style="width: calc(100% - 90px)"></el-input>
+      </div>
+      <div>
+        <label for="">年级</label>
+        <el-select
+          placeholder="年级"
+          @change="
+            getdepartmentsList(1);
+            getClassList(1);
+          "
+          style="width: calc(100% - 90px)"
+          v-model="filterForm.gradeId"
+        >
+          <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">级部</label>
+        <el-select
+          placeholder="级部"
+          @change="getClassList(1)"
+          style="width: calc(100% - 70px)"
+          v-model="filterForm.departmentId"
+        >
+          <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">班级</label>
+        <el-select placeholder="班级" style="width: calc(100% - 90px)" v-model="filterForm.classId">
+          <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="name">开始时间</label>
+        <el-date-picker
+          v-model="filterForm.startTime"
+          type="datetime"
+          :value-format="'YYYY-MM-DD HH:mm:ss'"
+          :format="'YYYY-MM-DD HH:mm:ss'"
+          style="width: calc(100% - 90px)"
+        />
+      </div>
+      <div>
+        <label for="name">结束时间</label>
+        <el-date-picker
+          v-model="filterForm.endTime"
+          type="datetime"
+          :value-format="'YYYY-MM-DD HH:mm:ss'"
+          :format="'YYYY-MM-DD HH:mm:ss'"
+          style="width: calc(100% - 90px)"
+        />
+      </div>
+      <div>
+        <el-button @click="reset" style="margin-left: 20px">重置</el-button>
+        <el-button type="primary" @click="fetchTenantList">查询</el-button>
+      </div>
     </div>
     <div class="btn-box">
       <span>通话记录列表</span>
-      <div></div>
+      <div>
+        <el-button type="primary" @click="exportInfo">导出</el-button>
+      </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
         <el-table-column label="学校" prop="schoolName" width="130"> </el-table-column>
-        <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="班级" prop="className"> </el-table-column>
-        <el-table-column label="实际扣费金额（元）" prop="amount" width="160"> </el-table-column>
-        <el-table-column label="通话时长" prop="callDurationFormatted" width="90"> </el-table-column>
-        <el-table-column label="通话开始时间" prop="callStartTime" width="140"> </el-table-column>
-        <el-table-column label="通话结束时间" prop="callEndTime" width="140"> </el-table-column>
-        <el-table-column label="联系人称呼" prop="contactName" width="120"> </el-table-column>
-        <el-table-column label="被呼叫号码" prop="phoneNumber" width="120"> </el-table-column>
-        <el-table-column label="物理卡号" prop="cardNumber" width="150"> </el-table-column>
-        <el-table-column label="可用余额" align="center" width="100">
+        <el-table-column label="学生" prop="studentName"> </el-table-column>
+        <el-table-column label="设备SN号" prop="deviceSn" width="110"> </el-table-column>
+        <el-table-column label="扣费类型" prop="usageTypeText" width="90"> </el-table-column>
+        <el-table-column label="赠送通话剩余分钟数" align="center" width="160">
           <template #default="{ row }">
             <span v-if="row.studentBalance">
-              {{ row.studentBalance.availableBalance }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="总余额" align="center" width="100">
-          <template #default="{ row }">
-            <span v-if="row.studentBalance">
-              {{ row.studentBalance.totalBalance }}
+              {{ row.studentBalance.giftMinutes }}
             </span>
           </template>
         </el-table-column>
@@ -59,6 +90,27 @@
             </span>
           </template>
         </el-table-column>
+        <el-table-column label="总余额（元）" align="center" width="110">
+          <template #default="{ row }">
+            <span v-if="row.studentBalance">
+              {{ row.studentBalance.totalBalance }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="可用余额（元）" align="center" width="130">
+          <template #default="{ row }">
+            <span v-if="row.studentBalance">
+              {{ row.studentBalance.availableBalance }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="实际扣费金额（元）" prop="amount" width="160"> </el-table-column>
+        <el-table-column label="通话时长" prop="callDurationFormatted" width="90"> </el-table-column>
+        <el-table-column label="通话开始时间" prop="callStartTime" width="140"> </el-table-column>
+        <el-table-column label="通话结束时间" prop="callEndTime" width="140"> </el-table-column>
+        <el-table-column label="联系人称呼" prop="contactName" width="120"> </el-table-column>
+        <el-table-column label="被呼叫号码" prop="phoneNumber" width="120"> </el-table-column>
+        <el-table-column label="物理卡号" prop="cardNumber" width="150"> </el-table-column>
         <el-table-column label="套餐留言剩余条数" align="center" width="150">
           <template #default="{ row }">
             <span v-if="row.studentBalance">
@@ -153,26 +205,73 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 批量导出 -->
+    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="left">
+          <el-form-item label="">
+            <div style="">
+              <div style="margin-top: 20px; font-size: 16px">请选择导出页码（每次最多导出一万条）：</div>
+              <el-pagination
+                v-model:current-page="pageInfo"
+                v-model:page-size="pageSizeInfo"
+                :page-sizes="[10000]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalInfo"
+              />
+            </div>
+          </el-form-item>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="exportDialog = false">取消</el-button>
+              <el-button type="primary" @click="confirmexport">导出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { callrecordsList, callrecordsDetail } from "@/api/modules/InternalPage.js";
+import axios from "axios";
+import {
+  gradesList,
+  departmentsList,
+  classesList,
+  callrecordsList,
+  callrecordsDetail,
+  callrecordsListExportInfo
+} from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
       filterForm: {
         studentName: "",
+        gradeId: "",
+        departmentId: "",
+        classId: "",
         startTime: "",
         endTime: ""
       },
+      gradesList: [],
+      departmentsList: [],
+      classList: [],
       //  列表
       carbonCk_list: [],
       total: 0,
       page: 1,
       pageSize: 10,
       dialogVisibleDetail: false,
-      detailForm: { studentBalance: {} }
+      detailForm: { studentBalance: {} },
+      // 批量导出
+      exportDialog: false,
+      totalInfo: 0,
+      pageInfo: 1,
+      pageSizeInfo: 10000,
+      exportForm: {}
     };
   },
   computed: {
@@ -181,30 +280,85 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    token() {
+      return useUserStore().token;
+    },
+    exportmessageUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/call-records/export`;
+      } else {
+        return `/admin/call-records/export`;
+      }
     }
   },
   watch: {
     schoolId: {
       handler(newVal) {
         if (newVal) {
+          this.getGradesList();
           this.fetchTenantList();
+          this.filterForm.gradeId = "";
+          this.filterForm.departmentId = "";
+          this.filterForm.classId = "";
         }
       },
       immediate: true
     }
   },
   mounted() {
+    this.getGradesList();
     this.fetchTenantList();
   },
   methods: {
+    getGradesList() {
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
+      gradesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.gradesList = res.data.list;
+        } else {
+          this.gradesList = [];
+        }
+      });
+    },
+    getdepartmentsList() {
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
+      let gradeId = this.filterForm.gradeId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${gradeId}`;
+      departmentsList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.departmentsList = res.data.list;
+        } else {
+          this.departmentsList = [];
+        }
+      });
+    },
+    // 获取班级
+    getClassList() {
+      this.filterForm.classId = "";
+      let gradeId = this.filterForm.gradeId;
+      let departmentId = this.filterForm.departmentId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${gradeId}&departmentId=${departmentId}`;
+      classesList(params).then(res => {
+        if (res.code == 0 && res.data && res.data.list) {
+          this.classList = res.data.list;
+        } else {
+          this.classList = [];
+        }
+      });
+    },
     reset() {
       this.filterForm.studentName = "";
+      this.filterForm.gradeId = "";
+      this.filterForm.departmentId = "";
+      this.filterForm.classId = "";
       this.filterForm.startTime = "";
       this.filterForm.endTime = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&studentName=${this.filterForm.studentName}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&studentName=${this.filterForm.studentName}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
       callrecordsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -234,6 +388,44 @@ export default {
           this.$message.error("获取信息失败");
         }
       });
+    },
+    // 批量导出
+    exportInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      this.exportDialog = true;
+      let params = `schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      callrecordsListExportInfo(params).then(res => {
+        if (res.code == 0 && res.data) {
+          this.totalInfo = res.data.totalRecords;
+        }
+      });
+    },
+    confirmexport() {
+      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      axios
+        .get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "通话记录.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+        });
     }
   }
 };

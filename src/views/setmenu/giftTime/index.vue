@@ -149,7 +149,6 @@
             <el-table-column label="学号" prop="studentCode"> </el-table-column>
             <el-table-column label="性别" prop="sex"> </el-table-column>
             <el-table-column label="身份证" prop="idCard"> </el-table-column>
-            <el-table-column label="学号" prop="studentCode"> </el-table-column>
           </el-table>
           <div class="demo-pagination-block" style="padding: 10px 0">
             <el-pagination

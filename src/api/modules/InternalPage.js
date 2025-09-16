@@ -554,12 +554,18 @@ export const callrecordsList = params => {
 export const callrecordsDetail = params => {
   return http.get(`/admin/call-records/${params.id}`);
 };
+export const callrecordsListExportInfo = params => {
+  return http.get(`/admin/call-records/export-info?${params}`);
+};
 // 留言记录
 export const messagesList = params => {
   return http.get(`/admin/messages?${params}`);
 };
 export const messagesDetail = params => {
   return http.get(`/admin/messages/${params.id}`);
+};
+export const messagesListExportInfo = params => {
+  return http.get(`/admin/messages/export-info?${params}`);
 };
 // 模板
 export const modulesassign = params => {

@@ -11,13 +11,26 @@
       </div>
       <div>
         <label for="">年级</label>
-        <el-select placeholder="年级" @change="getdepartmentsList" style="width: calc(100% - 60px)" v-model="filterForm.gradeId">
+        <el-select
+          placeholder="年级"
+          @change="
+            getdepartmentsList(1);
+            getClassList(1);
+          "
+          style="width: calc(100% - 60px)"
+          v-model="filterForm.gradeId"
+        >
           <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
         </el-select>
       </div>
       <div>
         <label for="">级部</label>
-        <el-select placeholder="级部" @change="getClassList" style="width: calc(100% - 70px)" v-model="filterForm.departmentId">
+        <el-select
+          placeholder="级部"
+          @change="getClassList(1)"
+          style="width: calc(100% - 70px)"
+          v-model="filterForm.departmentId"
+        >
           <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
         </el-select>
       </div>
@@ -58,10 +71,13 @@
         <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName"> </el-table-column>
         <el-table-column label="班级" prop="className"> </el-table-column>
+        <el-table-column label="唯一号" prop="uuid" width="180"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
-        <el-table-column label="性别" prop="sex"> </el-table-column>
         <el-table-column label="身份证" prop="idCard" width="200"> </el-table-column>
-        <el-table-column label="UUID" prop="uuid" width="180"> </el-table-column>
+        <el-table-column label="赠送通话剩余分钟数" prop="giftMinutes" align="center" width="160"> </el-table-column>
+        <el-table-column label="总余额（元）" prop="totalBalance" align="center" width="160"> </el-table-column>
+        <el-table-column label="可用余额（元）" prop="availableBalance" align="center" width="160"> </el-table-column>
+        <el-table-column label="性别" prop="sex"> </el-table-column>
         <el-table-column label="IC卡号" prop="cardNumber" width="180"> </el-table-column>
         <el-table-column label="电话" prop="phone" width="150"> </el-table-column>
         <el-table-column label="监护人" prop="guardianName" width="110"> </el-table-column>
@@ -126,7 +142,13 @@
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="年级" prop="gradeId">
-                <el-select @change="getdepartmentsList" v-model="form.gradeId">
+                <el-select
+                  @change="
+                    getdepartmentsList(2);
+                    getClassList(2);
+                  "
+                  v-model="form.gradeId"
+                >
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -134,8 +156,8 @@
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="级部" prop="departmentId">
-                <el-select v-model="form.departmentId" @change="getClassList">
+              <el-form-item label="级部" prop="">
+                <el-select v-model="form.departmentId" @change="getClassList(2)">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
@@ -150,13 +172,25 @@
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="身份证号(备注:身份证和学号至少填一个)" prop="idCard">
-                <el-input v-model="form.idCard"></el-input>
+              <el-form-item label="唯一号" prop="uuid">
+                <el-input v-model="form.uuid"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="学号" prop="studentCode">
                 <el-input v-model="form.studentCode"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="身份证号" prop="idCard">
+                <el-input v-model="form.idCard"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11" :offset="1">
+              <el-form-item label="监护人电话" prop="guardianPhone">
+                <el-input v-model="form.guardianPhone"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -192,11 +226,6 @@
             <el-col :span="11">
               <el-form-item label="监护人姓名" prop="guardianName">
                 <el-input v-model="form.guardianName"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="监护人电话" prop="guardianPhone">
-                <el-input v-model="form.guardianPhone"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -419,20 +448,25 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="年级" prop="gradeId">
-                <el-select @change="getdepartmentsList" v-model="exportForm.gradeId">
+                <el-select
+                  @change="
+                    getdepartmentsList(3);
+                    getClassList(3);
+                  "
+                  v-model="exportForm.gradeId"
+                >
                   <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11" :offset="1">
               <el-form-item label="级部" prop="departmentId">
-                <el-select v-model="exportForm.departmentId" @change="getClassList">
+                <el-select v-model="exportForm.departmentId" @change="getClassList(3)">
                   <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
-
           <el-row>
             <el-col :span="11">
               <el-form-item label="班级" prop="classId">
@@ -499,6 +533,7 @@ export default {
       classList: [],
       form: {
         name: "",
+        uuid: "",
         sex: "",
         idCard: "",
         cardNumber: "",
@@ -506,7 +541,7 @@ export default {
         address: "",
         guardianName: "",
         guardianPhone: "",
-        studentType: "",
+        studentType: "BOARDING",
         gradeId: "",
         departmentId: "",
         classId: "",
@@ -515,8 +550,8 @@ export default {
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
+        uuid: [{ required: true, message: "必填项", trigger: "blur" }],
         gradeId: [{ required: true, message: "必填项", trigger: "blur" }],
-        departmentId: [{ required: true, message: "必填项", trigger: "blur" }],
         classId: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       // 导入
@@ -658,15 +693,15 @@ export default {
         }
       });
     },
-    getdepartmentsList() {
+    getdepartmentsList(val) {
       this.filterForm.departmentId = "";
       this.filterForm.classId = "";
       this.form.departmentId = "";
       this.form.classId = "";
       this.exportForm.departmentId = "";
       this.exportForm.classId = "";
-
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${this.form.gradeId}`;
+      let gradeId = val == 1 ? this.filterForm.gradeId : val == 2 ? this.form.gradeId : this.exportForm.gradeId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${gradeId}`;
       departmentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.departmentsList = res.data.list;
@@ -676,11 +711,14 @@ export default {
       });
     },
     // 获取班级
-    getClassList() {
+    getClassList(val) {
       this.filterForm.classId = "";
       this.form.classId = "";
       this.exportForm.classId = "";
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${this.form.gradeId}&departmentId=${this.form.departmentId}`;
+      let gradeId = val == 1 ? this.filterForm.gradeId : val == 2 ? this.form.gradeId : this.exportForm.gradeId;
+      let departmentId =
+        val == 1 ? this.filterForm.departmentId : val == 2 ? this.form.departmentId : this.exportForm.departmentId;
+      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${gradeId}&departmentId=${departmentId}`;
       classesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.classList = res.data.list;
@@ -689,7 +727,6 @@ export default {
         }
       });
     },
-
     reset() {
       this.filterForm.name = "";
       this.filterForm.studentCode = "";
@@ -723,7 +760,6 @@ export default {
       this.page = val;
       this.fetchTenantList();
     },
-
     //新增
     openAddDialog() {
       if (this.schoolId == -1) {
@@ -733,6 +769,7 @@ export default {
       delete this.form.id;
       this.dialogVisibleAdd = true;
       this.form.faceImageUrl = "";
+      this.form.departmentId = "";
       this.$nextTick(() => {
         this.$refs.linkFormRef.resetFields();
         this.$refs.uploadFileface.clearFiles();
@@ -743,11 +780,11 @@ export default {
       this.form.faceImageUrl = "";
       studentsDetail({ id: row.id }).then(res => {
         if (res.code == 0 && res.data) {
+          this.getdepartmentsList();
+          this.getClassList();
           for (let key in res.data) {
             this.form[key] = res.data[key];
           }
-          this.getdepartmentsList();
-          this.getClassList();
           this.form.id = row.id;
         } else {
           this.$message.error("获取信息失败");
@@ -757,10 +794,11 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          if (!this.form.idCard && !this.form.studentCode) {
-            this.$message.warning("身份证号和学号不能同时为空");
-            return;
-          }
+          // if (!this.form.idCard && !this.form.studentCode) {
+          //   this.$message.warning("身份证号和学号不能同时为空");
+          //   return;
+          // }
+          this.form.departmentId = this.form.departmentId ? this.form.departmentId : -1;
           if (this.form.id) {
             studentsUpdate(this.form).then(res => {
               if (res.code == 0) {
@@ -930,15 +968,24 @@ export default {
         this.$message.warning("请先选择学校");
         return;
       }
-      this.exportDialog = true;
-      this.$nextTick(() => {
-        this.$refs.exportlinkFormRef.resetFields();
-      });
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let classId = this.filterForm.classId ? this.filterForm.classId : -1;
+      let params = {
+        schoolId: this.schoolId,
+        gradeId,
+        departmentId,
+        classId
+      };
+      this.confirmexport(params);
+      // this.exportDialog = true;
+      // this.$nextTick(() => {
+      //   this.$refs.exportlinkFormRef.resetFields();
+      // });
     },
-    confirmexport() {
-      this.exportForm.schoolId = this.schoolId;
+    confirmexport(params) {
       axios
-        .post(this.exportStudentUrl, this.exportForm, {
+        .post(this.exportStudentUrl, params, {
           headers: {
             "Content-Type": "application/json",
             Authorization: this.token
