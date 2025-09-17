@@ -105,9 +105,9 @@
           </template>
         </el-table-column>
         <el-table-column label="实际扣费金额（元）" prop="amount" width="160"> </el-table-column>
-        <el-table-column label="通话时长" prop="callDurationFormatted" width="90"> </el-table-column>
-        <el-table-column label="通话开始时间" prop="callStartTime" width="140"> </el-table-column>
-        <el-table-column label="通话结束时间" prop="callEndTime" width="140"> </el-table-column>
+        <el-table-column label="通话时长" prop="callLenMinute" width="90"> </el-table-column>
+        <el-table-column label="开始时间" prop="callStartTime" width="140"> </el-table-column>
+        <el-table-column label="结束时间" prop="callEndTime" width="140"> </el-table-column>
         <el-table-column label="联系人称呼" prop="contactName" width="120"> </el-table-column>
         <el-table-column label="被呼叫号码" prop="phoneNumber" width="120"> </el-table-column>
         <el-table-column label="物理卡号" prop="cardNumber" width="150"> </el-table-column>
@@ -169,13 +169,13 @@
           <el-descriptions-item label="是否是SOS电话">{{ detailForm.isSos ? "是" : "否" }}</el-descriptions-item>
           <el-descriptions-item label="呼叫开始时间">{{ detailForm.callStartTime }}</el-descriptions-item>
           <el-descriptions-item label="呼叫结束时间">{{ detailForm.callEndTime }}</el-descriptions-item>
-          <el-descriptions-item label="通话时长(秒)">{{ detailForm.callDuration }}</el-descriptions-item>
           <el-descriptions-item label="通话时长(分钟)">{{ detailForm.callLenMinute }}</el-descriptions-item>
-          <el-descriptions-item label="格式化通话时长">{{ detailForm.callDurationFormatted }}</el-descriptions-item>
+          <el-descriptions-item label="拨号和通话时长(秒)">{{ detailForm.callDuration }}</el-descriptions-item>
+          <el-descriptions-item label="拨号和通话时长">{{ detailForm.callDurationFormatted }}</el-descriptions-item>
           <el-descriptions-item label="消费流水号">{{ detailForm.consumeSerialNo }}</el-descriptions-item>
-          <el-descriptions-item label="使用时长(秒)">{{ detailForm.usageDuration }}</el-descriptions-item>
+          <!-- <el-descriptions-item label="使用时长(秒)">{{ detailForm.usageDuration }}</el-descriptions-item> -->
           <el-descriptions-item label="单价">{{ detailForm.unitPrice }}</el-descriptions-item>
-          <el-descriptions-item label="实际扣费金额">{{ detailForm.amount }}</el-descriptions-item>
+          <el-descriptions-item label="实际扣费金额（元）">{{ detailForm.amount }}</el-descriptions-item>
           <el-descriptions-item label="扣费时间">{{ detailForm.consumeTime }}</el-descriptions-item>
           <el-descriptions-item label="是否使用套餐">{{ detailForm.isPackageUsage ? "是" : "否" }}</el-descriptions-item>
           <el-descriptions-item label="使用类型">{{ detailForm.usageTypeText }}</el-descriptions-item>
@@ -188,7 +188,7 @@
           <el-descriptions-item label="套餐类型">
             {{ { FIXED: "固定套餐", GENERAL: "通用套餐" }[detailForm.packageType] }}
           </el-descriptions-item>
-          <el-descriptions-item label="套餐购买价格">{{ detailForm.purchasePrice }}</el-descriptions-item>
+          <el-descriptions-item label="套餐购买价格（元）">{{ detailForm.purchasePrice }}</el-descriptions-item>
           <el-descriptions-item label="套餐开始日期">{{ detailForm.packageStartDate }}</el-descriptions-item>
           <el-descriptions-item label="套餐结束日期">{{ detailForm.packageEndDate }}</el-descriptions-item>
           <el-descriptions-item label="学校">{{ detailForm.schoolName }}</el-descriptions-item>
