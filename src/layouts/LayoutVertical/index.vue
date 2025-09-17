@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       ruleForm: {
-        name: "",
+        name: "校园管理系统",
         logo: ""
       }
     };

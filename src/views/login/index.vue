@@ -9,7 +9,7 @@
         <div class="login-logo" style="margin-right: 10px; margin-bottom: 30px; font-size: 23px">
           <!-- <img class="login-icon" src="@/assets/images/tzsklogo.png" alt="" /> -->
           <img style="height: 60px" src="@/assets/images/xinkao.png" alt="logo" />
-          欢迎登录校园管理平台
+          校园管理平台
         </div>
         <LoginForm />
       </div>
