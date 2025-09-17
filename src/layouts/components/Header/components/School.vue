@@ -34,9 +34,9 @@ export default {
       immediate: true
     }
   },
-  // mounted() {
-  //   this.fetchTenantList("load");
-  // },
+  mounted() {
+    this.fetchTenantList("load");
+  },
   methods: {
     fetchTenantList(val) {
       let params = `page=1&pageSize=200`;
