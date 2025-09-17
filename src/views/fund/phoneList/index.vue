@@ -105,7 +105,7 @@
           </template>
         </el-table-column>
         <el-table-column label="实际扣费金额（元）" prop="amount" width="160"> </el-table-column>
-        <el-table-column label="通话时长" prop="callLenMinute" width="90"> </el-table-column>
+        <el-table-column label="通话时长（分钟）" prop="callLenMinute" width="140"> </el-table-column>
         <el-table-column label="开始时间" prop="callStartTime" width="140"> </el-table-column>
         <el-table-column label="结束时间" prop="callEndTime" width="140"> </el-table-column>
         <el-table-column label="联系人称呼" prop="contactName" width="120"> </el-table-column>
