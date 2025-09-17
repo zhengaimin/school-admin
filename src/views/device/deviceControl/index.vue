@@ -391,8 +391,8 @@
             </h1>
           </el-row>
           <el-row>
-            <el-table class="my-custom-table" :data="errorData.failList">
-              <el-table-column label="Excel行号" prop="index" align="left"> </el-table-column>
+            <el-table class="my-custom-table" :data="errorData.failures">
+              <el-table-column label="Excel行号" prop="rowIndex" align="left"> </el-table-column>
               <el-table-column label="失败原因" prop="reason" align="left"> </el-table-column>
             </el-table>
           </el-row>
