@@ -78,13 +78,16 @@
         <el-table-column label="已绑定标签" width="130">
           <template #default="{ row }">
             <div v-if="row.tags">
-              <div
+              <!-- <div
                 style="padding: 0 5px; margin-bottom: 5px; border: 1px solid #cccccc; border-radius: 3px"
                 v-for="v in row.tags"
                 :key="v.id"
               >
                 {{ v.name }}
-              </div>
+              </div> -->
+              <el-tag @close="delteTag(row, tag)" v-for="tag in row.tags" :key="tag.id" closable type="primary" effect="dark">
+                {{ tag.name }}
+              </el-tag>
             </div>
           </template>
         </el-table-column>
@@ -333,8 +336,8 @@
         <el-form ref="taglinkFormRef" :model="tagform" :rules="taglinkRules" class="demo-ruleForm" label-position="top">
           <el-row>
             <el-col :span="23">
-              <el-form-item label="标签" prop="deviceTagId">
-                <el-select v-model="tagform.deviceTagId">
+              <el-form-item label="标签" prop="deviceTagIds">
+                <el-select v-model="tagform.deviceTagIds" multiple>
                   <el-option v-for="v in devicetagsListSelect" :key="v.id" :label="v.name" :value="v.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -473,6 +476,7 @@
 </template>
 <script>
 import axios from "axios";
+import { ElNotification } from "element-plus";
 import {
   devicegroupsList,
   devicesAdd,
@@ -540,10 +544,10 @@ export default {
       dialogtag: false,
       devicetagsListSelect: [],
       tagform: {
-        deviceTagId: ""
+        deviceTagIds: []
       },
       taglinkRules: {
-        deviceTagId: [{ required: true, message: "必填项", trigger: "blur" }]
+        deviceTagIds: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       // 导入
       strumentsloadFlag: false,
@@ -664,8 +668,24 @@ export default {
     },
     bindTag() {
       this.dialogtag = true;
-      this.tagform.deviceTagId = "";
+      this.tagform.deviceTagIds = [];
       this.getdevicetagsListSelect();
+    },
+    delteTag(row, tag) {
+      let tags = row.tags;
+      let ary = tags.filter(v => v.id != tag.id);
+      let deviceTagIds = [];
+      ary.map(v => {
+        deviceTagIds.push(v.id);
+      });
+      devicetagsbatchassign({ deviceIds: [row.id], deviceTagIds: deviceTagIds }).then(res => {
+        if (res.code == 0) {
+          this.$message.success("更新成功");
+          this.fetchTenantList();
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
     },
     getdevicetagsListSelect() {
       let params = `schoolId=${this.schoolId}&status=-1`;
@@ -684,7 +704,7 @@ export default {
           this.multipleSelection.map(v => {
             deviceIds.push(v.id);
           });
-          devicetagsbatchassign({ deviceIds: deviceIds, deviceTagId: this.tagform.deviceTagId }).then(res => {
+          devicetagsbatchassign({ deviceIds: deviceIds, deviceTagIds: this.tagform.deviceTagIds }).then(res => {
             if (res.code == 0) {
               let msg = `成功绑定${res.data.successCount}, 失败${res.data.failCount}`;
               this.$message.success(msg);
@@ -840,6 +860,12 @@ export default {
       });
     },
     beforeAvatarUpload() {
+      ElNotification({
+        title: "提示",
+        message: "数据导入中，请稍后",
+        type: "success",
+        duration: 0
+      });
       // this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
@@ -850,15 +876,29 @@ export default {
         this.errorData = res.data;
         this.falseFlag = true;
       }
+      ElNotification.closeAll();
       this.fetchTenantList();
     },
-    // 批量导出
+    // 设备导出
     confirmexport() {
       let status = this.filterForm.status ? this.filterForm.status : -1;
       let deviceGroupId = this.filterForm.deviceGroupId ? this.filterForm.deviceGroupId : -1;
-      let url = `${this.devicesexport}?schoolId=${this.schoolId}&name=${this.filterForm.name}&status=${status}&terminalSn=&deviceGroupId=${deviceGroupId}`;
+      let url = `${this.devicesexport}`;
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
+      let params = {
+        schoolId: this.schoolId,
+        name: this.filterForm.name,
+        status: status,
+        terminalSn: "",
+        deviceGroupId: deviceGroupId
+      };
       axios
-        .get(url, {
+        .post(url, params, {
           headers: {
             "Content-Type": "application/json",
             Authorization: this.token
@@ -877,6 +917,7 @@ export default {
           aLink.click();
           window.URL.revokeObjectURL(url);
           this.exportDialog = false;
+          ElNotification.closeAll();
         });
     }
   }

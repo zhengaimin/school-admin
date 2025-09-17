@@ -116,20 +116,30 @@
       <el-dialog v-model="innerDialog" width="900" title="学生" append-to-body>
         <div class="table-list" style="padding: 0 10px">
           <div style="margin: 0 10px 10px 0">
-            <el-select placeholder="年级" @change="getdepartmentsList" style="width: 200px" v-model="filterForm_s.gradeId">
+            <el-input placeholder="学生姓名" v-model="filterForm_s.name" style="width: 150px; margin-right: 10px"></el-input>
+            <el-select
+              placeholder="年级"
+              @change="
+                getdepartmentsList();
+                getClassList();
+              "
+              style="width: 150px"
+              v-model="filterForm_s.gradeId"
+            >
               <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
             </el-select>
             <el-select
               placeholder="级部"
               @change="getClassList"
-              style="width: 200px; margin: 0 10px"
+              style="width: 150px; margin: 0 10px"
               v-model="filterForm_s.departmentId"
             >
               <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
             </el-select>
-            <el-select placeholder="班级" style="width: 200px; margin-right: 10px" v-model="filterForm_s.classId">
+            <el-select placeholder="班级" style="width: 150px; margin-right: 10px" v-model="filterForm_s.classId">
               <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
             </el-select>
+            <el-button type="primary" @click="resetInner">重置</el-button>
             <el-button type="primary" @click="fetchstudentsList()">查询</el-button>
           </div>
           <el-table class="my-custom-table" :data="student_list" @selection-change="handleSelectionChange">
@@ -214,6 +224,7 @@ export default {
       // 学生
       innerDialog: false,
       filterForm_s: {
+        name: "",
         gradeId: "",
         departmentId: "",
         classId: ""
@@ -332,12 +343,20 @@ export default {
         }
       });
     },
+    resetInner() {
+      this.filterForm_s.name = "";
+      this.filterForm_s.studentCode = "";
+      this.filterForm_s.gradeId = "";
+      this.filterForm_s.departmentId = "";
+      this.filterForm_s.classId = "";
+      this.fetchstudentsList();
+    },
     // 学生列表
     fetchstudentsList() {
       let gradeId = this.filterForm_s.gradeId ? this.filterForm_s.gradeId : -1;
       let departmentId = this.filterForm_s.departmentId ? this.filterForm_s.departmentId : -1;
       let classId = this.filterForm_s.classId ? this.filterForm_s.classId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=${this.filterForm_s.name}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       studentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.student_list = res.data.list;

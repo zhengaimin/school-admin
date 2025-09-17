@@ -435,59 +435,7 @@
         </el-col>
       </el-row>
     </el-dialog>
-    <!-- 批量导出学生信息 -->
-    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="800">
-      <div style="padding-left: 20px">
-        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="top">
-          <el-row>
-            <el-col :span="23">
-              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
-                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="年级" prop="gradeId">
-                <el-select
-                  @change="
-                    getdepartmentsList(3);
-                    getClassList(3);
-                  "
-                  v-model="exportForm.gradeId"
-                >
-                  <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="级部" prop="departmentId">
-                <el-select v-model="exportForm.departmentId" @change="getClassList(3)">
-                  <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="班级" prop="classId">
-                <el-select v-model="exportForm.classId">
-                  <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: right">
-              <el-button @click="exportDialog = false">取消</el-button>
-              <el-button type="primary" @click="confirmexport">导出</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-    </el-dialog>
+
     <!-- 批量控制 -->
     <el-dialog v-model="dialogtag" :close-on-click-modal="false" title="人脸信息同步" :width="600">
       <div style="padding-left: 20px">
@@ -516,6 +464,7 @@
 </template>
 <script>
 import axios from "axios";
+import { ElNotification } from "element-plus";
 import {
   gradesList,
   departmentsList,
@@ -621,7 +570,6 @@ export default {
         sortOrder: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       // 批量导出
-      exportDialog: false,
       exportForm: {
         gradeId: "",
         departmentId: "",
@@ -908,6 +856,12 @@ export default {
       });
     },
     beforeAvatarUpload() {
+      ElNotification({
+        title: "提示",
+        message: "数据导入中，请稍后",
+        type: "success",
+        duration: 0
+      });
       // this.$refs.uploadFile.clearFiles();
     },
     handleSuccess(res) {
@@ -918,6 +872,7 @@ export default {
         this.errorData = res.data;
         this.falseFlag = true;
       }
+      ElNotification.closeAll();
       this.fetchTenantList();
     },
     // 头像
@@ -1011,12 +966,14 @@ export default {
         classId
       };
       this.confirmexport(params);
-      // this.exportDialog = true;
-      // this.$nextTick(() => {
-      //   this.$refs.exportlinkFormRef.resetFields();
-      // });
     },
     confirmexport(params) {
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
       axios
         .post(this.exportStudentUrl, params, {
           headers: {
@@ -1036,7 +993,7 @@ export default {
           aLink.setAttribute("download", "学生信息.xlsx");
           aLink.click();
           window.URL.revokeObjectURL(url);
-          this.exportDialog = false;
+          ElNotification.closeAll();
         });
     },
     updateFace(row) {

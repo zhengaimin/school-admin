@@ -160,9 +160,9 @@
           <el-descriptions-item label="学生姓名">{{ detailForm.studentName }}</el-descriptions-item>
           <el-descriptions-item label="UUID">{{ detailForm.studentUuid }}</el-descriptions-item>
           <el-descriptions-item label="物理卡号">{{ detailForm.cardNumber }}</el-descriptions-item>
-          <el-descriptions-item label="通话类型">{{
-            { VIDEO: "视频通话", SPEECH: "语音通话" }[detailForm.callType]
-          }}</el-descriptions-item>
+          <el-descriptions-item label="通话类型">
+            {{ { VIDEO: "视频通话", SPEECH: "语音通话" }[detailForm.callType] }}
+          </el-descriptions-item>
           <el-descriptions-item label="通道类型">{{ detailForm.channelType }}</el-descriptions-item>
           <el-descriptions-item label="被呼叫号码">{{ detailForm.phoneNumber }}</el-descriptions-item>
           <el-descriptions-item label="联系人称呼">{{ detailForm.contactName }}</el-descriptions-item>
@@ -236,6 +236,7 @@
 </template>
 <script>
 import axios from "axios";
+import { ElNotification } from "element-plus";
 import {
   gradesList,
   departmentsList,
@@ -271,7 +272,8 @@ export default {
       totalInfo: 0,
       pageInfo: 1,
       pageSizeInfo: 10000,
-      exportForm: {}
+      exportForm: {},
+      exportlinkRules: {}
     };
   },
   computed: {
@@ -405,6 +407,12 @@ export default {
     },
     confirmexport() {
       let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
       axios
         .get(url, {
           headers: {
@@ -425,6 +433,7 @@ export default {
           aLink.click();
           window.URL.revokeObjectURL(url);
           this.exportDialog = false;
+          ElNotification.closeAll();
         });
     }
   }
