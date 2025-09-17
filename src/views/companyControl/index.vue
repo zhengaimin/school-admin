@@ -55,6 +55,7 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
       form: {
         tenantId: "",
         merchantId: "",
@@ -89,10 +90,13 @@ export default {
   },
   methods: {
     fetchTenantList() {
+      if (this.isloading) return;
+      this.isloading = true;
       wechatConfig({ tenantId: this.userInfo.tenantId }).then(res => {
         if (res.code == 0 && res.data) {
           this.form = res.data;
         }
+        this.isloading = false;
       });
     },
     beforeAvatarUpload() {

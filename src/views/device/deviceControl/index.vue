@@ -493,6 +493,8 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
+      isloading1: false,
       filterForm: {
         name: "",
         status: "",
@@ -611,6 +613,8 @@ export default {
   methods: {
     // 设备组
     getdevicegroupsList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&name=&status=-1`;
       devicegroupsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -618,6 +622,7 @@ export default {
         } else {
           this.devicegroupsList = [];
         }
+        this.isloading = false;
       });
     },
     reset() {
@@ -627,6 +632,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading1) return;
+      this.isloading1 = true;
       let status = this.filterForm.status ? this.filterForm.status : -1;
       let deviceGroupId = this.filterForm.deviceGroupId ? this.filterForm.deviceGroupId : -1;
       let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&status=${status}&terminalSn=&deviceGroupId=${deviceGroupId}`;
@@ -638,6 +645,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading1 = false;
       });
     },
     //获取表单数据

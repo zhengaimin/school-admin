@@ -52,19 +52,14 @@
   </div>
 </template>
 <script>
-import {
-  gradesList,
-  schoolcallratedata,
-  schoolcallrate,
-  schoolmessageratedata,
-  schoolmessagerate
-} from "@/api/modules/InternalPage.js";
+import { schoolcallratedata, schoolcallrate, schoolmessageratedata, schoolmessagerate } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
+      isloading1: false,
       flag: 1,
-      gradesList: [],
       form: {
         schoolId: "",
         rate: "",
@@ -99,7 +94,6 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.fetchTenantList();
-          this.getGradesList();
         }
       },
       immediate: true
@@ -107,7 +101,6 @@ export default {
   },
   mounted() {
     this.fetchTenantList();
-    this.getGradesList();
   },
   methods: {
     getMonthsDiff() {
@@ -136,22 +129,28 @@ export default {
         return;
       }
       if (this.flag == 1) {
+        if (this.isloading) return;
+        this.isloading = true;
         schoolcallratedata({ schoolId: this.schoolId }).then(res => {
           if (res.code == 0 && res.data) {
             this.form = res.data;
           } else {
             this.form = {};
           }
+          this.isloading = false;
         });
         return;
       }
       if (this.flag == 2) {
+        if (this.isloading1) return;
+        this.isloading1 = true;
         schoolmessageratedata({ schoolId: this.schoolId }).then(res => {
           if (res.code == 0 && res.data) {
             this.form = res.data;
           } else {
             this.form = {};
           }
+          this.isloading1 = false;
         });
         return;
       }
@@ -190,16 +189,6 @@ export default {
       const [year, month] = dateStr.split("-").map(Number);
       const lastDay = new Date(year, month, 0);
       return lastDay.getDate();
-    },
-    getGradesList() {
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
-      gradesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.gradesList = res.data.list;
-        } else {
-          this.gradesList = [];
-        }
-      });
     }
   }
 };

@@ -28,15 +28,15 @@ export default {
     count: {
       handler(newVal) {
         if (newVal) {
-          this.fetchTenantList();
+          this.fetchTenantList("load");
         }
       },
       immediate: true
     }
   },
-  mounted() {
-    this.fetchTenantList("load");
-  },
+  // mounted() {
+  //   this.fetchTenantList("load");
+  // },
   methods: {
     fetchTenantList(val) {
       let params = `page=1&pageSize=200`;

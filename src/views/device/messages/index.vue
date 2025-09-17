@@ -205,6 +205,8 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
+      isloading1: false,
       messageToList: [
         { id: "STUDENT_TO_GUARDIAN", name: "学生给家长留言" },
         { id: "GUARDIAN_TO_STUDENT", name: "家长给学生留言" }
@@ -279,6 +281,8 @@ export default {
   },
   methods: {
     getGradesList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
       gradesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -286,6 +290,7 @@ export default {
         } else {
           this.gradesList = [];
         }
+        this.isloading = false;
       });
     },
     getdepartmentsList() {
@@ -326,6 +331,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading1) return;
+      this.isloading1 = true;
       this.filterForm.startTime = this.filterForm.startTime ? this.filterForm.startTime : "";
       this.filterForm.endTime = this.filterForm.endTime ? this.filterForm.endTime : "";
       let params = `schoolId=${this.schoolId}&studentName=${this.filterForm.studentName}&messageDirection=${this.filterForm.messageDirection}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}`;
@@ -337,6 +344,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading1 = false;
       });
     },
     //获取表单数据

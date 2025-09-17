@@ -68,6 +68,7 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
       filterForm: {
         name: "",
         status: ""
@@ -124,6 +125,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let status = this.filterForm.status;
       let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&status=${status}`;
       devicecommandsList(params).then(res => {
@@ -134,6 +137,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading = false;
       });
     },
     //获取表单数据

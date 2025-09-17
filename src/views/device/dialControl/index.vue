@@ -269,6 +269,7 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
       filterForm: {},
       statusList: [
         { id: "1", name: "在线" },
@@ -335,6 +336,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}`;
       deviceconfigList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -344,6 +347,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading = false;
       });
     },
     //获取表单数据

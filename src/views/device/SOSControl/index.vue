@@ -135,6 +135,7 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
       filterForm: {
         phoneNumber: "",
         salutation: "",
@@ -198,6 +199,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let status = this.filterForm.status ? this.filterForm.status : -1;
       let params = `schoolId=${this.schoolId}&phoneNumber=${this.filterForm.phoneNumber}&salutation=${this.filterForm.salutation}&status=${status}&page=${this.page}&pageSize=${this.pageSize}`;
       schoolsosList(params).then(res => {
@@ -208,6 +211,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading = false;
       });
     },
     //获取表单数据

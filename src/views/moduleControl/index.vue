@@ -120,6 +120,7 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
       filterForm: {
         name: ""
       },
@@ -182,6 +183,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}`;
       modulesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.schools) {
@@ -189,6 +192,7 @@ export default {
         } else {
           this.carbonCk_list = [];
         }
+        this.isloading = false;
       });
     },
     //获取表单数据

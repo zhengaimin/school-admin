@@ -249,6 +249,8 @@ import { useUserStore } from "@/stores/modules/user";
 export default {
   data() {
     return {
+      isloading: false,
+      isloading1: false,
       filterForm: {
         studentName: "",
         gradeId: "",
@@ -314,6 +316,8 @@ export default {
   },
   methods: {
     getGradesList() {
+      if (this.isloading) return;
+      this.isloading = true;
       let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
       gradesList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -321,6 +325,7 @@ export default {
         } else {
           this.gradesList = [];
         }
+        this.isloading = false;
       });
     },
     getdepartmentsList() {
@@ -360,6 +365,8 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
+      if (this.isloading1) return;
+      this.isloading1 = true;
       let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&studentName=${this.filterForm.studentName}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
       callrecordsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
@@ -369,6 +376,7 @@ export default {
           this.carbonCk_list = [];
           this.total = 0;
         }
+        this.isloading1 = false;
       });
     },
     //获取表单数据
