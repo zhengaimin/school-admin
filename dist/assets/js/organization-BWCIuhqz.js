@@ -1,1 +1,0 @@
-import{a1 as n}from"./index-e_0c_Zdx.js";const o=a=>n.post("/admin/organization/add",a),i=()=>n.get("/admin/organization/list"),r=a=>n.post("/admin/organization/update",a),e=a=>n.post("/admin/organization/delete",a),s=a=>n.get(`/admin/organization?${a}`),d=a=>n.get(`/admin/organization/info?id=${a.id}`);export{s as a,i as b,r as c,o as d,e,d as o};
