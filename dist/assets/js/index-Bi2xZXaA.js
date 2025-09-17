@@ -1,0 +1,1 @@
+import{_ as c}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as e,o}from"./index-DMUgSkHE.js";const t={},n={class:"card content-box"};function r(s,_){return o(),e("div",n,"d")}const f=c(t,[["render",r],["__scopeId","data-v-b0d71503"]]);export{f as default};
