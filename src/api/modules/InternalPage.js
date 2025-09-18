@@ -538,9 +538,19 @@ export const gradeunconfiguredList = params => {
   return http.get(`/admin/grade-config/unconfigured?${params}`);
 };
 // 赠送时间
-
 export const giftsbatch = params => {
   return http.post(`/admin/gifts/batch`, params);
+};
+export const giftsOne = params => {
+  return http.post(`/admin/gifts`, params);
+};
+/**
+ * 礼品批量取消功能
+ * @param {Object} params - 请求参数对象
+ * @returns {Promise} 返回HTTP POST请求的Promise对象
+ */
+export const batchcancel = params => {
+  return http.post(`/admin/gifts/batch/cancel`, params);
 };
 
 export const giftsList = params => {
