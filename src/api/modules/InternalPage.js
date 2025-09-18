@@ -587,3 +587,27 @@ export const paymentconfigstenant = params => {
 export const paymentconfigsadd = params => {
   return http.put(`/admin/payment-configs/tenant/${params.tenantId}`, params);
 };
+// 通知配置
+export const notificationList = params => {
+  return http.get(`/admin/notification-configs?${params}`);
+};
+export const notificationDetail = params => {
+  return http.get(`/admin/notification-configs/${params.id}`);
+};
+export const notificationupdate = params => {
+  return http.put(`/admin/notification-configs/${params.id}`, params);
+};
+export const notificationbatchstatus = params => {
+  return http.put(`/admin/notification-configs/batch-status`, params);
+};
+// 充值记录导出
+export const paymentsexportinfo = params => {
+  return http.get(`/admin/payments/export-info?${params}`);
+};
+// 套餐购买记录
+export const packagerecordsexportinfo = params => {
+  return http.get(`/admin/package-records/export-info?${params}`);
+};
+export const refundsexportinfo = params => {
+  return http.get(`/admin/refunds/export-info?${params}`);
+};

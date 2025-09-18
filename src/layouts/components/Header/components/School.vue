@@ -26,9 +26,9 @@ export default {
   },
   watch: {
     count: {
-      handler(newVal) {
-        if (newVal) {
-          this.fetchTenantList("load");
+      handler(newVal, oldVal) {
+        if (newVal && oldVal) {
+          this.fetchTenantList();
         }
       },
       immediate: true

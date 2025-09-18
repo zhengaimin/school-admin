@@ -69,10 +69,13 @@
     </div>
     <div class="btn-box">
       <span>退款审核</span>
-      <div></div>
+      <div>
+        <el-button type="primary" @click="exportInfo">导出</el-button>
+      </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
+        <el-table-column label="学校" prop="schoolName" width="140"> </el-table-column>
         <el-table-column label="退款申请单号" prop="refundNo" width="150"> </el-table-column>
         <el-table-column label="退款状态" prop="status" width="130">
           <template #default="{ row }">
@@ -85,7 +88,6 @@
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="唯一号" prop="studentUuid" width="160"> </el-table-column>
         <el-table-column label="学号" prop="studentCode" width="140"> </el-table-column>
-        <el-table-column label="学校" prop="schoolName" width="140"> </el-table-column>
         <el-table-column label="申请人" prop="applicantName"> </el-table-column>
         <el-table-column label="退款类型" prop="refundType" width="120">
           <template #default="{ row }">
@@ -198,16 +200,46 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 批量导出 -->
+    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="left">
+          <el-form-item label="">
+            <div style="">
+              <div style="margin-top: 20px; font-size: 16px">请选择导出页码（每次最多导出一万条）：</div>
+              <el-pagination
+                v-model:current-page="pageInfo"
+                v-model:page-size="pageSizeInfo"
+                :page-sizes="[10000]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalInfo"
+              />
+            </div>
+          </el-form-item>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="exportDialog = false">取消</el-button>
+              <el-button type="primary" @click="confirmexport">导出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+import axios from "axios";
+import { ElNotification } from "element-plus";
 import {
   gradesList,
   departmentsList,
   classesList,
   refundsList,
   refundscheck,
-  refundsDetail
+  refundsDetail,
+  refundsexportinfo
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 export default {
@@ -255,7 +287,14 @@ export default {
       pageSize: 10,
       // 详情
       dialogVisibledetail: false,
-      detailObj: {}
+      detailObj: {},
+      // 批量导出
+      exportDialog: false,
+      totalInfo: 0,
+      pageInfo: 1,
+      pageSizeInfo: 10000,
+      exportForm: {},
+      exportlinkRules: {}
     };
   },
   computed: {
@@ -264,6 +303,16 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    token() {
+      return useUserStore().token;
+    },
+    exportmessageUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/refunds/export`;
+      } else {
+        return `/admin/refunds/export`;
+      }
     }
   },
   watch: {
@@ -402,6 +451,63 @@ export default {
           this.detailObj = res.data;
         }
       });
+    },
+    // 批量导出
+    exportInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      this.exportDialog = true;
+      let status = this.filterForm.status ? this.filterForm.status : -1;
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let classId = this.filterForm.classId ? this.filterForm.classId : -1;
+      this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
+      this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let params = `schoolId=${this.schoolId}&refundType=FULL&studentKeyword=${this.filterForm.studentKeyword}&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      refundsexportinfo(params).then(res => {
+        if (res.code == 0 && res.data) {
+          this.totalInfo = res.data.totalRecords;
+        }
+      });
+    },
+    confirmexport() {
+      let status = this.filterForm.status ? this.filterForm.status : -1;
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let classId = this.filterForm.classId ? this.filterForm.classId : -1;
+      this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
+      this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&refundType=FULL&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
+      axios
+        .get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "余额退款记录.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+          ElNotification.closeAll();
+        });
     }
   }
 };

@@ -67,7 +67,9 @@
     </div>
     <div class="btn-box">
       <span>充值记录</span>
-      <div></div>
+      <div>
+        <el-button type="primary" @click="exportInfo">导出</el-button>
+      </div>
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
@@ -76,8 +78,8 @@
         <el-table-column label="学生" prop="studentName"> </el-table-column>
         <el-table-column label="唯一号" prop="studentUuid" width="160"> </el-table-column>
         <el-table-column label="学号" prop="studentCode"> </el-table-column>
-        <el-table-column label="充值金额（元）" prop="amount"> </el-table-column>
-        <el-table-column label="支付方式" prop="paymentMethod">
+        <el-table-column label="充值金额（元）" prop="amount" width="130"> </el-table-column>
+        <el-table-column label="支付方式" prop="paymentMethod" width="90">
           <template #default="{ row }">
             {{ { WECHAT: "微信支付", MOCK: "模拟支付" }[row.paymentMethod] }}
           </template>
@@ -164,11 +166,47 @@
         </el-row>
       </div>
     </el-dialog>
+    <!-- 批量导出 -->
+    <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="600">
+      <div style="padding-left: 20px">
+        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="left">
+          <el-form-item label="">
+            <div style="">
+              <div style="margin-top: 20px; font-size: 16px">请选择导出页码（每次最多导出一万条）：</div>
+              <el-pagination
+                v-model:current-page="pageInfo"
+                v-model:page-size="pageSizeInfo"
+                :page-sizes="[10000]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalInfo"
+              />
+            </div>
+          </el-form-item>
+        </el-form>
+        <el-row :gutter="23">
+          <el-col :span="23">
+            <div style="margin-top: 20px; text-align: center">
+              <el-button @click="exportDialog = false">取消</el-button>
+              <el-button type="primary" @click="confirmexport">导出</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { gradesList, departmentsList, classesList, paymentsList, paymentsDetail } from "@/api/modules/InternalPage.js";
+import axios from "axios";
+import {
+  gradesList,
+  departmentsList,
+  classesList,
+  paymentsList,
+  paymentsDetail,
+  paymentsexportinfo
+} from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
+import { ElNotification } from "element-plus";
 export default {
   data() {
     return {
@@ -211,7 +249,14 @@ export default {
       carbonCk_list: [],
       total: 0,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      // 批量导出
+      exportDialog: false,
+      totalInfo: 0,
+      pageInfo: 1,
+      pageSizeInfo: 10000,
+      exportForm: {},
+      exportlinkRules: {}
     };
   },
   computed: {
@@ -220,6 +265,16 @@ export default {
     },
     schoolId() {
       return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
+    },
+    token() {
+      return useUserStore().token;
+    },
+    exportmessageUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/payments/export`;
+      } else {
+        return `/admin/payments/export`;
+      }
     }
   },
   watch: {
@@ -330,6 +385,56 @@ export default {
           this.$message.error("获取信息失败");
         }
       });
+    },
+    // 批量导出
+    exportInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      this.exportDialog = true;
+      let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
+      let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
+      let classId = this.filterForm.classId ? this.filterForm.classId : -1;
+      this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
+      this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      paymentsexportinfo(params).then(res => {
+        if (res.code == 0 && res.data) {
+          this.totalInfo = res.data.totalRecords;
+        }
+      });
+    },
+    confirmexport() {
+      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
+      axios
+        .get(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "充值记录.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+          ElNotification.closeAll();
+        });
     }
   }
 };

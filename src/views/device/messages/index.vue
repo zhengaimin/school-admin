@@ -135,7 +135,7 @@
             }}</el-descriptions-item>
             <el-descriptions-item label="接收方手机号">{{ detailObj.receiverPhone }}</el-descriptions-item>
             <el-descriptions-item label="称呼">{{ detailObj.guardianName }}</el-descriptions-item>
-            <el-descriptions-item label="UUID">{{ detailObj.studentUuid }}</el-descriptions-item>
+            <el-descriptions-item label="唯一号">{{ detailObj.studentUuid }}</el-descriptions-item>
             <el-descriptions-item label="卡号">{{ detailObj.cardNumber }}</el-descriptions-item>
             <el-descriptions-item label="是否已读">{{ detailObj.isRead ? "是" : "否" }}</el-descriptions-item>
             <el-descriptions-item label="状态"> {{ ["", "正常", "删除"][detailObj.status] }}</el-descriptions-item>

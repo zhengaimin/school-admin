@@ -575,6 +575,20 @@
       }
     },
     {
+      "path": "/notificationConfig",
+      "name": "notificationConfig",
+      "component": "/notificationConfig/index",
+      "meta": {
+        "icon": "SwitchFilled",
+        "title": "通知配置管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
       "path": "/operationLog",
       "name": "operationLog",
       "component": "/operationLog/index",

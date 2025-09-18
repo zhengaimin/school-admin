@@ -12,8 +12,7 @@
       <span>年级管理</span>
       <div>
         <el-button type="primary" class="search-btn" @click="openAddDialog"> 新增 </el-button>
-        <el-button type="primary" class="search-btn" v-if="false"> 导入-no </el-button>
-        <el-button type="primary" class="search-btn" v-if="false"> 导出-no </el-button>
+        <el-button type="primary" @click="exportInfo">导出</el-button>
       </div>
     </div>
     <div class="table-list">
@@ -112,6 +111,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import { ElNotification } from "element-plus";
 import { gradesAdd, gradesUpdate, gradesList, gradesDelete, gradesDetail } from "@/api/modules/InternalPage.js";
 import { ElMessageBox } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -154,6 +155,16 @@ export default {
     },
     schoolName() {
       return useUserStore().schoolMsg.schoolName;
+    },
+    token() {
+      return useUserStore().token;
+    },
+    exportmessageUrl() {
+      if (process.env.NODE_ENV == "development") {
+        return `/api/admin/grades/export`;
+      } else {
+        return `/admin/grades/export`;
+      }
     }
   },
   // 监听schoolId的变化
@@ -270,6 +281,46 @@ export default {
         })
         .catch(() => {
           console.log("取消删除");
+        });
+    },
+    // 批量导出
+    exportInfo() {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
+      ElNotification({
+        title: "提示",
+        message: "数据导出中，请稍后",
+        type: "success",
+        duration: 0
+      });
+      let params = {
+        schoolId: this.schoolId,
+        name: this.filterForm.name,
+        enrollYear: this.filterForm.enrollYear ? Number(this.filterForm.enrollYear) : -1
+      };
+      axios
+        .post(this.exportmessageUrl, params, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.token
+          },
+          responseType: "blob"
+        })
+        .then(data => {
+          const content = data.data;
+          let blob = new Blob([content], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.href = url;
+          aLink.setAttribute("download", "年级信息.xlsx");
+          aLink.click();
+          window.URL.revokeObjectURL(url);
+          this.exportDialog = false;
+          ElNotification.closeAll();
         });
     }
   }

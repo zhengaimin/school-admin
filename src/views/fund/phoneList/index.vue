@@ -158,7 +158,7 @@
         </div>
         <el-descriptions column="2" border title="通话详情" style="margin-top: 20px">
           <el-descriptions-item label="学生姓名">{{ detailForm.studentName }}</el-descriptions-item>
-          <el-descriptions-item label="UUID">{{ detailForm.studentUuid }}</el-descriptions-item>
+          <el-descriptions-item label="唯一号">{{ detailForm.studentUuid }}</el-descriptions-item>
           <el-descriptions-item label="物理卡号">{{ detailForm.cardNumber }}</el-descriptions-item>
           <el-descriptions-item label="通话类型">
             {{ { VIDEO: "视频通话", SPEECH: "语音通话" }[detailForm.callType] }}
