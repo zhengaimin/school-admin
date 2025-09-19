@@ -61,7 +61,7 @@
         <el-table-column label="唯一号" prop="uuid" width="180"> </el-table-column>
         <el-table-column label="图片" width="95" align="center">
           <template #default="{ row }">
-            <img style="width: 70px; max-height: 70px; border-radius: 50%" :src="row.faceImageUrl" alt="" srcset="" />
+            <el-avatar v-if="row.faceImageUrl" :size="60" fit="cover" :src="row.faceImageUrl" />
           </template>
         </el-table-column>
         <el-table-column label="人脸核验" width="95">

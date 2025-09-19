@@ -24,7 +24,7 @@
         <el-table-column label="学校" prop="name" width="180"> </el-table-column>
         <el-table-column label="校徽" width="85" align="center">
           <template #default="{ row }">
-            <img v-if="row.badge" style="width: 60px; height: 60px" :src="row.badge" alt="" srcset="" />
+            <el-avatar v-if="row.badge" :size="60" fit="cover" :src="row.badge" />
           </template>
         </el-table-column>
         <el-table-column label="学校地址" prop="address" width="200"> </el-table-column>
