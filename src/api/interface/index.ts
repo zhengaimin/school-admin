@@ -36,7 +36,9 @@ export namespace Login {
     username: string;
     password: string;
     captcha: string;
-    captcha_id: string;
+    // captcha_id: string;
+    captchaId: string;
+    remberPw: boolean;
   }
   export interface ResLogin {
     sign: string;

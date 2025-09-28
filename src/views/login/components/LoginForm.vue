@@ -21,7 +21,7 @@
       </el-input>
     </el-form-item>
     <!-- 验证码 -->
-    <el-form-item prop="username">
+    <el-form-item prop="username" style="margin-bottom: 10px">
       <el-col :span="16">
         <el-input v-model="loginForm.captcha" placeholder="请输入验证码">
           <template #prefix>
@@ -37,6 +37,9 @@
         </div>
       </el-col>
     </el-form-item>
+    <div class="remember-password">
+      <el-checkbox v-model="loginForm.remberPw" label="记住账号及密码" style="font-size: 12px !important" />
+    </div>
   </el-form>
   <div class="login-btn">
     <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="login(loginFormRef)"> 登录 </el-button>
@@ -85,12 +88,13 @@ const loginForm = reactive<Login.ReqLoginForm>({
   username: "",
   password: "",
   captcha: "",
-  captchaId: ""
+  captchaId: "",
+  remberPw: false
 });
 const captchaImgPath = ref("");
 
 const RSA_PUBLIC_KEY = ref("");
-// const userId = ref("");
+
 //获取秘匙
 const getKey = async () => {
   const { data } = await get_rsa_public_key();
@@ -152,13 +156,18 @@ const login = (formEl: FormInstance | undefined) => {
       }
       userStore.setToken(data.token);
       userStore.setUserInfo(data["login_user_info"]);
-
       // 2.添加动态路由
       await initDynamicRouter();
       // 3.清空 tabs、keepAlive 数据
       tabsStore.setTabs([]);
       keepAliveStore.setKeepAliveName([]);
       // 4.跳转到首页
+      // 记住账号及密码
+      if (loginForm.remberPw) {
+        localStorage.setItem("loginForm", JSON.stringify(loginForm));
+      } else {
+        localStorage.removeItem("loginForm");
+      }
 
       setTimeout(() => {
         if (login_user_info.role_key == "super_admin" || login_user_info.role_key == "agent_admin") {
@@ -187,6 +196,13 @@ onMounted(() => {
       login(loginFormRef.value);
     }
   };
+
+  let form = localStorage.getItem("loginForm") ? JSON.parse(localStorage.getItem("loginForm")) : null;
+  if (form && form["remberPw"]) {
+    loginForm["username"] = form.username;
+    loginForm["password"] = form.password;
+    loginForm["remberPw"] = form.remberPw;
+  }
 
   ajaxGetCaptcha();
   // 2.清除 Token

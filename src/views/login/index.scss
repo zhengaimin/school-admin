@@ -76,6 +76,9 @@
     }
   }
 }
+:deep(.el-checkbox__label) {
+  font-size: 12px;
+}
 
 @media screen and (width <= 1250px) {
   .login-left {
