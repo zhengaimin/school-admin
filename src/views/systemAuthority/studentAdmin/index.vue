@@ -6,6 +6,10 @@
         <el-input v-model="filterForm.name" style="width: calc(100% - 90px)"></el-input>
       </div>
       <div>
+        <label for="name">唯一号</label>
+        <el-input v-model="filterForm.uuid" style="width: calc(100% - 90px)"></el-input>
+      </div>
+      <div>
         <label for="name">学号</label>
         <el-input v-model="filterForm.studentCode" style="width: calc(100% - 90px)"></el-input>
       </div>
@@ -38,6 +42,20 @@
         <label for="">班级</label>
         <el-select placeholder="班级" style="width: calc(100% - 90px)" v-model="filterForm.classId">
           <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">创建时间</label>
+        <el-select placeholder="升降排序" style="width: calc(100% - 90px)" v-model="filterForm.created_atorder">
+          <el-option label="升序" value="asc"></el-option>
+          <el-option label="倒序" value="desc"></el-option>
+        </el-select>
+      </div>
+      <div>
+        <label for="">唯一号</label>
+        <el-select placeholder="升降排序" style="width: calc(100% - 90px)" v-model="filterForm.uuidorder">
+          <el-option label="升序" value="asc"></el-option>
+          <el-option label="倒序" value="desc"></el-option>
         </el-select>
       </div>
       <div>
@@ -92,7 +110,7 @@
             {{ ["停用", "在读", "毕业", "转学"][row.status] }}
           </template>
         </el-table-column>
-
+        <el-table-column label="创建时间" prop="createdAt" width="110"> </el-table-column>
         <el-table-column label="操作" align="center" width="220" fixed="right">
           <template #default="scope">
             <div class="table-btn">
@@ -490,10 +508,13 @@ export default {
       isloading1: false,
       filterForm: {
         name: "",
+        uuid: "",
         studentCode: "",
         gradeId: "",
         departmentId: "",
-        classId: ""
+        classId: "",
+        created_atorder: "",
+        uuidorder: ""
       },
       //新增权限系统
       dialogVisibleAdd: false,
@@ -718,10 +739,13 @@ export default {
     },
     reset() {
       this.filterForm.name = "";
+      this.filterForm.uuid = "";
       this.filterForm.studentCode = "";
       this.filterForm.gradeId = "";
       this.filterForm.departmentId = "";
       this.filterForm.classId = "";
+      this.filterForm.created_atorder = "";
+      this.filterForm.uuidorder = "";
       this.fetchTenantList();
     },
     fetchTenantList() {
@@ -730,7 +754,8 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&studentCode=${this.filterForm.studentCode}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let order = `created_at:${this.filterForm.created_atorder},uuid:${this.filterForm.uuidorder}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}&uuid=${this.filterForm.uuid}&studentCode=${this.filterForm.studentCode}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}&order=${order}`;
       studentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
