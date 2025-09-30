@@ -1,0 +1,1 @@
+import{ab as t}from"./index-DYUWtit3.js";const e=t({id:"form-list",state(){return{configObj:{},logoForm:{}}},getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{e as f};

@@ -855,6 +855,10 @@ export default {
         });
     },
     uploadFile(val) {
+      if (this.schoolId == -1) {
+        this.$message.warning("请先选择学校");
+        return;
+      }
       this.typeflag = val;
       this.strumentsloadFlag = true;
       this.falseFlag = false;

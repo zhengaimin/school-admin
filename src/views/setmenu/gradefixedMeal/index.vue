@@ -378,6 +378,7 @@ export default {
             this.form[key] = res.data[key];
           }
           this.form.gradeIds = gradeIds;
+          this.form.videoCallMinutes = res.data.packageContent.videoCallMinutes;
         } else {
           this.$message.error("获取信息失败");
         }
