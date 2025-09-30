@@ -136,7 +136,6 @@ export default {
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
         enrollYear: [{ required: true, message: "必填项", trigger: "blur" }],
-        description: [{ required: true, message: "必填项", trigger: "blur" }],
         isGraduated: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       //  列表

@@ -27,6 +27,7 @@ export default {
   watch: {
     count: {
       handler(newVal, oldVal) {
+        console.log(1, newVal, oldVal);
         if (newVal && oldVal) {
           this.fetchTenantList();
         }

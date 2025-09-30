@@ -158,8 +158,7 @@ export default {
       },
       linkRules: {
         name: [{ required: true, message: "必填项", trigger: "blur" }],
-        departmentId: [{ required: true, message: "必填项", trigger: "blur" }],
-        description: [{ required: true, message: "必填项", trigger: "blur" }]
+        departmentId: [{ required: true, message: "必填项", trigger: "blur" }]
       },
       //  列表
       carbonCk_list: [],

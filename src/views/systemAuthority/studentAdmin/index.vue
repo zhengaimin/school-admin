@@ -566,7 +566,6 @@ export default {
       },
       parentlinkRules: {
         relationship: [{ required: true, message: "必填项", trigger: "blur" }],
-        nickname: [{ required: true, message: "必填项", trigger: "blur" }],
         phone: [{ required: true, message: "必填项", trigger: "blur" }],
         isPrimary: [{ required: true, message: "必填项", trigger: "blur" }],
         sortOrder: [{ required: true, message: "必填项", trigger: "blur" }]
