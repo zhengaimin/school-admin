@@ -118,3 +118,14 @@
   font-size: 16px;
   font-weight: normal;
 }
+.filter-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  .el-form-item {
+    margin-bottom: 0;
+  }
+}
+.btn-box {
+  margin: 10px 0;
+}

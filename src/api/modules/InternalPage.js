@@ -302,7 +302,7 @@ export const devicesUpdate = params => {
   return http.put(`/admin/devices/${params.id}`, params);
 };
 export const devicesList = params => {
-  return http.get(`/admin/devices?${params}`);
+  return http.get(`/admin/devices`, params);
 };
 export const devicesDelete = params => {
   return http.delete(`/admin/devices/${params.id}`);
@@ -599,7 +599,7 @@ export const paymentconfigsadd = params => {
 };
 // 通知配置
 export const notificationList = params => {
-  return http.get(`/admin/notification-configs?${params}`);
+  return http.get(`/admin/notification-configs`, params);
 };
 export const notificationDetail = params => {
   return http.get(`/admin/notification-configs/${params.id}`);

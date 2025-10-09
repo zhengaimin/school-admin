@@ -15,14 +15,14 @@
       <div></div>
     </div>
     <div class="table-list">
-      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
+      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list" v-loading="isloading">
         <el-table-column label="学校" prop="schoolName" width="130"> </el-table-column>
         <el-table-column label="命令UUID" prop="cmdUuid" width="150"> </el-table-column>
         <el-table-column label="设备ID" prop="deviceId" width="140"> </el-table-column>
         <el-table-column label="设备名称" prop="deviceName" width="140"> </el-table-column>
         <el-table-column label="终端KEY" prop="terminalKey" width="140"> </el-table-column>
         <el-table-column label="SN" prop="terminalSn" width="140"> </el-table-column>
-        <el-table-column label="命令类型" prop="commandType" width="140"> </el-table-column>
+        <!-- <el-table-column label="命令类型" prop="commandType" width="140"> </el-table-column> -->
         <el-table-column label="命令" prop="commandName" width="140"> </el-table-column>
         <el-table-column label="状态" prop="statusText" width="140"> </el-table-column>
         <el-table-column label="描述" prop="describe" width="220"> </el-table-column>
@@ -55,183 +55,109 @@
     </div>
   </div>
 </template>
-<script>
-import {
-  devicegroupsAdd,
-  devicegroupsUpdate,
-  devicecommandsList,
-  devicecommandsDelete,
-  devicecommandsDetail
-} from "@/api/modules/InternalPage.js";
-import { ElMessageBox } from "element-plus";
+
+<script setup>
+import { ref, reactive, computed, watch, onMounted } from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
-export default {
-  data() {
-    return {
-      isloading: false,
-      filterForm: {
-        name: "",
-        status: ""
-      },
-      gradesList: [
-        { id: "PENDING", name: "待执行" },
-        { id: "SUCCESS", name: "执行成功" },
-        { id: "FAILED", name: "执行失败" }
-      ],
-      //新增权限系统
-      dialogVisibleAdd: false,
-      form: {
-        name: "",
-        isVoipGroup: false,
-        schoolId: "",
-        description: ""
-      },
-      linkRules: {
-        name: [{ required: true, message: "必填项", trigger: "blur" }],
-        isVoipGroup: [{ required: true, message: "必填项", trigger: "blur" }]
-      },
-      //  列表
-      carbonCk_list: [],
-      total: 0,
-      page: 1,
-      pageSize: 10
-    };
-  },
-  computed: {
-    userInfo() {
-      return useUserStore().userInfo;
-    },
-    schoolId() {
-      return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
-    }
-  },
-  watch: {
-    schoolId: {
-      handler(newVal) {
-        if (newVal) {
-          this.fetchTenantList();
-        }
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-    this.fetchTenantList();
-  },
-  methods: {
-    reset() {
-      this.filterForm.name = "";
-      this.filterForm.status = "";
-      this.fetchTenantList();
-    },
-    fetchTenantList() {
-      if (this.isloading) return;
-      this.isloading = true;
-      let status = this.filterForm.status;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&status=${status}`;
-      devicecommandsList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.carbonCk_list = res.data.list;
-          this.total = res.data.total;
-        } else {
-          this.carbonCk_list = [];
-          this.total = 0;
-        }
-        this.isloading = false;
-      });
-    },
-    //获取表单数据
-    handleSizeChange(val) {
-      this.page = 1;
-      this.pageSize = val;
-      this.fetchTenantList();
-    },
-    handleCurrentChange(val) {
-      this.page = val;
-      this.fetchTenantList();
-    },
+import { devicecommandsList, devicecommandsDelete } from "@/api/modules/InternalPage.js";
 
-    //新增
-    openAddDialog() {
-      delete this.form.id;
-      this.dialogVisibleAdd = true;
-      this.$nextTick(() => {
-        this.$refs.linkFormRef.resetFields();
-      });
-    },
-    editRow(row) {
-      this.dialogVisibleAdd = true;
-      devicecommandsDetail({ id: row.id }).then(res => {
-        if (res.code == 0 && res.data) {
-          for (let key in res.data) {
-            this.form[key] = res.data[key];
-          }
-        } else {
-          this.$message.error("获取信息失败");
-        }
-      });
-      this.form.id = row.id;
-    },
-    changeStatus(row) {
-      let params = {
-        schoolId: this.schoolId,
-        id: row.id,
-        status: row.status,
-        isVoipGroup: row.isVoipGroup
-      };
-      devicegroupsUpdate(params).then(res => {
-        if (res.code == 0) {
-          this.$message.success("状态修改成功");
-          this.fetchTenantList();
-        }
-      });
-    },
-    confirmAdd() {
-      this.$refs.linkFormRef.validate(valid => {
-        if (valid) {
-          this.form.schoolId = this.schoolId;
-          if (this.form.id) {
-            devicegroupsUpdate(this.form).then(res => {
-              if (res.code == 0) {
-                this.dialogVisibleAdd = false;
-                this.$message.success("编辑成功");
-                this.fetchTenantList();
-              }
-            });
-            return;
-          }
-          devicegroupsAdd(this.form).then(res => {
-            if (res.code == 0) {
-              this.dialogVisibleAdd = false;
-              this.$message.success("添加成功");
-              this.fetchTenantList();
-            }
-          });
-        }
-      });
-    },
+// 响应式数据
+const isloading = ref(false);
+const carbonCk_list = ref([]);
+const total = ref(0);
+const page = ref(1);
+const pageSize = ref(10);
 
-    deleteRow(row) {
-      ElMessageBox.confirm("确定删除该条数据吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          devicecommandsDelete({ id: row.id }).then(res => {
-            if (res && res.code == 0) {
-              this.$message.success("删除成功");
-              this.fetchTenantList();
-            }
-          });
-        })
-        .catch(() => {
-          console.log("取消删除");
-        });
-    }
-  }
+const filterForm = reactive({
+  name: "",
+  status: ""
+});
+
+const gradesList = ref([
+  { id: "PENDING", name: "待执行" },
+  { id: "SUCCESS", name: "执行成功" },
+  { id: "FAILED", name: "执行失败" }
+]);
+
+// 计算属性
+const userStore = useUserStore();
+const schoolId = computed(() => {
+  return userStore.schoolMsg.schoolId ? Number(userStore.schoolMsg.schoolId) : "";
+});
+
+// 方法
+const reset = () => {
+  filterForm.name = "";
+  filterForm.status = "";
+  fetchTenantList();
 };
+
+const fetchTenantList = () => {
+  if (isloading.value) return;
+  isloading.value = true;
+  const status = filterForm.status;
+  const params = `schoolId=${schoolId.value}&page=${page.value}&pageSize=${pageSize.value}&status=${status}`;
+  devicecommandsList(params).then(res => {
+    if (res.code == 0 && res.data && res.data.list) {
+      carbonCk_list.value = res.data.list;
+      total.value = res.data.total;
+    } else {
+      carbonCk_list.value = [];
+      total.value = 0;
+    }
+    isloading.value = false;
+  });
+};
+
+// 获取表单数据
+const handleSizeChange = val => {
+  page.value = 1;
+  pageSize.value = val;
+  fetchTenantList();
+};
+
+const handleCurrentChange = val => {
+  page.value = val;
+  fetchTenantList();
+};
+
+const deleteRow = row => {
+  ElMessageBox.confirm("确定删除该条数据吗?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(() => {
+      devicecommandsDelete({ id: row.id }).then(res => {
+        if (res && res.code == 0) {
+          ElMessage.success("删除成功");
+          fetchTenantList();
+        }
+      });
+    })
+    .catch(() => {
+      console.log("取消删除");
+    });
+};
+
+// 监听器
+watch(
+  schoolId,
+  newVal => {
+    if (newVal) {
+      fetchTenantList();
+    }
+  },
+  { immediate: true }
+);
+
+// 生命周期钩子
+onMounted(() => {
+  fetchTenantList();
+});
 </script>
+
 <style lang="scss" scoped>
 @import "./index";
 </style>

@@ -75,15 +75,15 @@
     </div>
     <div class="table-list">
       <el-table class="my-custom-table" height="100%" border :data="carbonCk_list">
-        <el-table-column label="学校" prop="schoolName" width="130"> </el-table-column>
-        <el-table-column label="学生" prop="studentName" width="110"> </el-table-column>
-        <el-table-column label="年级" prop="gradeName" width="100"> </el-table-column>
+        <el-table-column label="学校" prop="schoolName"> </el-table-column>
+        <el-table-column label="学生" prop="studentName"> </el-table-column>
+        <el-table-column label="年级" prop="gradeName"> </el-table-column>
         <el-table-column label="级部" prop="departmentName" width="100"> </el-table-column>
         <el-table-column label="班级" prop="className" width="100"> </el-table-column>
-        <el-table-column label="卡号" prop="cardNumber" width="110"> </el-table-column>
+        <el-table-column label="卡号" prop="cardNumber" min-width="110"> </el-table-column>
         <el-table-column label="称呼" prop="guardianName" width="90"> </el-table-column>
         <el-table-column label="接收方手机号" prop="receiverPhone" width="130"> </el-table-column>
-        <el-table-column label="留言方向" prop="messageDirection" width="130">
+        <el-table-column label="留言方向" prop="messageDirection" min-width="130">
           <template #default="{ row }">
             {{ { STUDENT_TO_GUARDIAN: "学生给家长留言", GUARDIAN_TO_STUDENT: "家长给学生留言" }[row.messageDirection] }}
           </template>
@@ -164,7 +164,7 @@
     <!-- 批量导出 -->
     <el-dialog v-model="exportDialog" :close-on-click-modal="false" title="批量导出" :width="600">
       <div style="padding-left: 20px">
-        <el-form ref="exportlinkFormRef" :model="exportForm" :rules="exportlinkRules" class="demo-ruleForm" label-position="left">
+        <el-form ref="exportlinkFormRef" :model="exportForm" class="demo-ruleForm" label-position="left">
           <el-form-item label="">
             <div style="">
               <div style="margin-top: 20px; font-size: 16px">请选择导出页码（每次最多导出一万条）：</div>
@@ -190,229 +190,219 @@
     </el-dialog>
   </div>
 </template>
-<script>
+<script setup>
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import axios from "axios";
-import { ElNotification } from "element-plus";
+import { ElNotification, ElMessage } from "element-plus";
 import {
-  gradesList,
-  departmentsList,
-  classesList,
-  messagesList,
-  messagesDetail,
-  messagesListExportInfo
+  gradesList as gradesListApi,
+  departmentsList as departmentsListApi,
+  classesList as classesListApi,
+  messagesList as messagesListApi,
+  messagesDetail as messagesDetailApi,
+  messagesListExportInfo as messagesListExportInfoApi
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
-export default {
-  data() {
-    return {
-      isloading: false,
-      isloading1: false,
-      messageToList: [
-        { id: "STUDENT_TO_GUARDIAN", name: "学生给家长留言" },
-        { id: "GUARDIAN_TO_STUDENT", name: "家长给学生留言" }
-      ],
-      filterForm: {
-        studentName: "",
-        messageDirection: "",
-        gradeId: "",
-        departmentId: "",
-        classId: "",
-        startTime: "",
-        endTime: ""
-      },
-      statusList: [
-        { id: "1", name: "在线" },
-        { id: "0", name: "离线" }
-      ],
-      gradesList: [],
-      departmentsList: [],
-      classList: [],
-      //新增权限系统
-      dialogVisibledetail: false,
-      detailObj: { packageContent: {} },
-      //  列表
-      carbonCk_list: [],
-      total: 0,
-      page: 1,
-      pageSize: 10,
-      // 批量导出
-      exportDialog: false,
-      totalInfo: 0,
-      pageInfo: 1,
-      pageSizeInfo: 10000,
-      exportForm: {}
-    };
-  },
-  computed: {
-    userInfo() {
-      return useUserStore().userInfo;
-    },
-    schoolId() {
-      return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
-    },
-    token() {
-      return useUserStore().token;
-    },
-    exportmessageUrl() {
-      if (process.env.NODE_ENV == "development") {
-        return `/api/admin/messages/export`;
-      } else {
-        return `/admin/messages/export`;
-      }
-    }
-  },
-  watch: {
-    schoolId: {
-      handler(newVal) {
-        if (newVal) {
-          this.getGradesList();
-          this.fetchTenantList();
-          this.filterForm.gradeId = "";
-          this.filterForm.departmentId = "";
-          this.filterForm.classId = "";
-        }
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-    this.getGradesList();
-    this.fetchTenantList();
-  },
-  methods: {
-    getGradesList() {
-      if (this.isloading) return;
-      this.isloading = true;
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`;
-      gradesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.gradesList = res.data.list;
-        } else {
-          this.gradesList = [];
-        }
-        this.isloading = false;
-      });
-    },
-    getdepartmentsList() {
-      this.filterForm.departmentId = "";
-      this.filterForm.classId = "";
-      let gradeId = this.filterForm.gradeId;
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${gradeId}`;
-      departmentsList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.departmentsList = res.data.list;
-        } else {
-          this.departmentsList = [];
-        }
-      });
-    },
-    // 获取班级
-    getClassList() {
-      this.filterForm.classId = "";
-      let gradeId = this.filterForm.gradeId;
-      let departmentId = this.filterForm.departmentId;
-      let params = `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${gradeId}&departmentId=${departmentId}`;
-      classesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.classList = res.data.list;
-        } else {
-          this.classList = [];
-        }
-      });
-    },
-    reset() {
-      this.filterForm.studentName = "";
-      this.filterForm.messageDirection = "";
-      this.filterForm.gradeId = "";
-      this.filterForm.departmentId = "";
-      this.filterForm.classId = "";
-      this.filterForm.startTime = "";
-      this.filterForm.endTime = "";
-      this.fetchTenantList();
-    },
-    fetchTenantList() {
-      if (this.isloading1) return;
-      this.isloading1 = true;
-      this.filterForm.startTime = this.filterForm.startTime ? this.filterForm.startTime : "";
-      this.filterForm.endTime = this.filterForm.endTime ? this.filterForm.endTime : "";
-      let params = `schoolId=${this.schoolId}&studentName=${this.filterForm.studentName}&messageDirection=${this.filterForm.messageDirection}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}`;
-      messagesList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.carbonCk_list = res.data.list;
-          this.total = res.data.total;
-        } else {
-          this.carbonCk_list = [];
-          this.total = 0;
-        }
-        this.isloading1 = false;
-      });
-    },
-    //获取表单数据
-    handleSizeChange(val) {
-      this.page = 1;
-      this.pageSize = val;
-      this.fetchTenantList();
-    },
-    handleCurrentChange(val) {
-      this.page = val;
-      this.fetchTenantList();
-    },
-    // 详情
-    detail(row) {
-      this.dialogVisibledetail = true;
-      messagesDetail({ id: row.id }).then(res => {
-        if (res.code == 0 && res.data) {
-          this.detailObj = res.data;
-        }
-      });
-    },
-    // 批量导出
-    exportInfo() {
-      if (this.schoolId == -1) {
-        this.$message.warning("请先选择学校");
-        return;
-      }
-      this.exportDialog = true;
-      let params = `schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
-      messagesListExportInfo(params).then(res => {
-        if (res.code == 0 && res.data) {
-          this.totalInfo = res.data.totalRecords;
-        }
-      });
-    },
-    confirmexport() {
-      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
-      ElNotification({
-        title: "提示",
-        message: "数据导出中，请稍后",
-        type: "success",
-        duration: 0
-      });
-      axios
-        .get(url, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: this.token
-          },
-          responseType: "blob"
-        })
-        .then(data => {
-          const content = data.data;
-          let blob = new Blob([content], {
-            type: "application/vnd.ms-excel;charset=utf-8"
-          });
-          let url = window.URL.createObjectURL(blob);
-          let aLink = document.createElement("a");
-          aLink.href = url;
-          aLink.setAttribute("download", "留言记录.xlsx");
-          aLink.click();
-          window.URL.revokeObjectURL(url);
-          this.exportDialog = false;
-          ElNotification.closeAll();
-        });
-    }
+
+const userStore = useUserStore();
+
+const isloading = ref(false);
+const isloading1 = ref(false);
+
+const filterForm = reactive({
+  studentName: "",
+  messageDirection: "",
+  gradeId: "",
+  departmentId: "",
+  classId: "",
+  startTime: "",
+  endTime: ""
+});
+
+const gradesList = ref([]);
+const departmentsList = ref([]);
+const classList = ref([]);
+
+const dialogVisibledetail = ref(false);
+const detailObj = reactive({ packageContent: {} });
+
+const carbonCk_list = ref([]);
+const total = ref(0);
+const page = ref(1);
+const pageSize = ref(10);
+
+const exportDialog = ref(false);
+const totalInfo = ref(0);
+const pageInfo = ref(1);
+const pageSizeInfo = ref(10000);
+const exportForm = reactive({});
+
+const schoolId = computed(() => (userStore.schoolMsg.schoolId ? Number(userStore.schoolMsg.schoolId) : ""));
+const token = computed(() => userStore.token);
+
+const exportmessageUrl = computed(() => {
+  if (process.env.NODE_ENV == "development") {
+    return `/api/admin/messages/export`;
+  } else {
+    return `/admin/messages/export`;
   }
+});
+
+const getGradesList = () => {
+  if (isloading.value) return;
+  isloading.value = true;
+  let params = `schoolId=${schoolId.value}&page=1&pageSize=200&enrollYear=-1`;
+  gradesListApi(params).then(res => {
+    if (res.code == 0 && res.data && res.data.list) {
+      gradesList.value = res.data.list;
+    } else {
+      gradesList.value = [];
+    }
+    isloading.value = false;
+  });
 };
+
+const getdepartmentsList = () => {
+  filterForm.departmentId = "";
+  filterForm.classId = "";
+  let gradeId = filterForm.gradeId;
+  let params = `schoolId=${schoolId.value}&page=1&pageSize=100&gradeId=${gradeId}`;
+  departmentsListApi(params).then(res => {
+    if (res.code == 0 && res.data && res.data.list) {
+      departmentsList.value = res.data.list;
+    } else {
+      departmentsList.value = [];
+    }
+  });
+};
+
+const getClassList = () => {
+  filterForm.classId = "";
+  let gradeId = filterForm.gradeId;
+  let departmentId = filterForm.departmentId;
+  let params = `schoolId=${schoolId.value}&page=1&pageSize=200&gradeId=${gradeId}&departmentId=${departmentId}`;
+  classesListApi(params).then(res => {
+    if (res.code == 0 && res.data && res.data.list) {
+      classList.value = res.data.list;
+    } else {
+      classList.value = [];
+    }
+  });
+};
+
+const reset = () => {
+  filterForm.studentName = "";
+  filterForm.messageDirection = "";
+  filterForm.gradeId = "";
+  filterForm.departmentId = "";
+  filterForm.classId = "";
+  filterForm.startTime = "";
+  filterForm.endTime = "";
+  fetchTenantList();
+};
+
+const fetchTenantList = () => {
+  if (isloading1.value) return;
+  isloading1.value = true;
+  filterForm.startTime = filterForm.startTime ? filterForm.startTime : "";
+  filterForm.endTime = filterForm.endTime ? filterForm.endTime : "";
+  let params = `schoolId=${schoolId.value}&studentName=${filterForm.studentName}&messageDirection=${filterForm.messageDirection}&startTime=${filterForm.startTime}&endTime=${filterForm.endTime}&page=${page.value}&pageSize=${pageSize.value}&gradeId=${filterForm.gradeId}&departmentId=${filterForm.departmentId}&classId=${filterForm.classId}`;
+  messagesListApi(params).then(res => {
+    if (res.code == 0 && res.data && res.data.list) {
+      carbonCk_list.value = res.data.list;
+      total.value = res.data.total;
+    } else {
+      carbonCk_list.value = [];
+      total.value = 0;
+    }
+    isloading1.value = false;
+  });
+};
+
+const handleSizeChange = val => {
+  page.value = 1;
+  pageSize.value = val;
+  fetchTenantList();
+};
+
+const handleCurrentChange = val => {
+  page.value = val;
+  fetchTenantList();
+};
+
+const detail = row => {
+  dialogVisibledetail.value = true;
+  messagesDetailApi({ id: row.id }).then(res => {
+    if (res.code == 0 && res.data) {
+      Object.assign(detailObj, res.data);
+    }
+  });
+};
+
+const exportInfo = () => {
+  if (schoolId.value == -1) {
+    ElMessage.warning("请先选择学校");
+    return;
+  }
+  exportDialog.value = true;
+  let params = `schoolId=${schoolId.value}&gradeId=${filterForm.gradeId}&departmentId=${filterForm.departmentId}&classId=${filterForm.classId}&startTime=${filterForm.startTime}&endTime=${filterForm.endTime}`;
+  messagesListExportInfoApi(params).then(res => {
+    if (res.code == 0 && res.data) {
+      totalInfo.value = res.data.totalRecords;
+    }
+  });
+};
+
+const confirmexport = () => {
+  let url = `${exportmessageUrl.value}?page=${pageInfo.value}&pageSize=${pageSizeInfo.value}&schoolId=${schoolId.value}&gradeId=${filterForm.gradeId}&departmentId=${filterForm.departmentId}&classId=${filterForm.classId}&startTime=${filterForm.startTime}&endTime=${filterForm.endTime}`;
+  ElNotification({
+    title: "提示",
+    message: "数据导出中，请稍后",
+    type: "success",
+    duration: 0
+  });
+  axios
+    .get(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token.value
+      },
+      responseType: "blob"
+    })
+    .then(data => {
+      const content = data.data;
+      let blob = new Blob([content], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      let url = window.URL.createObjectURL(blob);
+      let aLink = document.createElement("a");
+      aLink.href = url;
+      aLink.setAttribute("download", "留言记录.xlsx");
+      aLink.click();
+      window.URL.revokeObjectURL(url);
+      exportDialog.value = false;
+      ElNotification.closeAll();
+    });
+};
+
+watch(
+  schoolId,
+  newVal => {
+    if (newVal) {
+      getGradesList();
+      fetchTenantList();
+      filterForm.gradeId = "";
+      filterForm.departmentId = "";
+      filterForm.classId = "";
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  getGradesList();
+  fetchTenantList();
+});
 </script>
 <style lang="scss" scoped>
 @import "./index";
