@@ -197,7 +197,8 @@ onMounted(() => {
     }
   };
 
-  let form = localStorage.getItem("loginForm") ? JSON.parse(localStorage.getItem("loginForm")) : null;
+  const formStr = localStorage.getItem("loginForm");
+  let form = formStr ? JSON.parse(formStr) : null;
   if (form && form["remberPw"]) {
     loginForm["username"] = form.username;
     loginForm["password"] = form.password;

@@ -55,20 +55,20 @@ export type FieldNamesProps = {
   children?: string;
 };
 
-export type RenderScope<T> = {
+export type RenderScope<T extends Record<string, any>> = {
   row: T;
   $index: number;
   column: TableColumnCtx<T>;
   [key: string]: any;
 };
 
-export type HeaderRenderScope<T> = {
+export type HeaderRenderScope<T extends Record<string, any>> = {
   $index: number;
   column: TableColumnCtx<T>;
   [key: string]: any;
 };
 
-export interface ColumnProps<T = any>
+export interface ColumnProps<T extends Record<string, any> = any>
   extends Partial<Omit<TableColumnCtx<T>, "type" | "children" | "renderCell" | "renderHeader">> {
   type?: TypeProps; // 列类型
   tag?: boolean | Ref<boolean>; // 是否是标签展示
