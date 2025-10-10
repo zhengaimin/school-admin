@@ -10,9 +10,66 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="16">
+          <el-col :span="23">
+            <el-form-item label="设备名称" prop="name">
+              <el-input v-model="form.name"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="11">
+            <el-form-item label="终端Key" prop="terminalKey">
+              <el-input v-model="form.terminalKey"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" :offset="1">
+            <el-form-item label="设备SN号" prop="terminalSn">
+              <el-input v-model="form.terminalSn"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="11">
+            <el-form-item label="设备MAC地址" prop="terminalMac">
+              <el-input v-model="form.terminalMac"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" :offset="1">
+            <el-form-item label="设备组" prop="deviceGroupId">
+              <el-select v-model="form.deviceGroupId">
+                <el-option v-for="v in deviceGroupsList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="23">
+            <el-form-item label="设备地址" prop="location">
+              <el-input v-model="form.location"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="11">
+            <el-form-item label="定时开机时间" prop="powerOnTime">
+              <el-time-select v-model="form.powerOnTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" :offset="1">
+            <el-form-item label="定时关机时间" prop="powerOffTime">
+              <el-time-select v-model="form.powerOffTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="11">
             <el-form-item label="心跳时间（ms）" prop="heartbeatFrequency">
               <el-input type="number" v-model="form.heartbeatFrequency"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" :offset="1">
+            <el-form-item label="预警通话时长（分钟）" prop="warnCallTime">
+              <el-input type="number" v-model="form.warnCallTime"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -58,13 +115,12 @@
         </el-row>
         <el-row>
           <el-col :span="11">
-            <el-form-item label="定时开机时间" prop="powerOnTime">
-              <el-time-select v-model="form.powerOnTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="11" :offset="1">
-            <el-form-item label="定时关机时间" prop="powerOffTime">
-              <el-time-select v-model="form.powerOffTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
+            <el-form-item label="计费模式" prop="billMode">
+              <el-select v-model="form.billMode" style="width: 100%">
+                <el-option label="免费" value="0"></el-option>
+                <el-option label="音视频分开计费" value="Y"></el-option>
+                <el-option label="合并计费" value="N"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -74,6 +130,7 @@
               <el-radio-group v-model="form.messageFlag">
                 <el-radio value="Y">是</el-radio>
                 <el-radio value="N">否</el-radio>
+                <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -82,6 +139,7 @@
               <el-radio-group v-model="form.downloadUserFlag">
                 <el-radio value="Y">是</el-radio>
                 <el-radio value="N">否</el-radio>
+                <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -92,6 +150,7 @@
               <el-radio-group v-model="form.messageSoundFlag">
                 <el-radio value="Y">是</el-radio>
                 <el-radio value="N">否</el-radio>
+                <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -100,6 +159,7 @@
               <el-radio-group disabled v-model="form.mhcFlag">
                 <el-radio value="Y">是</el-radio>
                 <el-radio value="N">否</el-radio>
+                <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -110,6 +170,7 @@
               <el-radio-group v-model="form.addPunchFace">
                 <el-radio value="Y">是</el-radio>
                 <el-radio value="N">否</el-radio>
+                <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -121,7 +182,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div style="margin-bottom: 10px; font-size: 12px; color: red">提示：多个号码用“,”分隔，例如：110,120,119</div>
+        <div style="margin-bottom: 10px; font-size: 12px; color: red">提示：多个号码用","分隔，例如：110,120,119</div>
         <el-row>
           <el-col :span="8">
             <el-form-item label="">
@@ -167,7 +228,7 @@
 <script setup>
 import { ref, reactive, computed, nextTick } from "vue";
 import { PHONE_TYPE_OPTIONS, SIP_TYPE_OPTIONS } from "@/config/modules/device";
-import { deviceconfigAdd, deviceconfigUpdate, deviceconfigDetail } from "@/api/modules/InternalPage.js";
+import { devicesAdd, devicesUpdate, devicesDetail } from "@/api/modules/InternalPage.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 
@@ -175,6 +236,10 @@ defineProps({
   schoolName: {
     type: String,
     default: ""
+  },
+  deviceGroupsList: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -183,42 +248,59 @@ const dialogVisible = ref(false);
 const linkFormRef = ref(null);
 
 const form = reactive({
-  schoolId: "",
+  name: "",
+  terminalKey: "",
+  terminalSn: "",
+  terminalMac: "",
+  location: "",
+  deviceGroupId: "",
   heartbeatFrequency: "",
   callTime: "",
   powerOnTime: "",
   powerOffTime: "",
   forbidPhone: "",
-  phoneType: "all",
-  messageFlag: "N",
-  downloadUserFlag: "N",
-  messageSoundFlag: "N",
-  mhcFlag: "N",
-  addPunchFace: "N",
+  phoneType: "",
+  messageFlag: "",
+  downloadUserFlag: "",
+  messageSoundFlag: "",
+  mhcFlag: "",
+  addPunchFace: "",
   forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
   forbidCallTimes: "",
+  billMode: "",
+  warnCallTime: "",
   sipDomain: "",
   sipPassword: "",
   sipTransportType: "",
   sipUserName: ""
 });
-const linkRules = reactive({});
+
+const linkRules = reactive({
+  name: [{ required: true, message: "必填项", trigger: "blur" }],
+  terminalKey: [{ required: true, message: "必填项", trigger: "blur" }],
+  terminalSn: [{ required: true, message: "必填项", trigger: "blur" }],
+  terminalMac: [{ required: true, message: "必填项", trigger: "blur" }]
+});
 
 const schoolId = computed(() => (userStore.schoolMsg.schoolId ? Number(userStore.schoolMsg.schoolId) : ""));
 
 const openDialog = row => {
   if (row && row.id) {
-    deviceconfigDetail({ id: row.id }).then(res => {
+    devicesDetail({ id: row.id }).then(res => {
       if (res.code == 0 && res.data) {
-        Object.assign(form, res.data);
-        if (res.data.forbidCallTimes) {
-          form.forbidCallTimesAry = res.data.forbidCallTimes.split(",").map(v => {
-            const [fst, fend] = v.split("-");
-            return { fstTime: fst, fendTime: fend };
-          });
-        } else {
-          form.forbidCallTimesAry = [{ fstTime: "", fendTime: "" }];
+        form.forbidCallTimesAry = [];
+        for (const key in res.data) {
+          if (key === "forbidCallTimes" && res.data["forbidCallTimes"]) {
+            const ary = res.data["forbidCallTimes"].split(",");
+            ary.forEach(v => {
+              const arr = v.split("-");
+              form.forbidCallTimesAry.push({ fstTime: arr[0], fendTime: arr[1] });
+            });
+          } else {
+            form[key] = res.data[key];
+          }
         }
+        form.id = row.id;
       } else {
         ElMessage.error("获取信息失败");
       }
@@ -226,20 +308,27 @@ const openDialog = row => {
   } else {
     delete form.id;
     Object.assign(form, {
-      schoolId: "",
+      name: "",
+      terminalKey: "",
+      terminalSn: "",
+      terminalMac: "",
+      location: "",
+      deviceGroupId: "",
       heartbeatFrequency: "",
       callTime: "",
       powerOnTime: "",
       powerOffTime: "",
       forbidPhone: "",
-      phoneType: "all",
-      messageFlag: "N",
-      downloadUserFlag: "N",
-      messageSoundFlag: "N",
-      mhcFlag: "N",
-      addPunchFace: "N",
+      phoneType: "",
+      messageFlag: "",
+      downloadUserFlag: "",
+      messageSoundFlag: "",
+      mhcFlag: "",
+      addPunchFace: "",
       forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
       forbidCallTimes: "",
+      billMode: "",
+      warnCallTime: "",
       sipDomain: "",
       sipPassword: "",
       sipTransportType: "",
@@ -253,10 +342,7 @@ const openDialog = row => {
 };
 
 const AddItem = () => {
-  form.forbidCallTimesAry.push({
-    fstTime: "",
-    fendTime: ""
-  });
+  form.forbidCallTimesAry.push({ fstTime: "", fendTime: "" });
 };
 
 const deleteItem = index => {
@@ -268,18 +354,15 @@ const confirmAdd = async () => {
   if (!linkFormRef.value) return;
   await linkFormRef.value.validate(valid => {
     if (valid) {
-      form.heartbeatFrequency = Number(form.heartbeatFrequency);
-      form.callTime = Number(form.callTime);
-      form.forbidCallTimes = form.forbidCallTimesAry
-        .filter(v => v.fstTime && v.fendTime)
-        .map(v => `${v.fstTime}-${v.fendTime}`)
-        .join(",");
+      form.schoolId = schoolId.value;
+      form.heartbeatFrequency = form.heartbeatFrequency ? Number(form.heartbeatFrequency) : -1;
+      form.callTime = form.callTime ? Number(form.callTime) : -1;
+      form.warnCallTime = form.warnCallTime ? Number(form.warnCallTime) : -1;
+      const ary = form.forbidCallTimesAry.filter(v => v.fstTime && v.fendTime).map(v => `${v.fstTime}-${v.fendTime}`);
+      form.forbidCallTimes = ary.join(",");
 
-      const api = form.id ? deviceconfigUpdate : deviceconfigAdd;
+      const api = form.id ? devicesUpdate : devicesAdd;
       const message = form.id ? "编辑成功" : "添加成功";
-      if (!form.id) {
-        form.schoolId = schoolId.value;
-      }
 
       api(form).then(res => {
         if (res.code == 0) {

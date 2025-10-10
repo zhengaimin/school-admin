@@ -139,208 +139,12 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <!-- 新增 -->
-    <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" :title="form.id ? '编辑' : '新增'" :width="800">
-      <div style="padding-left: 20px">
-        <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
-          <el-row>
-            <el-col :span="23">
-              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
-                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="设备名称" prop="name">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="终端Key" prop="terminalKey">
-                <el-input v-model="form.terminalKey"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="设备SN号" prop="terminalSn">
-                <el-input v-model="form.terminalSn"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="设备MAC地址" prop="terminalMac">
-                <el-input v-model="form.terminalMac"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="设备组" prop="deviceGroupId">
-                <el-select v-model="form.deviceGroupId">
-                  <el-option v-for="v in deviceGroupsList" :key="v.id" :label="v.name" :value="v.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="设备地址" prop="location">
-                <el-input v-model="form.location"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="定时开机时间" prop="powerOnTime">
-                <el-time-select v-model="form.powerOnTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="定时关机时间" prop="powerOffTime">
-                <el-time-select v-model="form.powerOffTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="心跳时间（ms）" prop="heartbeatFrequency">
-                <el-input type="number" v-model="form.heartbeatFrequency"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="预警通话时长（分钟）" prop="warnCallTime">
-                <el-input type="number" v-model="form.warnCallTime"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="单次通话限定时长（分钟）" prop="callTime">
-                <el-input type="number" v-model="form.callTime"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="拨号类型" prop="phoneType">
-                <el-select v-model="form.phoneType" placeholder="请选择拨号类型" style="width: 100%">
-                  <el-option label="视频+语音" value="all"></el-option>
-                  <el-option label="视频" value="video"></el-option>
-                  <el-option label="语音" value="sim"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="计费模式" prop="billMode">
-                <el-select v-model="form.billMode" style="width: 100%">
-                  <el-option label="免费" value="0"></el-option>
-                  <el-option label="音视频分开计费" value="Y"></el-option>
-                  <el-option label="合并计费" value="N"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="是否显示留言按钮" prop="messageFlag">
-                <el-radio-group v-model="form.messageFlag">
-                  <el-radio value="Y">是</el-radio>
-                  <el-radio value="N">否</el-radio>
-                  <el-radio value="">暂不配置</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="是否全量同步人脸" prop="downloadUserFlag">
-                <el-radio-group v-model="form.downloadUserFlag">
-                  <el-radio value="Y">是</el-radio>
-                  <el-radio value="N">否</el-radio>
-                  <el-radio value="">暂不配置</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
-                <el-radio-group v-model="form.messageSoundFlag">
-                  <el-radio value="Y">是</el-radio>
-                  <el-radio value="N">否</el-radio>
-                  <el-radio value="">暂不配置</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="心理咨询身份认证" prop="mhcFlag">
-                <el-radio-group disabled v-model="form.mhcFlag">
-                  <el-radio value="Y">是</el-radio>
-                  <el-radio value="N">否</el-radio>
-                  <el-radio value="">暂不配置</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="刷脸记录人员信息" prop="addPunchFace">
-                <el-radio-group v-model="form.addPunchFace">
-                  <el-radio value="Y">是</el-radio>
-                  <el-radio value="N">否</el-radio>
-                  <el-radio value="">暂不配置</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="禁拨号码" prop="forbidPhone">
-                <el-input type="textarea" v-model="form.forbidPhone"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <div style="margin-bottom: 10px; font-size: 12px; color: red">提示：多个号码用“,”分隔，例如：110,120,119</div>
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="">
-                禁拨时间 <el-button style="margin-left: 10px" @click="AddItem"> + 新增</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row v-for="(item, i) in form.forbidCallTimesAry" :key="i">
-            <el-col :span="10">
-              <el-form-item label="禁拨开始时间">
-                <el-time-select v-model="item.fstTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="10" style="margin: 0 15px">
-              <el-form-item label="禁拨结束时间">
-                <el-time-select v-model="item.fendTime" style="width: 100%" start="00:00" step="00:10" end="23:59" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="2">
-              <el-form-item label="&nbsp">
-                <img
-                  v-if="form.forbidCallTimesAry.length > 1"
-                  @click="deleteItem(i)"
-                  src="@/assets/images/common/delete-circle-2.svg"
-                  alt=""
-                  style="width: 23px; height: 23px; margin-top: 3px"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: right">
-              <el-button @click="dialogVisibleAdd = false">取消</el-button>
-              <el-button type="primary" @click="confirmAdd">确定</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-    </el-dialog>
+    <add-or-edit-dialog
+      ref="addOrEditDialogRef"
+      :school-name="schoolName"
+      :device-groups-list="deviceGroupsList"
+      @success="fetchDeviceList"
+    />
     <!-- 绑定标签 -->
     <el-dialog v-model="dialogTag" :close-on-click-modal="false" title="绑定标签" :width="600">
       <div style="padding-left: 20px">
@@ -416,86 +220,18 @@
         </div>
       </div>
     </el-dialog>
-    <!-- 详情 -->
-    <el-dialog v-model="dialogVisibleDetail" :close-on-click-modal="false" title="配置详情" :width="800">
-      <div style="padding-left: 20px">
-        <div>
-          <el-descriptions :column="2" border title="">
-            <el-descriptions-item label="学校">{{ detailForm.schoolName }}</el-descriptions-item>
-            <el-descriptions-item label="设备名称">{{ detailForm.name }}</el-descriptions-item>
-            <el-descriptions-item label="设备终端key">{{ detailForm.terminalKey }}</el-descriptions-item>
-            <el-descriptions-item label="设备SN号">{{ detailForm.terminalSn }}</el-descriptions-item>
-            <el-descriptions-item label="设备Mac地址">{{ detailForm.terminalMac }}</el-descriptions-item>
-            <el-descriptions-item label="设备组">{{ detailForm.deviceGroupName }}</el-descriptions-item>
-            <el-descriptions-item label="设备位置">{{ detailForm.location }}</el-descriptions-item>
-            <el-descriptions-item label="心跳时间（ms）">{{ detailForm.heartbeatFrequency }}</el-descriptions-item>
-            <el-descriptions-item label="单次通话限定时长（分钟）">{{ detailForm.callTime }}</el-descriptions-item>
-            <el-descriptions-item label="拨号类型">{{ detailForm.phoneType }}</el-descriptions-item>
-            <el-descriptions-item label="定时开机时间">{{ detailForm.powerOnTime }}</el-descriptions-item>
-            <el-descriptions-item label="定时关机时间">{{ detailForm.powerOffTime }}</el-descriptions-item>
-            <el-descriptions-item label="是否显示留言按钮">
-              <span v-if="detailForm.messageFlag">
-                {{ detailForm.messageFlag == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="是否全量同步人脸">
-              <span v-if="detailForm.downloadUserFlag">
-                {{ detailForm.downloadUserFlag == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="是否启用语音留言">
-              <span v-if="detailForm.messageSoundFlag">
-                {{ detailForm.messageSoundFlag == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="心理咨询身份认证">
-              <span v-if="detailForm.mhcFlag">
-                {{ detailForm.mhcFlag == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="刷脸记录人员信息">
-              <span v-if="detailForm.addPunchFace">
-                {{ detailForm.addPunchFace == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="禁拨号码">
-              <span v-if="detailForm.forbidPhone">
-                {{ detailForm.forbidPhone == "Y" ? "是" : "否" }}
-              </span>
-            </el-descriptions-item>
-            <el-descriptions-item label="计费模式">
-              {{ { "0": "免费", Y: "音视频分开计费", N: "合并计费" }[detailForm.billMode] }}
-            </el-descriptions-item>
-            <el-descriptions-item label="预警通话时长（分钟）">
-              {{ detailForm.warnCallTime }}
-            </el-descriptions-item>
-            <el-descriptions-item label="禁拨时间段">
-              {{ detailForm.forbidCallTimes }}
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: center">
-              <el-button @click="dialogVisibleDetail = false">关闭</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-    </el-dialog>
+    <detail-dialog ref="detailDialogRef" />
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import axios from "axios";
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import {
   devicegroupsList as apiDeviceGroupsList,
-  devicesAdd,
-  devicesUpdate,
   devicesList,
   devicesDelete,
-  devicesDetail,
   devicesbatchcontrol,
   devicetagsListSelect as apiDeviceTagsListSelect,
   devicetagsbatchassign as deviceTagsBatchAssign
@@ -503,6 +239,9 @@ import {
 import { useUserStore } from "@/stores/modules/user";
 import type { FormInstance, FormRules } from "element-plus";
 import { Loading, TurnOff, UploadFilled } from "@element-plus/icons-vue";
+
+import AddOrEditDialog from "./modules/AddOrEditDialog.vue";
+import DetailDialog from "./modules/DetailDialog.vue";
 
 const userStore = useUserStore();
 
@@ -520,40 +259,12 @@ const statusList = ref([
   { id: "0", name: "离线" }
 ]);
 
-// 新增/编辑弹窗
-const dialogVisibleAdd = ref(false);
-const deviceGroupsList = ref<any[]>([]);
-const linkFormRef = ref<FormInstance>();
-const form = reactive<any>({
-  name: "",
-  terminalKey: "",
-  terminalSn: "",
-  terminalMac: "",
-  location: "",
-  deviceGroupId: "",
-  heartbeatFrequency: "",
-  callTime: "",
-  powerOnTime: "",
-  powerOffTime: "",
-  forbidPhone: "",
-  phoneType: "",
-  messageFlag: "",
-  downloadUserFlag: "",
-  messageSoundFlag: "",
-  mhcFlag: "",
-  addPunchFace: "",
-  forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
-  forbidCallTimes: "",
-  billMode: "",
-  warnCallTime: ""
-});
+// 组件引用
+const addOrEditDialogRef = ref<InstanceType<typeof AddOrEditDialog> | null>(null);
+const detailDialogRef = ref<InstanceType<typeof DetailDialog> | null>(null);
 
-const linkRules = reactive<FormRules>({
-  name: [{ required: true, message: "必填项", trigger: "blur" }],
-  terminalKey: [{ required: true, message: "必填项", trigger: "blur" }],
-  terminalSn: [{ required: true, message: "必填项", trigger: "blur" }],
-  terminalMac: [{ required: true, message: "必填项", trigger: "blur" }]
-});
+// 设备组列表
+const deviceGroupsList = ref<any[]>([]);
 
 // 列表
 const deviceList = ref<any[]>([]);
@@ -578,10 +289,6 @@ const instrumentsLoadFlag = ref(false);
 const falseFlag = ref(false);
 const errorData = ref<any>({});
 const uploadFileRef = ref();
-
-// 详情
-const dialogVisibleDetail = ref(false);
-const detailForm = ref<any>({});
 
 const schoolId = computed(() => (userStore.schoolMsg.schoolId ? Number(userStore.schoolMsg.schoolId) : ""));
 const schoolName = computed(() => userStore.schoolMsg.schoolName);
@@ -728,83 +435,15 @@ const openAddDialog = () => {
     ElMessage.warning("请先选择学校");
     return;
   }
-  delete form.id;
-  dialogVisibleAdd.value = true;
-  nextTick(() => {
-    linkFormRef.value?.resetFields();
-    form.forbidCallTimesAry = [{ fstTime: "", fendTime: "" }];
-  });
+  addOrEditDialogRef.value?.openDialog();
 };
 
-const editRow = async (row: any) => {
-  dialogVisibleAdd.value = true;
-  const res = await devicesDetail({ id: row.id });
-  if (res.code == 0 && res.data) {
-    form.forbidCallTimesAry = [];
-    for (const key in res.data) {
-      if (key === "forbidCallTimes" && res.data["forbidCallTimes"]) {
-        const ary = res.data["forbidCallTimes"].split(",");
-        ary.forEach((v: string) => {
-          const arr = v.split("-");
-          form.forbidCallTimesAry.push({ fstTime: arr, fendTime: arr });
-        });
-      } else {
-        form[key] = res.data[key];
-      }
-    }
-    form.id = row.id;
-  } else {
-    ElMessage.error("获取信息失败");
-  }
+const editRow = (row: any) => {
+  addOrEditDialogRef.value?.openDialog(row);
 };
 
-const detail = async (row: any) => {
-  dialogVisibleDetail.value = true;
-  const res = await devicesDetail({ id: row.id });
-  if (res.code == 0 && res.data) {
-    detailForm.value = res.data;
-  } else {
-    ElMessage.error("获取信息失败");
-  }
-};
-
-const AddItem = () => {
-  form.forbidCallTimesAry.push({ fstTime: "", fendTime: "" });
-};
-
-const deleteItem = (index: number) => {
-  form.forbidCallTimesAry.splice(index, 1);
-};
-
-const confirmAdd = () => {
-  linkFormRef.value?.validate(async valid => {
-    if (valid) {
-      form.schoolId = schoolId.value;
-      form.heartbeatFrequency = form.heartbeatFrequency ? Number(form.heartbeatFrequency) : -1;
-      form.callTime = form.callTime ? Number(form.callTime) : -1;
-      form.warnCallTime = form.warnCallTime ? Number(form.warnCallTime) : -1;
-      const ary = form.forbidCallTimesAry
-        .filter((v: any) => v.fstTime && v.fendTime)
-        .map((v: any) => `${v.fstTime}-${v.fendTime}`);
-      form.forbidCallTimes = ary.join(",");
-
-      if (form.id) {
-        const res = await devicesUpdate(form);
-        if (res.code == 0) {
-          dialogVisibleAdd.value = false;
-          ElMessage.success("编辑成功");
-          fetchDeviceList();
-        }
-      } else {
-        const res = await devicesAdd(form);
-        if (res.code == 0) {
-          dialogVisibleAdd.value = false;
-          ElMessage.success("添加成功");
-          fetchDeviceList();
-        }
-      }
-    }
-  });
+const detail = (row: any) => {
+  detailDialogRef.value?.openDialog(row);
 };
 
 const deleteRow = (row: any) => {
@@ -856,9 +495,9 @@ const downloadFileTemplate = () => {
 const uploadFile = () => {
   instrumentsLoadFlag.value = true;
   falseFlag.value = false;
-  nextTick(() => {
+  setTimeout(() => {
     uploadFileRef.value?.clearFiles();
-  });
+  }, 0);
 };
 
 const beforeAvatarUpload = () => {
@@ -938,6 +577,7 @@ onMounted(() => {
   fetchDeviceList();
 });
 </script>
+
 <style lang="scss" scoped>
 @import "./index";
 .upload-box {
