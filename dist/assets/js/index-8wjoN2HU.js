@@ -1,0 +1,1 @@
+const a={all:"全部",video:"视频",sim:"SIM卡"},e=[{label:a.all,value:"all"},{label:a.video,value:"video"},{label:a.sim,value:"sim"}],l={udp:"UDP",tcp:"TCP",tls:"TLS",dtls:"DTLS"},s=[{label:l.udp,value:"UDP"},{label:l.tcp,value:"TCP"},{label:l.tls,value:"TLS"},{label:l.dtls,value:"DTLS"}];export{a as P,s as S,e as a,l as b};

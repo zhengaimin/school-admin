@@ -40,8 +40,10 @@ export default {
   },
   methods: {
     fetchTenantList(val) {
-      let params = `page=1&pageSize=200`;
-      schoolsList(params).then(res => {
+      schoolsList({
+        page: 1,
+        pageSize: 200
+      }).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.schoolList = res.data.list;
           this.schoolList.unshift({ id: "-1", name: "全部学校" });

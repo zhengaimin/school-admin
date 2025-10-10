@@ -175,10 +175,10 @@ export const schoolsUpdate = params => {
   return http.put(`/admin/schools/${params.id}`, params);
 };
 export const schoolsList = params => {
-  return http.get(`/admin/schools?${params}`);
+  return http.get(`/admin/schools`, params);
 };
 export const schoolsDelete = params => {
-  return http.delete(`/admin/schools/${params.id}`);
+  return http.delete(`/admin/schools/${params.id}`, {}, { errorTip: false });
 };
 export const schoolsDetail = params => {
   return http.get(`/admin/schools/${params.id}`);

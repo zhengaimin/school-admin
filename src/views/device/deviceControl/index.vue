@@ -223,9 +223,9 @@
             <el-col :span="11" :offset="1">
               <el-form-item label="拨号类型" prop="phoneType">
                 <el-select v-model="form.phoneType" placeholder="请选择拨号类型" style="width: 100%">
-                  <el-option label="全部" value="all"></el-option>
-                  <el-option label="VIDEO" value="video"></el-option>
-                  <el-option label="SIM" value="sim"></el-option>
+                  <el-option label="视频+语音" value="all"></el-option>
+                  <el-option label="视频" value="video"></el-option>
+                  <el-option label="语音" value="sim"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>

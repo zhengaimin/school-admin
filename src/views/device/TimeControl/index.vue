@@ -149,7 +149,11 @@ export default {
       this.fetchTenantList();
     },
     fetchTenantList() {
-      let params = `page=${this.page}&pageSize=${this.pageSize}&name=${this.filterForm.name}`;
+      let params = {
+        page: this.page,
+        pageSize: this.pageSize,
+        name: this.filterForm.name
+      };
       schoolsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
