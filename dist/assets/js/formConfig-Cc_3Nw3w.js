@@ -1,0 +1,1 @@
+import{ac as t}from"./index-B8IGdssZ.js";const e=t({id:"form-list",state(){return{configObj:{},logoForm:{}}},getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{e as f};

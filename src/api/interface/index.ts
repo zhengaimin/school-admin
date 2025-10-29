@@ -50,7 +50,8 @@ export namespace Login {
   }
 
   export interface ResGetCaptcha {
-    captcha_id: string;
+    id: string;
+    base64Blob: string;
   }
 }
 

@@ -93,6 +93,13 @@
           </el-row>
           <el-row>
             <el-col :span="23">
+              <el-form-item label="服务器地址（成绩）" prop="scoreUrl">
+                <el-input v-model="form.scoreUrl" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="23">
               <el-form-item label="学校校训" prop="motto">
                 <el-input v-model="form.motto" :maxlength="100" show-word-limit />
               </el-form-item>
@@ -178,7 +185,8 @@ const form = reactive({
   badge: "",
   background: "",
   photos: [],
-  tenantId: ""
+  tenantId: "",
+  scoreUrl: ""
 });
 
 // 表单验证规则

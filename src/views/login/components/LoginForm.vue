@@ -113,9 +113,9 @@ const rsaEncrypt = (value: string, pubKey = RSA_PUBLIC_KEY.value): string => {
 /** 获取验证码 */
 const ajaxGetCaptcha = async () => {
   const { data } = await getCaptchaApi();
-  if (data["id"]) {
-    loginForm.captchaId = data["id"];
-    captchaImgPath.value = data["base64Blob"];
+  if (data?.id) {
+    loginForm.captchaId = data.id;
+    captchaImgPath.value = data?.base64Blob;
   }
 };
 // login

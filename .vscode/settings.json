@@ -1,4 +1,6 @@
 {
+  "css.customData": [".vscode/unocss.json"],
+
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.stylelint": "explicit"
@@ -94,7 +96,5 @@
     "zhongyingwen",
     "zhuti"
   ],
-  "i18n-ally.localesPaths": [
-    "src/languages"
-  ]
+  "i18n-ally.localesPaths": ["src/languages"]
 }
