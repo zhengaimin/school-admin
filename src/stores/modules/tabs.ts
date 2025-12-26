@@ -4,11 +4,13 @@ import { getUrlWithParams } from "@/utils";
 import { useKeepAliveStore } from "./keepAlive";
 import { TabsState, TabsMenuProps } from "@/stores/interface";
 import piniaPersistConfig from "@/stores/helper/persist";
+import { generatePrefix } from "@/stores/helper/prefix";
 
 const keepAliveStore = useKeepAliveStore();
 
-export const useTabsStore = defineStore({
-  id: "geeker-tabs",
+const id = generatePrefix("tabs");
+
+export const useTabsStore = defineStore(id, {
   state: (): TabsState => ({
     tabsMenuList: []
   }),
@@ -36,7 +38,7 @@ export const useTabsStore = defineStore({
       }
       // remove keepalive
       const tabItem = this.tabsMenuList.find(item => item.path === tabPath);
-      tabItem?.isKeepAlive && keepAliveStore.removeKeepAliveName(tabItem.path);
+      if (tabItem?.isKeepAlive) keepAliveStore.removeKeepAliveName(tabItem.path);
       // set tabs
       this.tabsMenuList = this.tabsMenuList.filter(item => item.path !== tabPath);
     },
@@ -73,5 +75,5 @@ export const useTabsStore = defineStore({
       });
     }
   },
-  persist: piniaPersistConfig("geeker-tabs")
+  persist: piniaPersistConfig(id)
 });

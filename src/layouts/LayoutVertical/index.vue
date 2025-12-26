@@ -3,15 +3,15 @@
   <el-container class="layout">
     <el-aside>
       <div class="aside-box" :style="{ width: isCollapse ? '65px' : '210px' }">
-        <div class="logo flx-center" v-if="ruleForm.name.length < 8">
+        <div class="logo flx-center" v-if="currentModuleName.length < 8">
           <img v-if="ruleForm.logo" class="logo-img" :src="ruleForm.logo" alt="logo" />
           <img v-else class="logo-img" src="@/assets/images/xinkao.png" alt="logo" />
-          <span v-show="!isCollapse" class="logo-text">{{ ruleForm.name }}</span>
+          <span v-show="!isCollapse" class="logo-text">{{ currentModuleName }}</span>
         </div>
         <div v-else class="logo logo-more">
           <img v-if="ruleForm.logo" :src="ruleForm.logo" alt="logo" />
           <img v-else src="@/assets/images/xinkao.png" alt="logo" />
-          <div v-show="!isCollapse" class="logo-text" style="font-size: 14px">{{ ruleForm.name }}</div>
+          <div v-show="!isCollapse" class="logo-text" style="font-size: 14px">{{ currentModuleName }}</div>
         </div>
         <!-- 左侧菜单 -->
         <el-scrollbar>
@@ -62,6 +62,13 @@ export default {
     };
   },
   computed: {
+    currentModuleName() {
+      const authStore = useAuthStore();
+      const currentModule = authStore.currentModuleGet;
+      const moduleList = authStore.moduleListGet;
+      const module = moduleList.find(m => m.key === currentModule);
+      return module?.label || this.ruleForm.name;
+    },
     menuList() {
       const authStore = useAuthStore();
       return authStore.showMenuListGet;

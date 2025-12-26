@@ -36,7 +36,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const menuList = computed(() => authStore.flatMenuListGet.filter(item => !item.meta.isHide));
 
-const searchMenuList = (queryString: string, cb: Function) => {
+const searchMenuList = (queryString: string, cb: (results: Menu.MenuOptions[]) => void) => {
   const results = queryString ? menuList.value.filter(filterNodeMethod(queryString)) : menuList.value;
   cb(results);
 };

@@ -7,6 +7,7 @@ import { getLightColor, getDarkColor } from "@/utils/color";
 import { menuTheme } from "@/styles/theme/menu";
 import { asideTheme } from "@/styles/theme/aside";
 import { headerTheme } from "@/styles/theme/header";
+import { generatePrefix } from "@/stores/helper/prefix";
 
 /**
  * @description 全局主题 hooks
@@ -14,6 +15,19 @@ import { headerTheme } from "@/styles/theme/header";
 export const useTheme = () => {
   const globalStore = useGlobalStore();
   const { primary, isDark, isGrey, isWeak, layout, asideInverted, headerInverted } = storeToRefs(globalStore);
+
+  // 默认主题色变更后，自动迁移旧默认色（避免用户需要手动清理 localStorage）
+  const THEME_PRIMARY_MIGRATION_KEY = generatePrefix("theme-primary-migrated");
+  const migrateLegacyPrimary = () => {
+    try {
+      if (localStorage.getItem(THEME_PRIMARY_MIGRATION_KEY)) return;
+      const legacyDefaults = new Set(["#0ec69a", "#409eff"]);
+      if (primary.value && legacyDefaults.has(primary.value)) globalStore.setGlobalState("primary", DEFAULT_PRIMARY);
+      localStorage.setItem(THEME_PRIMARY_MIGRATION_KEY, "1");
+    } catch {
+      // ignore
+    }
+  };
 
   // 切换暗黑模式 ==> 同时修改主题颜色、侧边栏、头部颜色
   const switchDark = () => {
@@ -95,6 +109,7 @@ export const useTheme = () => {
 
   // init theme
   const initTheme = () => {
+    migrateLegacyPrimary();
     switchDark();
     if (isGrey.value) changeGreyOrWeak("grey", true);
     if (isWeak.value) changeGreyOrWeak("weak", true);

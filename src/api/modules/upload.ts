@@ -5,12 +5,35 @@ import http from "@/api";
 /**
  * @name 文件上传模块
  */
-// 图片上传
-export const uploadImg = (params: FormData) => {
-  return http.post<Upload.ResFileUrl>(PORT1 + `/file/upload/img`, params, { cancel: false });
+/**
+ * 图片上传
+ * @param file 要上传的图片文件
+ * @param businessType 业务类型（可选）
+ */
+export const postUploadImgApi = (file: File, businessType?: Upload.BusinessType) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  if (businessType) {
+    formData.append("businessType", businessType);
+  }
+  return http.post<Upload.ResFileUpload>(`/common/files/upload`, formData, { cancel: false });
 };
 
 // 视频上传
 export const uploadVideo = (params: FormData) => {
   return http.post<Upload.ResFileUrl>(PORT1 + `/file/upload/video`, params, { cancel: false });
+};
+
+/**
+ * 通用文件上传
+ * @param file 要上传的文件
+ * @param businessType 业务类型（可选）
+ */
+export const uploadFileApi = (file: File, businessType?: Upload.BusinessType) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  if (businessType) {
+    formData.append("businessType", businessType);
+  }
+  return http.post<Upload.ResFileUpload>(`/common/files/upload`, formData, { cancel: false });
 };

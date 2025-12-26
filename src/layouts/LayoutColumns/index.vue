@@ -24,7 +24,7 @@
     </div>
     <el-aside :class="{ 'not-aside': !subMenuList.length }" :style="{ width: isCollapse ? '65px' : '210px' }">
       <div class="logo flx-center">
-        <span v-show="subMenuList.length" class="logo-text">{{ isCollapse ? "G" : title }}</span>
+        <span v-show="subMenuList.length" class="logo-text">{{ isCollapse ? "G" : currentModuleLabel }}</span>
       </div>
       <el-scrollbar>
         <el-menu
@@ -58,8 +58,6 @@ import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
 import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
 
-const title = import.meta.env.VITE_GLOB_APP_TITLE;
-
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -67,6 +65,14 @@ const globalStore = useGlobalStore();
 const accordion = computed(() => globalStore.accordion);
 const isCollapse = computed(() => globalStore.isCollapse);
 const menuList = computed(() => authStore.showMenuListGet);
+
+// 获取当前模块名称
+const currentModuleLabel = computed(() => {
+  const currentModule = authStore.currentModuleGet;
+  const moduleList = authStore.moduleListGet;
+  const module = moduleList.find(m => m.key === currentModule);
+  return module?.label || import.meta.env.VITE_GLOB_APP_TITLE;
+});
 const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu : route.path) as string);
 
 const subMenuList = ref<Menu.MenuOptions[]>([]);

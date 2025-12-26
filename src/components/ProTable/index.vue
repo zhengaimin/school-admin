@@ -1,106 +1,4 @@
 <!-- 📚📚📚 Pro-Table 文档: https://juejin.cn/post/7166068828202336263 -->
-
-<template>
-  <!-- 查询表单 -->
-  <SearchForm
-    v-show="isShowSearch"
-    :search="_search"
-    :reset="_reset"
-    :columns="searchColumns"
-    :search-param="searchParam"
-    :search-col="searchCol"
-  />
-
-  <!-- 表格主体 -->
-  <div class="card table-main">
-    <!-- 表格头部 操作按钮 -->
-    <div class="table-header">
-      <div class="header-button-lf">
-        <slot name="tableHeader" :selected-list="selectedList" :selected-list-ids="selectedListIds" :is-selected="isSelected" />
-      </div>
-      <div v-if="toolButton" class="header-button-ri">
-        <slot name="toolButton">
-          <el-button v-if="showToolButton('refresh')" :icon="Refresh" circle @click="getTableList" />
-          <el-button v-if="showToolButton('setting') && columns.length" :icon="Operation" circle @click="openColSetting" />
-          <el-button
-            v-if="showToolButton('search') && searchColumns?.length"
-            :icon="Search"
-            circle
-            @click="isShowSearch = !isShowSearch"
-          />
-        </slot>
-      </div>
-    </div>
-    <!-- 表格主体 -->
-    <el-table
-      ref="tableRef"
-      v-bind="$attrs"
-      :data="processTableData"
-      :border="border"
-      :row-key="rowKey"
-      @selection-change="selectionChange"
-    >
-      <!-- 默认插槽 -->
-      <slot />
-      <template v-for="item in tableColumns" :key="item">
-        <!-- selection || radio || index || expand || sort -->
-        <el-table-column
-          v-if="item.type && columnTypes.includes(item.type)"
-          v-bind="item"
-          :align="item.align ?? 'center'"
-          :reserve-selection="item.type == 'selection'"
-        >
-          <template #default="scope">
-            <!-- expand -->
-            <template v-if="item.type == 'expand'">
-              <component :is="item.render" v-bind="scope" v-if="item.render" />
-              <slot v-else :name="item.type" v-bind="scope" />
-            </template>
-            <!-- radio -->
-            <el-radio v-if="item.type == 'radio'" v-model="radio" :label="scope.row[rowKey]">
-              <i></i>
-            </el-radio>
-            <!-- sort -->
-            <el-tag v-if="item.type == 'sort'" class="move">
-              <el-icon> <DCaret /></el-icon>
-            </el-tag>
-          </template>
-        </el-table-column>
-        <!-- other -->
-        <TableColumn v-if="!item.type && item.prop && item.isShow" :column="item">
-          <template v-for="slot in Object.keys($slots)" #[slot]="scope">
-            <slot :name="slot" v-bind="scope" />
-          </template>
-        </TableColumn>
-      </template>
-      <!-- 插入表格最后一行之后的插槽 -->
-      <template #append>
-        <slot name="append" />
-      </template>
-      <!-- 无数据 -->
-      <template #empty>
-        <div class="table-empty">
-          <slot name="empty">
-            <img src="@/assets/images/notData.png" alt="notData" />
-            <div>暂无数据</div>
-          </slot>
-        </div>
-      </template>
-    </el-table>
-    <!-- 分页组件 -->
-    <slot name="pagination">
-      <Pagination
-        v-if="pagination"
-        :pageable="pageable"
-        :handle-size-change="handleSizeChange"
-        :handle-current-change="handleCurrentChange"
-      />
-    </slot>
-  </div>
-  <!-- 列设置 -->
-  <ColSetting v-if="toolButton" ref="colRef" v-model:col-setting="colSetting" />
-</template>
-
 <script setup lang="ts" name="ProTable">
 import { ref, watch, provide, onMounted, unref, computed, reactive } from "vue";
 import { ElTable } from "element-plus";
@@ -108,11 +6,9 @@ import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
 import { BreakPoint } from "@/components/Grid/interface";
 import { ColumnProps, TypeProps } from "@/components/ProTable/interface";
-import { Refresh, Operation, Search } from "@element-plus/icons-vue";
 import { handleProp } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
 import Pagination from "./components/Pagination.vue";
-import ColSetting from "./components/ColSetting.vue";
 import TableColumn from "./components/TableColumn.vue";
 import Sortable from "sortablejs";
 
@@ -124,6 +20,7 @@ export interface ProTableProps {
   requestError?: (params: any) => void; // 表格 api 请求错误监听 ==> 非必传
   dataCallback?: (data: any) => any; // 返回数据的回调函数，可以对数据进行处理 ==> 非必传
   title?: string; // 表格标题 ==> 非必传
+  tableHeader?: string; // 表格头部文本内容，若提供则作为文本展示，否则使用插槽 ==> 非必传
   pagination?: boolean; // 是否需要分页组件 ==> 非必传（默认为true）
   initParam?: any; // 初始化请求参数 ==> 非必传（默认为{}）
   border?: boolean; // 是否带有纵向边框 ==> 非必传（默认为true）
@@ -153,11 +50,6 @@ const columnTypes: TypeProps[] = ["selection", "radio", "index", "expand", "sort
 // 是否显示搜索模块
 const isShowSearch = ref(true);
 
-// 控制 ToolButton 显示
-const showToolButton = (key: "refresh" | "setting" | "search") => {
-  return Array.isArray(props.toolButton) ? props.toolButton.includes(key) : props.toolButton;
-};
-
 // 单选值
 const radio = ref("");
 
@@ -174,8 +66,8 @@ const clearSelection = () => tableRef.value!.clearSelection();
 // 初始化表格数据 && 拖拽排序
 onMounted(() => {
   dragSort();
-  props.requestAuto && getTableList();
-  props.data && (pageable.value.total = props.data.length);
+  if (props.requestAuto) getTableList();
+  if (props.data) pageable.value.total = props.data.length;
 });
 
 // 处理表格数据
@@ -253,14 +145,6 @@ searchColumns.value?.forEach((column, index) => {
   }
 });
 
-// 列设置 ==> 需要过滤掉不需要设置的列
-const colRef = ref();
-const colSetting = tableColumns!.filter(item => {
-  const { type, prop, isShow } = item;
-  return !columnTypes.includes(type!) && prop !== "operation" && isShow;
-});
-const openColSetting = () => colRef.value.openColSetting();
-
 // 定义 emit 事件
 const emit = defineEmits<{
   search: [];
@@ -312,3 +196,181 @@ defineExpose({
   selectedListIds
 });
 </script>
+
+<template>
+  <div class="table-main rounded-lg shadow-none bg-white h-full flex flex-col overflow-hidden">
+    <!-- 查询表单 -->
+    <SearchForm
+      v-show="isShowSearch"
+      :search="_search"
+      :reset="_reset"
+      :columns="searchColumns"
+      :search-param="searchParam"
+      :search-col="searchCol"
+    />
+
+    <!-- 表格主体 -->
+    <div class="p-0 shadow-none flex-1 flex flex-col overflow-hidden">
+      <!-- 表格头部 操作按钮 -->
+      <div v-if="tableHeader || toolButton" class="table-header min-h-[56px] flex flex-row items-center justify-between">
+        <div class="header-button-lf">
+          <slot
+            v-if="!tableHeader"
+            name="tableHeader"
+            :selected-list="selectedList"
+            :selected-list-ids="selectedListIds"
+            :is-selected="isSelected"
+          />
+          <span class="text-base px-4 leading-[56px]" v-else>{{ tableHeader }}</span>
+        </div>
+        <div v-if="toolButton" class="header-button-ri flex flex-row items-center justify-center px-4 gap-3">
+          <slot name="toolButton" />
+        </div>
+      </div>
+      <!-- 表格主体 -->
+      <el-table
+        ref="tableRef"
+        v-bind="$attrs"
+        resizable
+        :data="processTableData"
+        :border="border"
+        :row-key="rowKey"
+        @selection-change="selectionChange"
+      >
+        <!-- 默认插槽 -->
+        <slot />
+
+        <template v-for="item in tableColumns" :key="item">
+          <!-- selection || radio || index || expand || sort -->
+          <el-table-column
+            v-if="item.type && columnTypes.includes(item.type)"
+            v-bind="item"
+            :align="item.align ?? 'center'"
+            :reserve-selection="item.type == 'selection'"
+          >
+            <template #default="scope">
+              <!-- expand -->
+              <template v-if="item.type == 'expand'">
+                <component :is="item.render" v-bind="scope" v-if="item.render" />
+                <slot v-else :name="item.type" v-bind="scope" />
+              </template>
+              <!-- radio -->
+              <el-radio v-if="item.type == 'radio'" v-model="radio" :label="scope.row[rowKey]">
+                <i></i>
+              </el-radio>
+              <!-- sort -->
+              <el-tag v-if="item.type == 'sort'" class="move">
+                <el-icon> <DCaret /></el-icon>
+              </el-tag>
+            </template>
+          </el-table-column>
+          <!-- other -->
+          <TableColumn v-if="!item.type && item.prop && item.isShow" :column="item">
+            <template v-for="slot in Object.keys($slots)" #[slot]="scope">
+              <slot :name="slot" v-bind="scope" />
+            </template>
+          </TableColumn>
+        </template>
+        <!-- 插入表格最后一行之后的插槽 -->
+        <template #append>
+          <slot name="append" />
+        </template>
+        <!-- 无数据 -->
+        <template #empty>
+          <div class="table-empty">
+            <slot name="empty">
+              <img src="@/assets/images/notData.png" alt="notData" />
+              <div>暂无数据</div>
+            </slot>
+          </div>
+        </template>
+      </el-table>
+      <!-- 分页组件 -->
+      <slot name="pagination">
+        <Pagination
+          v-if="pagination"
+          :background="false"
+          :pageable="pageable"
+          :handle-size-change="handleSizeChange"
+          :handle-current-change="handleCurrentChange"
+        />
+      </slot>
+    </div>
+    <!-- 列设置 -->
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.table-main {
+  // 搜索表单底部线条
+  :deep(.table-search) {
+    border-bottom: 0.5px solid #e4e7ed;
+  }
+
+  // 表格上方标题 + 按钮部分
+  :deep(.header-button-ri) {
+    .el-button {
+      @apply m-[0];
+    }
+  }
+
+  // 表格
+  :deep(.el-table) {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    // 去掉表格最外层的border
+    &::after,
+    &::before {
+      content: none !important;
+    }
+
+    // 去掉表格最外层的border
+    .el-table__border-left-patch {
+      display: none !important;
+    }
+    .el-table__header th {
+      font-size: 14px;
+      font-weight: 400;
+      color: #8894b3;
+      background: #f9fafb;
+    }
+    &.el-table--border {
+      .el-table__inner-wrapper::after {
+        content: none !important;
+      }
+    }
+
+    // 表格内部wrapper填满
+    .el-table__inner-wrapper {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    // 表格body区域填满剩余空间
+    .el-table__body-wrapper {
+      flex: 1;
+    }
+
+    // 空数据区域填满剩余空间
+    .el-table__empty-block {
+      height: 100% !important;
+      min-height: 200px;
+    }
+  }
+
+  // 表格滚动区域
+  :deep(.el-scrollbar) {
+    .el-scrollbar__view {
+      height: 100%;
+    }
+  }
+
+  // 分页
+  :deep(.el-pagination) {
+    @apply p-2.5 m-0;
+  }
+}
+</style>

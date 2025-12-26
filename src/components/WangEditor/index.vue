@@ -139,7 +139,7 @@ const uploadVideoValidate = (file: File): boolean => {
 
 // 编辑框失去焦点时触发
 const handleBlur = () => {
-  formItemContext?.prop && formContext?.validateField([formItemContext.prop as string]);
+  if (formItemContext?.prop) formContext?.validateField([formItemContext.prop as string]);
 };
 
 // 组件销毁时，也及时销毁编辑器

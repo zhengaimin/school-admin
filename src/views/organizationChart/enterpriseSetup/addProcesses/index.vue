@@ -323,7 +323,11 @@ export default {
     },
     //下一步
     next(val) {
-      val == 1 ? this.active++ : this.active--;
+      if (val == 1) {
+        this.active++;
+      } else {
+        this.active--;
+      }
     },
     handleCheckAllChange(val) {
       console.log(val);

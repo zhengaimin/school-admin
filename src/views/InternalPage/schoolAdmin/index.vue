@@ -354,7 +354,7 @@ const deleteRow = row => {
         }
 
         ElMessage.error("学校使用中，请勿删除！");
-      } catch (error) {
+      } catch {
         ElMessage.error("学校使用中，请勿删除！");
       }
     })

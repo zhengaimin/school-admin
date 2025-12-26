@@ -1,3 +1,5 @@
+import type { DEVICE_TYPE } from "@/config/modules/device";
+
 // 请求响应参数（不包含data）
 export interface Result {
   code: number;
@@ -12,14 +14,14 @@ export interface ResultData<T = any> extends Result {
 // 分页响应参数
 export interface ResPage<T> {
   list: T[];
-  pageNum: number;
+  page: number;
   pageSize: number;
   total: number;
 }
 
 // 分页请求参数
 export interface ReqPage {
-  pageNum: number;
+  page: number;
   pageSize: number;
 }
 
@@ -27,6 +29,32 @@ export interface ReqPage {
 export namespace Upload {
   export interface ResFileUrl {
     fileUrl: string;
+  }
+
+  /** 业务类型 */
+  export type BusinessType = "AVATAR" | "FACE" | "DOCUMENT" | "MESSAGE" | "TEMP";
+
+  /** 文件类型 */
+  export type FileType = "image" | "doc" | "video" | "other";
+
+  /** 文件上传响应 */
+  export interface ResFileUpload {
+    /** 文件MD5哈希值 */
+    fileHash: string;
+    /** 原始文件名 */
+    originalName: string;
+    /** 存储文件名 */
+    fileName: string;
+    /** 文件访问URL */
+    fileUrl: string;
+    /** 文件大小（字节） */
+    fileSize: number;
+    /** 文件类型 */
+    fileType: FileType;
+    /** 缩略图URL（仅图片文件） */
+    thumbnailUrl?: string;
+    /** 上传时间 */
+    uploadTime: string;
   }
 }
 
@@ -99,3 +127,290 @@ export namespace User {
     children?: ResDepartment[];
   }
 }
+
+// 设备管理模块
+export namespace DeviceBase {
+  /** 设备列表 - 查询参数 */
+  export interface ReqDeviceBaseListParams {
+    /** 页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+    /** 厂商代码 */
+    vendorCode?: string;
+    /** 设备类型 */
+    deviceType?: DEVICE_TYPE;
+    /** 设备序列号（模糊查询） */
+    deviceSn?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 设备状态：0-离线，1-在线 */
+    status?: 0 | 1;
+  }
+
+  /** 设备详情 */
+  export interface IDeviceBaseItem {
+    /** 设备ID */
+    id: number;
+    /** 设备序列号 */
+    deviceSn: string;
+    /** 设备名称 */
+    name: string;
+    /** 设备位置 */
+    location: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 厂商名称 */
+    vendorName: string;
+    /** 租户ID */
+    tenantId: number;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 设备状态：0-离线，1-在线 */
+    status: 0 | 1;
+    /** 最后在线时间戳 */
+    lastOnline: number;
+    /** 固件版本 */
+    version: string;
+    /** 创建时间 */
+    createdAt: string;
+    /** 更新时间 */
+    updatedAt: string;
+  }
+
+  /** 设备列表 - 响应 data */
+  export interface ResDeviceBaseListData {
+    /** 设备列表 */
+    list: IDeviceBaseItem[];
+    /** 总数 */
+    total: number;
+    /** 当前页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+  }
+
+  /** 创建设备 - 请求参数 */
+  export interface ReqCreateDeviceBaseParams {
+    /** 设备序列号 */
+    deviceSn: string;
+    /** 设备名称 */
+    name: string;
+    /** 设备位置 */
+    location?: string;
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 厂商名称 */
+    vendorName?: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+    /** 学校ID */
+    schoolId?: number;
+    /** 固件版本 */
+    version?: string;
+  }
+
+  /** 更新设备 - 请求参数 */
+  export interface ReqUpdateDeviceBaseParams {
+    /** 设备名称 */
+    name?: string;
+    /** 设备位置 */
+    location?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 设备状态：0-离线，1-在线 */
+    status?: 0 | 1;
+  }
+}
+
+// 设备配置模块
+export namespace DeviceConfig {
+  /** 二维码配置 */
+  export interface IQRCodeConfig {
+    /** 文件ID（上传后获得） */
+    fileId: number;
+    /** 文件URL */
+    fileUrl: string;
+  }
+
+  /** 屏幕参数配置 */
+  export interface IScreenConfig {
+    /** 亮度 0-100 */
+    brightness: number;
+    /** 欢迎消息 */
+    welcomeMessage: string;
+    /** 引导文字（支持多行，用\n分隔） */
+    guideText: string;
+  }
+
+  /** 超时时长配置 */
+  export interface ITimeoutConfig {
+    /** 超时退款时间（秒） */
+    refundTimeout: number;
+  }
+
+  /** 订单配置 */
+  export interface IOrderConfig {
+    /** 订单使用最大时间（分钟） */
+    maxUsageTime: number;
+  }
+
+  /** 功能点配置响应 */
+  export interface IFeatureConfigResponse {
+    /** 二维码配置 */
+    qrCode: IQRCodeConfig;
+    /** 屏幕参数配置 */
+    screen: IScreenConfig;
+    /** 超时时长配置 */
+    timeout: ITimeoutConfig;
+    /** 订单配置 */
+    order: IOrderConfig;
+    /** 配置版本号 */
+    configVersion: number;
+  }
+
+  /** 获取设备级配置 - 响应 */
+  export interface ResDeviceFeatureConfig {
+    /** 设备ID */
+    deviceId: number;
+    /** 功能点配置 */
+    config: IFeatureConfigResponse;
+  }
+
+  /** 功能点配置请求（所有字段可选） */
+  export interface IFeatureConfigRequest {
+    /** 二维码配置 */
+    qrCode?: Partial<IQRCodeConfig>;
+    /** 屏幕参数配置 */
+    screen?: Partial<IScreenConfig>;
+    /** 超时时长配置 */
+    timeout?: Partial<ITimeoutConfig>;
+    /** 订单配置 */
+    order?: Partial<IOrderConfig>;
+  }
+
+  /** 更新设备级配置 - 请求参数 */
+  export interface ReqUpdateDeviceFeatureConfig {
+    /** 功能点配置 */
+    config: IFeatureConfigRequest;
+  }
+
+  /** 更新设备级配置 - 响应 */
+  export interface ResUpdateDeviceFeatureConfig {
+    /** 响应消息 */
+    message: string;
+  }
+
+  /** 获取配置列表 - 请求参数 */
+  export interface ReqDeviceFeatureConfigListParams {
+    /** 学校ID */
+    schoolId?: number;
+    /** 厂商代码 */
+    vendorCode?: string;
+    /** 设备类型 */
+    deviceType?: string;
+  }
+
+  /** 配置列表项 */
+  export interface IDeviceFeatureConfigListItem {
+    /** 配置ID */
+    id: number;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 设备类型 */
+    deviceType: string;
+    /** 功能点配置 */
+    config: IFeatureConfigResponse;
+    /** 配置版本号 */
+    configVersion: number;
+  }
+
+  /** 获取配置列表 - 响应 data */
+  export interface ResDeviceFeatureConfigListData {
+    /** 配置列表 */
+    list: IDeviceFeatureConfigListItem[];
+  }
+
+  /** 功能点类型 */
+  export type TFeatureType = "qrCode" | "screen" | "timeout" | "reboot";
+
+  /** 同步配置 - 请求参数 */
+  export interface ReqDeviceFeatureConfigSync {
+    /** 设备ID列表 */
+    deviceIds: number[];
+    /** 功能点类型 */
+    feature: TFeatureType;
+  }
+
+  /** 同步配置 - 响应 data */
+  export interface ResDeviceFeatureConfigSync {
+    /** 响应消息 */
+    message: string;
+    /** 创建的命令数量 */
+    count: number;
+  }
+}
+
+// 学校模块
+export namespace School {
+  /** 学校列表 - 查询参数 */
+  export interface ReqSchoolsListParams {
+    page?: string | number;
+    pageSize?: string | number;
+    /** 学校名称（模糊搜索） */
+    name?: string;
+    /** 租户 ID */
+    tenantId?: string | number;
+    /** 状态筛选（全部传 -1） */
+    status?: string | number;
+  }
+
+  /** 学校列表项 */
+  export interface ISchoolItem {
+    id: number;
+    code?: string;
+    name?: string;
+    address?: string;
+    phone?: string;
+    /** 校长姓名 */
+    principal?: string;
+    /** 学校校训 */
+    motto?: string;
+    /** 校徽 URL */
+    badge?: string;
+    tenantId?: number;
+    tenantName?: string;
+    status?: number;
+    createdAt?: string;
+    updatedAt?: string;
+  }
+
+  /** 学校列表 - 响应 data */
+  export interface ResSchoolsListData {
+    list: ISchoolItem[];
+    total: number;
+  }
+}
+
+// 赠费模块
+export type { Gift } from "./modules/gifts";
+// 级部模块
+export type { Department } from "./modules/department";
+// 班级模块
+export type { Class } from "./modules/class";
+// 学生模块
+export type { Student } from "./modules/student";
+// 吹风机费率模块
+export type { RateDryer } from "./modules/rate/dryer";
+// 年级模块
+export type { Grade } from "./modules/grade";
+// 设备标签模块
+export type { DeviceBaseTag } from "./modules/device-tag";

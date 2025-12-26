@@ -36,9 +36,9 @@ export const initDynamicRouter = async () => {
       return Promise.reject("暂无权限");
     }
 
-    // 3.添加动态路由
-    authStore.flatMenuListGet.forEach(item => {
-      item.children && delete item.children;
+    // 3.添加动态路由（加载所有模块的路由）
+    authStore.allFlatMenuListGet.forEach(item => {
+      if (item.children) delete item.children;
       if (item.component && typeof item.component == "string") {
         item.component = modules["/src/views" + item.component + ".vue"];
       }

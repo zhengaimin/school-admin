@@ -43,10 +43,10 @@ class RequestHttp {
         const userStore = useUserStore();
         // 重复请求不需要取消，在 api 服务中通过指定的第三个参数: { cancel: false } 来控制
         config.cancel ??= true;
-        config.cancel && axiosCanceler.addPending(config);
+        if (config.cancel) axiosCanceler.addPending(config);
         // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
         config.loading ??= true;
-        config.loading && showFullScreenLoading();
+        if (config.loading) showFullScreenLoading();
         if (config.headers && typeof config.headers.set === "function") {
           config.headers.set("x-access-token", userStore.token);
           //临时代码,上线需要删除
@@ -70,17 +70,17 @@ class RequestHttp {
         if (config.cancel) {
           axiosCanceler.removePending(config);
         }
-        config.loading && tryHideFullScreenLoading();
+        if (config.loading) tryHideFullScreenLoading();
         // 登录失效
         if (data.code == ResultEnum.OVERDUE) {
           userStore.setToken("");
           router.replace(LOGIN_URL);
-          config.errorTip !== false && ElMessage.error(data.msg);
+          if (config.errorTip !== false) ElMessage.error(data.msg);
           return Promise.reject(data);
         }
         // 全局错误信息拦截（防止下载文件的时候返回数据流，没有 code 直接报错）
         if (data.code && data.code !== ResultEnum.SUCCESS) {
-          config.errorTip !== false && ElMessage.error(errorCode[data.code] || data.msg);
+          if (config.errorTip !== false) ElMessage.error(errorCode[data.code] || data.msg);
           return Promise.reject(data);
         }
         // 成功请求（在页面上除非特殊情况，否则不用处理失败逻辑）

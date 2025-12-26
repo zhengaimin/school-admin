@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 import { UserState } from "@/stores/interface";
 import piniaPersistConfig from "@/stores/helper/persist";
+import { generatePrefix } from "@/stores/helper/prefix";
 
-export const useUserStore = defineStore({
-  id: "geeker-user",
+const id = generatePrefix("user");
+
+export const useUserStore = defineStore(id, {
   state: (): UserState => ({
     token: "",
     userInfo: { name: "" },
@@ -27,5 +29,5 @@ export const useUserStore = defineStore({
       this.count = count;
     }
   },
-  persist: piniaPersistConfig("geeker-user")
+  persist: piniaPersistConfig(id)
 });

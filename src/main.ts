@@ -35,6 +35,7 @@ import errorHandler from "@/utils/errorHandler";
 
 import vue3TreeOrg from "vue3-tree-org";
 import "vue3-tree-org/lib/vue3-tree-org.css";
+import "uno.css";
 
 const app = createApp(App);
 

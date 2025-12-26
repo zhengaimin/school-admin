@@ -9,7 +9,7 @@ export const useOnline = () => {
     online.value = typeof val == "boolean" ? val : val.target.online;
   };
   // 在页面加载后，设置正确的网络状态
-  navigator.onLine ? showStatus(true) : showStatus(false);
+  showStatus(navigator.onLine);
 
   onMounted(() => {
     // 开始监听网络状态的变化

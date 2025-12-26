@@ -30,7 +30,7 @@ export interface UserState {
   token: string;
   userInfo: { name: string };
   schoolMsg: { schoolId: string; schoolName: string };
-  count: Number;
+  count: number;
 }
 
 /* tabsMenuProps */
@@ -48,11 +48,24 @@ export interface TabsState {
   tabsMenuList: TabsMenuProps[];
 }
 
+/* ModuleItem */
+export interface ModuleItem {
+  key: string;
+  label: string;
+  icon: string;
+}
+
 /* AuthState */
 export interface AuthState {
   routeName: string;
   authButtonList: Menu.MenuOptions[];
   authMenuList: Menu.MenuOptions[];
+  // 模块相关
+  currentModule: string;
+  moduleList: ModuleItem[];
+  allModuleMenus: Record<string, Menu.MenuOptions[]>;
+  // 全局路由（不属于任何模块）
+  globalMenus: Menu.MenuOptions[];
 }
 
 /* KeepAliveState */

@@ -1,70 +1,123 @@
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { ElMessage } from "element-plus";
+import { getSchoolsListApi } from "@/api/modules/schools";
+import { useUserStore } from "@/stores/modules/user";
+
+interface SchoolItem {
+  id: string;
+  name: string;
+}
+
+const userStore = useUserStore();
+const schoolList = ref<SchoolItem[]>([]);
+const school = ref("");
+
+const count = computed(() => userStore.count);
+
+/** “全部学校”选项 */
+const ALL_SCHOOLS: SchoolItem = { id: "-1", name: "全部学校" };
+/** 记录上次选择的学校 id（localStorage key） */
+const LAST_SELECTED_SCHOOL_KEY = "lastSelectedSchoolId";
+
+/**
+ * 同步当前选中的学校到：
+ * 1) `school`（下拉 v-model）
+ * 2) `userStore`（全局学校信息）
+ * 可选：持久化到 localStorage
+ */
+const syncSelectedSchool = (nextSchoolId: string, persist = false) => {
+  const selectedSchool = schoolList.value.find(item => item.id === nextSchoolId) ?? ALL_SCHOOLS;
+  school.value = selectedSchool.id;
+  userStore.setSchoolMsg({ schoolId: selectedSchool.id, schoolName: selectedSchool.name });
+  if (persist) localStorage.setItem(LAST_SELECTED_SCHOOL_KEY, selectedSchool.id);
+};
+
+/**
+ * 计算“优先选中的学校 id”
+ * 优先级：当前已选中 > localStorage 上次选择 > 列表第一个学校 > “全部学校”
+ */
+const resolvePreferredSchoolId = () => {
+  const currentSchoolId = school.value;
+  if (currentSchoolId && schoolList.value.some(item => item.id === currentSchoolId)) return currentSchoolId;
+
+  const lastSchoolId = localStorage.getItem(LAST_SELECTED_SCHOOL_KEY);
+  if (lastSchoolId && schoolList.value.some(item => item.id === lastSchoolId)) return lastSchoolId;
+
+  const firstSchool = schoolList.value.find(item => item.id !== ALL_SCHOOLS.id);
+  return firstSchool?.id ?? ALL_SCHOOLS.id;
+};
+
+/**
+ * 获取学校列表并写入下拉数据源；
+ * 同时根据“优先选中规则”同步默认选中项到 store
+ */
+const axiosGetSchoolsListApi = async () => {
+  try {
+    const result = await getSchoolsListApi({
+      page: 1,
+      pageSize: 100
+    });
+
+    if (result.code === 0) {
+      const list = result.data?.list ?? [];
+      if (list.length > 0) {
+        schoolList.value = [
+          ALL_SCHOOLS,
+          ...list.map(item => ({
+            id: String(item.id),
+            name: item.name ?? ""
+          }))
+        ];
+        syncSelectedSchool(resolvePreferredSchoolId());
+        return;
+      }
+
+      schoolList.value = [ALL_SCHOOLS];
+      syncSelectedSchool(ALL_SCHOOLS.id);
+      ElMessage.warning("请创建学校");
+      return;
+    }
+
+    schoolList.value = [ALL_SCHOOLS];
+    syncSelectedSchool(ALL_SCHOOLS.id);
+    ElMessage.warning(result.msg || "获取学校列表失败");
+  } catch (error) {
+    console.error("axiosGetSchoolsListApi:", error);
+    schoolList.value = [ALL_SCHOOLS];
+    syncSelectedSchool(ALL_SCHOOLS.id);
+    ElMessage.warning("获取学校列表失败");
+  }
+};
+
+/**
+ * 处理学校切换事件：
+ * 同步到 store，并把本次选择写入 localStorage
+ */
+const handleSchoolChange = () => {
+  syncSelectedSchool(school.value, true);
+};
+
+onMounted(() => {
+  /** 首次进入：获取学校列表并恢复上次选择 */
+  axiosGetSchoolsListApi();
+});
+
+/** 监听 `count` 变化时刷新学校列表（例如登录态/权限变化后） */
+watch(count, (newVal, oldVal) => {
+  if (newVal !== oldVal) axiosGetSchoolsListApi();
+});
+</script>
+
 <template>
   <div class="message" style="width: 300px">
-    <el-select class="custom-dropdown" placement="right" @change="selectSchool" v-model="school" placeholder="请选择学校">
+    <el-select class="custom-dropdown" placement="right" @change="handleSchoolChange" v-model="school" placeholder="请选择学校">
       <el-option style="text-align: right" v-for="item in schoolList" :key="item.id" :label="item.name" :value="item.id">
       </el-option>
     </el-select>
   </div>
 </template>
-<script>
-import { schoolsList } from "@/api/modules/InternalPage.js";
-import { useUserStore } from "@/stores/modules/user";
-export default {
-  data() {
-    return {
-      schoolList: [],
-      school: ""
-    };
-  },
-  computed: {
-    userStore() {
-      return useUserStore();
-    },
-    count() {
-      return useUserStore().count;
-    }
-  },
-  watch: {
-    count: {
-      handler(newVal, oldVal) {
-        console.log(1, newVal, oldVal);
-        if (newVal && oldVal) {
-          this.fetchTenantList();
-        }
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-    this.fetchTenantList("load");
-  },
-  methods: {
-    fetchTenantList(val) {
-      schoolsList({
-        page: 1,
-        pageSize: 200
-      }).then(res => {
-        if (res.code == 0 && res.data && res.data.list) {
-          this.schoolList = res.data.list;
-          this.schoolList.unshift({ id: "-1", name: "全部学校" });
-          if (val == "load") {
-            this.school = this.schoolList[1].id;
-            this.userStore.setSchoolMsg({ schoolId: this.school, schoolName: this.schoolList[1].name });
-          }
-        } else {
-          this.schoolList = [{ id: "-1", name: "全部学校" }];
-          this.userStore.setSchoolMsg({ schoolId: "-1" });
-          this.$message.warning("请创建学校");
-        }
-      });
-    },
-    selectSchool() {
-      let ary = this.schoolList.filter(item => item.id == this.school);
-      this.userStore.setSchoolMsg({ schoolId: this.school, schoolName: ary[0].name });
-    }
-  }
-};
-</script>
+
 <style scoped lang="scss">
 ::v-deep(.custom-dropdown .el-select-dropdown__wrap) {
   max-width: 100%; /* 或者具体的一个宽度值 */

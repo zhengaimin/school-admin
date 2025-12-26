@@ -1,52 +1,3 @@
-<template>
-  <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-    <!-- 用户名 -->
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" placeholder="请输入账号">
-        <template #prefix>
-          <el-icon class="el-input__icon">
-            <user />
-          </el-icon>
-        </template>
-      </el-input>
-    </el-form-item>
-    <!-- 密码 -->
-    <el-form-item prop="password">
-      <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" show-password autocomplete="new-password">
-        <template #prefix>
-          <el-icon class="el-input__icon">
-            <lock />
-          </el-icon>
-        </template>
-      </el-input>
-    </el-form-item>
-    <!-- 验证码 -->
-    <el-form-item prop="username" style="margin-bottom: 10px">
-      <el-col :span="16">
-        <el-input v-model="loginForm.captcha" placeholder="请输入验证码">
-          <template #prefix>
-            <el-icon class="el-input__icon">
-              <key />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-col>
-      <el-col :span="8">
-        <div class="captcha" @click="ajaxGetCaptcha">
-          <el-image :src="captchaImgPath" style="height: 40px" />
-        </div>
-      </el-col>
-    </el-form-item>
-    <div class="remember-password">
-      <el-checkbox v-model="loginForm.remberPw" label="记住账号及密码" style="font-size: 12px !important" />
-    </div>
-  </el-form>
-  <div class="login-btn">
-    <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="login(loginFormRef)"> 登录 </el-button>
-  </div>
-  <div class="private-tip"></div>
-</template>
-
 <script setup lang="ts">
 import type { ElForm } from "element-plus";
 import { Login } from "@/api/interface";
@@ -67,8 +18,6 @@ import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { useRouter } from "vue-router";
 
 // constants
-// import { RSA_PUBLIC_KEY } from "@/config/user";
-import { SUPER_ADMIN } from "@/config";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -170,9 +119,7 @@ const login = (formEl: FormInstance | undefined) => {
       }
 
       setTimeout(() => {
-        if (login_user_info.role_key == "super_admin" || login_user_info.role_key == "agent_admin") {
-          router.push(SUPER_ADMIN);
-        }
+        router.push("/moduleSelect");
       }, 1000);
 
       ElNotification({
@@ -211,6 +158,55 @@ onMounted(() => {
   userStore.setUserInfo({ name: "" });
 });
 </script>
+
+<template>
+  <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
+    <!-- 用户名 -->
+    <el-form-item prop="username">
+      <el-input v-model="loginForm.username" placeholder="请输入账号">
+        <template #prefix>
+          <el-icon class="el-input__icon">
+            <user />
+          </el-icon>
+        </template>
+      </el-input>
+    </el-form-item>
+    <!-- 密码 -->
+    <el-form-item prop="password">
+      <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" show-password autocomplete="new-password">
+        <template #prefix>
+          <el-icon class="el-input__icon">
+            <lock />
+          </el-icon>
+        </template>
+      </el-input>
+    </el-form-item>
+    <!-- 验证码 -->
+    <el-form-item prop="username" style="margin-bottom: 10px">
+      <el-col :span="16">
+        <el-input v-model="loginForm.captcha" placeholder="请输入验证码">
+          <template #prefix>
+            <el-icon class="el-input__icon">
+              <key />
+            </el-icon>
+          </template>
+        </el-input>
+      </el-col>
+      <el-col :span="8">
+        <div class="captcha" @click="ajaxGetCaptcha">
+          <el-image :src="captchaImgPath" style="height: 40px" />
+        </div>
+      </el-col>
+    </el-form-item>
+    <div class="remember-password">
+      <el-checkbox v-model="loginForm.remberPw" label="记住账号及密码" style="font-size: 12px !important" />
+    </div>
+  </el-form>
+  <div class="login-btn">
+    <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="login(loginFormRef)"> 登录 </el-button>
+  </div>
+  <div class="private-tip"></div>
+</template>
 
 <style scoped lang="scss">
 @import "../index";

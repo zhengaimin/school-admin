@@ -64,15 +64,20 @@ router.beforeEach(async (to, from, next) => {
   if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
 
   // 6.如果没有菜单列表，就重新请求菜单列表并添加动态路由
-  if (!authStore.authMenuListGet.length) {
+  if (!authStore.allFlatMenuListGet.length) {
     await initDynamicRouter();
+    // 根据目标路径设置模块
+    authStore.setModuleByPath(to.path);
     return next({ ...to, replace: true });
   }
 
-  // 7.存储 routerName 做按钮权限筛选
+  // 7.根据路径自动切换模块
+  authStore.setModuleByPath(to.path);
+
+  // 8.存储 routerName 做按钮权限筛选
   authStore.setRouteName(to.name as string);
 
-  // 8.正常访问页面
+  // 9.正常访问页面
   next();
 });
 

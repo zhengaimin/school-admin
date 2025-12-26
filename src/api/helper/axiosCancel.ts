@@ -31,7 +31,7 @@ export class AxiosCanceler {
     const url = getPendingUrl(config);
     // 如果在 pending 中存在当前请求标识，需要取消当前请求
     const controller = pendingMap.get(url);
-    controller && controller.abort();
+    if (controller) controller.abort();
   }
 
   /**
@@ -39,7 +39,7 @@ export class AxiosCanceler {
    */
   removeAllPending() {
     pendingMap.forEach(controller => {
-      controller && controller.abort();
+      if (controller) controller.abort();
     });
     pendingMap.clear();
   }

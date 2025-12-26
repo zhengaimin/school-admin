@@ -318,10 +318,10 @@ export default {
       if (this.isloading) return;
       this.isloading = true;
       let status = this.filterForm.status ? this.filterForm.status : -1;
-      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&source=ADMIN_GIFT&status=${status}`;
+      let params = `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&source=ADMIN_GIFT&status=${status}&deviceType=VIDEO`;
       giftsList(params).then(res => {
-        if (res.code == 0 && res.data && res.data.items) {
-          this.carbonCk_list = res.data.items;
+        if (res.code == 0 && res.data && res.data.list) {
+          this.carbonCk_list = res.data.list;
           this.total = res.data.total;
         } else {
           this.carbonCk_list = [];

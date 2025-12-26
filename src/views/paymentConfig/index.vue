@@ -85,7 +85,7 @@ export default {
       paymentconfigsadd(this.form).then(res => {
         if (res.code == 0) {
           this.$message.success("提交成功");
-          this.fetchTenantList;
+          this.fetchTenantList();
         }
       });
     }
