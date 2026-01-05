@@ -85,3 +85,4 @@ export namespace Order {
 1. 在常量模块中新增/补充枚举（推荐目录：`src/config/modules/**`）
 2. 遵循 `.ai/constant.md` 的 Enum/Type/I18N/Options 结构（按项目需要可裁剪）
 3. 在接口类型中引用对应的 `TxxxValue`，替换原始 `number/string`
+4. **同步更新 `.ai/constant-index.md` 枚举索引表**

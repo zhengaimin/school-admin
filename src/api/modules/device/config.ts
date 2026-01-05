@@ -1,5 +1,5 @@
 import http from "@/api";
-import type { DeviceConfig } from "@/api/interface";
+import type { DeviceConfig, SchoolDeviceConfig } from "@/api/interface";
 
 /** 获取设备级功能点配置 */
 export function getDeviceFeatureConfigApi(deviceId: number) {
@@ -19,4 +19,14 @@ export function getDeviceFeatureConfigListApi(params?: DeviceConfig.ReqDeviceFea
 /** 同步配置（仅支持设备级同步） */
 export function postDeviceFeatureConfigSyncApi(data: DeviceConfig.ReqDeviceFeatureConfigSync) {
   return http.post<DeviceConfig.ResDeviceFeatureConfigSync>("/admin/device-feature-configs/sync", data);
+}
+
+/** 获取设备配置列表（支持多维度筛选） */
+export function getSchoolDeviceConfigListApi(params?: SchoolDeviceConfig.ReqGetSchoolDeviceConfigListApi) {
+  return http.get<SchoolDeviceConfig.ResGetSchoolDeviceConfigListApi>("/admin/device-configs", params);
+}
+
+/** 更新单个设备配置 */
+export function putSchoolDeviceConfigApi(id: number, data: SchoolDeviceConfig.ReqPutSchoolDeviceConfigApi) {
+  return http.put<SchoolDeviceConfig.ResPutSchoolDeviceConfigApi>(`/admin/device-configs/${id}`, data);
 }

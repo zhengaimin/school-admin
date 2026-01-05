@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-box">
+  <div class="upload-box" :style="{ width, height }">
     <el-upload
       :id="uuid"
       action="#"
@@ -24,10 +24,6 @@
             <el-icon><Edit /></el-icon>
             <span>编辑</span>
           </div>
-          <div class="handle-icon" @click="handlePreview">
-            <el-icon><View /></el-icon>
-            <span>查看</span>
-          </div>
           <div v-if="!selfDisabled" class="handle-icon" @click="handleDelete">
             <el-icon><Delete /></el-icon>
             <span>删除</span>
@@ -50,7 +46,7 @@
 
 <script setup lang="ts" name="UploadFile">
 import { ref, computed, inject } from "vue";
-import { Document, Edit, View, Delete, Plus } from "@element-plus/icons-vue";
+import { Document, Edit, Delete, Plus } from "@element-plus/icons-vue";
 import { generateUUID } from "@/utils";
 import { uploadFileApi } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
@@ -130,17 +126,32 @@ const handleEdit = () => {
   if (dom) dom.dispatchEvent(new MouseEvent("click"));
 };
 
-/** 处理预览文件 */
-const handlePreview = () => {
-  if (fileUrl.value) {
-    window.open(fileUrl.value, "_blank");
-  }
-};
-
 /** 处理上传前校验 */
 const handleBeforeUpload: UploadProps["beforeUpload"] = rawFile => {
   const isValidSize = rawFile.size / 1024 / 1024 < props.fileSize;
-  const isValidType = props.fileType.includes(rawFile.type);
+
+  // 检查文件扩展名
+  const fileName = rawFile.name.toLowerCase();
+  const fileExtension = fileName.substring(fileName.lastIndexOf("."));
+  const allowedExtensions = props.fileType.map(type => {
+    // 如果是 MIME 类型，提取扩展名
+    if (type.includes("/")) {
+      return type;
+    }
+    // 如果已经是扩展名格式（如 .pem），直接使用
+    return type;
+  });
+
+  // 检查是否是允许的扩展名或 MIME 类型
+  const isValidType = allowedExtensions.some(allowed => {
+    if (allowed.startsWith(".")) {
+      // 扩展名匹配
+      return fileExtension === allowed;
+    } else {
+      // MIME 类型匹配
+      return rawFile.type === allowed;
+    }
+  });
 
   if (!isValidType) {
     ElNotification({
@@ -222,8 +233,6 @@ const handleUploadError = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: v-bind(width);
-      height: v-bind(height);
       overflow: hidden;
       border: 1px dashed var(--el-border-color-darker);
       border-radius: v-bind(borderRadius);

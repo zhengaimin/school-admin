@@ -12,6 +12,13 @@ type TDateFieldConfig = {
   isUnix?: boolean;
 };
 
+/** 格式化时间戳 */
+export const formatTimestamp = (timestamp: number | null | undefined, format = "YYYY-MM-DD HH:mm:ss"): string => {
+  if (timestamp === null || timestamp === undefined) return "";
+  const date = dayjs.unix(timestamp);
+  return date.isValid() ? date.format(format) : "";
+};
+
 /** 日期格式化函数 */
 export const dateFormatter = (list: any[], fields: (string | TDateFieldConfig)[], defaultFormat = "YYYY-MM-DD HH:mm:ss") => {
   return (list || []).map(item => {
@@ -21,18 +28,23 @@ export const dateFormatter = (list: any[], fields: (string | TDateFieldConfig)[]
       const format = typeof fieldConfig === "string" ? defaultFormat : fieldConfig.format || defaultFormat;
       const isUnix = typeof fieldConfig === "string" ? true : (fieldConfig.isUnix ?? true);
 
-      if (newItem[field] !== undefined && newItem[field] !== null) {
-        newItem[field] = isUnix ? dayjs.unix(newItem[field]).format(format) : dayjs(newItem[field]).format(format);
+      if (newItem[field] !== undefined && newItem[field] !== null && newItem[field] !== "") {
+        const date = isUnix ? dayjs.unix(newItem[field]) : dayjs(newItem[field]);
+        newItem[field] = date.isValid() ? date.format(format) : "";
+      } else {
+        newItem[field] = "";
       }
     });
+
+    console.log(newItem);
     return newItem;
   });
 };
 
 type TFormList = ((list: any[]) => any[]) | null;
 type TParams = {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   [key: string]: any;
 };
 type TApi = (params: any) => Promise<ResultData<any>>;
@@ -83,8 +95,8 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
       return {
         data: {
           list: formatList ? formatList(list || []) : list || [],
-          pageNum: page,
-          pageSize: pageSize,
+          pageNum: page ?? query.value?.page ?? 1,
+          pageSize: pageSize ?? query.value?.pageSize ?? 10,
           total: total
         }
       };
@@ -93,8 +105,8 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
     return {
       data: {
         list: [],
-        pageNum: 1,
-        pageSize: 10,
+        pageNum: query.value?.page ?? 1,
+        pageSize: query.value?.pageSize ?? 10,
         total: 0
       }
     };
@@ -120,7 +132,6 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
       return formatTableList();
     }
   };
-
   /** 删除某一项 */
   const deleteRow = (id, text = "", callback: any = null) => {
     if (!apis.delete) {
@@ -128,7 +139,7 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
     }
 
     console.log(id);
-    ElMessageBox.confirm(text ? `确定删除 ${text} 吗？` : "确定删除此项吗？", "提示", {
+    ElMessageBox.confirm(text ? `确定删除 【${text}】 吗？` : "确定删除此项吗？", "提示", {
       type: "warning"
     }).then(async () => {
       const result = await apis.delete!(id);
@@ -195,6 +206,7 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
         });
     });
   };
+
   return {
     query,
     extra,

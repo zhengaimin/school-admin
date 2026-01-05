@@ -16,11 +16,10 @@ const MODULE_PATH_MAP: Record<string, string[]> = {
     "/moduleControl",
     "/paymentConfig",
     "/notificationConfig",
-    "/companyControl",
     "/operationLog",
     "/dataScreening"
   ],
-  phone: ["/device", "/fund", "/setmenu", "/messagesall"],
+  video: ["/device", "/fund", "/setmenu", "/messagesall", "/merchant"],
   hairdryer: ["/hairdryer", "/hairdryerFund", "/hairdryerLog", "/hairdryerRate", "/hairdryerPackage"]
 };
 
@@ -99,7 +98,7 @@ export const useAuthStore = defineStore(id, {
       if (userInfo["role_key"] == "super_admin" || userInfo["role_key"] == "agent_admin") {
         this.allModuleMenus = systemData || {};
       } else if (userInfo["role_key"] == "maintainer") {
-        this.allModuleMenus = isOperator || {};
+        this.allModuleMenus = (Array.isArray(isOperator) ? {} : isOperator) || {};
       }
 
       // 设置当前模块的菜单

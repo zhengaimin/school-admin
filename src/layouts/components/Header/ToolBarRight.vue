@@ -1,6 +1,9 @@
 <script setup>
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/modules/user";
+import { ROUTE_MODULE_SELECT } from "@/config/router";
+import { Grid } from "@element-plus/icons-vue";
 // import AssemblySize from "./components/AssemblySize.vue";
 import Language from "./components/Language.vue";
 // import SearchMenu from "./components/SearchMenu.vue";
@@ -11,13 +14,13 @@ import Fullscreen from "./components/Fullscreen.vue";
 import Avatar from "./components/Avatar.vue";
 import SwitchDark from "@/components/SwitchDark/index.vue";
 
+const router = useRouter();
 const userStore = useUserStore();
 const name = computed(() => userStore.userInfo.realName);
-// const schoolList = [
-//   { label: "洪山高中", id: "1" },
-//   { label: "华师附中", id: "2" }
-// ];
-// const school = computed(() => "1");
+
+const handleBackToModuleSelect = () => {
+  router.push(ROUTE_MODULE_SELECT);
+};
 </script>
 
 <template>
@@ -25,6 +28,13 @@ const name = computed(() => userStore.userInfo.realName);
     <div class="header-icon">
       <!-- <AssemblySize id="assemblySize" /> -->
       <School id="school" ref="school" />
+      <el-tooltip content="主菜单" placement="bottom">
+        <div class="module-select-icon" @click="handleBackToModuleSelect">
+          <el-icon :size="20">
+            <Grid />
+          </el-icon>
+        </div>
+      </el-tooltip>
       <Language id="language" v-if="false" />
       <SwitchDark id="language" v-if="false" />
       <!-- <SearchMenu /> -->
@@ -50,6 +60,15 @@ const name = computed(() => userStore.userInfo.realName);
     & > * {
       margin-left: 21px;
       color: var(--el-header-text-color);
+    }
+    .module-select-icon {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: color 0.3s;
+      &:hover {
+        color: var(--el-color-primary);
+      }
     }
   }
   .username {

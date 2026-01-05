@@ -1,10 +1,9 @@
+import type { TDeviceTypeValue } from "@/config/modules/device";
+
 // 吹风机费率配置模块
 export namespace RateDryer {
   /** 服务类型 */
   export type ServiceType = "CALL" | "MESSAGE" | "DRYER";
-
-  /** 设备类型 */
-  export type DeviceType = "VIDEO" | "VOICE" | "DRYER";
 
   /** 费率单位 */
   export type RateUnit = "MINUTE" | "ITEM";
@@ -16,7 +15,7 @@ export namespace RateDryer {
     /** 模板编码 */
     templateCode: string;
     /** 设备类型 */
-    deviceType: DeviceType;
+    deviceType: TDeviceTypeValue;
     /** 服务类型 */
     serviceType: ServiceType;
     /** 费率值 */
@@ -67,7 +66,7 @@ export namespace RateDryer {
     /** 模板编码 */
     templateCode: string;
     /** 设备类型 */
-    deviceType: DeviceType;
+    deviceType: TDeviceTypeValue;
     /** 服务类型 */
     serviceType: ServiceType;
     /** 费率值 */

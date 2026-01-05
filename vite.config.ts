@@ -15,12 +15,14 @@ const __APP_INFO__ = {
 // @see: https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
-  const env = loadEnv(mode, root);
+  const envDir = resolve(root, "env");
+  const env = loadEnv(mode, envDir);
   const viteEnv = wrapperEnv(env);
 
   return {
     base: viteEnv.VITE_PUBLIC_PATH,
     root,
+    envDir,
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),

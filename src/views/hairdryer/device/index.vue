@@ -35,15 +35,14 @@ const batchTagModalRef = ref();
 const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
   { type: "selection", width: 50 },
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校名称", width: 150 },
   {
     prop: "deviceSn",
     label: "设备序列号",
     width: 180,
     search: { el: "input", props: { placeholder: "请输入设备序列号" } }
   },
-  { prop: "name", label: "设备名称", width: 150 },
-  { prop: "location", label: "设备位置", width: 150 },
-  { prop: "vendorName", label: "厂商名称", width: 120 },
+  { prop: "name", label: "设备名称", width: 180 },
   {
     prop: "status",
     label: "设备状态",

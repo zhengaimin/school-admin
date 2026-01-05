@@ -37,3 +37,11 @@ export const uploadFileApi = (file: File, businessType?: Upload.BusinessType) =>
   }
   return http.post<Upload.ResFileUpload>(`/common/files/upload`, formData, { cancel: false });
 };
+
+/**
+ * 图片上传（接受 FormData）
+ * @param formData 包含文件的 FormData
+ */
+export const uploadImg = (formData: FormData) => {
+  return http.post<Upload.ResFileUpload>(`/common/files/upload`, formData, { cancel: false });
+};

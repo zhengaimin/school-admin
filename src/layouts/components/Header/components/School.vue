@@ -110,41 +110,51 @@ watch(count, (newVal, oldVal) => {
 </script>
 
 <template>
-  <div class="message" style="width: 300px">
-    <el-select class="custom-dropdown" placement="right" @change="handleSchoolChange" v-model="school" placeholder="请选择学校">
-      <el-option style="text-align: right" v-for="item in schoolList" :key="item.id" :label="item.name" :value="item.id">
-      </el-option>
+  <div class="school-selector">
+    <el-select class="custom-dropdown" @change="handleSchoolChange" v-model="school" placeholder="请选择学校">
+      <el-option v-for="item in schoolList" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
   </div>
 </template>
 
 <style scoped lang="scss">
-::v-deep(.custom-dropdown .el-select-dropdown__wrap) {
-  max-width: 100%; /* 或者具体的一个宽度值 */
+.school-selector {
+  width: 200px;
 }
-::v-deep(.el-select__placeholder) {
-  font-family: cursive;
-  font-size: 20px;
-  font-weight: bold;
-  color: #627292 !important;
-  border: none !important;
-}
-::v-deep(.el-select__wrapper) {
-  text-align: right;
-  background: none;
-  border: none !important;
-  box-shadow: none;
-  .el-select__suffix {
-    display: none;
+::v-deep(.custom-dropdown) {
+  width: 100%;
+  .el-select__wrapper {
+    padding: 6px 12px;
+    background-color: rgba(64, 158, 255, 0.12);
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 4px;
+    box-shadow: none;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+    .el-select__selected-item {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--el-header-text-color);
+    }
+    .el-select__placeholder {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--el-text-color-secondary);
+    }
+    .el-select__suffix {
+      display: inline-flex;
+      color: var(--el-header-text-color);
+      opacity: 0.7;
+    }
   }
-}
-::v-deep(.el-select__wrapper:hover) {
-  text-align: right;
-  background: none;
-  border: none !important;
-  box-shadow: none;
-  .el-select__suffix {
-    display: none;
+  .el-select__wrapper:hover {
+    background-color: var(--el-fill-color-light);
+    border-color: var(--el-border-color);
+  }
+  .el-select__wrapper.is-focused {
+    background-color: var(--el-fill-color-light);
+    border-color: var(--el-color-primary);
   }
 }
 </style>

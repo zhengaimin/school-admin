@@ -24,7 +24,7 @@
 import { ref } from "vue";
 import { ColumnProps } from "@/components/ProTable/interface";
 import { Delete, EditPen, CirclePlus } from "@element-plus/icons-vue";
-import authMenuList from "@/assets/json/authMenuList.json";
+import authMenuList from "@/config/authMenuList";
 import ProTable from "@/components/ProTable/index.vue";
 
 const proTable = ref();

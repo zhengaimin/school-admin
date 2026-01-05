@@ -1,3 +1,5 @@
+import type { TGradeConfigTypeValue, TGradePackageTypeValue, TGradeServiceTypeValue } from "@/config/modules/grade";
+
 // 年级模块
 export namespace Grade {
   /** 年级列表项 */
@@ -56,15 +58,6 @@ export namespace Grade {
     total: number;
   }
 
-  /** 配置类型 */
-  export type ConfigType = "package" | "rate";
-
-  /** 套餐类型 */
-  export type PackageType = "GENERAL" | "FIXED";
-
-  /** 服务类型 */
-  export type ServiceType = "CALL" | "MESSAGE" | "DRYER";
-
   /** 年级简要信息 */
   export interface IGradeInfoVo {
     /** 年级ID */
@@ -78,11 +71,11 @@ export namespace Grade {
     /** 学校ID */
     schoolId: number;
     /** 配置类型 */
-    configType: ConfigType;
+    configType: TGradeConfigTypeValue;
     /** 套餐类型（查询套餐配置时必填） */
-    packageType?: PackageType;
+    packageType?: TGradePackageTypeValue;
     /** 服务类型（查询费率配置时必填） */
-    serviceType?: ServiceType;
+    serviceType?: TGradeServiceTypeValue;
     /** 页码 */
     page?: number;
     /** 每页大小 */
@@ -94,7 +87,7 @@ export namespace Grade {
     /** 学校ID */
     schoolId: number;
     /** 配置类型 */
-    configType: ConfigType;
+    configType: TGradeConfigTypeValue;
     /** 未配置的年级列表 */
     grades: IGradeInfoVo[];
     /** 总数 */

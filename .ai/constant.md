@@ -77,17 +77,19 @@ export const ORDER_STATUS_OPTIONS: Array<{ label: string; value: TOrderStatusVal
 export * from "./status";
 ```
 
-## 5. 可选：枚举索引（避免写死到模板里）
+## 5. 枚举索引
 
-如果你希望“可检索、可审计”，可以在项目内维护一个索引表（建议放在项目文档里，而不是模板里），例如：
+本项目维护了完整的枚举索引表，用于检索和审计所有常量和枚举。
 
-| 枚举名称      | 描述     | 值类型   | 文件位置                             |
-| ------------- | -------- | -------- | ------------------------------------ |
-| `DEVICE_TYPE` | 设备类型 | `string` | `src/config/modules/device/index.ts` |
-| `PHONE_TYPE`  | 拨号类型 | `string` | `src/config/modules/device/index.ts` |
-| `SIP_TYPE`    | SIP类型  | `string` | `src/config/modules/device/index.ts` |
+**索引文件位置**：`.ai/constant-index.md`
 
-模板中不要沉淀具体业务枚举列表，避免复制到其他项目后产生误导或泄漏。
+该文件记录了项目中所有枚举的详细信息，包括：
+- 枚举名称、描述、值类型
+- 类型名称（`T` 前缀）
+- 文件位置
+- 相关导出（I18N、Options 等）
+
+**重要**：在增删改查常量时，必须同步更新 `.ai/constant-index.md` 索引文件。
 
 ## 6. 使用指南（通用）
 
@@ -104,4 +106,4 @@ const options = ORDER_STATUS_OPTIONS;
 1. 在对应模块目录下新增/修改枚举文件
 2. 按第 3 节提供 Enum/Type/I18N/Options（按项目需要可裁剪）
 3. 在模块 `index.ts` 与根 `index.ts` 中导出
-4. （可选）更新项目文档中的枚举索引表
+4. **同步更新 `.ai/constant-index.md` 枚举索引表**

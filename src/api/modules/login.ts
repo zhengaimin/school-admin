@@ -1,6 +1,6 @@
 import { Login } from "@/api/interface/index";
 import { PORT1 } from "@/api/config/servicePort";
-import authMenuList from "@/assets/json/authMenuList.json";
+import authMenuList from "@/config/authMenuList";
 import authButtonList from "@/assets/json/authButtonList.json";
 import http from "@/api";
 

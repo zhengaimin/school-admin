@@ -386,8 +386,17 @@ export namespace School {
     motto?: string;
     /** 校徽 URL */
     badge?: string;
+    /** 学校描述 */
+    description?: string;
+    /** 校长简介 */
+    principalIntro?: string;
+    /** 背景图片 URL */
+    background?: string;
+    /** 学校照片 URLs */
+    photos?: string[];
     tenantId?: number;
     tenantName?: string;
+    scoreUrl?: string;
     status?: number;
     createdAt?: string;
     updatedAt?: string;
@@ -397,6 +406,72 @@ export namespace School {
   export interface ResSchoolsListData {
     list: ISchoolItem[];
     total: number;
+  }
+
+  /** 新增学校 - 请求参数 */
+  export interface ReqPostSchoolApi {
+    /** 学校名称 */
+    name: string;
+    /** 所属租户ID */
+    tenantId: number;
+    /** 学校地址 */
+    address?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 校长姓名 */
+    principal?: string;
+    /** 学校描述 */
+    description?: string;
+    /** 学校校训 */
+    motto?: string;
+    /** 校长简介 */
+    principalIntro?: string;
+    /** 校徽URL */
+    badge?: string;
+    /** 背景图片URL */
+    background?: string;
+    /** 学校照片URLs */
+    photos?: string[];
+    /** 服务器地址（成绩） */
+    scoreUrl?: string;
+  }
+
+  /** 新增学校 - 响应 data */
+  export interface ResPostSchoolApi {
+    /** 学校ID */
+    id: number;
+    /** 学校编码 */
+    code: string;
+    /** 学校名称 */
+    name: string;
+  }
+
+  /** 更新学校 - 请求参数 */
+  export interface ReqPutSchoolApi {
+    /** 学校名称 */
+    name?: string;
+    /** 学校地址 */
+    address?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 校长姓名 */
+    principal?: string;
+    /** 学校描述 */
+    description?: string;
+    /** 学校校训 */
+    motto?: string;
+    /** 校长简介 */
+    principalIntro?: string;
+    /** 校徽URL */
+    badge?: string;
+    /** 背景图片URL */
+    background?: string;
+    /** 学校照片URLs */
+    photos?: string[];
+    /** 状态，不修改传-1 */
+    status: number;
+    /** 排序，不修改传-1 */
+    sort: number;
   }
 }
 
@@ -412,5 +487,15 @@ export type { Student } from "./modules/student";
 export type { RateDryer } from "./modules/rate/dryer";
 // 年级模块
 export type { Grade } from "./modules/grade";
-// 设备标签模块
-export type { DeviceBaseTag } from "./modules/device-tag";
+// 设备标签模块, 设备命令模块
+export type { DeviceBaseTag, DeviceCommand, SchoolDeviceConfig } from "./modules/device";
+// 年级套餐配置模块
+export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules/package";
+// 支付管理模块
+export type { Payment } from "./modules/payment";
+// 退款模块
+export type { Refund } from "./modules/refund";
+// 商户号配置模块
+export type { Merchant } from "./modules/merchant";
+// 设备使用记录模块
+export type { DeviceUsage } from "./modules/device-usage";

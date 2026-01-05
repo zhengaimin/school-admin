@@ -1,0 +1,1 @@
+import{aa as i}from"./index-BnHo6DGs.js";function a(e){return i.get(`/admin/device-feature-configs/device/${e}`)}function c(e,t){return i.put(`/admin/device-feature-configs/device/${e}`,t)}function o(e){return i.get("/admin/device-feature-configs",e)}function r(e){return i.get("/admin/device-configs",e)}export{o as a,a as b,r as g,c as u};
