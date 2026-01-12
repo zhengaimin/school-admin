@@ -56,7 +56,7 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="`下发命令 - ${tagName}`" width="640px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="`下发命令 - ${tagName}`" width="480px" destroy-on-close draggable align-center>
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="top">
       <el-form-item label="命令类型" prop="commandCode">
         <el-select v-model="ruleForm.commandCode" class="w-full" placeholder="请选择命令类型">

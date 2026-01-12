@@ -1,4 +1,5 @@
 import type { TGradeConfigTypeValue, TGradePackageTypeValue, TGradeServiceTypeValue } from "@/config/modules/grade";
+import type { TDeviceTypeValue } from "@/config/modules/device/type";
 
 // 年级模块
 export namespace Grade {
@@ -72,6 +73,8 @@ export namespace Grade {
     schoolId: number;
     /** 配置类型 */
     configType: TGradeConfigTypeValue;
+    /** 设备类型 */
+    deviceType: TDeviceTypeValue;
     /** 套餐类型（查询套餐配置时必填） */
     packageType?: TGradePackageTypeValue;
     /** 服务类型（查询费率配置时必填） */

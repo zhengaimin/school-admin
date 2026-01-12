@@ -110,7 +110,7 @@ defineExpose({ acceptParams });
   <el-dialog v-model="visible" :title="parameter.title" width="640px" destroy-on-close draggable align-center>
     <SchoolInfo :name="schoolName" />
 
-    <el-form v-loading="loading" label-position="top">
+    <el-form label-position="top">
       <!-- 二维码配置 -->
       <el-form-item label="二维码">
         <UploadImg v-model:image-url="qrCodeUrl" :file-type="['image/jpeg', 'image/png', 'image/gif']" />

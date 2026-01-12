@@ -19,6 +19,25 @@ export const ROUTE_INTERNAL_PAGE = {
   CLASS: "/InternalPage/class"
 } as const;
 
+/** 话机模块路由 */
+export const ROUTE_VIDEO = {
+  /** 费率配置 */
+  RATE: "/video/rate",
+  RATE_SCHOOL_CALL: "/video/rate/schoolCall",
+  RATE_SCHOOL_MESSAGE: "/video/rate/schoolMessage",
+  RATE_GRADE_CALL: "/video/rate/gradeCall",
+  RATE_GRADE_MESSAGE: "/video/rate/gradeMessage",
+
+  /** 套餐配置 */
+  PACKAGE: "/video/package",
+  PACKAGE_GRADE_GENERAL: "/video/package/gradeGeneral",
+  PACKAGE_GRADE_FIXED: "/video/package/gradeFixed",
+  PACKAGE_GIFT_TIME: "/video/package/giftTime",
+
+  /** 商户号配置 */
+  MERCHANT: "/video/merchant"
+} as const;
+
 /** 吹风机模块路由 */
 export const ROUTE_HAIRDRYER = {
   /** 设备管理 */

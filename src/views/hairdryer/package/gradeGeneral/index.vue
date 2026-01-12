@@ -9,7 +9,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import { getGradeGeneralPackagesApi, deleteGradeGeneralPackageApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
-import { DEVICE_TYPE, DEVICE_TYPE_OPTIONS, PACKAGE_STATUS, PACKAGE_STATUS_OPTIONS } from "@/config/modules";
+import { DEVICE_TYPE, PACKAGE_STATUS, PACKAGE_STATUS_OPTIONS } from "@/config/modules";
 import PackageModal from "./modal/Package.vue";
 
 const { isAllSchools, schoolId } = useSchool();
@@ -28,21 +28,16 @@ const columns: ColumnProps<GradePackage.IGradePackageConfigVo>[] = [
   { type: "index", label: "#", width: 60 },
   { prop: "schoolName", label: "学校名称", minWidth: 200 },
   { prop: "gradeName", label: "年级名称", minWidth: 200 },
-  {
-    prop: "deviceType",
-    label: "设备类型",
-    width: 100,
-    enum: DEVICE_TYPE_OPTIONS,
-    search: { el: "select", props: { placeholder: "请选择设备类型" } }
-  },
-  { prop: "basePrice", label: "基础价格", width: 100 },
-  { prop: "totalMonths", label: "套餐月数", width: 100 },
-  { prop: "firstMonthRatio", label: "首月比例扣款", width: 120 },
+  { prop: "dryerMinutes", label: "吹风机使用时长（分钟/月）", width: 220 },
+  { prop: "basePrice", label: "基础价格（元/月）", width: 220 },
+  { prop: "totalMonths", label: "套餐总月数", width: 100 },
+  { prop: "firstMonthRatio", label: "首月比例扣款", fixed: "right", width: 120 },
   {
     prop: "status",
     label: "状态",
     width: 80,
-    enum: PACKAGE_STATUS_OPTIONS
+    enum: PACKAGE_STATUS_OPTIONS,
+    fixed: "right"
   },
   { prop: "operation", label: "操作", width: 180, fixed: "right" }
 ];
@@ -71,6 +66,10 @@ watch(schoolId, () => refreshTableList());
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="年级通用套餐">
       <template #toolButton>
         <el-button type="primary" :icon="CirclePlus" @click="onShowModal('Add')">新增</el-button>
+      </template>
+      <!-- 吹风机使用时长 -->
+      <template #dryerMinutes="{ row }">
+        {{ row.packageContent?.dryerMinutes ?? "-" }}
       </template>
       <!-- 首月比例扣款 -->
       <template #firstMonthRatio="{ row }">

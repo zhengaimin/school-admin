@@ -1,4 +1,4 @@
-import type { DEVICE_TYPE } from "@/config/modules/device";
+import type { DEVICE_TYPE, TDeviceCommandCodeValue } from "@/config/modules";
 
 // 请求响应参数（不包含data）
 export interface Result {
@@ -225,6 +225,46 @@ export namespace DeviceBase {
     /** 设备状态：0-离线，1-在线 */
     status?: 0 | 1;
   }
+
+  /** 下载导入模板 - 请求参数 */
+  export interface ReqGetDeviceBaseTemplateApi {
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+  }
+
+  /** 导入设备 - 请求参数（query 部分） */
+  export interface ReqPostDeviceBaseImportApi {
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+    /** 学校ID */
+    schoolId: number;
+  }
+
+  /** 导入设备 - 失败详情项 */
+  export interface IDeviceBaseImportFailureVo {
+    /** 行号 */
+    rowIndex: number;
+    /** 设备SN */
+    deviceSn: string;
+    /** 设备名称 */
+    name: string;
+    /** 失败原因 */
+    reason: string;
+  }
+
+  /** 导入设备 - 响应 data */
+  export interface ResPostDeviceBaseImportApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failCount: number;
+    /** 失败详情 */
+    failures: IDeviceBaseImportFailureVo[];
+  }
 }
 
 // 设备配置模块
@@ -339,15 +379,12 @@ export namespace DeviceConfig {
     list: IDeviceFeatureConfigListItem[];
   }
 
-  /** 功能点类型 */
-  export type TFeatureType = "qrCode" | "screen" | "timeout" | "reboot";
-
   /** 同步配置 - 请求参数 */
   export interface ReqDeviceFeatureConfigSync {
     /** 设备ID列表 */
     deviceIds: number[];
     /** 功能点类型 */
-    feature: TFeatureType;
+    feature: TDeviceCommandCodeValue;
   }
 
   /** 同步配置 - 响应 data */
@@ -483,12 +520,12 @@ export type { Department } from "./modules/department";
 export type { Class } from "./modules/class";
 // 学生模块
 export type { Student } from "./modules/student";
-// 吹风机费率模块
-export type { RateDryer } from "./modules/rate/dryer";
+// 吹风机费率模块, 视频话机通话费率模块
+export type { RateDryer, RateVideo } from "./modules/rate";
 // 年级模块
 export type { Grade } from "./modules/grade";
-// 设备标签模块, 设备命令模块
-export type { DeviceBaseTag, DeviceCommand, SchoolDeviceConfig } from "./modules/device";
+// 设备标签模块, 设备命令模块, 设备使用记录模块
+export type { DeviceBaseTag, DeviceCommand, SchoolDeviceConfig, DeviceUsage } from "./modules/device";
 // 年级套餐配置模块
 export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules/package";
 // 支付管理模块
@@ -497,5 +534,3 @@ export type { Payment } from "./modules/payment";
 export type { Refund } from "./modules/refund";
 // 商户号配置模块
 export type { Merchant } from "./modules/merchant";
-// 设备使用记录模块
-export type { DeviceUsage } from "./modules/device-usage";

@@ -9,7 +9,6 @@ import ProTable from "@/components/ProTable/index.vue";
 import { getDeviceBaseTagsApi } from "@/api/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
-import { DEVICE_TYPE_OPTIONS } from "@/config/modules";
 import TagModal from "./modal/Tag.vue";
 import DeviceTableModal from "./modal/DeviceTable.vue";
 import CommandModal from "./modal/Command.vue";
@@ -28,6 +27,7 @@ const commandRef = ref();
 
 const columns: ColumnProps<TagRow>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校名称", minWidth: 140 },
   {
     prop: "name",
     label: "标签名称",
@@ -35,11 +35,8 @@ const columns: ColumnProps<TagRow>[] = [
     search: { el: "input", props: { placeholder: "请输入标签名称" } }
   },
   { prop: "description", label: "标签描述", minWidth: 180, showOverflowTooltip: true },
-  { prop: "deviceType", label: "设备类型", width: 100, enum: DEVICE_TYPE_OPTIONS },
-  { prop: "schoolName", label: "学校名称", minWidth: 140 },
   { prop: "deviceCount", label: "关联设备数", width: 100 },
   { prop: "sort", label: "排序值", width: 80 },
-  { prop: "createdAt", label: "创建时间", width: 180 },
   { prop: "operation", label: "操作", width: 200, fixed: "right" }
 ];
 

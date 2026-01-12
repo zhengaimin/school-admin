@@ -25,3 +25,20 @@ export function putDeviceBaseApi(id: number, params: DeviceBase.ReqUpdateDeviceB
 export function deleteDeviceBaseApi(params: { id: number }) {
   return http.delete(`/admin/device-bases/detail/${params.id}`);
 }
+
+/** 下载导入模板 */
+export function getDeviceBaseTemplateApi(params: DeviceBase.ReqGetDeviceBaseTemplateApi) {
+  return http.get("/admin/device-bases/template", params, { responseType: "blob" });
+}
+
+/** 导入设备 */
+export function postDeviceBaseImportApi(params: DeviceBase.ReqPostDeviceBaseImportApi, file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const searchParams = new URLSearchParams({
+    vendorCode: params.vendorCode,
+    deviceType: params.deviceType,
+    schoolId: String(params.schoolId)
+  });
+  return http.post<DeviceBase.ResPostDeviceBaseImportApi>(`/admin/device-bases/import?${searchParams}`, formData);
+}

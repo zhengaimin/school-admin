@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 export * from "./base";
 export * from "./config";
 export * from "./tags";
+export * from "./command";
+export * from "./usage";
 
 /** 设备状态枚举 */
 export const DeviceStatus = {

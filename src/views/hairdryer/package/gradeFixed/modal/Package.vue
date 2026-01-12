@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import type { GradePackage } from "@/api/interface";
 
-import { ref, unref, nextTick, computed, watch } from "vue";
+import { ref, unref, computed, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { DEVICE_TYPE, DEVICE_TYPE_I18N, PACKAGE_STATUS, GRADE_CONFIG_TYPE, GRADE_PACKAGE_TYPE } from "@/config/modules";
-import { postGradeFixedPackageApi, putGradeFixedPackageApi, getUnconfiguredGradesApi } from "@/api/modules";
+import {
+  postGradeFixedPackageApi,
+  putGradeFixedPackageApi,
+  getUnconfiguredGradesApi,
+  getGradeFixedPackageDetailApi
+} from "@/api/modules";
 import { useSchool } from "@/hooks/useSchool";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 
@@ -22,8 +27,15 @@ const parameter = ref({
 const ruleFormRef = ref();
 const ruleForm = ref<Partial<GradePackage.ReqPostGradeFixedPackageApi> & { packageTemplateId?: number; status?: number }>({});
 const gradeOptions = ref<{ id: number; name: string }[]>([]);
+const boundGrades = ref<{ id: number; name: string }[]>([]);
 
 const isView = computed(() => parameter.value.type === "View");
+
+const mergedGradeOptions = computed(() => {
+  const map = new Map<number, { id: number; name: string }>();
+  [...boundGrades.value, ...gradeOptions.value].forEach(g => map.set(g.id, g));
+  return Array.from(map.values());
+});
 
 const validateEndTime = (_rule: any, value: string, callback: any) => {
   if (value && ruleForm.value.startTime && value <= ruleForm.value.startTime) {
@@ -61,6 +73,7 @@ const axiosGetGradesApi = async (targetSchoolId?: number) => {
     const result = await getUnconfiguredGradesApi({
       schoolId: targetSchoolId ?? Number(schoolId.value),
       configType: GRADE_CONFIG_TYPE.PACKAGE,
+      deviceType: DEVICE_TYPE.DRYER,
       packageType: GRADE_PACKAGE_TYPE.FIXED,
       page: 1,
       pageSize: 100
@@ -113,18 +126,6 @@ const formatMonthToDate = (yearMonth: string, isEndDate: boolean = false): strin
   }
 };
 
-/** 监听开始和结束时间变化，自动计算月数并重新验证 */
-watch(
-  () => [ruleForm.value.startTime, ruleForm.value.endTime],
-  () => {
-    calculateTotalMonths();
-    if (ruleForm.value.endTime) {
-      ruleFormRef.value?.validateField("endTime");
-    }
-  },
-  { deep: true }
-);
-
 const onSubmitForm = async (formEl: any) => {
   if (!formEl) return;
   await formEl.validate(async (valid: boolean) => {
@@ -174,6 +175,7 @@ const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigV
   parameter.value = { ...parameter.value, ...params };
 
   if (params.type === "Add") {
+    boundGrades.value = [];
     ruleForm.value = {
       ...getInitialFormData(),
       schoolId: Number(schoolId.value)
@@ -181,31 +183,49 @@ const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigV
     currentSchoolName.value = storeSchoolName.value;
     await axiosGetGradesApi();
   } else if (row) {
-    // 编辑或查看模式
-    ruleForm.value = {
-      packageTemplateId: row.packageTemplateId,
-      schoolId: row.schoolId,
-      gradeIds: [row.gradeId],
-      deviceType: row.deviceType,
-      basePrice: row.basePrice,
-      totalMonths: row.totalMonths,
-      startTime: formatDateToMonth(row.startTime),
-      endTime: formatDateToMonth(row.endTime),
-      packageContent: row.packageContent as GradePackage.IPackageContent,
-      templateDescription: row.templateDescription,
-      usageRules: row.usageRules,
-      monthlyDecrease: row.monthlyDecrease,
-      status: row.status
-    };
-    currentSchoolName.value = row.schoolName ?? "";
-    await axiosGetGradesApi(row.schoolId);
+    // 编辑或查看模式：调用详情接口
+    try {
+      const result = await getGradeFixedPackageDetailApi(row.packageTemplateId);
+      if (result.code === 0 && result.data) {
+        const detail = result.data;
+        boundGrades.value = detail.boundGrades;
+        ruleForm.value = {
+          packageTemplateId: detail.id,
+          schoolId: row.schoolId,
+          gradeIds: detail.boundGrades.map(g => g.id),
+          deviceType: detail.deviceType,
+          basePrice: detail.basePrice,
+          totalMonths: detail.totalMonths,
+          startTime: formatDateToMonth(detail.startTime),
+          endTime: formatDateToMonth(detail.endTime),
+          packageContent: detail.packageContent as GradePackage.IPackageContent,
+          templateDescription: detail.templateDescription,
+          usageRules: detail.usageRules,
+          monthlyDecrease: detail.monthlyDecrease,
+          status: detail.status
+        };
+        currentSchoolName.value = row.schoolName ?? "";
+        await axiosGetGradesApi(row.schoolId);
+      }
+    } catch (error) {
+      console.error("获取详情失败", error);
+    }
   }
 
   visible.value = true;
-  nextTick(() => {
-    ruleFormRef.value?.clearValidate();
-  });
 };
+
+/** 监听开始和结束时间变化，自动计算月数并重新验证 */
+watch(
+  () => [ruleForm.value.startTime, ruleForm.value.endTime],
+  () => {
+    calculateTotalMonths();
+    if (ruleForm.value.endTime) {
+      ruleFormRef.value?.validateField("endTime");
+    }
+  },
+  { deep: true }
+);
 
 defineExpose({ acceptParams });
 </script>
@@ -230,15 +250,8 @@ defineExpose({ acceptParams });
         </el-col>
         <el-col :span="12">
           <el-form-item label="年级" prop="gradeIds">
-            <el-select
-              v-model="ruleForm.gradeIds"
-              multiple
-              collapse-tags
-              collapse-tags-tooltip
-              placeholder="请选择年级"
-              style="width: 100%"
-            >
-              <el-option v-for="item in gradeOptions" :key="item.id" :label="item.name" :value="item.id" />
+            <el-select v-model="ruleForm.gradeIds" multiple placeholder="请选择年级" style="width: 100%">
+              <el-option v-for="item in mergedGradeOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -247,7 +260,7 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="基础价格" prop="basePrice">
-            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" controls-position="right" style="width: 100%" />
+            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -256,7 +269,7 @@ defineExpose({ acceptParams });
               v-model="ruleForm.totalMonths"
               :min="0"
               :precision="0"
-              controls-position="right"
+              :controls="false"
               style="width: 100%"
               disabled
             />
@@ -293,22 +306,12 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.VIDEO" :gutter="24">
         <el-col :span="12">
           <el-form-item label="视频通话时长(分钟)">
-            <el-input-number
-              v-model="ruleForm.packageContent!.videoCallMinutes"
-              :min="0"
-              controls-position="right"
-              style="width: 100%"
-            />
+            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="留言条数">
-            <el-input-number
-              v-model="ruleForm.packageContent!.messageCount"
-              :min="0"
-              controls-position="right"
-              style="width: 100%"
-            />
+            <el-input-number v-model="ruleForm.packageContent!.messageCount" :min="0" :controls="false" style="width: 100%" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -317,12 +320,7 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.DRYER" :gutter="24">
         <el-col :span="12">
           <el-form-item label="吹风机使用时长(分钟)">
-            <el-input-number
-              v-model="ruleForm.packageContent!.dryerMinutes"
-              :min="0"
-              controls-position="right"
-              style="width: 100%"
-            />
+            <el-input-number v-model="ruleForm.packageContent!.dryerMinutes" :min="0" :controls="false" style="width: 100%" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -339,14 +337,6 @@ defineExpose({ acceptParams });
         <el-col :span="24">
           <el-form-item label="模板说明">
             <el-input v-model="ruleForm.templateDescription" type="textarea" :rows="2" placeholder="请输入模板说明" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="24">
-        <el-col :span="24">
-          <el-form-item label="使用规则">
-            <el-input v-model="ruleForm.usageRules" type="textarea" :rows="2" placeholder="请输入使用规则" />
           </el-form-item>
         </el-col>
       </el-row>

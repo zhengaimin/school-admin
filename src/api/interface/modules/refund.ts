@@ -42,6 +42,8 @@ export namespace Refund {
     applyReason: string;
     /** 申请时间 */
     applyTime: string;
+    /** 支付 ID */
+    paymentID: number;
     /** 审核时间 */
     auditTime: string | null;
     /** 完成时间 */
@@ -174,5 +176,49 @@ export namespace Refund {
     success: boolean;
     /** 操作结果消息 */
     message: string;
+  }
+
+  /** 获取导出退款记录信息 - 请求参数 */
+  export interface ReqGetRefundExportInfoApi {
+    /** 学生关键词（支持姓名或学号搜索） */
+    studentKeyword?: string;
+    /** 学生UUID精准查询 */
+    studentUuid?: string;
+    /** 退款申请单号 */
+    refundNo?: string;
+    /** 退款状态 */
+    status?: TRefundStatusValue;
+    /** 退款类型 */
+    refundType?: TRefundTypeValue;
+    /** 退款分类 */
+    refundCategory?: TRefundCategoryValue;
+    /** 学校ID，-1表示全部 */
+    schoolId?: number;
+    /** 级部ID，-1表示全部 */
+    departmentId?: number;
+    /** 年级ID，-1表示全部 */
+    gradeId?: number;
+    /** 班级ID，-1表示全部 */
+    classId?: number;
+    /** 设备类型 */
+    deviceType?: TDeviceTypeValue;
+    /** 开始日期 YYYY-MM-DD */
+    startDate?: string;
+    /** 结束日期 YYYY-MM-DD */
+    endDate?: string;
+    /** 最小金额 */
+    minAmount?: number;
+    /** 最大金额 */
+    maxAmount?: number;
+  }
+
+  /** 获取导出退款记录信息 - 响应 data */
+  export interface ResGetRefundExportInfoApi {
+    /** 总记录数 */
+    totalRecords: number;
+    /** 总页数 */
+    totalPages: number;
+    /** 每页数量 */
+    pageSize: number;
   }
 }

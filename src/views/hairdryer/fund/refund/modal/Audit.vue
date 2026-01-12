@@ -97,6 +97,7 @@ defineExpose({ acceptParams });
           :max="params.applyAmount"
           :precision="2"
           :step="0.1"
+          :controls="false"
           placeholder="请输入实际金额"
           style="width: 100%"
         />

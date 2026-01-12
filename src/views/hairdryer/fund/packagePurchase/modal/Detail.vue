@@ -24,8 +24,9 @@ const axiosGetPackageRecordDetailApi = async (id: number) => {
 };
 
 const acceptParams = async (row: PackageRecord.IPackageRecordItem) => {
-  visible.value = true;
   await axiosGetPackageRecordDetailApi(row.id);
+
+  visible.value = true;
 };
 
 defineExpose({ acceptParams });
@@ -59,9 +60,6 @@ defineExpose({ acceptParams });
           </el-descriptions-item>
           <el-descriptions-item label="套餐描述" :span="2">
             {{ detail.templateDescription || "--" }}
-          </el-descriptions-item>
-          <el-descriptions-item label="使用规则" :span="2">
-            {{ detail.usageRules || "--" }}
           </el-descriptions-item>
         </el-descriptions>
 

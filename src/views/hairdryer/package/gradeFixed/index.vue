@@ -26,17 +26,20 @@ const modalRef = ref();
 
 const columns: ColumnProps<GradePackage.IGradePackageConfigVo>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 200 },
-  { prop: "gradeName", label: "年级名称", minWidth: 200 },
-  { prop: "basePrice", label: "基础价格", width: 100 },
-  { prop: "totalMonths", label: "套餐月数", width: 100 },
-  { prop: "startTime", label: "开始时间", minWidth: 180 },
-  { prop: "endTime", label: "结束时间", minWidth: 180 },
+  { prop: "schoolName", label: "学校名称", minWidth: 160 },
+  { prop: "gradeName", label: "年级名称", minWidth: 160 },
+  { prop: "dryerMinutes", label: "吹风机使用时长（分钟/月）", width: 220 },
+  { prop: "basePrice", label: "基础价格（元/月）", width: 220 },
+  { prop: "totalMonths", label: "套餐总月数", width: 100 },
+  { prop: "startTime", label: "开始时间", width: 120 },
+  { prop: "endTime", label: "结束时间", width: 120 },
+  { prop: "monthlyDecrease", label: "按月递减计费", width: 120, fixed: "right" },
   {
     prop: "status",
     label: "状态",
     width: 80,
-    enum: PACKAGE_STATUS_OPTIONS
+    enum: PACKAGE_STATUS_OPTIONS,
+    fixed: "right"
   },
   { prop: "operation", label: "操作", width: 180, fixed: "right" }
 ];
@@ -65,6 +68,24 @@ watch(schoolId, () => refreshTableList());
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="年级固定套餐">
       <template #toolButton>
         <el-button type="primary" :icon="CirclePlus" @click="onShowModal('Add')">新增</el-button>
+      </template>
+      <!-- 吹风机使用时长 -->
+      <template #dryerMinutes="{ row }">
+        {{ row.packageContent?.dryerMinutes ?? "-" }}
+      </template>
+      <!-- 开始时间 -->
+      <template #startTime="{ row }">
+        {{ row.startTime?.substring(0, 7) ?? "-" }}
+      </template>
+      <!-- 结束时间 -->
+      <template #endTime="{ row }">
+        {{ row.endTime?.substring(0, 7) ?? "-" }}
+      </template>
+      <!-- 按月递减计费 -->
+      <template #monthlyDecrease="{ row }">
+        <el-tag :type="row.monthlyDecrease ? 'success' : 'info'">
+          {{ row.monthlyDecrease ? "是" : "否" }}
+        </el-tag>
       </template>
       <!-- 状态 -->
       <template #status="{ row }">

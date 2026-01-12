@@ -20,13 +20,14 @@ import {
 } from "@/config/modules";
 import DetailModal from "./modal/Detail.vue";
 import AuditModal from "./modal/Audit.vue";
+import ExportModal from "./modal/Export.vue";
 
 interface OptionItem {
   label: string;
   value: number;
 }
 
-const { schoolId } = useSchool();
+const { schoolId, guardSchool } = useSchool();
 
 const { proTable, axiosGetTableList, refreshTableList } = useManage(
   { get: getRefundsApi },
@@ -35,16 +36,18 @@ const { proTable, axiosGetTableList, refreshTableList } = useManage(
 
 const detailModalRef = ref();
 const auditModalRef = ref();
+const exportModalRef = ref();
 const gradeOptions = ref<OptionItem[]>([]);
 const departmentOptions = ref<OptionItem[]>([]);
 const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<Refund.IRefundItem>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "studentName", label: "学生姓名", minWidth: 100 },
   {
     prop: "refundNo",
     label: "退款单号",
-    minWidth: 180,
+    minWidth: 220,
     search: { el: "input", props: { placeholder: "请输入退款单号" } }
   },
   {
@@ -53,7 +56,6 @@ const columns: ColumnProps<Refund.IRefundItem>[] = [
     isShow: false,
     search: { el: "input", props: { placeholder: "姓名/学号" } }
   },
-  { prop: "studentName", label: "学生姓名", minWidth: 100 },
   { prop: "studentCode", label: "学号", minWidth: 120 },
   { prop: "schoolName", label: "学校名称", minWidth: 180 },
   { prop: "applicantName", label: "申请人", minWidth: 100 },
@@ -68,7 +70,7 @@ const columns: ColumnProps<Refund.IRefundItem>[] = [
   {
     prop: "status",
     label: "状态",
-    width: 100,
+    width: 120,
     fixed: "right",
     enum: REFUND_STATUS_OPTIONS
   },
@@ -169,6 +171,26 @@ const onShowDetail = (row: Refund.IRefundItem) => {
 const onAudit = (row: Refund.IRefundItem) => {
   auditModalRef.value?.acceptParams(row);
 };
+/** 处理导出 */
+const handleExport = () => {
+  if (!guardSchool()) return;
+  const searchParam = proTable.value?.searchParam || {};
+
+  exportModalRef.value?.acceptParams({
+    schoolId: Number(schoolId.value),
+    studentKeyword: searchParam.studentKeyword || "",
+    refundNo: searchParam.refundNo || "",
+    status: searchParam.status ?? null,
+    startDate: searchParam.startDate || "",
+    endDate: searchParam.endDate || "",
+    gradeId: searchParam.gradeId ?? null,
+    departmentId: searchParam.departmentId ?? null,
+    classId: searchParam.classId ?? null,
+    gradeOptions: [...gradeOptions.value],
+    departmentOptions: [...departmentOptions.value],
+    classOptions: [...classOptions.value]
+  });
+};
 
 /** 监听年级变化，加载级部和班级选项 */
 watch(
@@ -214,6 +236,9 @@ watch(
 <template>
   <div class="table-box">
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="套餐退款管理">
+      <template #toolButton>
+        <el-button type="primary" @click="handleExport">导出</el-button>
+      </template>
       <!-- 退款类型 -->
       <template #refundType="{ row }">
         {{ REFUND_TYPE_I18N[row.refundType] || "--" }}
@@ -248,6 +273,7 @@ watch(
 
     <DetailModal ref="detailModalRef" />
     <AuditModal ref="auditModalRef" @refresh="refreshTableList" />
+    <ExportModal ref="exportModalRef" />
   </div>
 </template>
 

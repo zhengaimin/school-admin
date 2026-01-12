@@ -207,6 +207,7 @@ import {
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
 import { ElNotification } from "element-plus";
+import { DEVICE_TYPE } from "@/config/modules";
 export default {
   data() {
     return {
@@ -351,7 +352,7 @@ export default {
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
-      let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       paymentsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -398,7 +399,7 @@ export default {
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
-      let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       paymentsexportinfo(params).then(res => {
         if (res.code == 0 && res.data) {
           this.totalInfo = res.data.totalRecords;
@@ -406,7 +407,7 @@ export default {
       });
     },
     confirmexport() {
-      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
+      let url = `${this.exportmessageUrl}?deviceType=${DEVICE_TYPE.VIDEO}&page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&gradeId=${this.filterForm.gradeId}&departmentId=${this.filterForm.departmentId}&classId=${this.filterForm.classId}&startTime=${this.filterForm.startTime}&endTime=${this.filterForm.endTime}`;
       ElNotification({
         title: "提示",
         message: "数据导出中，请稍后",

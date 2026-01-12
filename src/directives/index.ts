@@ -1,5 +1,6 @@
 import { App, Directive } from "vue";
 import auth from "./modules/auth";
+import permission from "./modules/permission";
 import copy from "./modules/copy";
 import waterMarker from "./modules/waterMarker";
 import draggable from "./modules/draggable";
@@ -9,6 +10,7 @@ import longpress from "./modules/longpress";
 
 const directivesList: { [key: string]: Directive } = {
   auth,
+  permission,
   copy,
   waterMarker,
   draggable,

@@ -63,11 +63,7 @@ export default {
   },
   computed: {
     currentModuleName() {
-      const authStore = useAuthStore();
-      const currentModule = authStore.currentModuleGet;
-      const moduleList = authStore.moduleListGet;
-      const module = moduleList.find(m => m.key === currentModule);
-      return module?.label || this.ruleForm.name;
+      return "校园管理系统";
     },
     menuList() {
       const authStore = useAuthStore();

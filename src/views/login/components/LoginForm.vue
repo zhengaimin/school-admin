@@ -92,7 +92,7 @@ const login = (formEl: FormInstance | undefined) => {
       data["userInfo"]["role_name"] = data["userInfo"]["roleName"];
       data["login_user_info"] = data["userInfo"];
       let login_user_info = data["login_user_info"];
-      if (login_user_info.role_key != "agent_admin") {
+      if (login_user_info.role_key != "agent_admin" && login_user_info.role_key != "super_admin") {
         loginForm.captcha = "";
         ajaxGetCaptcha();
         ElNotification({
@@ -105,6 +105,8 @@ const login = (formEl: FormInstance | undefined) => {
       }
       userStore.setToken(data.token);
       userStore.setUserInfo(data["login_user_info"]);
+      // 存储权限码列表
+      userStore.setPermissions(data["permissions"] || []);
       // 2.添加动态路由
       await initDynamicRouter();
       // 3.清空 tabs、keepAlive 数据
@@ -156,6 +158,7 @@ onMounted(() => {
   // 2.清除 Token
   userStore.setToken("");
   userStore.setUserInfo({ name: "" });
+  userStore.setPermissions([]);
 });
 </script>
 

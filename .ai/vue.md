@@ -1110,11 +1110,29 @@ const handleInputChange = (event: Event) => {
 
 在使用 Element Plus 的 `el-dialog` 组件时，应遵循统一的宽度规范，以确保界面的一致性和用户体验。
 
-**核心原则**: el-dialog 的宽度只能使用以下三种预设尺寸：`640px`、`760px`、`1120px`。
+**核心原则**: el-dialog 的宽度只能使用以下四种预设尺寸：`480px`、`640px`、`760px`、`1120px`。
 
 #### 7.1 宽度选择指南
 
-**小尺���对话框 (640px)**
+**迷你尺寸对话框 (480px)**
+
+适用场景：
+
+- 极简的确认/提示对话框
+- 单字段表单（如命令下发、状态切换）
+- 仅包含一个选择器或输入框的操作
+
+**✅ 推荐:**
+
+```vue
+<el-dialog title="下发命令" width="480px">
+  <el-select v-model="commandCode" placeholder="请选择命令类型">
+    <el-option label="同步二维码" value="SYNC_QR_CODE" />
+  </el-select>
+</el-dialog>
+```
+
+**小尺寸对话框 (640px)**
 
 适用场景：
 

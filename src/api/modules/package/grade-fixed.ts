@@ -6,6 +6,11 @@ export function getGradeFixedPackagesApi(params: GradePackage.ReqGetGradeFixedPa
   return http.get<GradePackage.ResGetGradeFixedPackagesApi>("/admin/grade-fixed-packages", params);
 }
 
+/** 获取固定套餐模板详情 */
+export function getGradeFixedPackageDetailApi(packageTemplateId: number | string) {
+  return http.get<GradePackage.ResGetGradeFixedPackageDetailApi>(`/admin/grade-fixed-packages/${packageTemplateId}`);
+}
+
 /** 创建年级固定套餐配置 */
 export function postGradeFixedPackageApi(data: GradePackage.ReqPostGradeFixedPackageApi) {
   return http.post("/admin/grade-fixed-packages", data);

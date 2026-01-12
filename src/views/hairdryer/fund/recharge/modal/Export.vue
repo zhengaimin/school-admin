@@ -5,6 +5,7 @@ import { reactive, ref, computed } from "vue";
 import axios from "axios";
 import { ElNotification } from "element-plus";
 import { getPaymentExportInfoApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import { DEVICE_TYPE } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
 
 interface OptionItem {
@@ -82,6 +83,7 @@ const pageOptions = computed(() => {
 /** 构建请求参数 */
 const buildRequestParams = (): Payment.ReqGetPaymentExportInfoApi => ({
   schoolId: formData.schoolId,
+  deviceType: DEVICE_TYPE.DRYER,
   studentKeyword: formData.studentKeyword || undefined,
   orderNo: formData.orderNo || undefined,
   startDate: formData.startDate || undefined,
@@ -294,7 +296,7 @@ defineExpose({ acceptParams });
   <el-dialog v-model="visible" title="批量导出" width="640px" destroy-on-close draggable align-center>
     <div v-loading="loading" class="export-container">
       <!-- 筛选表单 -->
-      <el-form :model="formData" label-width="80px" size="default">
+      <el-form :model="formData">
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item label="学生信息">
@@ -369,9 +371,7 @@ defineExpose({ acceptParams });
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label=" ">
-              <el-button type="primary" @click="handleSearch">查询</el-button>
-            </el-form-item>
+            <el-button type="primary" @click="handleSearch">查询</el-button>
           </el-col>
         </el-row>
       </el-form>

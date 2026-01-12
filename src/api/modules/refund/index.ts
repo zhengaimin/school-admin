@@ -15,3 +15,13 @@ export function getRefundDetailApi(id: number | string) {
 export function postAuditRefundApi(id: number | string, data: Refund.ReqAuditRefundApi) {
   return http.post<Refund.ResAuditRefundApi>(`/admin/refunds/${id}/audit`, data);
 }
+
+/** 获取导出退款记录信息 */
+export function getRefundExportInfoApi(params: Refund.ReqGetRefundExportInfoApi) {
+  return http.get<Refund.ResGetRefundExportInfoApi>("/admin/refunds/export-info", params);
+}
+
+/** 导出退款记录 */
+export function exportRefundsApi(params: Refund.ReqGetRefundsApi) {
+  return http.get("/admin/refunds/export", params, { responseType: "blob" });
+}

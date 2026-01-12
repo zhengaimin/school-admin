@@ -100,8 +100,8 @@ watch(
 </script>
 
 <template>
-  <div class="h-full flex flex-col rounded-lg overflow-hidden">
-    <el-card v-loading="loading" shadow="never" class="flex-1 flex flex-col">
+  <div class="h-full w-full flex flex-col rounded-lg overflow-hidden">
+    <el-card shadow="never" class="flex-1 flex flex-col">
       <template #header>
         <div class="flex items-center justify-between">
           <span>费率配置</span>

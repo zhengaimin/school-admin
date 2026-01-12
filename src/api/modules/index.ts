@@ -7,5 +7,3 @@ export * from "./package";
 export * from "./payment";
 export * from "./refund";
 export * from "./merchant";
-export * from "./deviceCommand";
-export * from "./deviceUsage";

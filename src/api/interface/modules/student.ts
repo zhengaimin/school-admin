@@ -1,13 +1,7 @@
-import type { TStudentStatusValue } from "@/config/modules";
+import type { TStudentStatusValue, TStudentTypeValue, TFaceStatusValue } from "@/config/modules";
 
 // 学生模块
 export namespace Student {
-  /** 学生类型 */
-  export type StudentType = "BOARDING" | "DAY";
-
-  /** 人脸状态：0-未采集，1-已采集，2-审核中，3-审核通过，4-审核失败 */
-  export type FaceStatus = 0 | 1 | 2 | 3 | 4;
-
   /** 学生列表项 */
   export interface IStudentItemVo {
     id: number;
@@ -30,7 +24,7 @@ export namespace Student {
     /** 监护人电话 */
     guardianPhone: string;
     /** 学生类型：BOARDING-寄宿生，DAY-走读生 */
-    studentType: StudentType;
+    studentType: TStudentTypeValue;
     /** 班级ID */
     classId: number;
     /** 班级名称 */
@@ -50,7 +44,7 @@ export namespace Student {
     /** 人脸URL */
     faceImageUrl: string;
     /** 人脸状态 */
-    faceStatus: FaceStatus;
+    faceStatus: TFaceStatusValue;
     /** 租户ID */
     tenantId: number;
     /** 租户名称 */

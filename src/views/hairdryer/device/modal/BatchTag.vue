@@ -90,23 +90,21 @@ defineExpose({ acceptParams });
     draggable
     align-center
   >
-    <div v-loading="loading">
-      <!-- 标签选择 -->
-      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="top">
-        <el-form-item label="选择标签" prop="tagId">
-          <el-select v-model="ruleForm.tagId" class="w-full" placeholder="请选择标签" clearable>
-            <el-option v-for="tag in tagOptions" :key="tag.id" :label="tag.name" :value="tag.id" />
-          </el-select>
-        </el-form-item>
-      </el-form>
+    <!-- 标签选择 -->
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="top">
+      <el-form-item label="选择标签" prop="tagId">
+        <el-select v-model="ruleForm.tagId" class="w-full" placeholder="请选择标签" clearable>
+          <el-option v-for="tag in tagOptions" :key="tag.id" :label="tag.name" :value="tag.id" />
+        </el-select>
+      </el-form-item>
+    </el-form>
 
-      <!-- 已选设备列表 -->
-      <div class="mb-2 text-sm text-gray-500">已选设备（{{ selectedDevices.length }} 台）</div>
-      <div class="flex flex-row flex-wrap gap-2">
-        <el-tag v-for="device in selectedDevices" :key="device.id" closable @close="handleRemoveDevice(device.id)">
-          {{ device.name || device.deviceSn }}
-        </el-tag>
-      </div>
+    <!-- 已选设备列表 -->
+    <div class="mb-2 text-sm text-gray-500">已选设备（{{ selectedDevices.length }} 台）</div>
+    <div class="flex flex-row flex-wrap gap-2">
+      <el-tag v-for="device in selectedDevices" :key="device.id" closable @close="handleRemoveDevice(device.id)">
+        {{ device.name || device.deviceSn }}
+      </el-tag>
     </div>
 
     <template #footer>

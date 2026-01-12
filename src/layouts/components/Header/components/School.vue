@@ -125,7 +125,7 @@ watch(count, (newVal, oldVal) => {
   width: 100%;
   .el-select__wrapper {
     padding: 6px 12px;
-    background-color: rgba(64, 158, 255, 0.12);
+    background-color: rgb(64 158 255 / 12%);
     border: 1px solid var(--el-border-color-lighter);
     border-radius: 4px;
     box-shadow: none;

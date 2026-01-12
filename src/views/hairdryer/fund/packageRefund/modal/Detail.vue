@@ -3,7 +3,14 @@ import type { Refund } from "@/api/interface";
 
 import { ref } from "vue";
 import { getRefundDetailApi } from "@/api/modules";
-import { REFUND_STATUS_I18N, getRefundStatusTagType, REFUND_TYPE_I18N, REFUND_CATEGORY_I18N, REFUND_DETAIL_STATUS_I18N, getRefundDetailStatusTagType } from "@/config/modules";
+import {
+  REFUND_STATUS_I18N,
+  getRefundStatusTagType,
+  REFUND_TYPE_I18N,
+  REFUND_CATEGORY_I18N,
+  REFUND_DETAIL_STATUS_I18N,
+  getRefundDetailStatusTagType
+} from "@/config/modules";
 
 const visible = ref(false);
 const loading = ref(false);

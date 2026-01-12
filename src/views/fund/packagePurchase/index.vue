@@ -125,11 +125,10 @@
             <el-descriptions-item label="状态">{{ detailObj.statusText }}</el-descriptions-item>
             <el-descriptions-item label="支付时间">{{ detailObj.paymentTime }}</el-descriptions-item>
             <el-descriptions-item label="购买人">{{ detailObj.purchaserName }}</el-descriptions-item>
-            <el-descriptions-item label="语音通话时长（分钟）">{{
-              detailObj.packageContent.videoCallMinutes ? detailObj.packageContent.videoCallMinutes : ""
-            }}</el-descriptions-item>
+            <el-descriptions-item label="语音通话时长（分钟）">
+              {{ detailObj.packageContent.videoCallMinutes ? detailObj.packageContent.videoCallMinutes : "" }}
+            </el-descriptions-item>
             <el-descriptions-item label="套餐描述">{{ detailObj.templateDescription }}</el-descriptions-item>
-            <el-descriptions-item label="使用规则">{{ detailObj.usageRules }}</el-descriptions-item>
           </el-descriptions>
         </div>
         <el-row :gutter="23">
@@ -182,6 +181,8 @@ import {
   packagerecordsexportinfo
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
+import { DEVICE_TYPE } from "@/config/modules";
+
 export default {
   data() {
     return {
@@ -312,7 +313,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       packagerecordsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -355,7 +356,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       packagerecordsexportinfo(params).then(res => {
         if (res.code == 0 && res.data) {
           this.totalInfo = res.data.totalRecords;
@@ -368,7 +369,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let url = `${this.exportmessageUrl}?deviceType=${DEVICE_TYPE.VIDEO}&page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       ElNotification({
         title: "提示",
         message: "数据导出中，请稍后",

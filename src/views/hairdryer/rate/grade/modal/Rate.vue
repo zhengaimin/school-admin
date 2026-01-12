@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { RateDryer } from "@/api/interface";
+import { GRADE_CONFIG_TYPE, GRADE_SERVICE_TYPE } from "@/config/modules/grade";
+import { DEVICE_TYPE } from "@/config/modules";
 
-import { ref, unref, computed, nextTick } from "vue";
+import { ref, unref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import {
   postGradeDryerRatesApi,
@@ -45,8 +47,6 @@ const rules = {
   description: [{ required: true, message: "请输入描述", trigger: "blur" }]
 };
 
-const isEdit = computed(() => parameter.value.type === "Edit");
-
 /** 获取年级费率详情 */
 const axiosGetGradeDryerRateDetailApi = async (rateTemplateId: number): Promise<RateDryer.IGradeDryerRateItemVo | null> => {
   try {
@@ -69,8 +69,9 @@ const axiosGetGradesOptions = async (): Promise<void> => {
   try {
     const result = await getUnconfiguredGradesApi({
       schoolId: id,
-      configType: "rate",
-      serviceType: "DRYER",
+      configType: GRADE_CONFIG_TYPE.RATE,
+      deviceType: DEVICE_TYPE.DRYER,
+      serviceType: GRADE_SERVICE_TYPE.DRYER,
       page: 1,
       pageSize: 100
     });
@@ -135,18 +136,24 @@ const acceptParams = async (params: any, row?: RateDryer.IGradeDryerRateItemVo) 
     await axiosGetGradesOptions();
   } else if (row?.rateTemplateID) {
     editingRateTemplateId.value = row.rateTemplateID;
-    // Edit 模式：通过详情接口获取数据
     loading.value = true;
-    const data = await axiosGetGradeDryerRateDetailApi(row.rateTemplateID);
+    const [data, unconfiguredResult] = await Promise.all([
+      axiosGetGradeDryerRateDetailApi(row.rateTemplateID),
+      getUnconfiguredGradesApi({
+        schoolId: Number(schoolId.value),
+        configType: GRADE_CONFIG_TYPE.RATE,
+        deviceType: DEVICE_TYPE.DRYER,
+        serviceType: GRADE_SERVICE_TYPE.DRYER,
+        page: 1,
+        pageSize: 100
+      })
+    ]);
     if (data) {
-      const boundGrades = data.boundGrades ?? [];
-      gradeOptions.value = boundGrades.map(g => ({ id: g.gradeId, name: g.gradeName }));
-      console.log(
-        gradeOptions.value,
-        boundGrades.map(g => g.gradeId)
-      );
+      const boundGrades = (data.boundGrades ?? []).map(g => ({ id: g.gradeId, name: g.gradeName }));
+      const unconfiguredGrades = (unconfiguredResult?.data?.grades ?? []).map(g => ({ id: g.id, name: g.name }));
+      gradeOptions.value = [...boundGrades, ...unconfiguredGrades];
       ruleForm.value = {
-        gradeIds: boundGrades.map(g => g.gradeId),
+        gradeIds: boundGrades.map(g => g.id),
         rate: data.rate,
         description: data.description
       };
@@ -180,7 +187,6 @@ defineExpose({ acceptParams });
                 clearable
                 :controls="false"
                 placeholder="请选择年级"
-                :disabled="isEdit"
               >
                 <el-option v-for="v in gradeOptions" :key="v.id" :label="v.name" :value="v.id" />
               </el-select>
@@ -196,7 +202,7 @@ defineExpose({ acceptParams });
                 :max="999999.99"
                 :precision="2"
                 :step="0.01"
-                controls-position="right"
+                :controls="false"
                 placeholder="请输入费率值"
               />
             </el-form-item>

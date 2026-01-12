@@ -28,7 +28,12 @@ export interface GlobalState {
 /* UserState */
 export interface UserState {
   token: string;
-  userInfo: any;
+  userInfo: {
+    name: string;
+    role_key?: string;
+    [key: string]: any;
+  };
+  permissions: string[];
   schoolMsg: { schoolId: string; schoolName: string };
   count: number;
 }

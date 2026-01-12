@@ -1,4 +1,4 @@
-import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_HAIRDRYER } from "./router";
+import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER } from "./router";
 
 export default {
   code: 200,
@@ -480,12 +480,12 @@ export default {
         ]
       },
       {
-        path: "/setmenu",
-        name: "setmenu",
-        component: "/setmenu/index",
+        path: ROUTE_VIDEO.RATE,
+        name: "videoRate",
+        redirect: ROUTE_VIDEO.RATE_SCHOOL_CALL,
         meta: {
-          icon: "Menu",
-          title: "套餐配置",
+          icon: "PriceTag",
+          title: "费率配置",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -494,12 +494,12 @@ export default {
         },
         children: [
           {
-            path: "/setmenu/schoolrate",
-            name: "schoolrate",
-            component: "/setmenu/schoolrate/index",
+            path: ROUTE_VIDEO.RATE_SCHOOL_CALL,
+            name: "videoRateSchoolCall",
+            component: "/video/rate/schoolCall/index",
             meta: {
               icon: "",
-              title: "学校费率",
+              title: "学校通话费率",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -508,9 +508,23 @@ export default {
             }
           },
           {
-            path: "/setmenu/graderate",
-            name: "graderate",
-            component: "/setmenu/graderate/index",
+            path: ROUTE_VIDEO.RATE_SCHOOL_MESSAGE,
+            name: "videoRateSchoolMessage",
+            component: "/video/rate/schoolMessage/index",
+            meta: {
+              icon: "",
+              title: "学校留言费率",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_VIDEO.RATE_GRADE_CALL,
+            name: "videoRateGradeCall",
+            component: "/video/rate/gradeCall/index",
             meta: {
               icon: "",
               title: "年级通话费率",
@@ -522,9 +536,9 @@ export default {
             }
           },
           {
-            path: "/setmenu/grademessagerate",
-            name: "grademessagerate",
-            component: "/setmenu/grademessagerate/index",
+            path: ROUTE_VIDEO.RATE_GRADE_MESSAGE,
+            name: "videoRateGradeMessage",
+            component: "/video/rate/gradeMessage/index",
             meta: {
               icon: "",
               title: "年级留言费率",
@@ -534,11 +548,27 @@ export default {
               isAffix: false,
               isKeepAlive: false
             }
-          },
+          }
+        ]
+      },
+      {
+        path: ROUTE_VIDEO.PACKAGE,
+        name: "videoPackage",
+        redirect: ROUTE_VIDEO.PACKAGE_GRADE_GENERAL,
+        meta: {
+          icon: "Present",
+          title: "套餐配置",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        },
+        children: [
           {
-            path: "/setmenu/gradegeneral",
-            name: "gradegeneral",
-            component: "/setmenu/gradegeneral/index",
+            path: ROUTE_VIDEO.PACKAGE_GRADE_GENERAL,
+            name: "videoPackageGradeGeneral",
+            component: "/video/package/gradeGeneral/index",
             meta: {
               icon: "",
               title: "年级通用套餐",
@@ -550,9 +580,9 @@ export default {
             }
           },
           {
-            path: "/setmenu/gradefixedMeal",
-            name: "gradefixedMeal",
-            component: "/setmenu/gradefixedMeal/index",
+            path: ROUTE_VIDEO.PACKAGE_GRADE_FIXED,
+            name: "videoPackageGradeFixed",
+            component: "/video/package/gradeFixed/index",
             meta: {
               icon: "",
               title: "年级固定套餐",
@@ -564,9 +594,9 @@ export default {
             }
           },
           {
-            path: "/setmenu/giftTime",
-            name: "giftTime",
-            component: "/setmenu/giftTime/index",
+            path: ROUTE_VIDEO.PACKAGE_GIFT_TIME,
+            name: "videoPackageGiftTime",
+            component: "/video/package/giftTime/index",
             meta: {
               icon: "",
               title: "赠送时长",
@@ -638,9 +668,9 @@ export default {
         ]
       },
       {
-        path: "/merchant",
-        name: "merchant",
-        component: "/merchant/index",
+        path: "/video/merchant",
+        name: "videoMerchant",
+        component: "/video/merchant/index",
         meta: {
           icon: "Tools",
           title: "商户号配置",
@@ -659,7 +689,7 @@ export default {
         component: "/hairdryer/index",
         meta: {
           icon: "UploadFilled",
-          title: "设备管理",
+          title: "吹风机管理",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -673,7 +703,7 @@ export default {
             component: "/hairdryer/tags/index",
             meta: {
               icon: "",
-              title: "设备标签",
+              title: "标签管理",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -687,7 +717,7 @@ export default {
             component: "/hairdryer/device/index",
             meta: {
               icon: "",
-              title: "吹风机设备",
+              title: "设备管理",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -701,7 +731,7 @@ export default {
             component: "/hairdryer/config/index",
             meta: {
               icon: "",
-              title: "学校配置",
+              title: "配置管理",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -783,50 +813,7 @@ export default {
           }
         ]
       },
-      {
-        path: ROUTE_HAIRDRYER.LOG,
-        name: "hairdryerLog",
-        component: "/hairdryer/log/index",
-        meta: {
-          icon: "Comment",
-          title: "日志管理",
-          isLink: "",
-          isHide: false,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: false
-        },
-        children: [
-          {
-            path: ROUTE_HAIRDRYER.LOG_USAGE,
-            name: "hairdryerLogUsage",
-            component: "/hairdryer/log/usage/index",
-            meta: {
-              icon: "",
-              title: "使用记录",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false
-            }
-          },
-          {
-            path: ROUTE_HAIRDRYER.LOG_COMMAND,
-            name: "hairdryerLogCommand",
-            component: "/hairdryer/log/command/index",
-            meta: {
-              icon: "",
-              title: "命令记录",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false
-            }
-          }
-        ]
-      },
+
       {
         path: ROUTE_HAIRDRYER.RATE,
         name: "hairdryerRate",
@@ -886,20 +873,6 @@ export default {
         },
         children: [
           {
-            path: ROUTE_HAIRDRYER.PACKAGE_GRADE_FIXED,
-            name: "hairdryerGradeFixed",
-            component: "/hairdryer/package/gradeFixed/index",
-            meta: {
-              icon: "",
-              title: "年级固定套餐",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false
-            }
-          },
-          {
             path: ROUTE_HAIRDRYER.PACKAGE_GRADE_GENERAL,
             name: "hairdryerGradeGeneral",
             component: "/hairdryer/package/gradeGeneral/index",
@@ -914,12 +887,70 @@ export default {
             }
           },
           {
+            path: ROUTE_HAIRDRYER.PACKAGE_GRADE_FIXED,
+            name: "hairdryerGradeFixed",
+            component: "/hairdryer/package/gradeFixed/index",
+            meta: {
+              icon: "",
+              title: "年级固定套餐",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
             path: ROUTE_HAIRDRYER.PACKAGE_GIFT_DURATION,
             name: "hairdryerGiftDuration",
             component: "/hairdryer/package/giftDuration/index",
             meta: {
               icon: "",
               title: "赠送时长",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          }
+        ]
+      },
+      {
+        path: ROUTE_HAIRDRYER.LOG,
+        name: "hairdryerLog",
+        component: "/hairdryer/log/index",
+        meta: {
+          icon: "Comment",
+          title: "日志管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        },
+        children: [
+          {
+            path: ROUTE_HAIRDRYER.LOG_USAGE,
+            name: "hairdryerLogUsage",
+            component: "/hairdryer/log/usage/index",
+            meta: {
+              icon: "",
+              title: "使用记录",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_HAIRDRYER.LOG_COMMAND,
+            name: "hairdryerLogCommand",
+            component: "/hairdryer/log/command/index",
+            meta: {
+              icon: "",
+              title: "命令记录",
               isLink: "",
               isHide: false,
               isFull: false,

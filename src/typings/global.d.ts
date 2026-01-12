@@ -17,6 +17,8 @@ declare namespace Menu {
     isFull: boolean;
     isAffix: boolean;
     isKeepAlive: boolean;
+    /** 权限码列表（满足任一即可访问） */
+    permission?: string[];
   }
 }
 

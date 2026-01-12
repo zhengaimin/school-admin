@@ -38,13 +38,13 @@ const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<PackageRecord.IPackageRecordItem>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校名称", minWidth: 180 },
   {
     prop: "orderNo",
     label: "订单号",
     minWidth: 200,
     search: { el: "input", props: { placeholder: "请输入订单号" } }
   },
-  { prop: "schoolName", label: "学校名称", minWidth: 180 },
   {
     prop: "studentKeyword",
     label: "学生",

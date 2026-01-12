@@ -3,7 +3,8 @@ import type { DeviceConfig } from "@/api/interface";
 
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { getDeviceFeatureConfigListApi } from "@/api/modules";
+import { getDeviceFeatureConfigListApi, updateSchoolDeviceFeatureConfigApi } from "@/api/modules";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
 import UploadImg from "@/components/Upload/Img.vue";
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   schoolId: ""
 });
+
+const { getUploadPath } = useAssetsPath();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -41,7 +44,18 @@ const handleSave = async () => {
 
   saving.value = true;
   try {
-    // TODO: 调用保存接口
+    await updateSchoolDeviceFeatureConfigApi(configData.value.id, {
+      config: {
+        qrCode: { fileUrl: getUploadPath(configData.value.config.qrCode.fileUrl) },
+        screen: {
+          brightness: configData.value.config.screen.brightness,
+          welcomeMessage: configData.value.config.screen.welcomeMessage,
+          guideText: configData.value.config.screen.guideText
+        },
+        timeout: { refundTimeout: configData.value.config.timeout.refundTimeout },
+        order: { maxUsageTime: configData.value.config.order.maxUsageTime }
+      }
+    });
     ElMessage.success("保存成功");
   } catch (error) {
     console.error("handleSave:", error);
@@ -87,7 +101,7 @@ watch(
             <!-- 二维码配置 -->
             <el-form-item label="二维码">
               <UploadImg
-                :image-url="configData.config?.qrCode?.fileUrl ?? ''"
+                v-model:image-url="configData.config.qrCode.fileUrl"
                 :file-type="['image/jpeg', 'image/png', 'image/gif']"
               />
             </el-form-item>
@@ -95,8 +109,15 @@ watch(
             <!-- 屏幕参数配置 -->
             <el-row :gutter="24">
               <el-col :span="8">
-                <el-form-item label="亮度">
-                  <el-input :model-value="configData.config?.screen?.brightness" />
+                <el-form-item label="亮度（%）">
+                  <el-input-number
+                    v-model="configData.config.screen.brightness"
+                    :min="0"
+                    :max="100"
+                    :precision="0"
+                    :controls="false"
+                    class="w-full"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -109,7 +130,7 @@ watch(
             <el-row :gutter="24">
               <el-col :span="24">
                 <el-form-item label="欢迎消息">
-                  <el-input :model-value="configData.config?.screen?.welcomeMessage" type="textarea" :rows="3" />
+                  <el-input v-model="configData.config.screen.welcomeMessage" type="textarea" :rows="3" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -117,7 +138,7 @@ watch(
             <el-row :gutter="24">
               <el-col :span="24">
                 <el-form-item label="引导文字">
-                  <el-input :model-value="configData.config?.screen?.guideText" type="textarea" :rows="3" />
+                  <el-input v-model="configData.config.screen.guideText" type="textarea" :rows="3" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -126,12 +147,24 @@ watch(
             <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="超时退款时间（秒）">
-                  <el-input :model-value="configData.config?.timeout?.refundTimeout" />
+                  <el-input-number
+                    v-model="configData.config.timeout.refundTimeout"
+                    :min="0"
+                    :precision="0"
+                    :controls="false"
+                    class="w-full"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="订单使用最大时间（分钟）">
-                  <el-input :model-value="configData.config?.order?.maxUsageTime" />
+                  <el-input-number
+                    v-model="configData.config.order.maxUsageTime"
+                    :min="0"
+                    :precision="0"
+                    :controls="false"
+                    class="w-full"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>

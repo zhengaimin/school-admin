@@ -242,6 +242,7 @@ import {
   refundsexportinfo
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
+import { DEVICE_TYPE } from "@/config/modules";
 export default {
   data() {
     return {
@@ -390,7 +391,7 @@ export default {
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
-      let params = `schoolId=${this.schoolId}&refundType=FULL&page=${this.page}&pageSize=${this.pageSize}&studentKeyword=${this.filterForm.studentKeyword}&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&refundType=FULL&page=${this.page}&pageSize=${this.pageSize}&studentKeyword=${this.filterForm.studentKeyword}&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       refundsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -431,7 +432,10 @@ export default {
           //   this.form.actualAmount = Number(this.form.actualAmount);
           // }
           if (this.form.refundApplicationId) {
-            refundscheck(this.form).then(res => {
+            refundscheck({
+              ...this.form,
+              deviceType: DEVICE_TYPE.VIDEO
+            }).then(res => {
               if (res.code == 0) {
                 this.dialogVisibleAdd = false;
                 this.$message.success("审核成功");
@@ -465,7 +469,7 @@ export default {
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
-      let params = `schoolId=${this.schoolId}&refundType=FULL&studentKeyword=${this.filterForm.studentKeyword}&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&refundType=FULL&studentKeyword=${this.filterForm.studentKeyword}&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       refundsexportinfo(params).then(res => {
         if (res.code == 0 && res.data) {
           this.totalInfo = res.data.totalRecords;
@@ -479,7 +483,7 @@ export default {
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
-      let url = `${this.exportmessageUrl}?page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&refundType=FULL&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let url = `${this.exportmessageUrl}?deviceType=${DEVICE_TYPE.VIDEO}&page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&refundType=FULL&status=${status}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       ElNotification({
         title: "提示",
         message: "数据导出中，请稍后",

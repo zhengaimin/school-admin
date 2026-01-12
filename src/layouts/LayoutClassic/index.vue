@@ -17,14 +17,6 @@ const accordion = computed(() => globalStore.accordion);
 const isCollapse = computed(() => globalStore.isCollapse);
 const menuList = computed(() => authStore.showMenuListGet);
 const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu : route.path) as string);
-
-// 获取当前模块名称
-const currentModuleLabel = computed(() => {
-  const currentModule = authStore.currentModuleGet;
-  const moduleList = authStore.moduleListGet;
-  const module = moduleList.find(m => m.key === currentModule);
-  return module?.label || "校园管理平台";
-});
 </script>
 
 <template>
@@ -33,7 +25,7 @@ const currentModuleLabel = computed(() => {
       <div class="header-lf mask-image">
         <div class="logo flx-center">
           <img class="logo-img" src="@/assets/images/logo.png" alt="logo" />
-          <span class="logo-text">{{ currentModuleLabel }}</span>
+          <span class="logo-text">校园管理平台</span>
         </div>
         <ModuleSwitch />
         <ToolBarLeft />

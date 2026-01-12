@@ -26,7 +26,7 @@ export const dateFormatter = (list: any[], fields: (string | TDateFieldConfig)[]
     fields.forEach(fieldConfig => {
       const field = typeof fieldConfig === "string" ? fieldConfig : fieldConfig.field;
       const format = typeof fieldConfig === "string" ? defaultFormat : fieldConfig.format || defaultFormat;
-      const isUnix = typeof fieldConfig === "string" ? true : (fieldConfig.isUnix ?? true);
+      const isUnix = typeof fieldConfig === "string" ? false : (fieldConfig.isUnix ?? false);
 
       if (newItem[field] !== undefined && newItem[field] !== null && newItem[field] !== "") {
         const date = isUnix ? dayjs.unix(newItem[field]) : dayjs(newItem[field]);
@@ -35,8 +35,6 @@ export const dateFormatter = (list: any[], fields: (string | TDateFieldConfig)[]
         newItem[field] = "";
       }
     });
-
-    console.log(newItem);
     return newItem;
   });
 };

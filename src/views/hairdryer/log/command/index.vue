@@ -3,8 +3,9 @@ import type { DeviceCommand } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import { getDeviceCommandListApi } from "@/api/modules";
+import { getDeviceCommandListApi, deleteDeviceCommandApi } from "@/api/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import {
@@ -13,7 +14,8 @@ import {
   getDeviceCommandStatusTagType,
   DEVICE_COMMAND_TYPE_OPTIONS,
   DEVICE_COMMAND_TYPE_I18N,
-  DEVICE_TYPE
+  DEVICE_TYPE,
+  DEVICE_COMMAND_STATUS
 } from "@/config/modules";
 import DetailModal from "./modal/Detail.vue";
 
@@ -24,9 +26,9 @@ const { proTable, axiosGetTableList, refreshTableList } = useManage(
   { deviceType: DEVICE_TYPE.DRYER },
   list =>
     dateFormatter(list, [
-      { field: "executedAt", isUnix: true },
-      { field: "completedAt", isUnix: true },
-      { field: "createdAt", isUnix: true }
+      { field: "createdAt", isUnix: false },
+      { field: "completedAt", isUnix: false },
+      { field: "executedAt", isUnix: false }
     ])
 );
 
@@ -45,8 +47,7 @@ const columns: ColumnProps<DeviceCommand.IDeviceCommandItem>[] = [
     prop: "commandType",
     label: "命令类型",
     width: 100,
-    enum: DEVICE_COMMAND_TYPE_OPTIONS,
-    search: { el: "select", props: { placeholder: "请选择命令类型" } }
+    enum: DEVICE_COMMAND_TYPE_OPTIONS
   },
   { prop: "description", label: "命令描述", minWidth: 150 },
   {
@@ -57,15 +58,27 @@ const columns: ColumnProps<DeviceCommand.IDeviceCommandItem>[] = [
     fixed: "right",
     search: { el: "select", props: { placeholder: "请选择状态" } }
   },
-  { prop: "resultMsg", label: "执行结果", minWidth: 150 },
   { prop: "executedAt", label: "执行时间", minWidth: 180 },
   { prop: "createdAt", label: "创建时间", minWidth: 180 },
-  { prop: "operation", label: "操作", width: 80, fixed: "right" }
+  { prop: "operation", label: "操作", width: 120, fixed: "right" }
 ];
 
 /** 查看详情 */
 const handleShowDetail = (row: DeviceCommand.IDeviceCommandItem) => {
-  detailModalRef.value?.acceptParams(row);
+  detailModalRef.value?.acceptParams(row.id);
+};
+
+/** 删除命令 */
+const handleDelete = (row: DeviceCommand.IDeviceCommandItem) => {
+  if (row.status !== DEVICE_COMMAND_STATUS.PENDING) {
+    ElMessage.warning("只能删除待执行状态的命令");
+    return;
+  }
+  ElMessageBox.confirm("确定删除该命令记录吗？", "提示", { type: "warning" }).then(async () => {
+    await deleteDeviceCommandApi(row.id);
+    ElMessage.success("删除成功");
+    refreshTableList();
+  });
 };
 
 /** 监听学校变化 */
@@ -102,6 +115,7 @@ watch(
       <!-- 操作 -->
       <template #operation="{ row }">
         <el-button type="primary" link @click="handleShowDetail(row)">查看</el-button>
+        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>
 

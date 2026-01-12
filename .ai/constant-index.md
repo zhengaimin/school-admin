@@ -65,12 +65,14 @@
 | 枚举名称         | 描述                                      | 值类型   | 类型名称              | 文件位置                              |
 | ---------------- | ----------------------------------------- | -------- | --------------------- | ------------------------------------- |
 | `STUDENT_STATUS` | 学生状态：0-停用，1-在读，2-毕业，3-转学 | `number` | `TStudentStatusValue` | `src/config/modules/student/status.ts`|
+| `STUDENT_TYPE`   | 学生类型：BOARDING-寄宿生，DAY-走读生    | `string` | `TStudentTypeValue`   | `src/config/modules/student/type.ts`  |
+| `FACE_STATUS`    | 人脸状态：0-未采集，1-已采集，2-审核中，3-审核通过，4-审核失败 | `number` | `TFaceStatusValue` | `src/config/modules/student/face-status.ts`|
 
 **相关导出：**
 
-- `STUDENT_STATUS_I18N` - 学生状态文案映射
-- `STUDENT_STATUS_TAG_TYPE` - 学生状态标签类型映射
-- `STUDENT_STATUS_OPTIONS` - 学生状态下拉选项
+- `STUDENT_STATUS_I18N` / `STUDENT_STATUS_TAG_TYPE` / `STUDENT_STATUS_OPTIONS` - 学生状态文案、标签类型和选项
+- `STUDENT_TYPE_I18N` / `STUDENT_TYPE_OPTIONS` - 学生类型文案和选项
+- `FACE_STATUS_I18N` / `FACE_STATUS_TAG_TYPE` / `FACE_STATUS_OPTIONS` - 人脸状态文案、标签类型和选项
 
 ---
 

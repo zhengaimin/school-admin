@@ -9,6 +9,7 @@ export const useUserStore = defineStore(id, {
   state: (): UserState => ({
     token: "",
     userInfo: { name: "" },
+    permissions: [],
     schoolMsg: { schoolId: "", schoolName: "" },
     count: 0
   }),
@@ -21,6 +22,10 @@ export const useUserStore = defineStore(id, {
     // Set setUserInfo
     setUserInfo(userInfo: UserState["userInfo"]) {
       this.userInfo = userInfo;
+    },
+    // Set permissions
+    setPermissions(permissions: string[]) {
+      this.permissions = permissions;
     },
     setSchoolMsg(schoolMsg: UserState["schoolMsg"]) {
       this.schoolMsg = schoolMsg;

@@ -1,13 +1,8 @@
 import type { TDeviceTypeValue } from "@/config/modules";
+import type { TGiftStatusValue, TGiftSourceValue } from "@/config/modules/gifts";
 
 // 赠费模块
 export namespace Gift {
-  /** 赠费状态：1-有效 2-已用完 3-已过期 4-已取消 */
-  export type GiftStatus = 1 | 2 | 3 | 4;
-
-  /** 赠费来源 */
-  export type GiftSource = "ADMIN_GIFT" | "RECHARGE_BONUS";
-
   /** 赠费列表项 */
   export interface IGiftItemVo {
     /** 赠费记录ID */
@@ -33,13 +28,13 @@ export namespace Gift {
     /** 过期时间 */
     expireDate: string;
     /** 赠费来源 */
-    source: GiftSource;
+    source: TGiftSourceValue;
     /** 赠费来源文本 */
     sourceText: string;
     /** 描述信息 */
     description: string;
     /** 状态 */
-    status: GiftStatus;
+    status: TGiftStatusValue;
     /** 状态文本 */
     statusText: string;
     /** 剩余有效天数 */
@@ -55,9 +50,9 @@ export namespace Gift {
     /** 每页数量 */
     pageSize?: number;
     /** 状态筛选：1-有效 2-已用完 3-已过期 4-已取消 */
-    status?: GiftStatus;
+    status?: TGiftStatusValue;
     /** 来源筛选 */
-    source?: GiftSource;
+    source?: TGiftSourceValue;
     /** 设备类型筛选 */
     deviceType?: TDeviceTypeValue;
     /** 学生关键词（姓名或学号） */
@@ -123,7 +118,7 @@ export namespace Gift {
     /** 过期日期 */
     expireDate: string;
     /** 赠费来源 */
-    source: GiftSource;
+    source: TGiftSourceValue;
     /** 赠费来源文本 */
     sourceText: string;
     /** 描述信息 */

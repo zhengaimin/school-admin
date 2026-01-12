@@ -6,7 +6,7 @@ import { reactive, ref, computed } from "vue";
 import axios from "axios";
 import { ElNotification } from "element-plus";
 import { getPackageRecordExportInfoApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
-import { PACKAGE_TYPE_OPTIONS, PACKAGE_RECORD_STATUS_OPTIONS } from "@/config/modules";
+import { PACKAGE_TYPE_OPTIONS, PACKAGE_RECORD_STATUS_OPTIONS, DEVICE_TYPE } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
 
 interface OptionItem {
@@ -80,6 +80,7 @@ const pageOptions = computed(() => {
 /** 构建请求参数 */
 const buildRequestParams = (): PackageRecord.ReqGetPackageRecordExportInfoApi => ({
   schoolId: formData.schoolId,
+  deviceType: DEVICE_TYPE.DRYER,
   studentKeyword: formData.studentKeyword || undefined,
   orderNo: formData.orderNo || undefined,
   startDate: formData.startDate || undefined,
@@ -208,8 +209,6 @@ export interface AcceptParamsOptions {
 }
 
 const acceptParams = async (options: AcceptParamsOptions) => {
-  visible.value = true;
-
   formData.schoolId = options.schoolId;
   formData.studentKeyword = options.studentKeyword || "";
   formData.orderNo = options.orderNo || "";
@@ -245,6 +244,8 @@ const acceptParams = async (options: AcceptParamsOptions) => {
   }
 
   await axiosGetExportInfo();
+
+  visible.value = true;
 };
 
 const onExport = async () => {
@@ -297,7 +298,7 @@ defineExpose({ acceptParams });
 <template>
   <el-dialog v-model="visible" title="批量导出" width="680px" destroy-on-close draggable align-center>
     <div v-loading="loading" class="export-container">
-      <el-form :model="formData" label-width="80px" size="default">
+      <el-form :model="formData">
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item label="学生信息">
@@ -413,9 +414,7 @@ defineExpose({ acceptParams });
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label=" ">
-              <el-button type="primary" @click="onSearch">查询</el-button>
-            </el-form-item>
+            <el-button type="primary" @click="onSearch">查询</el-button>
           </el-col>
         </el-row>
       </el-form>

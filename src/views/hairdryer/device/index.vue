@@ -3,16 +3,27 @@ import type { DeviceBase } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
-import { CirclePlus, PriceTag } from "@element-plus/icons-vue";
+import { CirclePlus, PriceTag, Download, Upload } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import type { UploadRequestOptions } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import { getDeviceBaseListApi, deleteDeviceBaseApi, DeviceStatus, deviceStatusOptions } from "@/api/modules";
+import {
+  getDeviceBaseListApi,
+  deleteDeviceBaseApi,
+  getDeviceBaseTemplateApi,
+  postDeviceBaseImportApi,
+  DeviceStatus,
+  deviceStatusOptions
+} from "@/api/modules";
+import { VENDOR_CODE, DEVICE_TYPE } from "@/config/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
+import { useDownload } from "@/hooks/useDownload";
 import { useSchool } from "@/hooks/useSchool";
 import { useSelection } from "@/hooks/useSelection";
 import DeviceModal from "./modal/Device.vue";
 import ConfigModal from "./modal/Config.vue";
 import BatchTagModal from "./modal/BatchTag.vue";
+import CommandModal from "./modal/Command.vue";
 
 const { isAllSchools, schoolId } = useSchool();
 const { isSelected, selectedList, selectionChange } = useSelection();
@@ -24,12 +35,63 @@ const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
     delete: deleteDeviceBaseApi
   },
   null,
-  list => dateFormatter(list, ["lastOnline", "createdAt"])
+  list => dateFormatter(list, [{ field: "lastOnline", isUnix: true }, "createdAt"])
 );
 
 const modalRef = ref();
 const configModalRef = ref();
 const batchTagModalRef = ref();
+const commandRef = ref();
+const downloadLoading = ref(false);
+const importLoading = ref(false);
+const importResultDialogVisible = ref(false);
+const importResult = ref<DeviceBase.ResPostDeviceBaseImportApi>({
+  successCount: 0,
+  failCount: 0,
+  failures: []
+});
+
+// 下载导入模板
+const onDownloadTemplate = async () => {
+  downloadLoading.value = true;
+  await useDownload(
+    getDeviceBaseTemplateApi,
+    "设备导入模板",
+    { vendorCode: VENDOR_CODE.XINGRI, deviceType: DEVICE_TYPE.DRYER },
+    false
+  );
+  downloadLoading.value = false;
+};
+
+// 导入前校验
+const beforeImport = () => {
+  if (isAllSchools.value || !schoolId.value) {
+    ElMessage.warning("请选择学校后再导入");
+    return false;
+  }
+  return true;
+};
+
+// 导入设备
+const handleImport = async (options: UploadRequestOptions) => {
+  if (!schoolId.value) return;
+  importLoading.value = true;
+  try {
+    const { data } = await postDeviceBaseImportApi(
+      { vendorCode: VENDOR_CODE.XINGRI, deviceType: DEVICE_TYPE.DRYER, schoolId: +schoolId.value },
+      options.file as File
+    );
+    importResult.value = data;
+    importResultDialogVisible.value = true;
+    if (data.successCount > 0) {
+      refreshTableList();
+    }
+  } catch (error: any) {
+    ElMessage.error(error?.message || "导入失败，请重试");
+  } finally {
+    importLoading.value = false;
+  }
+};
 
 // 表格列配置
 const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
@@ -43,6 +105,7 @@ const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
     search: { el: "input", props: { placeholder: "请输入设备序列号" } }
   },
   { prop: "name", label: "设备名称", width: 180 },
+  { prop: "tags", label: "标签", width: 200 },
   {
     prop: "status",
     label: "设备状态",
@@ -86,6 +149,11 @@ const onShowBatchTagModal = () => {
   batchTagModalRef.value.acceptParams(selectedList.value);
 };
 
+// 打开命令下发弹窗
+const onShowCommand = (row: DeviceBase.IDeviceBaseItem) => {
+  commandRef.value.acceptParams(row.id, row.name || row.deviceSn, row.status);
+};
+
 // 监听学校切换，刷新表格
 watch(schoolId, () => {
   refreshTableList();
@@ -105,7 +173,24 @@ watch(schoolId, () => {
       <!-- 表格头部按钮 -->
       <template #toolButton>
         <el-button type="primary" :icon="CirclePlus" @click="onShowModal('Add')">新增</el-button>
+        <el-button type="primary" :icon="Download" :loading="downloadLoading" @click="onDownloadTemplate">下载导入模板</el-button>
+        <el-upload
+          action="#"
+          :show-file-list="false"
+          :http-request="handleImport"
+          :before-upload="beforeImport"
+          accept=".xlsx,.xls"
+          style="display: inline-flex; margin: 0 12px"
+        >
+          <el-button type="primary" :icon="Upload" :loading="importLoading">导入设备</el-button>
+        </el-upload>
         <el-button type="warning" :icon="PriceTag" :disabled="!isSelected" @click="onShowBatchTagModal"> 批量添加标签 </el-button>
+      </template>
+      <!-- 标签 -->
+      <template #tags="{ row }">
+        <el-tag v-for="tag in row.tags" :key="tag.id" style="margin-right: 4px">
+          {{ tag.name }}
+        </el-tag>
       </template>
       <!-- 设备状态 -->
       <template #status="{ row }">
@@ -115,6 +200,7 @@ watch(schoolId, () => {
       </template>
       <!-- 操作 -->
       <template #operation="{ row }">
+        <el-button type="primary" link @click="onShowCommand(row)">控制</el-button>
         <el-button type="primary" link @click="onShowConfigModal(row)">配置</el-button>
         <el-button type="primary" link @click="onShowModal('View', row)">查看</el-button>
         <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>
@@ -132,6 +218,27 @@ watch(schoolId, () => {
     <DeviceModal ref="modalRef" @submit="refreshTableList" />
     <ConfigModal ref="configModalRef" />
     <BatchTagModal ref="batchTagModalRef" @submit="refreshTableList" />
+    <CommandModal ref="commandRef" />
+
+    <!-- 导入结果弹窗 -->
+    <el-dialog v-model="importResultDialogVisible" title="导入结果" width="800px">
+      <el-alert
+        :title="`成功：${importResult.successCount} 条，失败：${importResult.failCount} 条`"
+        :type="importResult.failCount > 0 ? 'warning' : 'success'"
+        :closable="false"
+        show-icon
+        style="margin-bottom: 16px"
+      />
+      <el-table v-if="importResult.failCount > 0" :data="importResult.failures" border max-height="400">
+        <el-table-column prop="rowIndex" label="行号" width="80" align="center" />
+        <el-table-column prop="deviceSn" label="设备SN" width="180" />
+        <el-table-column prop="name" label="名称" width="180" />
+        <el-table-column prop="reason" label="失败原因" min-width="200" show-overflow-tooltip />
+      </el-table>
+      <template #footer>
+        <el-button type="primary" @click="importResultDialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

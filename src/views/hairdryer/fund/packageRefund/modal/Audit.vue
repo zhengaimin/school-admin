@@ -5,11 +5,13 @@ import type { FormInstance, FormRules } from "element-plus";
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { postAuditRefundApi } from "@/api/modules";
+import { getPaymentDetailApi } from "@/api/modules/payment";
 import { REFUND_TYPE } from "@/config/modules";
 
 const visible = ref(false);
 const loading = ref(false);
 const formRef = ref<FormInstance>();
+const orderAmount = ref(0);
 
 const params = reactive({
   id: 0,
@@ -24,7 +26,23 @@ const formData = reactive<Refund.ReqAuditRefundApi>({
 });
 
 const rules = reactive<FormRules>({
-  approved: [{ required: true, message: "请选择审核结果", trigger: "change" }]
+  approved: [{ required: true, message: "请选择审核结果", trigger: "change" }],
+  actualAmount: [
+    {
+      validator: (_rule, value, callback) => {
+        if (value === undefined || value === null || value === "") {
+          callback(new Error("请输入实际退款金额"));
+        } else if (value < 0) {
+          callback(new Error("实际退款金额不能小于0"));
+        } else if (value > orderAmount.value) {
+          callback(new Error(`实际退款金额不能超过 ¥${orderAmount.value.toFixed(2)}`));
+        } else {
+          callback();
+        }
+      },
+      trigger: "change"
+    }
+  ]
 });
 
 const emit = defineEmits<{ refresh: [] }>();
@@ -61,57 +79,78 @@ const handleSubmit = async () => {
   }
 };
 
-const acceptParams = (row: Refund.IRefundItem) => {
+const acceptParams = async (row: Refund.IRefundItem) => {
   params.id = row.id;
   params.refundType = row.refundType;
   params.applyAmount = row.applyAmount;
   formData.approved = true;
   formData.adminRemark = "";
-  formData.actualAmount = row.refundType === REFUND_TYPE.PACKAGE ? row.applyAmount : undefined;
+  console.log(row.applyAmount);
+  formData.actualAmount = Number(row.applyAmount);
 
   visible.value = true;
+
+  if (row.paymentID) {
+    const res = await getPaymentDetailApi(row.paymentID);
+    if (res.code === 0) {
+      orderAmount.value = +res.data.amount;
+    }
+  }
 };
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="审核退款申请" width="500px" destroy-on-close :close-on-click-modal="false">
-    <div class="info-row">
-      <span class="label">申请退款金额：</span>
-      <span class="price">¥{{ Number(params.applyAmount || 0).toFixed(2) }}</span>
+  <el-dialog v-model="visible" title="审核退款申请" width="480px" destroy-on-close draggable align-center>
+    <div class="p-3 mb-4 bg-gray-100 rounded-md">
+      申请退款金额：<span class="font-bold text-red-500">¥{{ Number(params.applyAmount || 0).toFixed(2) }}</span>
     </div>
 
-    <el-form ref="formRef" :model="formData" :rules="rules" label-width="110px">
-      <el-form-item label="审核结果" prop="approved">
-        <el-radio-group v-model="formData.approved">
-          <el-radio :value="true">通过</el-radio>
-          <el-radio :value="false">拒绝</el-radio>
-        </el-radio-group>
-      </el-form-item>
+    <el-form ref="formRef" :model="formData" :rules="rules" label-position="top">
+      <el-row :gutter="24">
+        <el-col :span="24">
+          <el-form-item label="审核结果" prop="approved">
+            <el-radio-group v-model="formData.approved">
+              <el-radio :value="true">通过</el-radio>
+              <el-radio :value="false">拒绝</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item v-if="params.refundType === REFUND_TYPE.PACKAGE && formData.approved" label="实际退款金额">
-        <el-input-number
-          v-model="formData.actualAmount"
-          :min="0"
-          :max="params.applyAmount"
-          :precision="2"
-          :step="0.1"
-          placeholder="请输入实际金额"
-          style="width: 100%"
-        />
-      </el-form-item>
+      <el-row v-if="params.refundType === REFUND_TYPE.PACKAGE && formData.approved" :gutter="24">
+        <el-col :span="24">
+          <el-form-item prop="actualAmount">
+            <template #label>
+              实际退款金额
+              <span class="text-gray-400 text-xs ml-2">（最大可退 ¥{{ orderAmount.toFixed(2) }}）</span>
+            </template>
+            <el-input-number
+              v-model="formData.actualAmount"
+              :precision="2"
+              :controls="false"
+              placeholder="请输入实际退款金额"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="审核备注">
-        <el-input
-          v-model="formData.adminRemark"
-          type="textarea"
-          :rows="3"
-          placeholder="请输入审核备注"
-          maxlength="200"
-          show-word-limit
-        />
-      </el-form-item>
+      <el-row :gutter="24">
+        <el-col :span="24">
+          <el-form-item label="审核备注">
+            <el-input
+              v-model="formData.adminRemark"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入审核备注"
+              maxlength="200"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
     <template #footer>
@@ -120,17 +159,3 @@ defineExpose({ acceptParams });
     </template>
   </el-dialog>
 </template>
-
-<style scoped lang="scss">
-.info-row {
-  margin-bottom: 20px;
-  font-size: 14px;
-  .label {
-    color: var(--el-text-color-regular);
-  }
-  .price {
-    font-weight: 500;
-    color: var(--el-color-danger);
-  }
-}
-</style>
