@@ -1,19 +1,15 @@
 import { computed } from "vue";
-import { useRoute } from "vue-router";
-import { useAuthStore } from "@/stores/modules/auth";
 
 /**
  * @description 页面按钮权限
+ * @note 当前版本所有权限已放开，所有按钮都返回 true
  * */
 export const useAuthButtons = () => {
-  const route = useRoute();
-  const authStore = useAuthStore();
-  const authButtons = authStore.authButtonListGet[route.name as string] || [];
-
   const BUTTONS = computed(() => {
-    let currentPageAuthButton: { [key: string]: boolean } = {};
-    authButtons.forEach(item => (currentPageAuthButton[item] = true));
-    return currentPageAuthButton;
+    // 当前版本所有权限已放开，使用 Proxy 让所有按钮权限都返回 true
+    return new Proxy({} as Record<string, boolean>, {
+      get: () => true
+    });
   });
 
   return {

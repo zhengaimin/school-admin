@@ -243,7 +243,11 @@
       font-size: 17px;
     }
   }
-  .el-dialog__body,
+  .el-dialog__body {
+    max-height: calc(80vh - 120px);
+    padding: 15px 20px;
+    overflow-y: auto;
+  }
   .el-dialog__footer {
     padding: 15px 20px;
   }

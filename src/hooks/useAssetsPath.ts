@@ -9,8 +9,12 @@ export const useAssetsPath = () => {
       return path;
     }
     const { DEV, VITE_IMAGE_SERVER } = import.meta.env;
-    // 开发环境下补充图片服务器前缀
-    return DEV ? `${VITE_IMAGE_SERVER}${path}` : path;
+    // 如果配置了图片服务器，使用配置的服务器
+    if (VITE_IMAGE_SERVER) {
+      return DEV ? `${VITE_IMAGE_SERVER}${path}` : path;
+    }
+    // 如果没有配置图片服务器，使用当前域名
+    return `${window.location.origin}${path}`;
   };
 
   /** 获取 public 路径 */

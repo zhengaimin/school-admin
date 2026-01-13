@@ -5,6 +5,7 @@ const SUPER_ADMIN_ROLE = "super_admin";
 
 /**
  * @description 权限检查 Hook
+ * @note 当前版本所有权限已放开，始终返回 true
  */
 export const usePermission = () => {
   const userStore = useUserStore();
@@ -18,30 +19,20 @@ export const usePermission = () => {
 
   /**
    * 检查是否拥有指定权限（单个或全部满足）
-   * @param value 权限码或权限码数组（数组时需全部满足）
+   * @param _value 权限码或权限码数组（数组时需全部满足）
    */
-  const hasPermission = (value?: string | string[] | null): boolean => {
-    if (isSuperAdmin()) return true;
-    if (value === undefined || value === null) return false;
-
-    const permissions = userStore.permissions ?? [];
-    if (Array.isArray(value)) {
-      if (value.length === 0) return false;
-      return value.every(code => permissions.includes(code));
-    }
-    return permissions.includes(value);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const hasPermission = (_value?: string | string[] | null): boolean => {
+    return true; // 当前版本所有权限已放开
   };
 
   /**
    * 检查是否拥有任一权限（满足其中一个即可）
-   * @param values 权限码数组
+   * @param _values 权限码数组
    */
-  const hasAnyPermission = (values?: string[] | null): boolean => {
-    if (isSuperAdmin()) return true;
-    if (!Array.isArray(values) || values.length === 0) return false;
-
-    const permissions = userStore.permissions ?? [];
-    return values.some(code => permissions.includes(code));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const hasAnyPermission = (_values?: string[] | null): boolean => {
+    return true; // 当前版本所有权限已放开
   };
 
   return {

@@ -220,7 +220,13 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.DRYER" :gutter="24">
         <el-col :span="12">
           <el-form-item label="吹风机使用时长(分钟)">
-            <el-input-number v-model="ruleForm.packageContent!.dryerMinutes" :min="0" :controls="false" style="width: 100%" />
+            <el-input-number
+              v-model="ruleForm.packageContent!.dryerMinutes"
+              :min="0"
+              :controls="false"
+              placeholder="请输入吹风机使用时长"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
       </el-row>

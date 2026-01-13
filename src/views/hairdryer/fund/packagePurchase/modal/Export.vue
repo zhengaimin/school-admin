@@ -3,11 +3,15 @@ import type { PackageRecord } from "@/api/interface";
 import type { TPackageTypeValue, TPackageRecordStatusValue } from "@/config/modules/package";
 
 import { reactive, ref, computed } from "vue";
-import axios from "axios";
 import { ElNotification } from "element-plus";
-import { getPackageRecordExportInfoApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import {
+  getPackageRecordExportInfoApi,
+  exportPackageRecordsApi,
+  getGradesApi,
+  getDepartmentsListApi,
+  getClassesListApi
+} from "@/api/modules";
 import { PACKAGE_TYPE_OPTIONS, PACKAGE_RECORD_STATUS_OPTIONS, DEVICE_TYPE } from "@/config/modules";
-import { useUserStore } from "@/stores/modules/user";
 
 interface OptionItem {
   label: string;
@@ -57,13 +61,6 @@ const gradeOptions = ref<OptionItem[]>([]);
 const departmentOptions = ref<OptionItem[]>([]);
 const classOptions = ref<OptionItem[]>([]);
 
-const userStore = useUserStore();
-
-const exportUrl = computed(() => {
-  const baseUrl = import.meta.env.VITE_API_URL;
-  return `${baseUrl}/admin/package-records/export`;
-});
-
 const pageOptions = computed(() => {
   if (!totalRecords.value || !totalPages.value) return [];
   return Array.from({ length: totalPages.value }, (_, index) => {
@@ -78,7 +75,7 @@ const pageOptions = computed(() => {
 });
 
 /** 构建请求参数 */
-const buildRequestParams = (): PackageRecord.ReqGetPackageRecordExportInfoApi => ({
+const buildRequestParams = (): PackageRecord.ReqGetPackageRecordsApi => ({
   schoolId: formData.schoolId,
   deviceType: DEVICE_TYPE.DRYER,
   studentKeyword: formData.studentKeyword || undefined,
@@ -91,7 +88,9 @@ const buildRequestParams = (): PackageRecord.ReqGetPackageRecordExportInfoApi =>
   status: formData.status ?? undefined,
   packageType: formData.packageType ?? undefined,
   minPrice: formData.minPrice,
-  maxPrice: formData.maxPrice
+  maxPrice: formData.maxPrice,
+  page: selectedPage.value,
+  pageSize: pageSize.value
 });
 
 /** 获取导出信息 */
@@ -255,28 +254,13 @@ const onExport = async () => {
   ElNotification({ title: "提示", message: "数据导出中，请稍后", type: "info", duration: 0 });
 
   try {
-    const params = buildRequestParams();
-    const queryParams = new URLSearchParams();
-    queryParams.append("page", String(selectedPage.value));
-    queryParams.append("pageSize", String(pageSize.value));
+    const response = await exportPackageRecordsApi(buildRequestParams());
 
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(key, String(value));
-      }
-    });
-
-    const response = await axios.get(`${exportUrl.value}?${queryParams.toString()}`, {
-      withCredentials: true,
-      headers: { "x-access-token": userStore.token, Authorization: userStore.token },
-      responseType: "blob"
-    });
-
-    const blob = new Blob([response.data], { type: "application/vnd.ms-excel;charset=utf-8" });
+    const blob = new Blob([response as any], { type: "application/vnd.ms-excel;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "套餐购买记录.xlsx");
+    link.setAttribute("download", "套餐购买记录_吹风机.xlsx");
     link.click();
     window.URL.revokeObjectURL(url);
 

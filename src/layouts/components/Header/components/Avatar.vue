@@ -14,7 +14,7 @@
         <el-dropdown-item divided @click="setLogo" v-if="false && userInfo['is_admin']">
           <el-icon><Setting /></el-icon>系统设置
         </el-dropdown-item>
-        <el-dropdown-item v-if="false && userInfo['role_key'] != 'super_admin'" divided @click="openDialog('passwordRef')">
+        <el-dropdown-item v-if="false" divided @click="openDialog('passwordRef')">
           <el-icon><Edit /></el-icon>{{ $t("header.changePassword") }}
         </el-dropdown-item>
         <el-dropdown-item divided @click="logout">

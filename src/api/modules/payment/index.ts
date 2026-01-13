@@ -15,3 +15,8 @@ export function getPaymentDetailApi(id: number | string) {
 export function getPaymentExportInfoApi(params: Payment.ReqGetPaymentExportInfoApi) {
   return http.get<Payment.ResGetPaymentExportInfoApi>("/admin/payments/export-info", params, { loading: false });
 }
+
+/** 导出充值记录 */
+export function exportPaymentsApi(params: Payment.ReqGetPaymentsApi) {
+  return http.get("/admin/payments/export", params, { responseType: "blob" });
+}

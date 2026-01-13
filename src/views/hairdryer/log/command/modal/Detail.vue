@@ -31,15 +31,6 @@ const axiosGetDeviceCommandDetailApi = async (id: number) => {
   }
 };
 
-const paramsJson = computed(() => {
-  if (!detail.value?.params) return "--";
-  try {
-    return JSON.stringify(detail.value.params, null, 2);
-  } catch {
-    return "--";
-  }
-});
-
 const resultDataJson = computed(() => {
   if (!detail.value?.resultData) return "--";
   try {
@@ -99,10 +90,6 @@ defineExpose({ acceptParams });
         <el-descriptions-item label="超时时间(秒)">{{ detail.timeout }}</el-descriptions-item>
         <el-descriptions-item label="已重试次数">{{ detail.retryCount }} / {{ detail.maxRetries }}</el-descriptions-item>
         <el-descriptions-item label="命令描述" :span="2">{{ detail.description || "--" }}</el-descriptions-item>
-        <el-descriptions-item label="命令参数" :span="2">
-          <pre v-if="paramsJson !== '--'" class="json-data">{{ paramsJson }}</pre>
-          <span v-else>--</span>
-        </el-descriptions-item>
       </el-descriptions>
 
       <!-- 执行结果 -->

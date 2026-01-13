@@ -8,9 +8,6 @@ import { generatePrefix } from "@/stores/helper/prefix";
 
 const id = generatePrefix("auth");
 
-/** 超级管理员角色码 */
-const SUPER_ADMIN_ROLE = "super_admin";
-
 // 模块路由前缀映射
 const MODULE_PATH_MAP: Record<string, string[]> = {
   common: [
@@ -41,37 +38,25 @@ export const getModuleByPath = (path: string): string => {
 /**
  * 根据权限过滤菜单
  * @param menus 菜单列表
- * @param permissions 用户权限码列表
- * @param isSuperAdmin 是否为超级管理员
+ * @param _permissions 用户权限码列表
+ * @param _isSuperAdmin 是否为超级管理员
+ * @note 当前版本所有权限已放开，不过滤任何菜单
  */
-const filterMenusByPermission = (menus: Menu.MenuOptions[], permissions: string[], isSuperAdmin: boolean): Menu.MenuOptions[] => {
-  return menus
-    .map(menu => ({ ...menu, children: menu.children ? [...menu.children] : undefined }))
-    .filter(menu => {
-      // 超级管理员跳过权限检查
-      if (isSuperAdmin) {
-        if (menu.children?.length) {
-          menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
-        }
-        return true;
-      }
-
-      // 检查菜单权限：无 permission 字段则默认允许访问
-      const menuPermissions = menu.meta?.permission;
-      if (menuPermissions?.length) {
-        const hasPermission = menuPermissions.some(code => permissions.includes(code));
-        if (!hasPermission) return false;
-      }
-
-      // 递归处理子菜单
-      if (menu.children?.length) {
-        menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
-        // 如果子菜单全部被过滤掉，父菜单也不显示（除非父菜单本身有组件）
-        if (menu.children.length === 0 && !menu.component) return false;
-      }
-
-      return true;
-    });
+const filterMenusByPermission = (
+  menus: Menu.MenuOptions[],
+  _permissions: string[],
+  _isSuperAdmin: boolean
+): Menu.MenuOptions[] => {
+  return menus.map(menu => {
+    // 递归处理子菜单
+    if (menu.children?.length) {
+      return {
+        ...menu,
+        children: filterMenusByPermission(menu.children, _permissions, _isSuperAdmin)
+      };
+    }
+    return { ...menu };
+  });
 };
 
 export const useAuthStore = defineStore(id, {
@@ -124,31 +109,28 @@ export const useAuthStore = defineStore(id, {
     async getAuthMenuList() {
       this.authMenuList = [];
       const userStore = useUserStore();
-      const userInfo = userStore.userInfo;
       const permissions = userStore.permissions ?? [];
-      const isSuperAdmin = userInfo?.role_key === SUPER_ADMIN_ROLE;
 
       //获取前端固定的菜单
       const { data, systemData, modules, isOperator } = await getAuthMenuListApi();
 
       // 保存全局路由（应用权限过滤）
-      this.globalMenus = filterMenusByPermission(data || [], permissions, isSuperAdmin);
+      this.globalMenus = filterMenusByPermission(data || [], permissions, false);
 
       // 保存模块列表
       this.moduleList = modules || [];
 
       // 保存所有模块菜单（应用权限过滤）
-      let rawMenus: Record<string, Menu.MenuOptions[]> = {};
-      if (userInfo["role_key"] == "super_admin" || userInfo["role_key"] == "agent_admin") {
-        rawMenus = systemData || {};
-      } else if (userInfo["role_key"] == "maintainer") {
-        rawMenus = (Array.isArray(isOperator) ? {} : isOperator) || {};
-      }
+      // 当前版本所有权限已放开，合并所有菜单数据
+      let rawMenus: Record<string, Menu.MenuOptions[]> = {
+        ...(systemData || {}),
+        ...(Array.isArray(isOperator) ? {} : isOperator || {})
+      };
 
       // 对每个模块的菜单应用权限过滤
       this.allModuleMenus = {};
       Object.entries(rawMenus).forEach(([moduleKey, menus]) => {
-        this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin);
+        this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, false);
       });
 
       // 设置当前模块的菜单

@@ -2,11 +2,15 @@
 import type { Payment } from "@/api/interface";
 
 import { reactive, ref, computed } from "vue";
-import axios from "axios";
 import { ElNotification } from "element-plus";
-import { getPaymentExportInfoApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import {
+  getPaymentExportInfoApi,
+  exportPaymentsApi,
+  getGradesApi,
+  getDepartmentsListApi,
+  getClassesListApi
+} from "@/api/modules";
 import { DEVICE_TYPE } from "@/config/modules";
-import { useUserStore } from "@/stores/modules/user";
 
 interface OptionItem {
   label: string;
@@ -60,13 +64,6 @@ const gradeOptions = ref<OptionItem[]>([]);
 const departmentOptions = ref<OptionItem[]>([]);
 const classOptions = ref<OptionItem[]>([]);
 
-const userStore = useUserStore();
-
-const exportUrl = computed(() => {
-  const baseUrl = import.meta.env.VITE_API_URL;
-  return `${baseUrl}/admin/payments/export`;
-});
-
 const pageOptions = computed(() => {
   if (!totalRecords.value || !totalPages.value) return [];
   return Array.from({ length: totalPages.value }, (_, index) => {
@@ -81,7 +78,7 @@ const pageOptions = computed(() => {
 });
 
 /** 构建请求参数 */
-const buildRequestParams = (): Payment.ReqGetPaymentExportInfoApi => ({
+const buildRequestParams = (): Payment.ReqGetPaymentsApi => ({
   schoolId: formData.schoolId,
   deviceType: DEVICE_TYPE.DRYER,
   studentKeyword: formData.studentKeyword || undefined,
@@ -90,7 +87,9 @@ const buildRequestParams = (): Payment.ReqGetPaymentExportInfoApi => ({
   endDate: formData.endDate || undefined,
   gradeId: formData.gradeId ?? -1,
   departmentId: formData.departmentId ?? -1,
-  classId: formData.classId ?? -1
+  classId: formData.classId ?? -1,
+  page: selectedPage.value,
+  pageSize: pageSize.value
 });
 /** 获取导出信息 */
 const axiosGetExportInfo = async () => {
@@ -195,33 +194,15 @@ const handleExport = async () => {
   });
 
   try {
-    const params = buildRequestParams();
-    const queryParams = new URLSearchParams();
-    queryParams.append("page", String(selectedPage.value));
-    queryParams.append("pageSize", String(pageSize.value));
+    const response = await exportPaymentsApi(buildRequestParams());
 
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(key, String(value));
-      }
-    });
-
-    const response = await axios.get(`${exportUrl.value}?${queryParams.toString()}`, {
-      withCredentials: true,
-      headers: {
-        "x-access-token": userStore.token,
-        Authorization: userStore.token
-      },
-      responseType: "blob"
-    });
-
-    const blob = new Blob([response.data], {
+    const blob = new Blob([response as any], {
       type: "application/vnd.ms-excel;charset=utf-8"
     });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "充值记录.xlsx");
+    link.setAttribute("download", "充值记录_吹风机.xlsx");
     link.click();
     window.URL.revokeObjectURL(url);
 

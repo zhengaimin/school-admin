@@ -233,62 +233,80 @@ watch(
 </script>
 
 <template>
-  <el-dialog
-    v-model="visible"
-    class="student-select-dialog"
-    :close-on-click-modal="false"
-    destroy-on-close
-    draggable
-    align-center
-    title="选择学生"
-    :width="1120"
-    @open="handleDialogOpen"
-  >
-    <!-- 筛选条件 -->
-    <div class="flex flex-row flex-wrap items-center gap-3 mb-4">
-      <el-input v-model="filters.name" class="w-[180px]" placeholder="学生姓名" clearable />
-      <el-select v-model="filters.gradeId" class="w-40" placeholder="年级" clearable @change="handleGradeChange">
-        <el-option v-for="v in gradeOptions" :key="v.id" :label="v.name" :value="v.id" />
-      </el-select>
-      <el-select
-        v-model="filters.departmentId"
-        class="w-40"
-        placeholder="级部"
-        clearable
-        :disabled="!filters.gradeId"
-        @change="handleDepartmentChange"
-      >
-        <el-option v-for="v in departmentOptions" :key="v.id" :label="v.name" :value="v.id" />
-      </el-select>
-      <el-select
-        v-model="filters.classId"
-        class="w-40"
-        placeholder="班级"
-        clearable
-        :disabled="!filters.gradeId || !filters.departmentId"
-      >
-        <el-option v-for="v in classOptions" :key="v.id" :label="v.name" :value="v.id" />
-      </el-select>
-      <el-button @click="handleReset">重置</el-button>
-      <el-button class="ml-[0]!" type="primary" @click="handleSearch">查询</el-button>
-    </div>
+  <div class="student-select-dialog">
+    <el-dialog
+      v-model="visible"
+      :close-on-click-modal="false"
+      destroy-on-close
+      draggable
+      align-center
+      title="选择学生"
+      :width="1120"
+      @open="handleDialogOpen"
+    >
+      <div class="content-wrapper">
+        <!-- 筛选条件 -->
+        <div class="flex flex-row flex-wrap items-center gap-3 mb-4">
+          <el-input v-model="filters.name" class="w-[180px]" placeholder="学生姓名" clearable />
+          <el-select v-model="filters.gradeId" class="w-40" placeholder="年级" clearable @change="handleGradeChange">
+            <el-option v-for="v in gradeOptions" :key="v.id" :label="v.name" :value="v.id" />
+          </el-select>
+          <el-select
+            v-model="filters.departmentId"
+            class="w-40"
+            placeholder="级部"
+            clearable
+            :disabled="!filters.gradeId"
+            @change="handleDepartmentChange"
+          >
+            <el-option v-for="v in departmentOptions" :key="v.id" :label="v.name" :value="v.id" />
+          </el-select>
+          <el-select
+            v-model="filters.classId"
+            class="w-40"
+            placeholder="班级"
+            clearable
+            :disabled="!filters.gradeId || !filters.departmentId"
+          >
+            <el-option v-for="v in classOptions" :key="v.id" :label="v.name" :value="v.id" />
+          </el-select>
+          <el-button @click="handleReset">重置</el-button>
+          <el-button class="ml-[0]!" type="primary" @click="handleSearch">查询</el-button>
+        </div>
 
-    <!-- 学生列表 -->
-    <ProTable
-      class="h-[640px]!"
-      ref="proTable"
-      :columns="columns"
-      :request-api="axiosGetTableList"
-      row-key="id"
-      :tool-button="false"
-      @selection-change="handleSelectionChange"
-    />
-
-    <template #footer>
-      <div class="flex flex-row items-center justify-end gap-3">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确认（已选 {{ draftSelected.length }} 人）</el-button>
+        <!-- 学生列表 -->
+        <ProTable
+          class="flex-1"
+          ref="proTable"
+          :columns="columns"
+          :request-api="axiosGetTableList"
+          row-key="id"
+          :tool-button="false"
+          @selection-change="handleSelectionChange"
+        />
       </div>
-    </template>
-  </el-dialog>
+
+      <template #footer>
+        <div class="flex flex-row items-center justify-end gap-3">
+          <el-button @click="visible = false">取消</el-button>
+          <el-button type="primary" @click="handleConfirm">确认（已选 {{ draftSelected.length }} 人）</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.student-select-dialog {
+  :deep(.el-dialog__body) {
+    display: flex;
+    overflow-y: hidden;
+  }
+}
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+</style>

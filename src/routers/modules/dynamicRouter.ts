@@ -1,7 +1,6 @@
 import router from "@/routers/index";
 import { LOGIN_URL } from "@/config";
 import { RouteRecordRaw } from "vue-router";
-import { ElNotification } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
 import { useAuthStore } from "@/stores/modules/auth";
 
@@ -23,20 +22,9 @@ export const initDynamicRouter = async () => {
     await authStore.getAuthMenuList();
     // await authStore.getAuthButtonList();
 
-    // 2.判断当前用户有没有菜单权限
-    if (!authStore.authMenuListGet.length) {
-      ElNotification({
-        title: "无权限访问",
-        message: "当前账号无任何菜单权限，请联系系统管理员！",
-        type: "warning",
-        duration: 3000
-      });
-      userStore.setToken("");
-      router.replace(LOGIN_URL);
-      return Promise.reject("暂无权限");
-    }
+    // 当前版本所有权限已放开，移除菜单权限检查
 
-    // 3.添加动态路由（加载所有模块的路由）
+    // 2.添加动态路由（加载所有模块的路由）
     authStore.allFlatMenuListGet.forEach(item => {
       if (item.children) delete item.children;
       if (item.component && typeof item.component == "string") {

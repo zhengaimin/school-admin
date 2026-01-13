@@ -72,12 +72,7 @@ export default {
             });
           }
         });
-        //如果不是超级管理员，则不显示合作方
-        this.formItems.map((v, i) => {
-          if (v.model == "tenant_id" && this.userInfo.role_key != "super_admin") {
-            this.formItems.splice(i, 1);
-          }
-        });
+        // 当前版本所有权限已放开，不再根据角色过滤表单项
       });
     },
     //获取表单数据

@@ -3,11 +3,15 @@ import type { DeviceUsage } from "@/api/interface";
 import type { TDeviceUsageStatusValue } from "@/config/modules/device";
 
 import { reactive, ref, computed } from "vue";
-import axios from "axios";
 import { ElNotification } from "element-plus";
-import { getDeviceUsageExportInfoApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import {
+  getDeviceUsageExportInfoApi,
+  exportDeviceUsagesApi,
+  getGradesApi,
+  getDepartmentsListApi,
+  getClassesListApi
+} from "@/api/modules";
 import { DEVICE_USAGE_STATUS_OPTIONS, DEVICE_TYPE, VENDOR_CODE } from "@/config/modules";
-import { useUserStore } from "@/stores/modules/user";
 
 interface OptionItem {
   label: string;
@@ -53,13 +57,6 @@ const gradeOptions = ref<OptionItem[]>([]);
 const departmentOptions = ref<OptionItem[]>([]);
 const classOptions = ref<OptionItem[]>([]);
 
-const userStore = useUserStore();
-
-const exportUrl = computed(() => {
-  const baseUrl = import.meta.env.VITE_API_URL;
-  return `${baseUrl}/admin/device-usages/export`;
-});
-
 const pageOptions = computed(() => {
   if (!totalRecords.value || !totalPages.value) return [];
   return Array.from({ length: totalPages.value }, (_, index) => {
@@ -74,7 +71,7 @@ const pageOptions = computed(() => {
 });
 
 /** 构建请求参数 */
-const buildRequestParams = (): DeviceUsage.ReqGetDeviceUsageExportInfoApi => ({
+const buildRequestParams = (): DeviceUsage.ReqGetDeviceUsageListApi => ({
   schoolId: formData.schoolId,
   studentName: formData.studentName || undefined,
   orderNo: formData.orderNo || undefined,
@@ -86,7 +83,9 @@ const buildRequestParams = (): DeviceUsage.ReqGetDeviceUsageExportInfoApi => ({
   endTime: formData.endTime || undefined,
   gradeId: formData.gradeId ?? -1,
   departmentId: formData.departmentId ?? -1,
-  classId: formData.classId ?? -1
+  classId: formData.classId ?? -1,
+  page: selectedPage.value,
+  pageSize: pageSize.value
 });
 
 /** 获取导出信息 */
@@ -246,28 +245,13 @@ const onExport = async () => {
   ElNotification({ title: "提示", message: "数据导出中，请稍后", type: "info", duration: 0 });
 
   try {
-    const params = buildRequestParams();
-    const queryParams = new URLSearchParams();
-    queryParams.append("page", String(selectedPage.value));
-    queryParams.append("pageSize", String(pageSize.value));
+    const response = await exportDeviceUsagesApi(buildRequestParams());
 
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        queryParams.append(key, String(value));
-      }
-    });
-
-    const response = await axios.get(`${exportUrl.value}?${queryParams.toString()}`, {
-      withCredentials: true,
-      headers: { "x-access-token": userStore.token, Authorization: userStore.token },
-      responseType: "blob"
-    });
-
-    const blob = new Blob([response.data], { type: "application/vnd.ms-excel;charset=utf-8" });
+    const blob = new Blob([response as any], { type: "application/vnd.ms-excel;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "设备使用记录.xlsx");
+    link.setAttribute("download", "设备使用记录_吹风机.xlsx");
     link.click();
     window.URL.revokeObjectURL(url);
 

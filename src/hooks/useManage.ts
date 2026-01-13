@@ -13,9 +13,9 @@ type TDateFieldConfig = {
 };
 
 /** 格式化时间戳 */
-export const formatTimestamp = (timestamp: number | null | undefined, format = "YYYY-MM-DD HH:mm:ss"): string => {
-  if (timestamp === null || timestamp === undefined) return "";
-  const date = dayjs.unix(timestamp);
+export const formatTimestamp = (timestamp: number | string | null | undefined, format = "YYYY-MM-DD HH:mm:ss"): string => {
+  if (timestamp === null || timestamp === undefined || timestamp === "") return "";
+  const date = typeof timestamp === "number" ? dayjs.unix(timestamp) : dayjs(timestamp);
   return date.isValid() ? date.format(format) : "";
 };
 

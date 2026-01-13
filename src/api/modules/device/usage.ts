@@ -15,3 +15,8 @@ export function getDeviceUsageDetailApi(id: number) {
 export function getDeviceUsageExportInfoApi(params: DeviceUsage.ReqGetDeviceUsageExportInfoApi) {
   return http.get<DeviceUsage.ResGetDeviceUsageExportInfoApi>("/admin/device-usages/export-info", params);
 }
+
+/** 导出设备使用记录 */
+export function exportDeviceUsagesApi(params: DeviceUsage.ReqGetDeviceUsageListApi) {
+  return http.get("/admin/device-usages/export", params, { responseType: "blob" });
+}

@@ -91,18 +91,7 @@ const login = (formEl: FormInstance | undefined) => {
       data["userInfo"]["role_key"] = data["userInfo"]["roleCode"];
       data["userInfo"]["role_name"] = data["userInfo"]["roleName"];
       data["login_user_info"] = data["userInfo"];
-      let login_user_info = data["login_user_info"];
-      if (login_user_info.role_key != "agent_admin" && login_user_info.role_key != "super_admin") {
-        loginForm.captcha = "";
-        ajaxGetCaptcha();
-        ElNotification({
-          title: getTimeState(),
-          message: "该账号没有权限登录",
-          type: "error",
-          duration: 3000
-        });
-        return;
-      }
+      // 当前版本所有权限已放开，移除角色限制
       userStore.setToken(data.token);
       userStore.setUserInfo(data["login_user_info"]);
       // 存储权限码列表
