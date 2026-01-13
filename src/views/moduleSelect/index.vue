@@ -7,7 +7,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { getPermissionModulesApi } from "@/api/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
-import { version } from "../../../package.json";
+// import { version } from "../../../package.json";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -99,20 +99,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="module-select-page flex flex-col min-h-100vh bg-[#eeeeee] bg-cover">
+  <div class="module-select-page">
     <!-- 顶部导航栏 -->
-    <div
-      class="sticky top-0 z-1000 bg-[var(--el-bg-color)] border-b border-[var(--el-border-color-light)] shadow-[0_1px_4px_rgb(0_21_41_/_4%)]"
-    >
-      <div class="flex items-center justify-between w-full h-16 px-8 max-w-[1200px]">
-        <div class="flex items-center gap-4">
-          <img class="w-10 h-10 drop-shadow-[0_2px_4px_rgb(0_0_0_/_5%)]" src="@/assets/images/logo.png" alt="校园管理平台" />
-          <span class="text-[22px] font-bold text-[var(--el-text-color-primary)] max-w-600px:hidden">校园管理平台</span>
+    <div class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-left">
+          <img class="logo" src="@/assets/images/logo.png" alt="logo" />
+          <span class="navbar-title">校园管理平台</span>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="text-[15px] font-medium text-[var(--el-text-color-regular)]">{{ userName }}</span>
-          <el-button class="navbar-button" type="primary" link @click="handleLogout">
-            <el-icon class="mr-1.5"><SwitchButton /></el-icon>
+        <div class="navbar-right">
+          <span class="user-info">{{ userName }}</span>
+          <el-button type="primary" link @click="handleLogout">
+            <el-icon><SwitchButton /></el-icon>
             退出登录
           </el-button>
         </div>
@@ -120,38 +118,23 @@ onMounted(() => {
     </div>
 
     <!-- 主内容区 -->
-    <div class="flex flex-1 flex-col items-start justify-start w-full max-w-[1232px] p-4">
-      <p class="mb-4 mt-0 text-24px font-500 text-[var(--el-text-color-regular)] tracking-[1px]">请选择要进入的业务模块</p>
-      <div
-        class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-8 justify-center w-full max-w-[1000px] max-w-600px:grid-cols-2"
-      >
-        <div
-          v-for="item in moduleList"
-          :key="item.key"
-          class="module-card group relative flex flex-col items-center px-8 py-10 text-center cursor-pointer bg-[var(--el-bg-color)] border border-[var(--el-border-color-lighter)] rounded-[20px] shadow-[0_4px_20px_-4px_rgb(0_0_0_/_5%)] hover:z-1 hover:border-[var(--el-color-primary-light-7)] hover:shadow-[0_16px_40px_-12px_rgb(0_0_0_/_10%)]"
-          @click="handleModuleClick(item)"
-        >
-          <div
-            class="flex items-center justify-center w-[72px] h-[72px] mb-6 text-[var(--el-color-primary)] bg-[var(--el-color-primary-light-9)] rounded-[20px] transition-all duration-400 group-hover:text-white group-hover:bg-[var(--el-color-primary)] group-hover:shadow-[0_8px_16px_-4px_var(--el-color-primary-light-5)] group-hover:scale-110 group-hover:rotate-5"
-          >
+    <div class="main-content">
+      <p class="subtitle">请选择要进入的业务模块</p>
+      <div class="module-cards">
+        <div v-for="item in moduleList" :key="item.key" class="module-card" @click="handleModuleClick(item)">
+          <div class="card-icon">
             <el-icon :size="36">
               <component :is="item.icon" />
             </el-icon>
           </div>
-          <h2
-            class="mb-3 text-20px font-600 text-[var(--el-text-color-primary)] transition-colors duration-300 group-hover:text-[var(--el-color-primary)]"
-          >
-            {{ item.label }}
-          </h2>
-          <p class="text-14px leading-[1.6] text-[var(--el-text-color-secondary)] line-clamp-2">{{ getModuleDesc(item.key) }}</p>
+          <h2 class="card-title">{{ item.label }}</h2>
+          <p class="card-desc">{{ getModuleDesc(item.key) }}</p>
         </div>
       </div>
     </div>
-
-    <!-- 底部版本号 -->
-    <div class="py-4 text-center text-12px text-[var(--el-text-color-placeholder)]">v{{ version }}</div>
   </div>
 </template>
+
 <style scoped lang="scss">
 .module-select-page {
   background-image: url("@/assets/images/common/bg.svg");
