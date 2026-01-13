@@ -38,6 +38,18 @@ export const ROUTE_VIDEO = {
   MERCHANT: "/video/merchant"
 } as const;
 
+/** 系统管理模块路由 */
+export const ROUTE_SYSTEM = {
+  /** 系统管理 */
+  INDEX: "/system",
+  /** 角色管理 */
+  ROLE: "/permission/role",
+  /** 用户管理 */
+  USER: "/permission/user",
+  /** 组织架构 */
+  ORGANIZATION: "/permission/organization"
+} as const;
+
 /** 吹风机模块路由 */
 export const ROUTE_HAIRDRYER = {
   /** 设备管理 */

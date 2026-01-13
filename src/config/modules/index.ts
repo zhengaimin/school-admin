@@ -6,3 +6,4 @@ export * from "./student";
 export * from "./package";
 export * from "./payment";
 export * from "./refund";
+export * from "./organization";

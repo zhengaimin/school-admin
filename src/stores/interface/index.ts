@@ -34,6 +34,7 @@ export interface UserState {
     [key: string]: any;
   };
   permissions: string[];
+  moduleKeys: string[];
   schoolMsg: { schoolId: string; schoolName: string };
   count: number;
 }

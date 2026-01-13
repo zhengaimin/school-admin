@@ -96,6 +96,18 @@ const login = (formEl: FormInstance | undefined) => {
       userStore.setUserInfo(data["login_user_info"]);
       // 存储权限码列表
       userStore.setPermissions(data["permissions"] || []);
+
+      // 获取并存储用户的 moduleKeys
+      try {
+        const { getPermissionModulesApi } = await import("@/api/modules/system");
+        const { extractModuleKeys } = await import("@/stores/modules/auth");
+        const permissionModules = await getPermissionModulesApi();
+        const moduleKeys = extractModuleKeys(permissionModules);
+        userStore.setModuleKeys(moduleKeys);
+      } catch (error) {
+        console.warn("Failed to fetch user module keys:", error);
+        userStore.setModuleKeys([]);
+      }
       // 2.添加动态路由
       await initDynamicRouter();
       // 3.清空 tabs、keepAlive 数据

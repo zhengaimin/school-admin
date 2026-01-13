@@ -1,0 +1,1 @@
+import{aa as t}from"./index-BXD89bSo.js";function a(e){return t.get("/admin/device-usages",e)}function n(e){return t.get(`/admin/device-usages/${e}`)}function s(e){return t.get("/admin/device-usages/export-info",e)}export{n as a,s as b,a as g};

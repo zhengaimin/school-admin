@@ -1,4 +1,4 @@
-import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER } from "./router";
+import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "./router";
 
 export default {
   code: 200,
@@ -33,6 +33,11 @@ export default {
       key: "hairdryer",
       label: "吹风机模块",
       icon: "Odometer"
+    },
+    {
+      key: "system",
+      label: "权限模块",
+      icon: "Setting"
     }
   ],
   systemData: {
@@ -973,6 +978,70 @@ export default {
           isAffix: false,
           isKeepAlive: false
         }
+      }
+    ],
+    system: [
+      {
+        path: ROUTE_SYSTEM.INDEX,
+        name: "system",
+        redirect: ROUTE_SYSTEM.ROLE,
+        meta: {
+          icon: "Setting",
+          title: "系统设置",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: ["role:list", "adminuser:list", "org:list"]
+        },
+        children: [
+          {
+            path: ROUTE_SYSTEM.ROLE,
+            name: "systemRole",
+            component: "/permission/role/index",
+            meta: {
+              icon: "",
+              title: "角色管理",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: ["role:list"]
+            }
+          },
+          {
+            path: ROUTE_SYSTEM.USER,
+            name: "systemUser",
+            component: "/permission/user/index",
+            meta: {
+              icon: "",
+              title: "用户管理",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: ["adminuser:list"]
+            }
+          },
+          {
+            path: ROUTE_SYSTEM.ORGANIZATION,
+            name: "systemOrganization",
+            component: "/permission/organization/index",
+            meta: {
+              icon: "",
+              title: "组织架构",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: ["org:list"]
+            }
+          }
+        ]
       }
     ]
   },

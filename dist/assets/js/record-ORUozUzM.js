@@ -1,0 +1,1 @@
+import{aa as a}from"./index-BXD89bSo.js";function t(e){return a.get("/admin/package-records",e)}function o(e){return a.get(`/admin/package-records/${e}`)}function c(e){return a.get("/admin/package-records/export-info",e)}export{o as a,c as b,t as g};

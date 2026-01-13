@@ -232,13 +232,14 @@ const handleUploadError = () => {
   :deep(.upload) {
     display: flex;
     flex: 1;
-    width: 100%;
+    flex-direction: column;
     .el-upload {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
+      height: 100%;
       overflow: hidden;
       border: 1px dashed var(--el-border-color-darker);
       border-radius: v-bind(borderRadius);
@@ -296,6 +297,8 @@ const handleUploadError = () => {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        width: 100%;
+        height: 100%;
         font-size: 12px;
         line-height: 30px;
         color: var(--el-color-info);

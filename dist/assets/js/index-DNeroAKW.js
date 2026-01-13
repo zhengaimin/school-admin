@@ -1,0 +1,1 @@
+import{aa as n}from"./index-BXD89bSo.js";function e(t){return n.get("/admin/payments",t)}function i(t){return n.get(`/admin/payments/${t}`)}function m(t){return n.get("/admin/payments/export-info",t,{loading:!1})}export{e as a,m as b,i as g};

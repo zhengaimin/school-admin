@@ -64,15 +64,25 @@ export namespace Login {
     username: string;
     password: string;
     captcha: string;
-    // captcha_id: string;
     captchaId: string;
-    remberPw: boolean;
   }
+
+  export interface UserInfo {
+    id: number;
+    username: string;
+    realName: string;
+    roleCode: string;
+    roleName: string;
+    tenantId: number;
+    tenantCode: string;
+    tenantName: string;
+  }
+
   export interface ResLogin {
-    sign: string;
-    timestamp: string;
     token: string;
+    userInfo: UserInfo;
   }
+
   export interface ResAuthButtons {
     [key: string]: string[];
   }
@@ -574,3 +584,5 @@ export type { Payment } from "./modules/payment";
 export type { Refund } from "./modules/refund";
 // 商户号配置模块
 export type { Merchant } from "./modules/merchant";
+// 系统管理模块
+export type { System } from "./modules/system";
