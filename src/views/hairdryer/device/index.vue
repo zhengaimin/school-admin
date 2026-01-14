@@ -200,7 +200,7 @@ watch(schoolId, () => {
       </template>
       <!-- 操作 -->
       <template #operation="{ row }">
-        <el-button type="primary" link @click="onShowCommand(row)">控制</el-button>
+        <el-button type="primary" link :disabled="row.status !== DeviceStatus.ONLINE" @click="onShowCommand(row)">控制</el-button>
         <el-button type="primary" link @click="onShowConfigModal(row)">配置</el-button>
         <el-button type="primary" link @click="onShowModal('View', row)">查看</el-button>
         <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>
