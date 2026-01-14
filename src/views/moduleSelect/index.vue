@@ -7,7 +7,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { getPermissionModulesApi } from "@/api/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
-// import { version } from "../../../package.json";
+import { version } from "../../../package.json";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -102,14 +102,14 @@ onMounted(() => {
   <div class="module-select-page">
     <!-- 顶部导航栏 -->
     <div class="navbar">
-      <div class="navbar-container">
-        <div class="navbar-left">
-          <img class="logo" src="@/assets/images/logo.png" alt="logo" />
-          <span class="navbar-title">校园管理平台</span>
+      <div class="flex items-center justify-between w-full h-16 px-8 max-w-[1200px]">
+        <div class="flex items-center gap-4">
+          <img class="w-10 h-10 logo-shadow" src="@/assets/images/logo.png" alt="校园管理平台" />
+          <span class="text-[22px] font-bold navbar-title-color">校园管理平台</span>
         </div>
-        <div class="navbar-right">
-          <span class="user-info">{{ userName }}</span>
-          <el-button type="primary" link @click="handleLogout">
+        <div class="flex items-center gap-6">
+          <span class="text-[15px] font-medium user-info-color">{{ userName }}</span>
+          <el-button class="navbar-button" type="primary" link @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             退出登录
           </el-button>
@@ -118,8 +118,8 @@ onMounted(() => {
     </div>
 
     <!-- 主内容区 -->
-    <div class="main-content">
-      <p class="subtitle">请选择要进入的业务模块</p>
+    <div class="w-full max-w-[1200px] py-10 px-5 mx-auto">
+      <p class="m-0 mb-6 text-base text-[#8894b3]">请选择要进入的业务模块</p>
       <div class="module-cards">
         <div v-for="item in moduleList" :key="item.key" class="module-card" @click="handleModuleClick(item)">
           <div class="card-icon">
@@ -127,43 +127,113 @@ onMounted(() => {
               <component :is="item.icon" />
             </el-icon>
           </div>
-          <h2 class="card-title">{{ item.label }}</h2>
-          <p class="card-desc">{{ getModuleDesc(item.key) }}</p>
+          <h2 class="m-0 mb-2 text-base font-semibold text-[#34495e]">{{ item.label }}</h2>
+          <p class="m-0 text-xs leading-[1.5] text-[#8894b3]">{{ getModuleDesc(item.key) }}</p>
         </div>
       </div>
     </div>
+    <div class="version-text">v{{ version }}</div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .module-select-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #eeeeee;
   background-image: url("@/assets/images/common/bg.svg");
+  background-size: cover;
+}
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
+  box-shadow: 0 1px 4px rgb(0 21 41 / 4%);
+}
+.logo-shadow {
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 5%));
+}
+.navbar-title-color {
+  color: var(--el-text-color-primary);
+}
+.user-info-color {
+  color: var(--el-text-color-regular);
 }
 .navbar-button {
   padding: 8px 12px !important;
   font-size: 14px !important;
   color: var(--el-text-color-secondary) !important;
   transition: all 0.3s !important;
-  &:hover {
-    color: var(--el-color-primary) !important;
-    background-color: var(--el-color-primary-light-9) !important;
-    border-radius: 4px !important;
-  }
-  &:focus-visible {
-    color: var(--el-color-primary) !important;
-    background-color: var(--el-color-primary-light-9) !important;
-    border-radius: 4px !important;
-    outline: 2px solid var(--el-color-primary) !important;
-    outline-offset: 2px !important;
-  }
+}
+.navbar-button .el-icon {
+  margin-right: 6px;
+}
+.navbar-button:hover {
+  color: var(--el-color-primary) !important;
+  background-color: var(--el-color-primary-light-9) !important;
+  border-radius: 4px !important;
+}
+.navbar-button:focus-visible {
+  color: var(--el-color-primary) !important;
+  background-color: var(--el-color-primary-light-9) !important;
+  border-radius: 4px !important;
+  outline: 2px solid var(--el-color-primary) !important;
+  outline-offset: 2px !important;
+}
+.module-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 700px;
 }
 .module-card {
-  transition:
-    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    box-shadow 0.4s ease,
-    border-color 0.4s ease;
-  &:hover {
-    transform: translateY(-8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--el-bg-color);
+  border-radius: 10px;
+  box-shadow: rgb(0 0 0 / 8%) 0 2px 8px 1px;
+  transition: all 0.3s ease;
+}
+.module-card:hover {
+  box-shadow: rgb(0 0 0 / 12%) 0 4px 16px 2px;
+  transform: translateY(-4px);
+}
+.module-card:hover .card-icon {
+  background: var(--el-color-primary-light-3);
+}
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 14px;
+  color: #ffffff;
+  background: var(--el-color-primary);
+  border-radius: 12px;
+  transition: background 0.3s ease;
+}
+.version-text {
+  margin-top: auto;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--el-text-color-placeholder);
+}
+
+@media screen and (width <= 600px) {
+  .module-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .navbar-title-color {
+    display: none;
   }
 }
 </style>

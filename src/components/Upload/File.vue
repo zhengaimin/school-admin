@@ -233,11 +233,13 @@ const handleUploadError = () => {
     display: flex;
     flex: 1;
     flex-direction: column;
+    width: 100%;
     .el-upload {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
       height: 100%;
       overflow: hidden;
       border: 1px dashed var(--el-border-color-darker);
