@@ -6,7 +6,7 @@ import { ElMessage } from "element-plus";
 import UploadFile from "@/components/Upload/File.vue";
 import { useSchool } from "@/hooks/useSchool";
 import { useUserStore } from "@/stores/modules/user";
-import { getMerchantConfigApi, putMerchantConfigApi } from "@/api/modules";
+import { getMerchantConfigApi, putMerchantConfigApi, validateMerchantConfigApi } from "@/api/modules";
 import { DEVICE_TYPE } from "@/config/modules";
 
 const { guardSchool } = useSchool();
@@ -15,9 +15,15 @@ const userStore = useUserStore();
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 const submitting = ref(false);
+const validating = ref(false);
+const validated = ref(false);
 const hasData = ref(false);
 
 const tenantId = computed(() => userStore.userInfo?.tenantId || 0);
+
+const canSubmit = computed(() => {
+  return validated.value;
+});
 
 const form = ref({
   deviceType: DEVICE_TYPE.VIDEO,
@@ -31,14 +37,35 @@ const keyFileUrl = ref("");
 const certFile = ref<File | null>(null);
 const keyFile = ref<File | null>(null);
 
+const validateCertFile = (_rule: any, _value: any, callback: any) => {
+  if (!certFile.value && !certFileUrl.value.startsWith("已上传:")) {
+    callback(new Error("请上传API证书文件"));
+  } else {
+    callback();
+  }
+};
+
+const validateKeyFile = (_rule: any, _value: any, callback: any) => {
+  if (!keyFile.value && !keyFileUrl.value.startsWith("已上传:")) {
+    callback(new Error("请上传API密钥文件"));
+  } else {
+    callback();
+  }
+};
+
 const rules: FormRules = {
   merchantId: [{ required: true, message: "请输入微信商户号", trigger: "blur" }],
-  merchantSecret: [{ required: true, message: "请输入微信商户密钥", trigger: "blur" }]
+  merchantSecret: [{ required: true, message: "请输入微信商户密钥", trigger: "blur" }],
+  certFileUrl: [{ required: true, validator: validateCertFile, trigger: "change" }],
+  keyFileUrl: [{ required: true, validator: validateKeyFile, trigger: "change" }]
 };
 
 const handleCertFileUpload = async (file: File) => {
   certFile.value = file;
+  validated.value = false;
   ElMessage.success(`已选择证书文件: ${file.name}`);
+  formRef.value?.validateField("certFileUrl");
+
   return {
     fileUrl: `temp://${file.name}`,
     fileName: file.name,
@@ -52,7 +79,9 @@ const handleCertFileUpload = async (file: File) => {
 
 const handleKeyFileUpload = async (file: File) => {
   keyFile.value = file;
+  validated.value = false;
   ElMessage.success(`已选择密钥文件: ${file.name}`);
+  formRef.value?.validateField("keyFileUrl");
   return {
     fileUrl: `temp://${file.name}`,
     fileName: file.name,
@@ -99,12 +128,67 @@ const handleReset = (): void => {
   keyFileUrl.value = "";
   certFile.value = null;
   keyFile.value = null;
+  validated.value = false;
   formRef.value?.clearValidate();
+};
+
+const handleValidate = async (): Promise<void> => {
+  if (validating.value) return;
+  if (!guardSchool()) return;
+
+  const formEl = formRef.value;
+  if (!formEl) return;
+
+  if (!certFile.value && !keyFile.value) {
+    ElMessage.warning("配置检测需要重新上传API证书文件和API密钥文件");
+    return;
+  }
+
+  if (!certFile.value) {
+    ElMessage.warning("配置检测需要重新上传API证书文件");
+    return;
+  }
+
+  if (!keyFile.value) {
+    ElMessage.warning("配置检测需要重新上传API密钥文件");
+    return;
+  }
+
+  const isValid = await formEl.validate().catch(() => false);
+  if (!isValid) return;
+
+  validating.value = true;
+  try {
+    const result = await validateMerchantConfigApi({
+      merchantId: form.value.merchantId,
+      merchantSecret: form.value.merchantSecret,
+      certFile: certFile.value,
+      keyFile: keyFile.value
+    });
+
+    if (result.data.success) {
+      validated.value = true;
+      ElMessage.success(result.data.message || "配置验证通过");
+    } else {
+      validated.value = false;
+      ElMessage.error(result.data.message || "配置验证失败");
+    }
+  } catch (error: any) {
+    validated.value = false;
+    ElMessage.error(error?.msg || error?.message || "配置验证失败，请检查配置信息");
+  } finally {
+    validating.value = false;
+  }
 };
 
 const handleSubmit = async (): Promise<void> => {
   if (submitting.value) return;
   if (!guardSchool()) return;
+
+  if (!validated.value) {
+    ElMessage.warning("请先通过配置检测后再保存");
+    return;
+  }
 
   const formEl = formRef.value;
   if (!formEl) return;
@@ -172,7 +256,7 @@ onMounted(() => {
 
             <el-row :gutter="24">
               <el-col :span="12">
-                <el-form-item label="API证书文件（apiclient_cert.pem格式）">
+                <el-form-item label="API证书文件（apiclient_cert.pem格式）" prop="certFileUrl">
                   <UploadFile
                     v-model="certFileUrl"
                     :api="handleCertFileUpload"
@@ -188,7 +272,7 @@ onMounted(() => {
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="API密钥文件（apiclient_key.pem格式）">
+                <el-form-item label="API密钥文件（apiclient_key.pem格式）" prop="keyFileUrl">
                   <UploadFile
                     v-model="keyFileUrl"
                     :api="handleKeyFileUpload"
@@ -223,9 +307,10 @@ onMounted(() => {
         </div>
 
         <div class="px-4 pb-4">
-          <div class="flex justify-end pt-4 border-t border-gray-200 gap-3">
+          <div class="flex justify-end pt-4 border-t border-gray-200">
             <el-button @click="handleReset">重置</el-button>
-            <el-button class="ml-[0]!" type="primary" :loading="submitting" @click="handleSubmit">保存</el-button>
+            <el-button :loading="validating" @click="handleValidate">配置检测</el-button>
+            <el-button type="primary" :loading="submitting" :disabled="!canSubmit" @click="handleSubmit">保存</el-button>
           </div>
         </div>
       </template>

@@ -26,7 +26,7 @@ const modalRef = ref();
 
 const columns: ColumnProps<GradePackage.IGradePackageConfigVo>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 200 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   { prop: "gradeName", label: "年级名称", minWidth: 200 },
   { prop: "videoCallMinutes", label: "语音通话时长（分钟/月）", width: 220 },
   { prop: "basePrice", label: "基础价格（元/月）", width: 220 },

@@ -1,11 +1,11 @@
 /**
- * @description 启用/禁用状态:1-启用,2-禁用
+ * @description 启用/禁用状态:1-启用,0-禁用
  */
 export enum ENABLE_STATUS {
   /** 启用 */
   ENABLED = 1,
   /** 禁用 */
-  DISABLED = 2
+  DISABLED = 0
 }
 
 // 启用/禁用状态值类型

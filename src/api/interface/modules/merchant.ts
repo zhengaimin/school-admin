@@ -55,4 +55,24 @@ export namespace Merchant {
     /** API密钥文件 */
     keyFile?: File;
   }
+
+  /** 验证商户号配置请求参数 */
+  export interface ReqValidateMerchantConfigApi {
+    /** 微信商户号 */
+    merchantId: string;
+    /** 微信商户密钥 */
+    merchantSecret: string;
+    /** API证书文件 */
+    certFile: File;
+    /** API密钥文件 */
+    keyFile: File;
+  }
+
+  /** 验证商户号配置响应 */
+  export interface ResValidateMerchantConfigApi {
+    /** 验证是否通过 */
+    success: boolean;
+    /** 验证结果消息 */
+    message: string;
+  }
 }

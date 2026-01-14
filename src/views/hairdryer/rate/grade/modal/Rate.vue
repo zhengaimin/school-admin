@@ -194,7 +194,7 @@ defineExpose({ acceptParams });
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="费率值" prop="rate">
+            <el-form-item label="费率值（元/分钟）" prop="rate">
               <el-input-number
                 v-model="ruleForm.rate"
                 class="w-full"

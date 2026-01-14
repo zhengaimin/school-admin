@@ -26,10 +26,10 @@ const modalRef = ref();
 
 const columns: ColumnProps<GradePackage.IGradePackageConfigVo>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 200 },
-  { prop: "gradeName", label: "年级名称", minWidth: 200 },
-  { prop: "dryerMinutes", label: "吹风机使用时长（分钟/月）", width: 220 },
-  { prop: "basePrice", label: "基础价格（元/月）", width: 220 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
+  { prop: "gradeName", label: "年级名称", minWidth: 120 },
+  { prop: "dryerMinutes", label: "吹风机使用时长（分钟/月）", width: 130 },
+  { prop: "basePrice", label: "基础价格（元/月）", width: 100 },
   { prop: "totalMonths", label: "套餐总月数", width: 100 },
   { prop: "firstMonthRatio", label: "首月比例扣款", fixed: "right", width: 120 },
   {

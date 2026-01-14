@@ -222,13 +222,20 @@ const handleUploadError = () => {
   }
 }
 .upload-box {
+  display: flex;
+  flex-direction: column;
+
   .no-border {
     :deep(.el-upload) {
       border: none !important;
     }
   }
   :deep(.upload) {
+    display: flex;
+    flex: 1;
+    width: 100%;
     .el-upload {
+      width: 100%;
       position: relative;
       display: flex;
       align-items: center;

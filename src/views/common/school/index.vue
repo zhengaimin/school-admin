@@ -24,7 +24,7 @@ const columns: ColumnProps<School.ISchoolItem>[] = [
   {
     prop: "name",
     label: "学校名称",
-    minWidth: 180,
+    minWidth: 120,
     search: { el: "input", props: { placeholder: "请输入学校名称" } }
   },
   { prop: "badge", label: "校徽", width: 100, align: "center" },

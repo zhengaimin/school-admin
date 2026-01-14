@@ -22,7 +22,7 @@ const columns: ColumnProps<DeviceRow>[] = [
   { prop: "name", label: "设备名称", minWidth: 140 },
   { prop: "vendorCode", label: "厂商代码", width: 100 },
   { prop: "deviceType", label: "设备类型", width: 100, enum: DEVICE_TYPE_OPTIONS },
-  { prop: "createdAt", label: "创建时间", width: 180 },
+  { prop: "createdAt", label: "创建时间", width: 160 },
   { prop: "operation", label: "操作", width: 80, fixed: "right" }
 ];
 

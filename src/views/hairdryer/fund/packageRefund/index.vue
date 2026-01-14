@@ -43,11 +43,12 @@ const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<Refund.IRefundItem>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   { prop: "studentName", label: "学生姓名", minWidth: 100 },
   {
     prop: "refundNo",
     label: "退款单号",
-    minWidth: 220,
+    minWidth: 210,
     search: { el: "input", props: { placeholder: "请输入退款单号" } }
   },
   {
@@ -57,7 +58,6 @@ const columns: ColumnProps<Refund.IRefundItem>[] = [
     search: { el: "input", props: { placeholder: "姓名/学号" } }
   },
   { prop: "studentCode", label: "学号", minWidth: 120 },
-  { prop: "schoolName", label: "学校名称", minWidth: 180 },
   { prop: "applicantName", label: "申请人", minWidth: 100 },
   {
     prop: "refundType",
@@ -65,8 +65,8 @@ const columns: ColumnProps<Refund.IRefundItem>[] = [
     width: 120,
     enum: REFUND_TYPE_OPTIONS
   },
-  { prop: "applyAmount", label: "申请金额", width: 100 },
-  { prop: "actualAmount", label: "实际金额", width: 100 },
+  { prop: "applyAmount", label: "申请金额", width: 90 },
+  { prop: "actualAmount", label: "实际金额", width: 90 },
   {
     prop: "status",
     label: "状态",
@@ -74,7 +74,7 @@ const columns: ColumnProps<Refund.IRefundItem>[] = [
     fixed: "right",
     enum: REFUND_STATUS_OPTIONS
   },
-  { prop: "applyTime", label: "申请时间", minWidth: 180 },
+  { prop: "applyTime", label: "申请时间", minWidth: 160 },
   {
     prop: "startDate",
     label: "开始日期",

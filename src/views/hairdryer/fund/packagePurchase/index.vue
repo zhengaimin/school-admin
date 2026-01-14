@@ -38,11 +38,11 @@ const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<PackageRecord.IPackageRecordItem>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 180 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   {
     prop: "orderNo",
     label: "订单号",
-    minWidth: 200,
+    minWidth: 150,
     search: { el: "input", props: { placeholder: "请输入订单号" } }
   },
   {
@@ -58,7 +58,7 @@ const columns: ColumnProps<PackageRecord.IPackageRecordItem>[] = [
   {
     prop: "packageType",
     label: "套餐类型",
-    width: 120,
+    width: 100,
     enum: PACKAGE_TYPE_OPTIONS
   },
   { prop: "purchasePrice", label: "购买价格", width: 100, fixed: "right" },
@@ -69,8 +69,8 @@ const columns: ColumnProps<PackageRecord.IPackageRecordItem>[] = [
     fixed: "right",
     enum: PACKAGE_RECORD_STATUS_OPTIONS
   },
-  { prop: "paymentTime", label: "支付时间", minWidth: 180 },
-  { prop: "createdAt", label: "创建时间", minWidth: 180 },
+  { prop: "paymentTime", label: "支付时间", minWidth: 160 },
+  { prop: "createdAt", label: "创建时间", minWidth: 160 },
   {
     prop: "startDate",
     label: "开始日期",

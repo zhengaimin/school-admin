@@ -44,10 +44,11 @@ const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<DeviceUsage.IDeviceUsageItem>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校", minWidth: 120 },
   {
     prop: "orderNo",
     label: "订单号",
-    minWidth: 180,
+    minWidth: 150,
     search: { el: "input", props: { placeholder: "请输入订单号" } }
   },
   {
@@ -82,8 +83,8 @@ const columns: ColumnProps<DeviceUsage.IDeviceUsageItem>[] = [
   { prop: "usageMinutes", label: "计费时长(分)", width: 110 },
   { prop: "usageDuration", label: "计费时长(秒)", width: 110 },
   { prop: "actualAmount", label: "实际扣费(元)", width: 110 },
-  { prop: "createdAt", label: "刷卡时间", minWidth: 180 },
-  { prop: "completedAt", label: "完成时间", minWidth: 180 },
+  { prop: "createdAt", label: "刷卡时间", minWidth: 160 },
+  { prop: "completedAt", label: "完成时间", minWidth: 160 },
   {
     prop: "gradeId",
     label: "年级",

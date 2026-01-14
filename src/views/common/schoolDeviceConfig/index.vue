@@ -7,7 +7,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import { getSchoolDeviceConfigListApi } from "@/api/modules/device/config";
 import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
-import { DEVICE_TYPE_OPTIONS } from "@/config/modules";
+import { DEVICE_TYPE_OPTIONS, ENABLE_STATUS, ENABLE_STATUS_OPTIONS, ENABLE_STATUS_I18N } from "@/config/modules";
 import ConfigModal from "./modal/Config.vue";
 
 type ConfigRow = SchoolDeviceConfig.ISchoolDeviceConfigItem;
@@ -33,24 +33,23 @@ const columns: ColumnProps<ConfigRow>[] = [
   {
     prop: "schoolName",
     label: "学校名称",
-    minWidth: 140,
+    minWidth: 120,
     search: { el: "input", props: { placeholder: "请输入学校名称" } }
   },
   {
     prop: "deviceType",
     label: "设备类型",
-    width: 120,
+    width: 100,
     enum: DEVICE_TYPE_OPTIONS,
     search: { el: "select", props: { placeholder: "请选择设备类型" } }
   },
   {
     prop: "vendorCode",
     label: "厂商代码",
-    width: 120,
+    width: 100,
     search: { el: "input", props: { placeholder: "请输入厂商代码" } }
   },
-  { prop: "customName", label: "自定义名称", minWidth: 140 },
-  { prop: "description", label: "设备描述", minWidth: 180, showOverflowTooltip: true },
+  { prop: "description", label: "设备描述", minWidth: 140, showOverflowTooltip: true },
   { prop: "sortOrder", label: "显示排序", width: 100 },
   {
     prop: "status",
@@ -61,13 +60,10 @@ const columns: ColumnProps<ConfigRow>[] = [
       el: "select",
       props: { placeholder: "请选择状态" }
     },
-    enum: [
-      { label: "启用", value: 1 },
-      { label: "禁用", value: 0 }
-    ]
+    enum: ENABLE_STATUS_OPTIONS
   },
-  { prop: "createdAt", label: "创建时间", width: 180 },
-  { prop: "updatedAt", label: "更新时间", width: 180 },
+  { prop: "createdAt", label: "创建时间", width: 160 },
+  { prop: "updatedAt", label: "更新时间", width: 160 },
   { prop: "operation", label: "操作", width: 100, fixed: "right" }
 ];
 
@@ -78,8 +74,8 @@ watch(schoolId, () => refreshTableList());
   <div class="table-box">
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="学校设备配置管理">
       <template #status="{ row }">
-        <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-          {{ row.status === 1 ? "启用" : "禁用" }}
+        <el-tag :type="row.status === ENABLE_STATUS.ENABLED ? 'success' : 'danger'">
+          {{ ENABLE_STATUS_I18N[row.status] }}
         </el-tag>
       </template>
       <template #operation="{ row }">

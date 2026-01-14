@@ -97,7 +97,7 @@ const handleImport = async (options: UploadRequestOptions) => {
 const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
   { type: "selection", width: 50 },
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", width: 150 },
+  { prop: "schoolName", label: "学校名称", width: 120 },
   {
     prop: "deviceSn",
     label: "设备序列号",
@@ -115,7 +115,7 @@ const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
     search: { el: "select", props: { placeholder: "请选择状态" } }
   },
   { prop: "version", label: "固件版本", width: 120 },
-  { prop: "lastOnline", label: "最后在线时间", width: 180 },
+  { prop: "lastOnline", label: "最后在线时间", width: 160 },
   { prop: "createdAt", label: "创建时间", width: 220 },
   { prop: "operation", label: "操作", width: 200, fixed: "right" }
 ];

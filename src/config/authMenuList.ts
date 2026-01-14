@@ -71,7 +71,7 @@ export default {
             component: "/common/schoolDeviceConfig/index",
             meta: {
               icon: "",
-              title: "学校设备配置",
+              title: "设备配置",
               isLink: "",
               isHide: false,
               isFull: false,

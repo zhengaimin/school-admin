@@ -1,1 +1,0 @@
-import{p as t,c as o,o as a,f as n,a as r,t as p}from"./index-DKpzMeyC.js";const d={class:"p-3 mb-4 bg-gray-100 rounded-md"},c={class:"font-bold text-blue-500"},i=t({__name:"index",props:{name:{default:""}},setup(m){return(s,e)=>(a(),o("div",d,[e[0]||(e[0]=n(" 学校名称：",-1)),r("span",c,p(s.name),1)]))}});export{i as _};

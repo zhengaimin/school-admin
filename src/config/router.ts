@@ -5,7 +5,7 @@ export const ROUTE_MODULE_SELECT = "/moduleSelect";
 export const ROUTE_COMMON = {
   /** 学校管理 */
   SCHOOL: "/common/school",
-  /** 学校设备配置 */
+  /** 设备配置 */
   SCHOOL_DEVICE_CONFIG: "/common/schoolDeviceConfig"
 } as const;
 

@@ -27,7 +27,7 @@ const commandRef = ref();
 
 const columns: ColumnProps<TagRow>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 140 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   {
     prop: "name",
     label: "标签名称",

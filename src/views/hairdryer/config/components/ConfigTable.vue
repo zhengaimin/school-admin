@@ -18,7 +18,7 @@ const configModalRef = ref();
 // 表格列配置
 const columns: ColumnProps<DeviceConfig.IDeviceFeatureConfigListItem>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 150 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   { prop: "configVersion", label: "配置版本", width: 100 },
   { prop: "operation", label: "操作", width: 120, fixed: "right" }
 ];

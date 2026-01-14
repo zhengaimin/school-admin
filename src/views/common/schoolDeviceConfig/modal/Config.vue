@@ -6,6 +6,7 @@ import { ref, unref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import { putSchoolDeviceConfigApi } from "@/api/modules/device/config";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
+import { ENABLE_STATUS } from "@/config/modules";
 
 const emits = defineEmits<{
   submit: [];
@@ -76,7 +77,7 @@ const acceptParams = async (params: AcceptParams, row?: SchoolDeviceConfig.IScho
       customName: row.customName || "",
       sortOrder: row.sortOrder ?? 0,
       description: row.description || "",
-      status: row.status ?? 1
+      status: row.status ?? ENABLE_STATUS.ENABLED
     };
   }
 
@@ -114,8 +115,8 @@ defineExpose({ acceptParams });
         <el-col :span="12">
           <el-form-item label="状态" prop="status">
             <el-radio-group v-model="ruleForm.status">
-              <el-radio :value="1">启用</el-radio>
-              <el-radio :value="0">禁用</el-radio>
+              <el-radio :value="ENABLE_STATUS.ENABLED">启用</el-radio>
+              <el-radio :value="ENABLE_STATUS.DISABLED">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

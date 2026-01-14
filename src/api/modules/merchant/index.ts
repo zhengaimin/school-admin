@@ -36,3 +36,21 @@ export function putMerchantConfigApi(tenantId: number, data: Merchant.ReqUpdateM
     }
   });
 }
+
+/**
+ * 验证微信商户号配置
+ * @param data 配置数据
+ */
+export function validateMerchantConfigApi(data: Merchant.ReqValidateMerchantConfigApi) {
+  const formData = new FormData();
+  formData.append("merchantId", data.merchantId);
+  formData.append("merchantSecret", data.merchantSecret);
+  formData.append("certFile", data.certFile);
+  formData.append("keyFile", data.keyFile);
+
+  return http.post<Merchant.ResValidateMerchantConfigApi>("/admin/wechat-merchant-configs/validate", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+}

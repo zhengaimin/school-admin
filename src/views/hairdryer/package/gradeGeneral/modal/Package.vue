@@ -57,7 +57,7 @@ const getInitialFormData = (): Partial<GradeGeneralPackage.ReqPostGradeGeneralPa
   packageContent: {},
   templateDescription: "",
   usageRules: "",
-  firstMonthRatio: false
+  firstMonthRatio: true
 });
 
 /** 获取未配置的年级列表 */

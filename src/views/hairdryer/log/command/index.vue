@@ -36,6 +36,7 @@ const detailModalRef = ref();
 
 const columns: ColumnProps<DeviceCommand.IDeviceCommandItem>[] = [
   { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校", minWidth: 120 },
   {
     prop: "deviceSn",
     label: "设备序列号",
@@ -58,8 +59,8 @@ const columns: ColumnProps<DeviceCommand.IDeviceCommandItem>[] = [
     fixed: "right",
     search: { el: "select", props: { placeholder: "请选择状态" } }
   },
-  { prop: "executedAt", label: "执行时间", minWidth: 180 },
-  { prop: "createdAt", label: "创建时间", minWidth: 180 },
+  { prop: "executedAt", label: "执行时间", minWidth: 160 },
+  { prop: "createdAt", label: "创建时间", minWidth: 160 },
   { prop: "operation", label: "操作", width: 120, fixed: "right" }
 ];
 

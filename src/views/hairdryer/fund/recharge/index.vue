@@ -29,11 +29,11 @@ const classOptions = ref<OptionItem[]>([]);
 
 const columns: ColumnProps<Payment.IPaymentItem>[] = [
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校名称", minWidth: 180 },
+  { prop: "schoolName", label: "学校名称", minWidth: 120 },
   {
     prop: "orderNo",
     label: "订单号",
-    minWidth: 200,
+    minWidth: 150,
     search: { el: "input", props: { placeholder: "请输入订单号" } }
   },
   {
@@ -48,8 +48,8 @@ const columns: ColumnProps<Payment.IPaymentItem>[] = [
   { prop: "amount", label: "金额", width: 100, fixed: "right" },
   { prop: "status", label: "状态", width: 100, fixed: "right" },
   { prop: "payerName", label: "充值人", width: 100 },
-  { prop: "payTime", label: "支付时间", minWidth: 180 },
-  { prop: "createdAt", label: "创建时间", minWidth: 180 },
+  { prop: "payTime", label: "支付时间", minWidth: 160 },
+  { prop: "createdAt", label: "创建时间", minWidth: 160 },
   {
     prop: "startDate",
     label: "开始日期",

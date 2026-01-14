@@ -14,7 +14,7 @@
 
 | 枚举名称        | 描述                          | 值类型   | 类型名称             | 文件位置                              |
 | --------------- | ----------------------------- | -------- | -------------------- | ------------------------------------- |
-| `ENABLE_STATUS` | 启用/禁用状态：1-启用，2-禁用 | `number` | `TEnableStatusValue` | `src/config/modules/common/status.ts` |
+| `ENABLE_STATUS` | 启用/禁用状态：1-启用，0-禁用 | `number` | `TEnableStatusValue` | `src/config/modules/common/status.ts` |
 
 **相关导出：**
 

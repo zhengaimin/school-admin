@@ -7,6 +7,8 @@ import type {
   TDeviceUsageStatusValue
 } from "@/config/modules/device";
 
+import type { TEnableStatusValue } from "@/config/modules/common";
+
 // 设备标签模块
 export namespace DeviceBaseTag {
   /** 设备标签详情 */
@@ -353,7 +355,7 @@ export namespace SchoolDeviceConfig {
     /** 设备类型描述 */
     description: string;
     /** 状态 1-启用 0-禁用 */
-    status: number;
+    status: TEnableStatusValue;
     /** 是否启用 */
     isEnabled: boolean;
     /** 创建时间 */
@@ -371,7 +373,7 @@ export namespace SchoolDeviceConfig {
     /** 厂商代码（可选） */
     vendorCode?: string;
     /** 状态（可选）：1-启用，0-禁用 */
-    status?: number;
+    status?: TEnableStatusValue;
     /** 页码（默认1） */
     page?: number;
     /** 每页数量（默认20，最大100） */
@@ -399,7 +401,7 @@ export namespace SchoolDeviceConfig {
     /** 设备类型描述 */
     description?: string;
     /** 状态：1-启用，0-禁用 */
-    status?: number;
+    status?: TEnableStatusValue;
   }
 
   /** 更新设备配置 - 响应 data */
