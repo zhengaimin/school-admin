@@ -34,25 +34,26 @@ const moduleList = computed(() => {
   return availableModules.value;
 });
 
-// 获取用户有权限的模块
-const fetchAvailableModules = async () => {
+/** 获取用户有权限的模块 */
+const axiosGetPermissionModulesApi = async (): Promise<void> => {
   try {
-    const { data } = await getPermissionModulesApi();
-    const allModules = authStore.moduleListGet;
-    const hasModules = new Set<string>();
+    const result = await getPermissionModulesApi();
 
-    // 根据权限模块映射到业务模块
-    data.modules.forEach(permModule => {
-      const businessModule = permissionToModuleMap[permModule.moduleKey];
-      if (businessModule) {
-        hasModules.add(businessModule);
-      }
-    });
+    if (result.code === 0) {
+      const allModules = authStore.moduleListGet;
+      const hasModules = new Set<string>();
 
-    // 过滤出有权限的业务模块
-    availableModules.value = allModules.filter(module => hasModules.has(module.key));
+      result.data.modules.forEach(permModule => {
+        const businessModule = permissionToModuleMap[permModule.moduleKey];
+        if (businessModule) {
+          hasModules.add(businessModule);
+        }
+      });
+
+      availableModules.value = allModules.filter(module => hasModules.has(module.key));
+    }
   } catch (error) {
-    console.error("获取权限模块失败:", error);
+    console.error("axiosGetPermissionModulesApi:", error);
     availableModules.value = [];
   }
 };
@@ -69,9 +70,9 @@ const getModuleDesc = (key: string) => {
   return moduleDescMap[key] || "点击进入模块";
 };
 
+/** 处理模块点击事件 */
 const handleModuleClick = (module: ModuleItem) => {
   authStore.setCurrentModule(module.key);
-  // 获取该模块的第一个菜单路径
   const menus = authStore.authMenuListGet;
   let targetPath = "/";
   if (menus.length > 0) {
@@ -83,17 +84,17 @@ const handleModuleClick = (module: ModuleItem) => {
       targetPath = firstMenu.path;
     }
   }
-  // 打开新页面
   window.open(router.resolve(targetPath).href, "_blank");
 };
 
+/** 处理退出登录 */
 const handleLogout = () => {
   userStore.setToken("");
   router.replace(LOGIN_URL);
 };
 
 onMounted(() => {
-  fetchAvailableModules();
+  axiosGetPermissionModulesApi();
 });
 </script>
 
