@@ -9,7 +9,7 @@
           <el-icon><User /></el-icon>{{ $t("header.personalData") }}
         </el-dropdown-item>
         <el-dropdown-item>
-          <el-icon><Memo /></el-icon>版本号：Version1.0.5
+          <el-icon><Memo /></el-icon>版本号：v{{ version }}
         </el-dropdown-item>
         <el-dropdown-item divided @click="setLogo" v-if="false && userInfo['is_admin']">
           <el-icon><Setting /></el-icon>系统设置
@@ -38,6 +38,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 import InfoDialog from "./InfoDialog.vue";
 import PasswordDialog from "./PasswordDialog.vue";
+import { version } from "../../../../../package.json";
 
 const router = useRouter();
 const userStore = useUserStore();

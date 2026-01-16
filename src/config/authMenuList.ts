@@ -427,7 +427,7 @@ export default {
             component: "/fund/packagePurchase/index",
             meta: {
               icon: "",
-              title: "套餐购买记录",
+              title: "套餐购买",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -775,7 +775,7 @@ export default {
             component: "/hairdryer/fund/packagePurchase/index",
             meta: {
               icon: "",
-              title: "套餐购买记录",
+              title: "套餐购买",
               isLink: "",
               isHide: false,
               isFull: false,

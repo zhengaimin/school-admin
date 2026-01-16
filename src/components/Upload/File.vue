@@ -224,7 +224,6 @@ const handleUploadError = () => {
 .upload-box {
   display: flex;
   flex-direction: column;
-
   .no-border {
     :deep(.el-upload) {
       border: none !important;
@@ -235,11 +234,11 @@ const handleUploadError = () => {
     flex: 1;
     width: 100%;
     .el-upload {
-      width: 100%;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
       overflow: hidden;
       border: 1px dashed var(--el-border-color-darker);
       border-radius: v-bind(borderRadius);

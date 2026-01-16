@@ -260,7 +260,7 @@ const onExport = async () => {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "套餐购买记录_吹风机.xlsx");
+    link.setAttribute("download", "套餐购买_吹风机.xlsx");
     link.click();
     window.URL.revokeObjectURL(url);
 

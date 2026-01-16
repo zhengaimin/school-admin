@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="btn-box">
-      <span>套餐购买记录</span>
+      <span>套餐购买</span>
       <div>
         <el-button type="primary" @click="exportInfo">导出</el-button>
       </div>
@@ -392,7 +392,7 @@ export default {
           let url = window.URL.createObjectURL(blob);
           let aLink = document.createElement("a");
           aLink.href = url;
-          aLink.setAttribute("download", "套餐购买记录.xlsx");
+          aLink.setAttribute("download", "套餐购买.xlsx");
           aLink.click();
           window.URL.revokeObjectURL(url);
           this.exportDialog = false;

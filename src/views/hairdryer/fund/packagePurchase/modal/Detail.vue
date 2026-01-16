@@ -33,7 +33,7 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="套餐购买记录详情" width="720px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" title="套餐购买详情" width="720px" destroy-on-close draggable align-center>
     <div v-loading="loading">
       <template v-if="detail">
         <!-- 基本信息 -->
@@ -50,11 +50,10 @@ defineExpose({ acceptParams });
         <!-- 套餐信息 -->
         <el-divider content-position="left">套餐信息</el-divider>
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="套餐名称">{{ detail.packageName }}</el-descriptions-item>
-          <el-descriptions-item label="套餐编码">{{ detail.packageCode || "--" }}</el-descriptions-item>
           <el-descriptions-item label="套餐类型">
             {{ PACKAGE_TYPE_I18N[detail.packageType] || "--" }}
           </el-descriptions-item>
+          <el-descriptions-item label="套餐编码">{{ detail.packageCode || "--" }}</el-descriptions-item>
           <el-descriptions-item label="购买价格">
             <span class="price">¥{{ Number(detail.purchasePrice || 0).toFixed(2) }}</span>
           </el-descriptions-item>

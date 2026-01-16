@@ -2,6 +2,7 @@
 import type { Payment } from "@/api/interface";
 
 import { ref } from "vue";
+import dayjs from "dayjs";
 import { getPaymentDetailApi } from "@/api/modules";
 import { DEVICE_TYPE_I18N, PAYMENT_METHOD_I18N, PAYMENT_STATUS_I18N, getPaymentStatusTagType } from "@/config/modules";
 
@@ -58,7 +59,9 @@ defineExpose({ acceptParams });
         <el-descriptions-item label="支付时间">{{ detail.payTime || "-" }}</el-descriptions-item>
         <el-descriptions-item label="创建时间">{{ detail.createdAt }}</el-descriptions-item>
         <el-descriptions-item label="更新时间">{{ detail.updatedAt }}</el-descriptions-item>
-        <el-descriptions-item v-if="detail.expireAt" label="过期时间" :span="2">{{ detail.expireAt }}</el-descriptions-item>
+        <el-descriptions-item v-if="detail.expireAt" label="过期时间" :span="2">
+          {{ dayjs(detail.expireAt).format("YYYY-MM-DD HH:mm:ss") }}
+        </el-descriptions-item>
       </el-descriptions>
 
       <!-- 退款信息 -->

@@ -227,7 +227,7 @@ watch(
 
 <template>
   <div class="table-box">
-    <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="套餐购买记录">
+    <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="套餐购买">
       <template #toolButton>
         <el-button type="primary" @click="handleOpenExport">导出</el-button>
       </template>

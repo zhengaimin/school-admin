@@ -1,7 +1,8 @@
 {
   "name": "energy-management-admin",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.1.1",
+  "buildTime": "2026/1/16 11:20:57",
   "type": "module",
   "description": "校园服务系统",
   "scripts": {
@@ -9,7 +10,7 @@
     "serve": "vite",
     "build:dev": "vue-tsc && vite build --mode development",
     "build:test": "vue-tsc && vite build --mode test",
-    "build:pro": "vue-tsc && vite build --mode production",
+    "build:pro": "node scripts/bump-version.js && vue-tsc && vite build --mode production",
     "type:check": "vue-tsc --noEmit --skipLibCheck",
     "preview": "npm run build:dev && vite preview",
     "lint:eslint": "eslint --fix --ext .js,.ts,.vue ./src",
