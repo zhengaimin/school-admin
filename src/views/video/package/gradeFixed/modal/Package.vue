@@ -64,7 +64,7 @@ const getInitialFormData = (): Partial<GradePackage.ReqPostGradeFixedPackageApi>
   packageContent: { messageCount: -1 },
   templateDescription: "",
   usageRules: "",
-  monthlyDecrease: false
+  monthlyDecrease: true
 });
 
 /** 获取未配置的年级列表 */

@@ -33,7 +33,6 @@ const gradeOptions = ref<{ id: number; name: string }[]>([]);
 const boundGrades = ref<{ id: number; name: string }[]>([]);
 
 const isView = computed(() => parameter.value.type === "View");
-const isEdit = computed(() => parameter.value.type === "Edit");
 
 const mergedGradeOptions = computed(() => {
   const map = new Map<number, { id: number; name: string }>();
@@ -174,7 +173,7 @@ defineExpose({ acceptParams });
               v-model="ruleForm.deviceType"
               placeholder="请选择设备类型"
               style="width: 100%"
-              :disabled="isEdit"
+              disabled
               @change="handleDeviceTypeChange"
             >
               <el-option v-for="item in DEVICE_TYPE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />

@@ -19,7 +19,7 @@ const columns: ColumnProps<GradeRateRow>[] = [
   { type: "index", label: "#", width: 60 },
   { prop: "schoolName", label: "学校名称", minWidth: 120 },
   { prop: "gradeName", label: "年级名称", minWidth: 180 },
-  { prop: "rate", label: "费率（元/分钟）", width: 120 },
+  { prop: "rate", label: "费率（元/分钟）", width: 100 },
   { prop: "description", label: "描述", minWidth: 160 },
   { prop: "createdAt", label: "创建时间", width: 160 },
   { prop: "operation", label: "操作", width: 150, fixed: "right" }

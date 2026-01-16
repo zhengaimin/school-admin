@@ -3,7 +3,7 @@ import type { DeviceCommand } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import { getDeviceCommandListApi, deleteDeviceCommandApi } from "@/api/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
@@ -21,8 +21,8 @@ import DetailModal from "./modal/Detail.vue";
 
 const { schoolId } = useSchool();
 
-const { proTable, axiosGetTableList, refreshTableList } = useManage(
-  { get: getDeviceCommandListApi },
+const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
+  { get: getDeviceCommandListApi, delete: deleteDeviceCommandApi },
   { deviceType: DEVICE_TYPE.DRYER },
   list =>
     dateFormatter(list, [
@@ -71,15 +71,13 @@ const handleShowDetail = (row: DeviceCommand.IDeviceCommandItem) => {
 
 /** 删除命令 */
 const handleDelete = (row: DeviceCommand.IDeviceCommandItem) => {
-  if (row.status !== DEVICE_COMMAND_STATUS.PENDING) {
-    ElMessage.warning("只能删除待执行状态的命令");
+  if (row.status === DEVICE_COMMAND_STATUS.SUCCESS) {
+    ElMessage.warning("已执行完成的命令不允许删除");
     return;
   }
-  ElMessageBox.confirm("确定删除该命令记录吗？", "提示", { type: "warning" }).then(async () => {
-    await deleteDeviceCommandApi(row.id);
-    ElMessage.success("删除成功");
-    refreshTableList();
-  });
+
+  const text = row.status === DEVICE_COMMAND_STATUS.PENDING ? "该命令记录（删除待执行命令会取消该命令的执行）" : "该命令记录";
+  deleteRow(row.id, text);
 };
 
 /** 监听学校变化 */

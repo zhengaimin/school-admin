@@ -1,0 +1,1 @@
+import{a9 as a}from"./index-ES5nYAlp.js";function t(e){return a.get("/admin/package-records",e)}function o(e){return a.get(`/admin/package-records/${e}`)}function c(e){return a.get("/admin/package-records/export-info",e)}function n(e){return a.get("/admin/package-records/export",e,{responseType:"blob"})}export{o as a,c as b,n as e,t as g};

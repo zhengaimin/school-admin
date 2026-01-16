@@ -123,8 +123,8 @@ const onSubmitForm = async (formEl: any) => {
 
 const acceptParams = async (params: any, row?: RateDryer.IGradeDryerRateItemVo) => {
   parameter.value = { ...parameter.value, ...params };
-
   currentSchoolName.value = storeSchoolName.value;
+  gradeOptions.value = [];
 
   if (params.type === "Add") {
     editingRateTemplateId.value = null;

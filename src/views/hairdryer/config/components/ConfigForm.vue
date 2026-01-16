@@ -180,7 +180,7 @@ watch(
       </template>
 
       <template v-else>
-        <el-empty description="暂无配置数据" />
+        <el-empty class="h-full" description="暂无配置数据" />
       </template>
     </el-card>
   </div>

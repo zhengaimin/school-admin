@@ -22,8 +22,8 @@ export function putDeviceBaseApi(id: number, params: DeviceBase.ReqUpdateDeviceB
 }
 
 /** 删除设备 */
-export function deleteDeviceBaseApi(params: { id: number }) {
-  return http.delete(`/admin/device-bases/detail/${params.id}`);
+export function deleteDeviceBaseApi(id) {
+  return http.delete(`/admin/device-bases/detail/${id}`);
 }
 
 /** 下载导入模板 */
