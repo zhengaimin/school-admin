@@ -19,8 +19,8 @@ export const getRoleDetailApi = (id: number) => {
 };
 
 /** 创建角色 */
-export const createRoleApi = (params: System.ReqRoleSave) => {
-  return http.post<{ id: number; code: string }>("/admin/roles", params);
+export const createRoleApi = (params: System.ReqRoleCreate) => {
+  return http.post<System.ResRoleCreate>("/admin/roles", params);
 };
 
 /** 更新角色 */
@@ -64,7 +64,7 @@ export const getAdminUserDetailApi = (id: number) => {
 
 /** 创建用户 */
 export const createAdminUserApi = (params: System.ReqUserSave) => {
-  return http.post<{ id: number }>("/admin/users", params);
+  return http.post<System.ResUserCreate>("/admin/users", params);
 };
 
 /** 更新用户 */
@@ -101,7 +101,39 @@ export const setUserDataScopeApi = (userId: number, params: System.ReqUserDataSc
 
 /** ==================== 组织架构部门 API ==================== */
 
+/** 创建部门 */
+export const createOrgDepartmentApi = (params: System.ReqOrgDepartmentCreate) => {
+  return http.post<System.OrgDepartment>("/admin/org-departments", params);
+};
+
 /** 获取部门列表 */
 export const getOrgDepartmentListApi = (params: System.ReqOrgDepartmentList) => {
   return http.get<ResPage<System.OrgDepartment>>("/admin/org-departments", params);
+};
+
+/** ==================== 租户管理 API ==================== */
+
+/** 新增租户 */
+export const createTenantApi = (params: System.ReqTenantCreate) => {
+  return http.post<System.ResTenantCreate>("/admin/tenants", params);
+};
+
+/** 获取租户列表 */
+export const getTenantListApi = (params: System.ReqTenantList) => {
+  return http.get<ResPage<System.Tenant>>("/admin/tenants", params);
+};
+
+/** 删除租户 */
+export const deleteTenantApi = (id: number) => {
+  return http.delete<System.Tenant>(`/admin/tenants/${id}`);
+};
+
+/** 获取租户详情 */
+export const getTenantDetailApi = (id: number) => {
+  return http.get<System.Tenant>(`/admin/tenants/${id}`);
+};
+
+/** 修改租户 */
+export const updateTenantApi = (id: number, params: System.ReqTenantUpdate) => {
+  return http.put<System.ResTenantUpdate>(`/admin/tenants/${id}`, params);
 };

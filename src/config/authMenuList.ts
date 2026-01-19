@@ -982,66 +982,63 @@ export default {
     ],
     system: [
       {
-        path: ROUTE_SYSTEM.INDEX,
-        name: "system",
-        redirect: ROUTE_SYSTEM.ROLE,
+        path: ROUTE_SYSTEM.TENANT,
+        name: "systemTenant",
+        component: "/permission/tenant/index",
         meta: {
           icon: "Setting",
-          title: "系统设置",
+          title: "租户管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: ROUTE_SYSTEM.USER,
+        name: "systemUser",
+        component: "/permission/user/index",
+        meta: {
+          icon: "Setting",
+          title: "用户管理",
           isLink: "",
           isHide: false,
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: ["role:list", "adminuser:list", "org:list"]
-        },
-        children: [
-          {
-            path: ROUTE_SYSTEM.ROLE,
-            name: "systemRole",
-            component: "/permission/role/index",
-            meta: {
-              icon: "",
-              title: "角色管理",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false,
-              permission: ["role:list"]
-            }
-          },
-          {
-            path: ROUTE_SYSTEM.USER,
-            name: "systemUser",
-            component: "/permission/user/index",
-            meta: {
-              icon: "",
-              title: "用户管理",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false,
-              permission: ["adminuser:list"]
-            }
-          },
-          {
-            path: ROUTE_SYSTEM.ORGANIZATION,
-            name: "systemOrganization",
-            component: "/permission/organization/index",
-            meta: {
-              icon: "",
-              title: "组织架构",
-              isLink: "",
-              isHide: false,
-              isFull: false,
-              isAffix: false,
-              isKeepAlive: false,
-              permission: ["org:list"]
-            }
-          }
-        ]
+          permission: ["adminuser:list"]
+        }
+      },
+      {
+        path: ROUTE_SYSTEM.ROLE,
+        name: "systemRole",
+        component: "/permission/role/index",
+        meta: {
+          icon: "Setting",
+          title: "角色管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: ["role:list"]
+        }
+      },
+      {
+        path: ROUTE_SYSTEM.ORGANIZATION,
+        name: "systemOrganization",
+        component: "/permission/organization/index",
+        meta: {
+          icon: "Setting",
+          title: "组织架构",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: ["org:list"]
+        }
       }
     ]
   },

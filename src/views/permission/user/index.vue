@@ -4,7 +4,7 @@ import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { CirclePlus, DataAnalysis, Key } from "@element-plus/icons-vue";
+import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
 import { getAdminUserListApi, deleteAdminUserApi, resetUserPasswordApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
@@ -93,8 +93,8 @@ const handleDelete = (row: System.AdminUser) => {
 
       <template #operation="{ row }">
         <el-button type="primary" link @click="onShowUserModal('Edit', row)">编辑</el-button>
-        <el-button type="primary" link :icon="DataAnalysis" @click="onShowDataScopeModal(row)">数据权限</el-button>
-        <el-button type="warning" link :icon="Key" @click="handleResetPassword(row)">重置密码</el-button>
+        <el-button type="primary" link @click="onShowDataScopeModal(row)">数据权限</el-button>
+        <el-button type="warning" link @click="handleResetPassword(row)">重置密码</el-button>
         <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>

@@ -7,3 +7,4 @@ export * from "./package";
 export * from "./payment";
 export * from "./refund";
 export * from "./organization";
+export * from "./tenant";

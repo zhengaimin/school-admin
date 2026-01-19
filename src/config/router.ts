@@ -47,7 +47,9 @@ export const ROUTE_SYSTEM = {
   /** 用户管理 */
   USER: "/permission/user",
   /** 组织架构 */
-  ORGANIZATION: "/permission/organization"
+  ORGANIZATION: "/permission/organization",
+  /** 租户管理 */
+  TENANT: "/permission/tenant"
 } as const;
 
 /** 吹风机模块路由 */

@@ -2,15 +2,19 @@
 import type { System } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
-// import { ref } from "vue";
+import { ref } from "vue";
+import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
 import { getOrgDepartmentListApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
 import { ORG_DEPARTMENT_STATUS_OPTIONS } from "@/config/modules";
+import DepartmentModal from "./modal/Department.vue";
 
-const { proTable, axiosGetTableList } = useManage({
+const { proTable, axiosGetTableList, refreshTableList } = useManage({
   get: getOrgDepartmentListApi
 });
+
+const modalRef = ref();
 
 const columns: ColumnProps<System.OrgDepartment>[] = [
   { type: "index", label: "#", width: 60 },
@@ -35,11 +39,21 @@ const columns: ColumnProps<System.OrgDepartment>[] = [
   { prop: "createdAt", label: "创建时间", width: 180 },
   { prop: "updatedAt", label: "更新时间", width: 180 }
 ];
+
+const onShowModal = () => {
+  modalRef.value.acceptParams({ title: "新增部门", type: "Add" });
+};
 </script>
 
 <template>
   <div class="table-box">
-    <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="组织架构" />
+    <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="组织架构">
+      <template #toolButton>
+        <el-button type="primary" :icon="CirclePlus" @click="onShowModal">新增部门</el-button>
+      </template>
+    </ProTable>
+
+    <DepartmentModal ref="modalRef" @submit="refreshTableList" />
   </div>
 </template>
 

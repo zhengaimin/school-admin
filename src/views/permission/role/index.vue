@@ -4,7 +4,7 @@ import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { CirclePlus, Setting } from "@element-plus/icons-vue";
+import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
 import { getRoleListApi, deleteRoleApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
@@ -72,7 +72,7 @@ const handleDelete = (row: System.Role) => {
 
       <template #operation="{ row }">
         <el-button type="primary" link @click="onShowRoleModal('Edit', row)">编辑</el-button>
-        <el-button type="primary" link :icon="Setting" @click="onShowPermissionModal(row)">权限配置</el-button>
+        <el-button type="primary" link @click="onShowPermissionModal(row)">权限配置</el-button>
         <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>

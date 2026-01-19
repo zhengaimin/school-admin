@@ -148,6 +148,18 @@
 
 ---
 
+### 租户模块 (tenant)
+
+| 枚举名称      | 描述                              | 值类型   | 类型名称            | 文件位置                           |
+| ------------- | --------------------------------- | -------- | ------------------- | ---------------------------------- |
+| `TENANT_TYPE` | 租户类型：PLATFORM-平台，AGENT-代理商 | `string` | `TTenantTypeValue`  | `src/config/modules/tenant/type.ts` |
+
+**相关导出：**
+
+- `TENANT_TYPE_I18N` / `TENANT_TYPE_OPTIONS` - 租户类型文案和选项
+
+---
+
 ## 使用示例
 
 ```typescript

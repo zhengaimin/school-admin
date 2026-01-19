@@ -5,6 +5,7 @@ import type { FormInstance, FormRules } from "element-plus";
 import { ref, reactive, nextTick, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { createAdminUserApi, updateAdminUserApi, getAdminUserDetailApi, getAllRolesApi } from "@/api/modules";
+import { useUserStore } from "@/stores/modules/user";
 
 const emit = defineEmits<{ submit: [] }>();
 
@@ -12,6 +13,7 @@ const visible = ref(false);
 const loading = ref(false);
 const parameter = ref({ title: "", type: "Add" as "Add" | "Edit" });
 const roles = ref<System.Role[]>([]);
+const userStore = useUserStore();
 
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive<System.ReqUserSave & { id?: number }>({
@@ -20,14 +22,19 @@ const ruleForm = reactive<System.ReqUserSave & { id?: number }>({
   password: "",
   realName: "",
   phone: "",
+  email: "",
   roleId: undefined as unknown as number,
+  tenantId: undefined as unknown as number,
+  orgDepartmentId: undefined,
   status: 1
 });
 
 const rules: FormRules = {
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   realName: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
-  roleId: [{ required: true, message: "请选择角色", trigger: "change" }]
+  roleId: [{ required: true, message: "请选择角色", trigger: "change" }],
+  tenantId: [{ required: true, message: "请输入租户ID", trigger: "blur" }],
+  email: [{ type: "email", message: "请输入正确的邮箱", trigger: "blur" }]
 };
 
 /** 获取角色列表 */
@@ -51,7 +58,10 @@ const getInitialFormData = () => ({
   password: "",
   realName: "",
   phone: "",
+  email: "",
   roleId: undefined as unknown as number,
+  tenantId: (Number(userStore.userInfo?.tenantId) || undefined) as unknown as number,
+  orgDepartmentId: undefined,
   status: 1
 });
 
@@ -103,7 +113,10 @@ const onSubmitForm = async () => {
           username: ruleForm.username,
           realName: ruleForm.realName,
           phone: ruleForm.phone,
+          email: ruleForm.email,
           roleId: ruleForm.roleId,
+          tenantId: ruleForm.tenantId,
+          orgDepartmentId: ruleForm.orgDepartmentId,
           status: ruleForm.status
         };
         // 编辑时如果填了密码才更新
@@ -168,10 +181,25 @@ defineExpose({ acceptParams });
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="ruleForm.email" placeholder="请输入邮箱" maxlength="100" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="ruleForm.roleId" placeholder="请选择角色" style="width: 100%">
               <el-option v-for="role in roles" :key="role.id" :label="role.name" :value="role.id" />
             </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="租户ID" prop="tenantId">
+            <el-input-number v-model="ruleForm.tenantId" :min="0" placeholder="请输入租户ID" style="width: 100%" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="所属部门ID" prop="orgDepartmentId">
+            <el-input-number v-model="ruleForm.orgDepartmentId" :min="0" placeholder="可选" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">

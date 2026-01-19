@@ -17,6 +17,7 @@ const currentModuleLabel = computed(() => {
   const module = authStore.moduleList.find(m => m.key === authStore.currentModule);
   return module?.label || "";
 });
+const shouldShowSchool = computed(() => authStore.currentModule !== "system");
 
 const handleBackToModuleSelect = () => {
   router.push(ROUTE_MODULE_SELECT);
@@ -29,8 +30,10 @@ const handleBackToModuleSelect = () => {
       <!-- 模块徽章区域 -->
       <div v-if="currentModuleLabel" class="flex items-center gap-3 px-4 py-.5 rounded-md cursor-default module-badge">
         <span class="text-sm font-semibold whitespace-nowrap module-label">{{ currentModuleLabel }}</span>
-        <div class="w-[1px] h-[20px] module-divider"></div>
-        <School id="school" ref="school" class="school-in-badge" />
+        <template v-if="shouldShowSchool">
+          <div class="w-[1px] h-[20px] module-divider"></div>
+          <School id="school" ref="school" class="school-in-badge" />
+        </template>
       </div>
 
       <el-tooltip content="主菜单" placement="bottom">
