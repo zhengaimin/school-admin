@@ -265,6 +265,46 @@ export namespace DeviceBase {
     /** 失败详情 */
     failures: IDeviceBaseImportFailureVo[];
   }
+
+  /** 获取导出信息 - 请求参数 */
+  export interface ReqGetDeviceBaseExportInfoApi {
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+    /** 设备序列号（模糊查询） */
+    deviceSn?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 设备状态：0-离线，1-在线 */
+    status?: 0 | 1;
+  }
+
+  /** 获取导出信息 - 响应 data */
+  export interface ResGetDeviceBaseExportInfoApi {
+    /** 符合条件的设备总数 */
+    total: number;
+  }
+
+  /** 导出设备 - 请求参数 */
+  export interface ReqPostDeviceBaseExportApi {
+    /** 厂商代码 */
+    vendorCode: string;
+    /** 设备类型 */
+    deviceType: DEVICE_TYPE;
+    /** 设备序列号（模糊查询） */
+    deviceSn?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 设备ID列表 */
+    deviceIds?: number[];
+    /** 设备状态：0-离线，1-在线 */
+    status?: 0 | 1;
+    /** 页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+  }
 }
 
 // 设备配置模块

@@ -1,3 +1,23 @@
+/** 设备状态：ONLINE-在线，OFFLINE-离线 */
+export enum DEVICE_STATUS {
+  /** 在线 */
+  ONLINE = 1,
+  /** 离线 */
+  OFFLINE = 0
+}
+
+export type TDeviceStatusValue = (typeof DEVICE_STATUS)[keyof typeof DEVICE_STATUS];
+
+export const DEVICE_STATUS_I18N: Record<TDeviceStatusValue, string> = {
+  [DEVICE_STATUS.ONLINE]: "在线",
+  [DEVICE_STATUS.OFFLINE]: "离线"
+};
+
+export const DEVICE_STATUS_OPTIONS: Array<{ label: string; value: TDeviceStatusValue }> = [
+  { label: DEVICE_STATUS_I18N[DEVICE_STATUS.ONLINE], value: DEVICE_STATUS.ONLINE },
+  { label: DEVICE_STATUS_I18N[DEVICE_STATUS.OFFLINE], value: DEVICE_STATUS.OFFLINE }
+];
+
 /** 设备命令状态：PENDING-待执行 SUCCESS-执行成功 FAILED-执行失败 EXPIRED-已过期 TIMEOUT-已超时 */
 export enum DEVICE_COMMAND_STATUS {
   /** 待执行 */

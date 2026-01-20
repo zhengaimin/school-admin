@@ -7,15 +7,8 @@ import { CirclePlus, PriceTag, Download, Upload } from "@element-plus/icons-vue"
 import { ElMessage } from "element-plus";
 import type { UploadRequestOptions } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import {
-  getDeviceBaseListApi,
-  deleteDeviceBaseApi,
-  getDeviceBaseTemplateApi,
-  postDeviceBaseImportApi,
-  DeviceStatus,
-  deviceStatusOptions
-} from "@/api/modules";
-import { VENDOR_CODE, DEVICE_TYPE } from "@/config/modules";
+import { getDeviceBaseListApi, deleteDeviceBaseApi, getDeviceBaseTemplateApi, postDeviceBaseImportApi } from "@/api/modules";
+import { VENDOR_CODE, DEVICE_TYPE, DEVICE_STATUS, DEVICE_STATUS_OPTIONS, DEVICE_STATUS_I18N } from "@/config/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useDownload } from "@/hooks/useDownload";
 import { useSchool } from "@/hooks/useSchool";
@@ -24,6 +17,7 @@ import DeviceModal from "./modal/Device.vue";
 import ConfigModal from "./modal/Config.vue";
 import BatchTagModal from "./modal/BatchTag.vue";
 import CommandModal from "./modal/Command.vue";
+import ExportModal from "./modal/Export.vue";
 
 const { isAllSchools, schoolId } = useSchool();
 const { isSelected, selectedList, selectionChange } = useSelection();
@@ -42,6 +36,7 @@ const modalRef = ref();
 const configModalRef = ref();
 const batchTagModalRef = ref();
 const commandRef = ref();
+const exportModalRef = ref();
 const downloadLoading = ref(false);
 const importLoading = ref(false);
 const importResultDialogVisible = ref(false);
@@ -110,7 +105,7 @@ const columns: ColumnProps<DeviceBase.IDeviceBaseItem>[] = [
     prop: "status",
     label: "设备状态",
     width: 100,
-    enum: deviceStatusOptions,
+    enum: DEVICE_STATUS_OPTIONS,
     fixed: "right",
     search: { el: "select", props: { placeholder: "请选择状态" } }
   },
@@ -154,6 +149,17 @@ const onShowCommand = (row: DeviceBase.IDeviceBaseItem) => {
   commandRef.value.acceptParams(row.id, row.name || row.deviceSn, row.status);
 };
 
+// 打开导出弹窗
+const onShowExportModal = () => {
+  const searchParam = proTable.value?.searchParam || {};
+  const currentSchoolId = isAllSchools.value ? undefined : Number(schoolId.value);
+  exportModalRef.value?.acceptParams({
+    schoolId: Number.isNaN(currentSchoolId) ? undefined : currentSchoolId,
+    deviceSn: searchParam.deviceSn,
+    status: searchParam.status
+  });
+};
+
 // 监听学校切换，刷新表格
 watch(schoolId, () => {
   refreshTableList();
@@ -180,10 +186,11 @@ watch(schoolId, () => {
           :http-request="handleImport"
           :before-upload="beforeImport"
           accept=".xlsx,.xls"
-          style="display: inline-flex; margin: 0 12px"
+          style="display: inline-flex"
         >
           <el-button type="primary" :icon="Upload" :loading="importLoading">导入设备</el-button>
         </el-upload>
+        <el-button type="primary" :icon="Download" @click="onShowExportModal">导出</el-button>
         <el-button type="warning" :icon="PriceTag" :disabled="!isSelected" @click="onShowBatchTagModal"> 批量添加标签 </el-button>
       </template>
       <!-- 标签 -->
@@ -194,20 +201,22 @@ watch(schoolId, () => {
       </template>
       <!-- 设备状态 -->
       <template #status="{ row }">
-        <el-tag :type="row.status === DeviceStatus.ONLINE ? 'success' : 'info'">
-          {{ row.status === DeviceStatus.ONLINE ? "在线" : "离线" }}
+        <el-tag :type="row.status === DEVICE_STATUS.ONLINE ? 'success' : 'info'">
+          {{ DEVICE_STATUS_I18N[row.status] || "--" }}
         </el-tag>
       </template>
       <!-- 操作 -->
       <template #operation="{ row }">
-        <el-button type="primary" link :disabled="row.status !== DeviceStatus.ONLINE" @click="onShowCommand(row)">控制</el-button>
+        <el-button type="primary" link :disabled="row.status !== DEVICE_STATUS.ONLINE" @click="onShowCommand(row)">
+          控制
+        </el-button>
         <el-button type="primary" link @click="onShowConfigModal(row)">配置</el-button>
         <el-button type="primary" link @click="onShowModal('View', row)">查看</el-button>
         <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>
         <el-button
           type="danger"
           link
-          :disabled="row.status === DeviceStatus.ONLINE"
+          :disabled="row.status === DEVICE_STATUS.ONLINE"
           @click="deleteRow(row.id, row.name || row.deviceSn)"
         >
           删除
@@ -219,6 +228,7 @@ watch(schoolId, () => {
     <ConfigModal ref="configModalRef" />
     <BatchTagModal ref="batchTagModalRef" @submit="refreshTableList" />
     <CommandModal ref="commandRef" />
+    <ExportModal ref="exportModalRef" />
 
     <!-- 导入结果弹窗 -->
     <el-dialog v-model="importResultDialogVisible" title="导入结果" width="800px">

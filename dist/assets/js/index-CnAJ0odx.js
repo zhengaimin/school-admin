@@ -1,1 +1,0 @@
-import{a9 as e}from"./index-B9LKiVd7.js";function a(t){return e.get("/admin/payments",t)}function p(t){return e.get(`/admin/payments/${t}`)}function i(t){return e.get("/admin/payments/export-info",t,{loading:!1})}function o(t){return e.get("/admin/payments/export",t,{responseType:"blob"})}export{a,i as b,o as e,p as g};

@@ -3,8 +3,8 @@ import type { DeviceBase } from "@/api/interface";
 
 import { ref, unref, computed, nextTick } from "vue";
 import { ElMessage } from "element-plus";
-import { DEVICE_TYPE, VENDOR_CODE } from "@/config/modules";
-import { postDeviceBaseApi, getDeviceBaseDetailApi, putDeviceBaseApi, DeviceStatus } from "@/api/modules";
+import { DEVICE_TYPE, VENDOR_CODE, DEVICE_STATUS } from "@/config/modules";
+import { postDeviceBaseApi, getDeviceBaseDetailApi, putDeviceBaseApi } from "@/api/modules";
 import { useSchool } from "@/hooks/useSchool";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 
@@ -29,7 +29,7 @@ const rules = {
 
 const isView = computed(() => parameter.value.type === "View");
 const isSnDisabled = computed(
-  () => isView.value || (parameter.value.type === "Edit" && ruleForm.value.status === DeviceStatus.ONLINE)
+  () => isView.value || (parameter.value.type === "Edit" && ruleForm.value.status === DEVICE_STATUS.ONLINE)
 );
 
 /**

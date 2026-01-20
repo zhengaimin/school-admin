@@ -42,3 +42,13 @@ export function postDeviceBaseImportApi(params: DeviceBase.ReqPostDeviceBaseImpo
   });
   return http.post<DeviceBase.ResPostDeviceBaseImportApi>(`/admin/device-bases/import?${searchParams}`, formData);
 }
+
+/** 获取导出信息 */
+export function getDeviceBaseExportInfoApi(params: DeviceBase.ReqGetDeviceBaseExportInfoApi) {
+  return http.get<DeviceBase.ResGetDeviceBaseExportInfoApi>("/admin/device-bases/export-info", params);
+}
+
+/** 导出设备 */
+export function exportDeviceBasesApi(params: DeviceBase.ReqPostDeviceBaseExportApi) {
+  return http.post("/admin/device-bases/export", params, { responseType: "blob" });
+}

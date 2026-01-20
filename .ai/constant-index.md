@@ -28,6 +28,7 @@
 | 枚举名称                 | 描述                                                                   | 值类型   | 类型名称                    | 文件位置                                 |
 | ------------------------ | ---------------------------------------------------------------------- | -------- | --------------------------- | ---------------------------------------- |
 | `DEVICE_TYPE`            | 设备类型：DRYER-吹风机，WASHER-洗衣机，VIDEO-视频话机，VOICE-语音话机 | `string` | `TDeviceTypeValue`          | `src/config/modules/device/type.ts`      |
+| `DEVICE_STATUS`          | 设备状态：ONLINE-在线，OFFLINE-离线                                  | `number` | `TDeviceStatusValue`        | `src/config/modules/device/status.ts`    |
 | `PHONE_TYPE`             | 拨号类型：all-全部，video-视频，sim-SIM卡                             | `string` | `TPhoneTypeValue`           | `src/config/modules/device/phone.ts`     |
 | `SIP_TYPE`               | SIP类型：UDP，TCP，TLS，DTLS                                           | `string` | `TSipTypeValue`             | `src/config/modules/device/sip.ts`       |
 | `DEVICE_COMMAND_CODE`    | 设备命令代码：同步二维码/屏幕参数/超时时间，重启设备                  | `string` | `TDeviceCommandCodeValue`   | `src/config/modules/device/command.ts`   |
@@ -37,6 +38,7 @@
 **相关导出：**
 
 - `DEVICE_TYPE_I18N` / `DEVICE_TYPE_OPTIONS` - 设备类型文案和选项
+- `DEVICE_STATUS_I18N` / `DEVICE_STATUS_OPTIONS` - 设备状态文案和选项
 - `PHONE_TYPE_I18N` / `PHONE_TYPE_OPTIONS` - 拨号类型文案和选项
 - `SIP_TYPE_I18N` / `SIP_TYPE_OPTIONS` - SIP类型文案和选项
 - `DEVICE_COMMAND_CODE_I18N` / `DEVICE_COMMAND_CODE_OPTIONS` - 设备命令代码文案和选项
