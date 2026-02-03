@@ -1,125 +1,190 @@
 <script setup lang="ts">
-import type { ElForm } from "element-plus";
-import { Login } from "@/api/interface";
+import type { FormInstance, FormRules } from "element-plus";
+import type { Login } from "@/api/interface";
+import type { LoginForm } from "../types";
 
-import { ref, reactive, onMounted } from "vue";
-// import { CircleClose, UserFilled } from "@element-plus/icons-vue";
+import { onMounted, onUnmounted, reactive, ref, unref } from "vue";
+import { getCaptchaApi, loginApi } from "@/api/modules/login";
 import { ElNotification } from "element-plus";
-import JSEncrypt from "jsencrypt";
-
-// api
-import { getCaptchaApi, get_rsa_public_key, loginApi } from "@/api/modules/login";
-// utils
 import { getTimeState } from "@/utils";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
-import { useUserStore } from "@/stores/modules/user";
-import { useTabsStore } from "@/stores/modules/tabs";
-import { useKeepAliveStore } from "@/stores/modules/keepAlive";
+import { usePublicKey } from "@/hooks/usePublicKey";
 import { useRouter } from "vue-router";
+import { useKeepAliveStore } from "@/stores/modules/keepAlive";
+import { usePermissionStore } from "@/stores/modules/permission";
+import { useTabsStore } from "@/stores/modules/tabs";
+import { useUserStore } from "@/stores/modules/user";
 
-// constants
+const LOGIN_FORM_STORAGE_KEY = "loginForm";
 
 const router = useRouter();
 const userStore = useUserStore();
+const permissionStore = usePermissionStore();
 const tabsStore = useTabsStore();
 const keepAliveStore = useKeepAliveStore();
+const { publicKey, rsaEncrypt } = usePublicKey();
 
-type FormInstance = InstanceType<typeof ElForm>;
+/** 表单实例 */
 const loginFormRef = ref<FormInstance>();
-const loginRules = reactive({
-  username: [{ required: true, message: "请输入账号", trigger: "blur" }],
-  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-  captcha: [{ required: true, message: "请输入验证码", trigger: "blur" }]
-});
-
+/** 登录加载状态 */
 const loading = ref(false);
-const loginForm = reactive<Login.ReqLoginForm>({
+/** 登录表单 */
+const loginForm = reactive<LoginForm>({
   username: "",
   password: "",
   captcha: "",
   captchaId: "",
-  remberPw: false
+  rememberPassword: false
 });
+/** 表单校验规则 */
+const loginRules = reactive<FormRules>({
+  username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  captcha: [{ required: true, message: "请输入验证码", trigger: "blur" }]
+});
+/** 验证码图片 */
 const captchaImgPath = ref("");
 
-const RSA_PUBLIC_KEY = ref("");
-
-//获取秘匙
-const getKey = async () => {
-  const { data } = await get_rsa_public_key();
-  RSA_PUBLIC_KEY.value = data["publicKey"];
+/** 解析本地缓存表单 */
+const parseStoredLoginForm = () => {
+  const raw = localStorage.getItem(LOGIN_FORM_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    const data = JSON.parse(raw) as Partial<LoginForm> & { remberPw?: boolean };
+    return {
+      username: data.username ?? "",
+      password: data.password ?? "",
+      rememberPassword: Boolean(data.rememberPassword ?? data.remberPw)
+    };
+  } catch (error) {
+    console.error("parseStoredLoginForm:", error);
+    return null;
+  }
 };
-getKey();
-// rsa 加密
-const rsaEncrypt = (value: string, pubKey = RSA_PUBLIC_KEY.value): string => {
-  const encryptor = new JSEncrypt(); // 创建加密对象实例
-  //之前ssl生成的公钥，复制的时候要小心不要有空格
-  encryptor.setPublicKey(pubKey); //设置公钥
-  // 对内容进行加密
-  return encryptor.encrypt(value) || "";
+/** 应用本地缓存的登录信息 */
+const applyStoredLoginForm = () => {
+  const storedForm = parseStoredLoginForm();
+  if (!storedForm?.rememberPassword) return;
+  loginForm.username = storedForm.username ?? "";
+  loginForm.password = storedForm.password ?? "";
+  loginForm.rememberPassword = true;
+};
+/** 同步本地缓存 */
+const syncLoginFormStorage = () => {
+  if (loginForm.rememberPassword) {
+    localStorage.setItem(
+      LOGIN_FORM_STORAGE_KEY,
+      JSON.stringify({
+        username: loginForm.username,
+        password: loginForm.password,
+        rememberPassword: true
+      })
+    );
+    return;
+  }
+  localStorage.removeItem(LOGIN_FORM_STORAGE_KEY);
+};
+/** 构建登录参数 */
+const buildLoginPayload = (): Login.ReqLoginForm => ({
+  username: loginForm.username,
+  password: loginForm.password,
+  captcha: loginForm.captcha,
+  captchaId: loginForm.captchaId
+});
+/** 重置验证码 */
+const resetCaptcha = async () => {
+  loginForm.captcha = "";
+  await axiosGetCaptchaApi();
 };
 
 /** 获取验证码 */
-const ajaxGetCaptcha = async () => {
-  const { data } = await getCaptchaApi();
-  if (data?.id) {
-    loginForm.captchaId = data.id;
-    captchaImgPath.value = data?.base64Blob;
+const axiosGetCaptchaApi = async () => {
+  try {
+    const result = await getCaptchaApi();
+    if (result?.data?.id) {
+      loginForm.captchaId = result.data.id;
+      captchaImgPath.value = result.data.base64Blob;
+    }
+  } catch (error) {
+    console.error("axiosGetCaptchaApi:", error);
   }
 };
-// login
-const login = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate(async valid => {
+/** 登录接口 */
+const axiosLoginApi = async (params: Login.ReqLoginForm) => {
+  try {
+    return await loginApi(params);
+  } catch (error) {
+    console.error("axiosLoginApi:", error);
+    return null;
+  }
+};
+/** 获取权限模块 */
+const axiosGetPermissionModulesApi = async () => {
+  try {
+    const { getPermissionModulesApi } = await import("@/api/modules/system");
+    const result = await getPermissionModulesApi();
+    if (result?.code === 0) {
+      permissionStore.setModulePermissionsByModules(result);
+      return;
+    }
+  } catch (error) {
+    console.warn("axiosGetPermissionModulesApi:", error);
+  }
+  permissionStore.resetModulePermissions();
+};
+
+/** 处理验证码点击 */
+const handleCaptchaClick = () => {
+  axiosGetCaptchaApi();
+};
+/** 处理登录 */
+const handleLogin = () => {
+  const formRef = unref(loginFormRef);
+  if (!formRef) return;
+
+  formRef.validate(async valid => {
     if (!valid) return;
     loading.value = true;
     try {
-      const ajaxLogin = loginApi({ ...loginForm, password: rsaEncrypt(loginForm.password) });
-      ajaxLogin.catch(error => {
-        if (error?.code !== 0) {
-          loginForm.captcha = "";
-          ajaxGetCaptcha();
-        }
-      });
-
-      const { data, code } = await ajaxLogin;
-      if (code !== 0) {
-        loginForm.captcha = "";
-        ajaxGetCaptcha();
+      const payload = buildLoginPayload();
+      if (!unref(publicKey)) {
+        ElNotification({
+          title: "提示",
+          message: "公钥未加载，请稍后重试",
+          type: "warning",
+          duration: 3000
+        });
         return;
       }
-      data["userInfo"]["role_key"] = data["userInfo"]["roleCode"];
-      data["userInfo"]["role_name"] = data["userInfo"]["roleName"];
-      data["login_user_info"] = data["userInfo"];
-      // 当前版本所有权限已放开，移除角色限制
-      userStore.setToken(data.token);
-      userStore.setUserInfo(data["login_user_info"]);
-      // 存储权限码列表
-      userStore.setPermissions(data["permissions"] || []);
-
-      // 获取并存储用户的 moduleKeys
-      try {
-        const { getPermissionModulesApi } = await import("@/api/modules/system");
-        const { extractModuleKeys } = await import("@/stores/modules/auth");
-        const permissionModules = await getPermissionModulesApi();
-        const moduleKeys = extractModuleKeys(permissionModules);
-        userStore.setModuleKeys(moduleKeys);
-      } catch (error) {
-        console.warn("Failed to fetch user module keys:", error);
-        userStore.setModuleKeys([]);
+      const encryptedPassword = rsaEncrypt(payload.password);
+      if (!encryptedPassword) {
+        ElNotification({
+          title: "提示",
+          message: "密码加密失败，请稍后重试",
+          type: "warning",
+          duration: 3000
+        });
+        return;
       }
-      // 2.添加动态路由
+
+      const result = await axiosLoginApi({
+        ...payload,
+        password: encryptedPassword
+      });
+      if (!result || result.code !== 0) {
+        await resetCaptcha();
+        return;
+      }
+
+      const { data } = result;
+      userStore.setToken(data.token);
+      userStore.setUserInfo(data.userInfo);
+
+      await axiosGetPermissionModulesApi();
       await initDynamicRouter();
-      // 3.清空 tabs、keepAlive 数据
       tabsStore.setTabs([]);
       keepAliveStore.setKeepAliveName([]);
-      // 4.跳转到首页
-      // 记住账号及密码
-      if (loginForm.remberPw) {
-        localStorage.setItem("loginForm", JSON.stringify(loginForm));
-      } else {
-        localStorage.removeItem("loginForm");
-      }
+      syncLoginFormStorage();
 
       setTimeout(() => {
         router.push("/moduleSelect");
@@ -136,30 +201,25 @@ const login = (formEl: FormInstance | undefined) => {
     }
   });
 };
+/** 处理回车登录 */
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.code === "Enter" || event.code === "enter" || event.code === "NumpadEnter") {
+    if (unref(loading)) return;
+    handleLogin();
+  }
+};
 
 onMounted(() => {
-  // 监听 enter 事件（调用登录）
-  document.onkeydown = (e: KeyboardEvent) => {
-    e = (window.event as KeyboardEvent) || e;
-    if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
-      if (loading.value) return;
-      login(loginFormRef.value);
-    }
-  };
-
-  const formStr = localStorage.getItem("loginForm");
-  let form = formStr ? JSON.parse(formStr) : null;
-  if (form && form["remberPw"]) {
-    loginForm["username"] = form.username;
-    loginForm["password"] = form.password;
-    loginForm["remberPw"] = form.remberPw;
-  }
-
-  ajaxGetCaptcha();
-  // 2.清除 Token
+  document.addEventListener("keydown", handleKeydown);
+  applyStoredLoginForm();
+  axiosGetCaptchaApi();
   userStore.setToken("");
   userStore.setUserInfo({ name: "" });
-  userStore.setPermissions([]);
+  permissionStore.resetModulePermissions();
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
 });
 </script>
 
@@ -186,7 +246,7 @@ onMounted(() => {
       </el-input>
     </el-form-item>
     <!-- 验证码 -->
-    <el-form-item prop="username" style="margin-bottom: 10px">
+    <el-form-item prop="captcha" style="margin-bottom: 10px">
       <el-col :span="16">
         <el-input v-model="loginForm.captcha" placeholder="请输入验证码">
           <template #prefix>
@@ -197,17 +257,17 @@ onMounted(() => {
         </el-input>
       </el-col>
       <el-col :span="8">
-        <div class="captcha" @click="ajaxGetCaptcha">
+        <div class="captcha" @click="handleCaptchaClick">
           <el-image :src="captchaImgPath" style="height: 40px" />
         </div>
       </el-col>
     </el-form-item>
     <div class="remember-password">
-      <el-checkbox v-model="loginForm.remberPw" label="记住账号及密码" style="font-size: 12px !important" />
+      <el-checkbox v-model="loginForm.rememberPassword" label="记住账号及密码" style="font-size: 12px !important" />
     </div>
   </el-form>
   <div class="login-btn">
-    <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="login(loginFormRef)"> 登录 </el-button>
+    <el-button size="large" style="width: 100%" type="primary" :loading="loading" @click="handleLogin"> 登录 </el-button>
   </div>
   <div class="private-tip"></div>
 </template>

@@ -66,6 +66,7 @@ const handleBackToModuleSelect = () => {
     }
   }
   .module-label {
+    line-height: 32px !important;
     color: var(--el-text-color-regular);
   }
   .module-divider {

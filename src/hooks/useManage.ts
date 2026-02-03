@@ -63,7 +63,7 @@ export const useManage = (apis: TApis, initParams: TParams | null = null, format
 
   const withParams = (params: any) => {
     const { pageNum, pageSize, ..._params } = params;
-    const init = { /* sort: "created_at-desc", */ ...(initParams || {}) };
+    const init = { sort: "created_at-desc", ...(initParams || {}) };
 
     if (params.pageNum) {
       _params.page = params.pageNum;

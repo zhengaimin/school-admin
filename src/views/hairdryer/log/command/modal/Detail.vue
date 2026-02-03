@@ -15,6 +15,11 @@ import { formatTimestamp } from "@/hooks/useManage";
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<DeviceCommand.IDeviceCommandItem | null>(null);
+const parameter = ref({
+  title: "",
+  type: "View" as "Add" | "Edit" | "View",
+  showConfirm: false
+});
 
 /** 获取命令详情 */
 const axiosGetDeviceCommandDetailApi = async (id: number) => {
@@ -41,8 +46,13 @@ const resultDataJson = computed(() => {
 });
 
 /** 接收参数 */
-const acceptParams = async (id: number) => {
-  await axiosGetDeviceCommandDetailApi(id);
+const acceptParams = async (
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: DeviceCommand.IDeviceCommandItem
+) => {
+  parameter.value = { ...parameter.value, ...params };
+  if (!row?.id) return;
+  await axiosGetDeviceCommandDetailApi(row.id);
   visible.value = true;
 };
 
@@ -50,7 +60,7 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="命令详情" width="800px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="800px" destroy-on-close draggable align-center>
     <template v-if="detail">
       <!-- 基本信息 -->
       <el-descriptions :column="2" border>

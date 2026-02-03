@@ -118,8 +118,8 @@
             <el-form-item label="计费模式" prop="billMode">
               <el-select v-model="form.billMode" style="width: 100%">
                 <el-option label="免费" value="0"></el-option>
-                <el-option label="音视频分开计费" value="Y"></el-option>
-                <el-option label="合并计费" value="N"></el-option>
+                <el-option label="音视频分开计费" :value="YES_NO_FLAG.YES"></el-option>
+                <el-option label="合并计费" :value="YES_NO_FLAG.NO"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -128,8 +128,8 @@
           <el-col :span="11">
             <el-form-item label="是否显示留言按钮" prop="messageFlag">
               <el-radio-group v-model="form.messageFlag">
-                <el-radio value="Y">是</el-radio>
-                <el-radio value="N">否</el-radio>
+                <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
+                <el-radio :value="YES_NO_FLAG.NO">否</el-radio>
                 <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -137,8 +137,8 @@
           <el-col :span="11" :offset="1">
             <el-form-item label="是否全量同步人脸" prop="downloadUserFlag">
               <el-radio-group v-model="form.downloadUserFlag">
-                <el-radio value="Y">是</el-radio>
-                <el-radio value="N">否</el-radio>
+                <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
+                <el-radio :value="YES_NO_FLAG.NO">否</el-radio>
                 <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -148,8 +148,8 @@
           <el-col :span="11">
             <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
               <el-radio-group v-model="form.messageSoundFlag">
-                <el-radio value="Y">是</el-radio>
-                <el-radio value="N">否</el-radio>
+                <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
+                <el-radio :value="YES_NO_FLAG.NO">否</el-radio>
                 <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -157,8 +157,8 @@
           <el-col :span="11" :offset="1">
             <el-form-item label="心理咨询身份认证" prop="mhcFlag">
               <el-radio-group disabled v-model="form.mhcFlag">
-                <el-radio value="Y">是</el-radio>
-                <el-radio value="N">否</el-radio>
+                <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
+                <el-radio :value="YES_NO_FLAG.NO">否</el-radio>
                 <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -168,8 +168,8 @@
           <el-col :span="23">
             <el-form-item label="刷脸记录人员信息" prop="addPunchFace">
               <el-radio-group v-model="form.addPunchFace">
-                <el-radio value="Y">是</el-radio>
-                <el-radio value="N">否</el-radio>
+                <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
+                <el-radio :value="YES_NO_FLAG.NO">否</el-radio>
                 <el-radio value="">暂不配置</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -228,6 +228,7 @@
 <script setup>
 import { ref, reactive, computed, nextTick } from "vue";
 import { PHONE_TYPE_OPTIONS, SIP_TYPE_OPTIONS } from "@/config/modules/device";
+import { YES_NO_FLAG } from "@/config/modules/common";
 import { devicesAdd, devicesUpdate, devicesDetail } from "@/api/modules/InternalPage.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";

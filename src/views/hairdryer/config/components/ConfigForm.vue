@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DeviceConfig } from "@/api/interface";
+import type { ConfigFormProps } from "../types";
 
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
@@ -7,11 +8,7 @@ import { getDeviceFeatureConfigListApi, updateSchoolDeviceFeatureConfigApi } fro
 import { useAssetsPath } from "@/hooks/useAssetsPath";
 import UploadImg from "@/components/Upload/Img.vue";
 
-interface Props {
-  schoolId?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ConfigFormProps>(), {
   schoolId: ""
 });
 

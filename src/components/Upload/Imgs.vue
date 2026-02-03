@@ -23,7 +23,7 @@
         </slot>
       </div>
       <template #file="{ file }">
-        <img :src="file.url" class="upload-image" />
+        <img :src="getDisplayUrl(file.url)" class="upload-image" />
         <div class="upload-handle" @click.stop>
           <div class="handle-icon" @click="handlePictureCardPreview(file)">
             <el-icon><ZoomIn /></el-icon>
@@ -47,6 +47,7 @@
 import { ref, computed, inject, watch } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { uploadImg } from "@/api/modules/upload";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
 import type { UploadProps, UploadFile, UploadUserFile, UploadRequestOptions } from "element-plus";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 
@@ -70,7 +71,7 @@ const props = withDefaults(defineProps<UploadFileProps>(), {
   limit: 5,
   fileSize: 5,
   fileType: () => ["image/jpeg", "image/png", "image/gif"],
-  height: "150px",
+  height: "120px",
   width: "150px",
   borderRadius: "8px"
 });
@@ -85,6 +86,9 @@ const self_disabled = computed(() => {
 });
 
 const _fileList = ref<UploadUserFile[]>(props.fileList);
+const { getUploadPath } = useAssetsPath();
+
+const getDisplayUrl = (url?: string) => getUploadPath(url ?? "");
 
 // 监听 props.fileList 列表默认值改变
 watch(
@@ -193,7 +197,7 @@ const handleExceed = () => {
 const viewImageUrl = ref("");
 const imgViewVisible = ref(false);
 const handlePictureCardPreview: UploadProps["onPreview"] = file => {
-  viewImageUrl.value = file.url!;
+  viewImageUrl.value = getDisplayUrl(file.url);
   imgViewVisible.value = true;
 };
 </script>

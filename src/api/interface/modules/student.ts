@@ -1,4 +1,10 @@
-import type { TStudentStatusValue, TStudentTypeValue, TFaceStatusValue } from "@/config/modules";
+import type {
+  TFaceStatusValue,
+  TStudentDeviceControlActionValue,
+  TStudentSexValue,
+  TStudentStatusValue,
+  TStudentTypeValue
+} from "@/config/modules";
 
 // 学生模块
 export namespace Student {
@@ -14,7 +20,7 @@ export namespace Student {
     /** 身份证号 */
     idCard: string;
     /** 性别 */
-    sex: string;
+    sex: TStudentSexValue;
     /** IC卡号 */
     cardNumber: string;
     /** 联系电话 */
@@ -115,5 +121,161 @@ export namespace Student {
     list: IStudentItemVo[];
     /** 总数量 */
     total: number;
+  }
+
+  /** 新增学生 - 请求参数 */
+  export interface ReqPostStudentApi {
+    /** 学校ID */
+    schoolId: number;
+    /** 年级ID */
+    gradeId: number;
+    /** 级部ID */
+    departmentId: number;
+    /** 班级ID */
+    classId: number;
+    /** 学生姓名 */
+    name: string;
+    /** 学生UUID（系统唯一标识） */
+    uuid: string;
+    /** 学号 */
+    studentCode?: string;
+    /** 身份证号 */
+    idCard?: string;
+    /** 性别 */
+    sex?: string;
+    /** IC卡号 */
+    cardNumber?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 监护人姓名 */
+    guardianName?: string;
+    /** 监护人电话 */
+    guardianPhone?: string;
+    /** 学生类型 */
+    studentType: TStudentTypeValue;
+    /** 人脸图片URL */
+    faceImageUrl?: string;
+    /** 家庭住址 */
+    address?: string;
+  }
+
+  /** 新增学生 - 响应 data */
+  export interface ResPostStudentApi {
+    /** 学生ID */
+    id: number;
+    /** 学生姓名 */
+    name: string;
+  }
+
+  /** 更新学生 - 请求参数 */
+  export interface ReqPutStudentApi {
+    /** 学校ID */
+    schoolId?: number;
+    /** 年级ID */
+    gradeId?: number;
+    /** 级部ID */
+    departmentId?: number;
+    /** 班级ID */
+    classId?: number;
+    /** 学生姓名 */
+    name?: string;
+    /** 学生UUID（系统唯一标识） */
+    uuid?: string;
+    /** 学号 */
+    studentCode?: string;
+    /** 身份证号 */
+    idCard?: string;
+    /** 性别 */
+    sex?: string;
+    /** IC卡号 */
+    cardNumber?: string;
+    /** 联系电话 */
+    phone?: string;
+    /** 监护人姓名 */
+    guardianName?: string;
+    /** 监护人电话 */
+    guardianPhone?: string;
+    /** 学生类型 */
+    studentType?: TStudentTypeValue;
+    /** 人脸图片URL */
+    faceImageUrl?: string;
+    /** 家庭住址 */
+    address?: string;
+  }
+
+  /** 更新学生 - 响应 data */
+  export interface ResPutStudentApi {
+    /** 响应消息 */
+    message: string;
+  }
+
+  /** 删除学生 - 响应 data */
+  export interface ResDeleteStudentApi {
+    /** 响应消息 */
+    message: string;
+  }
+
+  /** 获取学生详情 - 响应 data */
+  export type ResGetStudentDetailApi = IStudentItemVo;
+
+  /** 下发学生信息到设备 - 请求参数 */
+  export interface ReqPostStudentDeviceControlApi {
+    /** 学生ID */
+    studentId: number;
+    /** 动作 */
+    action: TStudentDeviceControlActionValue;
+  }
+
+  /** 下载学生导入模板 - 请求参数 */
+  export interface ReqGetStudentTemplateApi {
+    /** 租户ID（平台管理员必填） */
+    tenantId?: number;
+    /** 学校ID */
+    schoolId: number;
+  }
+
+  /** 导入学生信息 - 请求参数 */
+  export interface ReqPostStudentImportApi {
+    /** 租户ID（平台管理员必填） */
+    tenantId?: number;
+    /** 学校ID */
+    schoolId: number;
+  }
+
+  /** 导入学生信息 - 失败项 */
+  export interface IStudentImportFailItemVo {
+    /** Excel行号 */
+    index: number;
+    /** 学生姓名 */
+    name: string;
+    /** 失败原因 */
+    reason: string;
+  }
+
+  /** 导入学生信息 - 响应 data */
+  export interface ResPostStudentImportApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failCount: number;
+    /** 失败列表 */
+    failList: IStudentImportFailItemVo[] | null;
+  }
+
+  /** 导入更新学生信息 - 响应 data */
+  export type ResPostStudentUpdateImportApi = ResPostStudentImportApi;
+
+  /** 批量导出学生信息 - 请求参数 */
+  export interface ReqPostStudentExportApi {
+    /** 学生ID数组 */
+    studentIds?: number[];
+    /** 学校ID */
+    schoolId?: number;
+    /** 年级ID */
+    gradeId?: number;
+    /** 班级ID */
+    classId?: number;
+    /** 级部ID */
+    departmentId?: number;
   }
 }

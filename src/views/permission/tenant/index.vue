@@ -7,7 +7,7 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import { deleteTenantApi, getTenantListApi } from "@/api/modules";
-import { ENABLE_STATUS_OPTIONS } from "@/config/modules";
+import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS } from "@/config/modules";
 import TenantModal from "./modal/Tenant.vue";
 
 const requestTenantList = async (params: System.ReqTenantList) => {
@@ -54,7 +54,7 @@ const modalRef = ref();
 
 const onShowModal = (type: "Add" | "Edit", row?: System.Tenant) => {
   const titleMap = { Add: "新增租户", Edit: "编辑租户" };
-  modalRef.value.acceptParams({ title: titleMap[type], type }, row);
+  modalRef.value.acceptParams({ title: titleMap[type], type, showConfirm: true }, row);
 };
 
 const refreshTableList = () => {
@@ -79,6 +79,11 @@ const handleDelete = (row: System.Tenant) => {
     <ProTable ref="proTable" :columns="columns" :request-api="requestTenantList" :pagination="false" table-header="租户管理">
       <template #toolButton>
         <el-button type="primary" :icon="CirclePlus" @click="onShowModal('Add')">新增租户</el-button>
+      </template>
+      <template #status="{ row }">
+        <el-tag :type="row.status === ENABLE_STATUS.ENABLED ? 'success' : 'info'">
+          {{ ENABLE_STATUS_I18N[row.status] || "--" }}
+        </el-tag>
       </template>
       <template #operation="{ row }">
         <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>

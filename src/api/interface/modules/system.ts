@@ -1,20 +1,33 @@
-import type { TEnableStatusValue, TOrgDepartmentStatusValue, TTenantTypeValue } from "@/config/modules";
+import type {
+  TDataScopeTypeValue,
+  TEnableStatusValue,
+  TOrgDepartmentStatusValue,
+  TRoleLevelValue,
+  TRoleTypeValue,
+  TTenantTypeValue
+} from "@/config/modules";
 
 export namespace System {
-  export type TRoleType = "admin" | "api";
-  export type TRoleLevel = "super" | "platform" | "agent" | "custom";
-
   /** 角色信息 */
   export interface Role {
     id: number;
     name: string;
     code: string;
     description?: string;
-    status: number;
+    status: TEnableStatusValue;
+    tenantName?: string;
     createdAt?: string;
-    roleType?: TRoleType;
-    roleLevel?: TRoleLevel;
+    updatedAt?: string;
+    roleType?: TRoleTypeValue;
+    roleLevel?: TRoleLevelValue;
     tenantId?: number;
+    isSystem?: boolean;
+  }
+
+  /** 角色详情响应 */
+  export interface ResGetRoleDetailApi extends Role {
+    permissionIds?: number[];
+    permissions?: PermissionInfo[];
   }
 
   /** 角色列表请求参数 */
@@ -22,6 +35,12 @@ export namespace System {
     page?: number;
     pageSize?: number;
     name?: string;
+    code?: string;
+    roleType?: TRoleTypeValue;
+    tenantId?: number;
+    status?: TEnableStatusValue;
+    includeSystem?: boolean;
+    roleLevel?: TRoleLevelValue;
   }
 
   /** 角色保存参数 */
@@ -29,15 +48,18 @@ export namespace System {
     id?: number;
     name: string;
     description?: string;
+    status?: TEnableStatusValue;
+    tenantId?: number;
+    permissionIds?: number[];
   }
 
   /** 角色创建参数 */
   export interface ReqRoleCreate {
     name: string;
     description?: string;
-    roleType: TRoleType;
-    tenantId: number;
-    roleLevel?: TRoleLevel;
+    roleType: TRoleTypeValue;
+    tenantId?: number;
+    roleLevel?: TRoleLevelValue;
     permissionIds?: number[];
   }
 
@@ -56,12 +78,22 @@ export namespace System {
     name: string;
   }
 
+  /** 权限详情 */
+  export interface PermissionInfo extends Permission {
+    module: string;
+  }
+
   /** 权限模块 */
   export interface PermissionModule {
     moduleKey: string;
     moduleName: string;
     description?: string;
     permissions: Permission[];
+  }
+
+  /** 权限模块列表请求参数 */
+  export interface ReqPermissionModules {
+    roleLevel?: TRoleLevelValue;
   }
 
   /** 权限模块列表响应 */
@@ -83,10 +115,97 @@ export namespace System {
     email?: string;
     roleId: number;
     roleName?: string;
+    roleLevel?: TRoleLevelValue;
     tenantId?: number;
     orgDepartmentId?: number | null;
-    status: number;
+    status: TEnableStatusValue;
     createdAt?: string;
+  }
+
+  /** 微信信息 */
+  export interface WechatInfo {
+    nickName?: string;
+    avatarUrl?: string;
+  }
+
+  /** 余额信息 */
+  export interface BalanceInfo {
+    totalBalance?: string;
+    availableBalance?: string;
+    frozenBalance?: string;
+    totalRecharge?: string;
+    totalConsumption?: string;
+    totalRefund?: string;
+    status?: number;
+    updatedAt?: string;
+  }
+
+  /** 当前孩子信息 */
+  export interface CurrentChildInfo {
+    studentId?: number;
+    studentName?: string;
+    studentCode?: string;
+    grade?: string;
+    className?: string;
+    balance?: string;
+    balanceInfo?: BalanceInfo;
+    cardNumber?: string;
+    relationship?: string;
+  }
+
+  /** 家长角色信息 */
+  export interface ParentRoleInfo {
+    currentChild?: CurrentChildInfo;
+    childrenCount?: number;
+  }
+
+  /** 教师角色信息 */
+  export interface TeacherRoleInfo {
+    teacherNumber?: string;
+    subject?: string;
+    position?: string;
+    managedClassCount?: number;
+  }
+
+  /** 角色特定信息 */
+  export type UserRoleInfo = ParentRoleInfo | TeacherRoleInfo;
+
+  /** 当前用户个人信息 */
+  export interface UserProfile {
+    id?: number;
+    username?: string;
+    realName?: string;
+    phone?: string;
+    email?: string;
+    avatar?: string;
+    roleId?: number;
+    roleName?: string;
+    tenantId?: number;
+    tenantName?: string;
+  }
+
+  /** 更新个人信息请求参数 */
+  export interface ReqUserProfileUpdate {
+    realName?: string;
+    phone?: string;
+    email?: string;
+    avatar?: string;
+  }
+
+  /** 更新个人信息响应 */
+  export interface ResUserProfileUpdate {
+    message?: string;
+  }
+
+  /** 修改密码请求参数 */
+  export interface ReqUserChangePassword {
+    oldPassword: string;
+    newPassword: string;
+  }
+
+  /** 修改密码响应 */
+  export interface ResUserChangePassword {
+    message?: string;
   }
 
   /** 用户列表请求参数 */
@@ -95,6 +214,7 @@ export namespace System {
     pageSize?: number;
     username?: string;
     realName?: string;
+    roleLevel?: TRoleLevelValue;
   }
 
   /** 用户保存参数 */
@@ -106,10 +226,35 @@ export namespace System {
     phone?: string;
     email?: string;
     roleId: number;
+    roleLevel?: TRoleLevelValue;
     tenantId: number;
     orgDepartmentId?: number | null;
-    status?: number;
+    status?: TEnableStatusValue;
   }
+
+  /** 更新用户请求参数 */
+  export interface ReqPutAdminUserUpdateApi {
+    realName?: string;
+    phone?: string;
+    email?: string;
+    /** 角色ID（-1表示不更新） */
+    roleId?: number | -1;
+    /** 所属部门ID（null不更新，0清空部门） */
+    orgDepartmentId?: number | null;
+    /** 状态（-1不更新，0停用，1启用） */
+    status?: TEnableStatusValue | -1;
+  }
+
+  /** 批量更新用户所属部门请求参数 */
+  export interface ReqBatchUpdateAdminUsersOrgDepartmentApi {
+    /** 用户ID列表 */
+    userIds: number[];
+    /** 组织部门ID（0清空部门） */
+    orgDepartmentId: number;
+  }
+
+  /** 批量更新用户所属部门响应 */
+  export type ResBatchUpdateAdminUsersOrgDepartmentApi = Record<string, never>;
 
   /** 创建用户响应 */
   export interface ResUserCreate {
@@ -118,24 +263,53 @@ export namespace System {
     realName: string;
   }
 
-  /** 可分配学校 */
-  export interface AvailableSchool {
+  /** 重置用户密码请求参数 */
+  export type ReqPostResetUserPasswordApi = Record<string, never>;
+
+  /** 重置用户密码响应 */
+  export interface ResPostResetUserPasswordApi {
+    message?: string;
+    password?: string;
+  }
+
+  /** 学校简要信息 */
+  export interface SchoolBrief {
     id: number;
     name: string;
   }
 
+  /** 租户简要信息 */
+  export interface TenantBrief {
+    id: number;
+    name: string;
+  }
+
+  /** 可分配学校 */
+  export type AvailableSchool = SchoolBrief;
+
   /** 用户数据权限 */
-  export interface UserDataScope {
-    type: string;
-    schoolIds: number[];
-    schoolList?: AvailableSchool[];
+  export interface ResGetUserDataScopeApi {
+    userId: number;
+    scopeType: TDataScopeTypeValue;
+    scopeTypeName?: string;
+    tenantIds?: number[];
+    tenants?: TenantBrief[];
+    schoolIds?: number[];
+    schools?: SchoolBrief[];
   }
 
   /** 用户数据权限保存参数 */
-  export interface ReqUserDataScopeSave {
-    scopeType: string;
-    schoolIds: number[];
+  export interface ReqPutUserDataScopeApi {
+    scopeType: TDataScopeTypeValue;
+    tenantIds?: number[];
+    schoolIds?: number[];
   }
+
+  /** 用户数据权限 */
+  export type UserDataScope = ResGetUserDataScopeApi;
+
+  /** 用户数据权限保存参数 */
+  export type ReqUserDataScopeSave = ReqPutUserDataScopeApi;
 
   /** 组织架构部门信息 */
   export interface OrgDepartment {
@@ -172,6 +346,22 @@ export namespace System {
     status?: TOrgDepartmentStatusValue;
   }
 
+  /** 部门更新参数 */
+  export interface ReqOrgDepartmentUpdate {
+    tenantId?: number;
+    parentId?: number | null;
+    name: string;
+    code: string;
+    leaderId?: number | null;
+    sort?: number;
+    status?: TOrgDepartmentStatusValue;
+  }
+
+  /** 部门更新响应 */
+  export interface ResOrgDepartmentUpdate {
+    message?: string;
+  }
+
   /** 租户信息 */
   export interface Tenant {
     id: number;
@@ -187,6 +377,12 @@ export namespace System {
     createdAt: string;
     updatedAt: string;
   }
+
+  /** 获取租户详情响应 */
+  export type ResGetTenantDetailApi = Tenant;
+
+  /** 删除租户响应 */
+  export type ResDeleteTenantApi = Tenant;
 
   /** 租户列表请求参数 */
   export interface ReqTenantList {
@@ -221,8 +417,8 @@ export namespace System {
     name: string;
     contactName: string;
     contactPhone: string;
-    contactEmail?: string;
-    address?: string;
+    contactEmail: string;
+    address: string;
     status: TEnableStatusValue;
   }
 

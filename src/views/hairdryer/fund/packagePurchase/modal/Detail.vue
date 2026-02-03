@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PackageRecord } from "@/api/interface";
+import type { PackagePurchaseModalParams, PackagePurchaseModalType } from "../types";
 
 import { ref } from "vue";
 import { getPackageRecordDetailApi } from "@/api/modules";
@@ -8,32 +9,41 @@ import { PACKAGE_TYPE_I18N, PACKAGE_RECORD_STATUS_I18N, getPackageRecordStatusTa
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<PackageRecord.IPackageRecordDetail>();
+const parameter = ref<PackagePurchaseModalParams>({
+  title: "",
+  type: "View" as PackagePurchaseModalType,
+  showConfirm: false
+});
 
-const axiosGetPackageRecordDetailApi = async (id: number) => {
+async function axiosGetPackageRecordDetailApi(id: number) {
   loading.value = true;
   try {
     const result = await getPackageRecordDetailApi(id);
     if (result.code === 0) {
       detail.value = result.data;
     }
+    return result;
   } catch (error) {
     console.error("axiosGetPackageRecordDetailApi:", error);
+    return { code: -1, data: null };
   } finally {
     loading.value = false;
   }
-};
+}
 
-const acceptParams = async (row: PackageRecord.IPackageRecordItem) => {
+async function acceptParams(params: PackagePurchaseModalParams, row?: PackageRecord.IPackageRecordItem) {
+  parameter.value = { ...parameter.value, ...params };
+  if (!row?.id) return;
   await axiosGetPackageRecordDetailApi(row.id);
 
   visible.value = true;
-};
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="套餐购买详情" width="720px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="720px" destroy-on-close draggable align-center>
     <div v-loading="loading">
       <template v-if="detail">
         <!-- 基本信息 -->

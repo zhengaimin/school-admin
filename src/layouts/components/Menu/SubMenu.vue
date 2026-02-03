@@ -37,13 +37,13 @@ defineProps<{ menuList: Menu.MenuOptions[] }>();
 const authStore = useAuthStore();
 const router = useRouter();
 // 点击菜单
-const handleClickMenu = (subItem: Menu.MenuOptions) => {
+function handleClickMenu(subItem: Menu.MenuOptions) {
   //页面按钮权限存储在全局
-  authStore.getAuthButtonList(subItem["buttonList"]);
+  authStore.getAuthButtonList(subItem.buttonList ?? []);
   // 如果是外链
   if (subItem.meta.isLink) return window.open(subItem.meta.isLink, "_blank");
   router.push(subItem.path);
-};
+}
 </script>
 
 <style lang="scss">

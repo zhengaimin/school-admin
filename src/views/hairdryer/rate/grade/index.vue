@@ -1,6 +1,6 @@
 <script setup lang="ts" name="hairdryerRateGrade">
 import type { ColumnProps } from "@/components/ProTable/interface";
-import type { RateDryer } from "@/api/interface";
+import type { GradeRateRow } from "./types";
 
 import { ref, watch } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
@@ -10,8 +10,6 @@ import { useSchool } from "@/hooks/useSchool";
 import { useManage } from "@/hooks/useManage";
 import { getGradeDryerRatesApi, deleteGradeDryerRatesApi } from "@/api/modules";
 import RateModal from "./modal/Rate.vue";
-
-type GradeRateRow = RateDryer.IGradeDryerRateItemVo;
 
 const { schoolId, isAllSchools } = useSchool();
 
@@ -47,7 +45,8 @@ const onShowModal = (type: "Add" | "Edit", row?: GradeRateRow) => {
   }
 
   const titleMap = { Add: "新增年级费率", Edit: "编辑年级费率" };
-  modalRef.value.acceptParams({ title: titleMap[type], type }, row);
+  const showConfirm = type === "Add" || type === "Edit";
+  modalRef.value.acceptParams({ title: titleMap[type], type, showConfirm }, row);
 };
 
 watch(schoolId, () => refreshTableList(), { immediate: true });

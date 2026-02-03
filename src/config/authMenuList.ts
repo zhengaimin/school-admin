@@ -1,4 +1,5 @@
 import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "./router";
+import { PERMISSION_CODE } from "@/config/modules";
 
 export default {
   code: 200,
@@ -37,7 +38,7 @@ export default {
     {
       key: "system",
       label: "权限模块",
-      icon: "Setting"
+      icon: "Lock"
     }
   ],
   systemData: {
@@ -59,7 +60,7 @@ export default {
           {
             path: ROUTE_COMMON.SCHOOL,
             name: "school",
-            component: "/common/school/index",
+            component: "/common/school/manage/index",
             meta: {
               icon: "",
               title: "学校管理",
@@ -72,8 +73,8 @@ export default {
           },
           {
             path: ROUTE_COMMON.SCHOOL_DEVICE_CONFIG,
-            name: "schoolDeviceConfig",
-            component: "/common/schoolDeviceConfig/index",
+            name: "deviceConfig",
+            component: "/common/school/deviceConfig/index",
             meta: {
               icon: "",
               title: "设备配置",
@@ -141,12 +142,26 @@ export default {
             }
           },
           {
-            path: "/systemAuthority/studentAdmin",
+            path: "/common/school/student",
             name: "studentAdmin",
-            component: "/systemAuthority/studentAdmin/index",
+            component: "/common/school/student/index",
             meta: {
               icon: "",
               title: "学生管理",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: "/common/school/parent",
+            name: "parentManage",
+            component: "/common/school/parent/index",
+            meta: {
+              icon: "",
+              title: "家长管理",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -299,9 +314,9 @@ export default {
             }
           },
           {
-            path: "/device/devicetags",
+            path: "/video/devices/tags",
             name: "devicetags",
-            component: "/device/devicetags/index",
+            component: "/video/devices/tags/index",
             meta: {
               icon: "",
               title: "设备标签",
@@ -313,9 +328,9 @@ export default {
             }
           },
           {
-            path: "/device/deviceControl",
+            path: "/video/devices/manage",
             name: "deviceControl",
-            component: "/device/deviceControl/index",
+            component: "/video/devices/manage/index",
             meta: {
               icon: "",
               title: "公话管理",
@@ -341,9 +356,9 @@ export default {
             }
           },
           {
-            path: "/device/dialControl",
-            name: "dialControl",
-            component: "/device/dialControl/index",
+            path: "/video/devices/control",
+            name: "control",
+            component: "/video/devices/control/index",
             meta: {
               icon: "",
               title: "公话配置",
@@ -377,6 +392,34 @@ export default {
               title: "时间段配置",
               isLink: "",
               isHide: true,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: "/video/devices/schoolMien",
+            name: "schoolMien",
+            component: "/video/devices/schoolMien/index",
+            meta: {
+              icon: "",
+              title: "校园风采",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: "/video/devices/announcement",
+            name: "videoAnnouncement",
+            component: "/video/devices/announcement/index",
+            meta: {
+              icon: "",
+              title: "校园公告",
+              isLink: "",
+              isHide: false,
               isFull: false,
               isAffix: false,
               isKeepAlive: false
@@ -705,7 +748,7 @@ export default {
           {
             path: ROUTE_HAIRDRYER.DEVICE_TAGS,
             name: "hairdryerTags",
-            component: "/hairdryer/tags/index",
+            component: "/hairdryer/devices/tags/index",
             meta: {
               icon: "",
               title: "标签管理",
@@ -719,7 +762,7 @@ export default {
           {
             path: ROUTE_HAIRDRYER.DEVICE_DEVICE,
             name: "hairdryerDevice",
-            component: "/hairdryer/device/index",
+            component: "/hairdryer/devices/manage/index",
             meta: {
               icon: "",
               title: "设备管理",
@@ -982,47 +1025,46 @@ export default {
     ],
     system: [
       {
-        path: ROUTE_SYSTEM.TENANT,
-        name: "systemTenant",
-        component: "/permission/tenant/index",
+        path: ROUTE_SYSTEM.PROFILE,
+        name: "systemProfile",
+        component: "/system/profile/index",
         meta: {
-          icon: "Setting",
-          title: "租户管理",
+          icon: "User",
+          title: "个人信息",
           isLink: "",
-          isHide: false,
+          isHide: true,
           isFull: false,
           isAffix: false,
           isKeepAlive: false
         }
       },
       {
-        path: ROUTE_SYSTEM.USER,
-        name: "systemUser",
-        component: "/permission/user/index",
+        path: ROUTE_SYSTEM.CHANGE_PASSWORD,
+        name: "systemChangePassword",
+        component: "/system/password/index",
         meta: {
-          icon: "Setting",
-          title: "用户管理",
+          icon: "Lock",
+          title: "修改密码",
           isLink: "",
-          isHide: false,
+          isHide: true,
           isFull: false,
           isAffix: false,
-          isKeepAlive: false,
-          permission: ["adminuser:list"]
+          isKeepAlive: false
         }
       },
       {
-        path: ROUTE_SYSTEM.ROLE,
-        name: "systemRole",
-        component: "/permission/role/index",
+        path: ROUTE_SYSTEM.TENANT,
+        name: "systemTenant",
+        component: "/permission/tenant/index",
         meta: {
-          icon: "Setting",
-          title: "角色管理",
+          icon: "Key",
+          title: "租户管理",
           isLink: "",
           isHide: false,
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: ["role:list"]
+          permission: [PERMISSION_CODE.TENANT_LIST]
         }
       },
       {
@@ -1030,15 +1072,93 @@ export default {
         name: "systemOrganization",
         component: "/permission/organization/index",
         meta: {
-          icon: "Setting",
+          icon: "OfficeBuilding",
           title: "组织架构",
           isLink: "",
           isHide: false,
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: ["org:list"]
+          permission: [PERMISSION_CODE.ORG_LIST]
         }
+      },
+      {
+        path: ROUTE_SYSTEM.ROLE,
+        name: "systemRole",
+        component: "/permission/role/index",
+        meta: {
+          icon: "Tickets",
+          title: "角色管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: [PERMISSION_CODE.ROLE_LIST]
+        }
+      },
+      {
+        path: ROUTE_SYSTEM.USER,
+        name: "systemUser",
+        component: "/permission/user/index",
+        meta: {
+          icon: "User",
+          title: "用户管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: [PERMISSION_CODE.USER_LIST]
+        },
+        redirect: ROUTE_SYSTEM.USER_PLATFORM,
+        children: [
+          {
+            path: ROUTE_SYSTEM.USER_PLATFORM,
+            name: "systemUserPlatform",
+            component: "/permission/user/platform/index",
+            meta: {
+              icon: "",
+              title: "平台用户",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: [PERMISSION_CODE.USER_LIST]
+            }
+          },
+          {
+            path: ROUTE_SYSTEM.USER_SUPPLIER,
+            name: "systemUserSupplier",
+            component: "/permission/user/supplier/index",
+            meta: {
+              icon: "",
+              title: "供应商用户",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: [PERMISSION_CODE.USER_LIST]
+            }
+          },
+          {
+            path: ROUTE_SYSTEM.USER_SALESMAN,
+            name: "systemUserSalesman",
+            component: "/permission/user/salesman/index",
+            meta: {
+              icon: "",
+              title: "业务员用户",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false,
+              permission: [PERMISSION_CODE.USER_LIST]
+            }
+          }
+        ]
       }
     ]
   },

@@ -185,12 +185,18 @@ watch(
       v-model="grantDialogVisible"
       v-model:students="studentSelected"
       :mode="grantMode"
+      :title="grantMode === 'range' ? '批量添加赠费' : '选择学生赠费'"
       @select-students="handleOpenStudentDialog"
       @submitted="handleGrantSubmitted"
     />
 
     <!-- 学生选择弹窗 -->
-    <StudentSelectModal v-model="studentDialogVisible" v-model:selected="studentSelected" :grade-options="studentGradeOptions" />
+    <StudentSelectModal
+      v-model="studentDialogVisible"
+      v-model:selected="studentSelected"
+      :grade-options="studentGradeOptions"
+      title="选择学生"
+    />
   </div>
 </template>
 

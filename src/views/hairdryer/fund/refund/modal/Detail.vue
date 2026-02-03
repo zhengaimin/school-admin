@@ -15,32 +15,44 @@ import {
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<Refund.IRefundDetail>();
+const parameter = ref({
+  title: "",
+  type: "View" as "Add" | "Edit" | "View",
+  showConfirm: false
+});
 
-const axiosGetRefundDetailApi = async (id: number) => {
+async function axiosGetRefundDetailApi(id: number) {
   loading.value = true;
   try {
     const result = await getRefundDetailApi(id);
     if (result.code === 0) {
       detail.value = result.data;
     }
+    return result;
   } catch (error) {
     console.error("axiosGetRefundDetailApi:", error);
+    return { code: -1, data: null };
   } finally {
     loading.value = false;
   }
-};
+}
 
-const acceptParams = async (row: Refund.IRefundItem) => {
+async function acceptParams(
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: Refund.IRefundItem
+) {
+  parameter.value = { ...parameter.value, ...params };
+  if (!row?.id) return;
   await axiosGetRefundDetailApi(row.id);
 
   visible.value = true;
-};
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="退款详情" width="720px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="720px" destroy-on-close draggable align-center>
     <template v-if="detail">
       <!-- 基本信息 -->
       <el-descriptions :column="2" border>

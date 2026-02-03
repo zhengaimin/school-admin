@@ -1,44 +1,21 @@
 <script setup lang="ts">
 import type { Refund } from "@/api/interface";
+import type { AcceptParamsOptions, FormData } from "../types";
 
 import { reactive, ref, computed } from "vue";
 import { ElNotification } from "element-plus";
-import { getRefundExportInfoApi, exportRefundsApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import { getRefundExportInfoApi, getRefundsExportApi } from "@/api/modules";
 import { DEVICE_TYPE, REFUND_CATEGORY, REFUND_STATUS_OPTIONS } from "@/config/modules";
-
-interface OptionItem {
-  label: string;
-  value: number;
-}
-interface FormData {
-  schoolId: number;
-  studentKeyword: string;
-  refundNo: string;
-  status: number | null;
-  startDate: string;
-  endDate: string;
-  gradeId: number | null;
-  departmentId: number | null;
-  classId: number | null;
-}
-export interface AcceptParamsOptions {
-  schoolId: number;
-  studentKeyword?: string;
-  refundNo?: string;
-  status?: number | null;
-  startDate?: string;
-  endDate?: string;
-  gradeId?: number | null;
-  departmentId?: number | null;
-  classId?: number | null;
-  gradeOptions?: OptionItem[];
-  departmentOptions?: OptionItem[];
-  classOptions?: OptionItem[];
-}
+import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
 
 const visible = ref(false);
 const loading = ref(false);
 const exporting = ref(false);
+const parameter = ref({
+  title: "",
+  type: "View" as "Add" | "Edit" | "View",
+  showConfirm: true
+});
 
 const totalRecords = ref(0);
 const totalPages = ref(0);
@@ -57,9 +34,23 @@ const formData = reactive<FormData>({
   classId: null
 });
 
-const gradeOptions = ref<OptionItem[]>([]);
-const departmentOptions = ref<OptionItem[]>([]);
-const classOptions = ref<OptionItem[]>([]);
+const schoolIdRef = computed(() => formData.schoolId);
+const {
+  gradeOptions,
+  departmentOptions,
+  classOptions,
+  loadGradeOptions,
+  loadDepartmentOptions,
+  loadClassOptions,
+  handleGradeCascade,
+  handleDepartmentCascade
+} = useGradeDepartmentClassOptions({
+  schoolId: schoolIdRef,
+  requestOptions: {
+    department: { loading: false },
+    class: { loading: false }
+  }
+});
 
 const pageOptions = computed(() => {
   if (!totalRecords.value || !totalPages.value) return [];
@@ -75,23 +66,25 @@ const pageOptions = computed(() => {
 });
 
 /** 构建请求参数 */
-const buildRequestParams = (): Refund.ReqGetRefundsApi => ({
-  schoolId: formData.schoolId,
-  deviceType: DEVICE_TYPE.DRYER,
-  refundCategory: REFUND_CATEGORY.PACKAGE,
-  studentKeyword: formData.studentKeyword || undefined,
-  refundNo: formData.refundNo || undefined,
-  status: formData.status ?? undefined,
-  startDate: formData.startDate || undefined,
-  endDate: formData.endDate || undefined,
-  gradeId: formData.gradeId ?? -1,
-  departmentId: formData.departmentId ?? -1,
-  classId: formData.classId ?? -1,
-  page: selectedPage.value,
-  pageSize: pageSize.value
-});
+function buildRequestParams(): Refund.ReqGetRefundsApi {
+  return {
+    schoolId: formData.schoolId,
+    deviceType: DEVICE_TYPE.DRYER,
+    refundCategory: REFUND_CATEGORY.PACKAGE,
+    studentKeyword: formData.studentKeyword || undefined,
+    refundNo: formData.refundNo || undefined,
+    status: formData.status ?? undefined,
+    startDate: formData.startDate || undefined,
+    endDate: formData.endDate || undefined,
+    gradeId: formData.gradeId ?? -1,
+    departmentId: formData.departmentId ?? -1,
+    classId: formData.classId ?? -1,
+    page: selectedPage.value,
+    pageSize: pageSize.value
+  };
+}
 /** 获取导出信息 */
-const axiosGetExportInfo = async () => {
+async function axiosGetExportInfo() {
   loading.value = true;
   try {
     const result = await getRefundExportInfoApi(buildRequestParams());
@@ -101,87 +94,40 @@ const axiosGetExportInfo = async () => {
       pageSize.value = result.data.pageSize || 10000;
       selectedPage.value = 1;
     }
+    return result;
   } catch (error) {
     console.error("axiosGetExportInfo:", error);
+    return { code: -1, data: null };
   } finally {
     loading.value = false;
   }
-};
-/** 获取年级列表 */
-const axiosGetGradeOptions = async () => {
-  try {
-    const result = await getGradesApi({ schoolId: formData.schoolId, page: 1, pageSize: 200 });
-    if (result.code === 0) {
-      gradeOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetGradeOptions:", error);
-  }
-};
-/** 获取级部列表 */
-const axiosGetDepartmentOptions = async (gradeId: number) => {
-  try {
-    const result = await getDepartmentsListApi(
-      { schoolId: formData.schoolId, gradeId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      departmentOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetDepartmentOptions:", error);
-  }
-};
-/** 获取班级列表 */
-const axiosGetClassOptions = async (gradeId: number, departmentId: number) => {
-  try {
-    const result = await getClassesListApi(
-      { schoolId: formData.schoolId, gradeId, departmentId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      classOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetClassOptions:", error);
-  }
-};
-
+}
 /** 处理年级变更 */
-const handleGradeChange = async (value: number | null) => {
-  formData.departmentId = null;
-  formData.classId = null;
-  departmentOptions.value = [];
-  classOptions.value = [];
-
-  if (value != null) {
-    await axiosGetDepartmentOptions(value);
-  }
-};
+async function handleGradeChange(value: number | null) {
+  await handleGradeCascade({
+    gradeId: value,
+    reset: () => {
+      formData.departmentId = null;
+      formData.classId = null;
+    }
+  });
+}
 /** 处理级部变更 */
-const handleDepartmentChange = async (value: number | null) => {
-  formData.classId = null;
-  classOptions.value = [];
-
-  if (formData.gradeId != null && value != null) {
-    await axiosGetClassOptions(formData.gradeId, value);
-  }
-};
+async function handleDepartmentChange(value: number | null) {
+  await handleDepartmentCascade({
+    gradeId: formData.gradeId,
+    departmentId: value,
+    reset: () => {
+      formData.classId = null;
+    }
+  });
+}
 /** 处理查询 */
-const handleSearch = () => {
+function handleSearch() {
   axiosGetExportInfo();
-};
+}
 /** 处理导出 */
-const handleExport = async () => {
+async function handleExport() {
   if (totalRecords.value === 0) return;
 
   exporting.value = true;
@@ -193,7 +139,7 @@ const handleExport = async () => {
   });
 
   try {
-    const response = await exportRefundsApi(buildRequestParams());
+    const response = await getRefundsExportApi(buildRequestParams());
 
     const blob = new Blob([response as any], {
       type: "application/vnd.ms-excel;charset=utf-8"
@@ -213,7 +159,7 @@ const handleExport = async () => {
       type: "success"
     });
   } catch (error) {
-    console.error("onExport:", error);
+    console.error("handleExport:", error);
     ElNotification.closeAll();
     ElNotification({
       title: "错误",
@@ -223,9 +169,10 @@ const handleExport = async () => {
   } finally {
     exporting.value = false;
   }
-};
-
-const acceptParams = async (options: AcceptParamsOptions) => {
+}
+/** 接收参数 */
+async function acceptParams(options: AcceptParamsOptions) {
+  parameter.value = { ...parameter.value, ...options };
   Object.assign(formData, {
     schoolId: options.schoolId,
     studentKeyword: options.studentKeyword || "",
@@ -249,25 +196,25 @@ const acceptParams = async (options: AcceptParamsOptions) => {
   classOptions.value = options.classOptions || [];
 
   if (!gradeOptions.value.length) {
-    await axiosGetGradeOptions();
+    await loadGradeOptions();
   }
   if (formData.gradeId != null && !departmentOptions.value.length) {
-    await axiosGetDepartmentOptions(formData.gradeId);
+    await loadDepartmentOptions(formData.gradeId);
   }
   if (formData.gradeId != null && formData.departmentId != null && !classOptions.value.length) {
-    await axiosGetClassOptions(formData.gradeId, formData.departmentId);
+    await loadClassOptions(formData.gradeId, formData.departmentId);
   }
 
   await axiosGetExportInfo();
 
   visible.value = true;
-};
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="批量导出" width="640px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="640px" destroy-on-close draggable align-center>
     <div v-loading="loading" class="export-container">
       <el-form :model="formData">
         <el-row :gutter="16">
@@ -374,7 +321,13 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="exporting" :disabled="loading || totalRecords === 0" @click="handleExport">
+      <el-button
+        v-if="parameter.showConfirm"
+        type="primary"
+        :loading="exporting"
+        :disabled="loading || totalRecords === 0"
+        @click="handleExport"
+      >
         导出
       </el-button>
     </template>

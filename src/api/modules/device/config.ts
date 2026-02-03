@@ -1,5 +1,5 @@
 import http from "@/api";
-import type { DeviceConfig, SchoolDeviceConfig } from "@/api/interface";
+import type { DeviceConfig, DeviceDialConfig, SchoolDeviceConfig } from "@/api/interface";
 
 /** 获取设备级功能点配置 */
 export function getDeviceFeatureConfigApi(deviceId: number) {
@@ -31,7 +31,32 @@ export function getSchoolDeviceConfigListApi(params?: SchoolDeviceConfig.ReqGetS
   return http.get<SchoolDeviceConfig.ResGetSchoolDeviceConfigListApi>("/admin/device-configs", params);
 }
 
+/** 获取公话配置列表 */
+export function getDeviceDialConfigListApi(params?: DeviceDialConfig.ReqGetDeviceDialConfigListApi) {
+  return http.get<DeviceDialConfig.ResGetDeviceDialConfigListApi>("/admin/device-config", params);
+}
+
+/** 获取公话配置详情 */
+export function getDeviceDialConfigDetailApi(id: number) {
+  return http.get<DeviceDialConfig.ResGetDeviceDialConfigDetailApi>(`/admin/device-config/${id}`);
+}
+
+/** 删除公话配置 */
+export function deleteDeviceDialConfigApi(id: number) {
+  return http.delete(`/admin/device-config/${id}`);
+}
+
+/** 添加公话配置 */
+export function postDeviceDialConfigApi(data: DeviceDialConfig.ReqPostDeviceDialConfigApi) {
+  return http.post<DeviceDialConfig.ResPostDeviceDialConfigApi>("/admin/device-config", data);
+}
+
+/** 修改公话配置 */
+export function putDeviceDialConfigApi(id: number, data: DeviceDialConfig.ReqPutDeviceDialConfigApi) {
+  return http.put(`/admin/device-config/${id}`, data);
+}
+
 /** 更新单个设备配置 */
 export function putSchoolDeviceConfigApi(id: number, data: SchoolDeviceConfig.ReqPutSchoolDeviceConfigApi) {
-  return http.put<SchoolDeviceConfig.ResPutSchoolDeviceConfigApi>(`/admin/device-configs/${id}`, data);
+  return http.put(`/admin/device-configs/${id}`, data);
 }

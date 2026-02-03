@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { UserState } from "@/stores/interface";
+import type { TUserInfo, UserState } from "@/stores/interface";
 import piniaPersistConfig from "@/stores/helper/persist";
 import { generatePrefix } from "@/stores/helper/prefix";
 
@@ -9,8 +9,6 @@ export const useUserStore = defineStore(id, {
   state: (): UserState => ({
     token: "",
     userInfo: { name: "" },
-    permissions: [],
-    moduleKeys: [],
     schoolMsg: { schoolId: "", schoolName: "" },
     count: 0
   }),
@@ -21,16 +19,8 @@ export const useUserStore = defineStore(id, {
       this.token = token;
     },
     // Set setUserInfo
-    setUserInfo(userInfo: UserState["userInfo"]) {
+    setUserInfo(userInfo: TUserInfo) {
       this.userInfo = userInfo;
-    },
-    // Set permissions
-    setPermissions(permissions: string[]) {
-      this.permissions = permissions;
-    },
-    // Set moduleKeys
-    setModuleKeys(moduleKeys: string[]) {
-      this.moduleKeys = moduleKeys;
     },
     setSchoolMsg(schoolMsg: UserState["schoolMsg"]) {
       this.schoolMsg = schoolMsg;

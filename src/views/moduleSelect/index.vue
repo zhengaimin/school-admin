@@ -2,33 +2,25 @@
 import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { SwitchButton } from "@element-plus/icons-vue";
-import { useAuthStore } from "@/stores/modules/auth";
+import { useAuthStore, hasModuleAccess, normalizePermissionModules } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
+import { usePermissionStore } from "@/stores/modules/permission";
 import { getPermissionModulesApi } from "@/api/modules";
+import { SUPER_ADMIN_ROLE } from "@/config/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
-import { version } from "../../../package.json";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const userStore = useUserStore();
+const permissionStore = usePermissionStore();
+const version = __APP_INFO__.pkg.version;
 
 const availableModules = ref<ModuleItem[]>([]);
 
-// 权限模块到业务模块的映射
-const permissionToModuleMap: Record<string, string> = {
-  device: "video",
-  fund: "video",
-  video: "video",
-  hairdryer: "hairdryer",
-  role: "system",
-  adminuser: "system",
-  system: "system"
-};
-
 const moduleList = computed(() => {
   // super_admin 显示所有模块
-  if (userStore.userInfo?.role_key === "super_admin") {
+  if (userStore.userInfo?.roleCode === SUPER_ADMIN_ROLE) {
     return authStore.moduleListGet;
   }
   return availableModules.value;
@@ -41,23 +33,20 @@ const axiosGetPermissionModulesApi = async (): Promise<void> => {
 
     if (result.code === 0) {
       const allModules = authStore.moduleListGet;
-      const hasModules = new Set<string>();
-
-      result.data.modules.forEach(permModule => {
-        const businessModule = permissionToModuleMap[permModule.moduleKey];
-        if (businessModule) {
-          hasModules.add(businessModule);
-        }
-      });
-
-      availableModules.value = allModules.filter(module => hasModules.has(module.key));
+      const modules = normalizePermissionModules(result);
+      const moduleKeys = modules.map(module => module.moduleKey).filter((key): key is string => Boolean(key));
+      permissionStore.setModulePermissionsByModules(result);
+      availableModules.value = allModules.filter(module => hasModuleAccess(module.key, moduleKeys));
     }
   } catch (error) {
     console.error("axiosGetPermissionModulesApi:", error);
-    availableModules.value = [];
+    const fallbackKeys = permissionStore.moduleKeysGet ?? [];
+    availableModules.value = authStore.moduleListGet.filter(module => hasModuleAccess(module.key, fallbackKeys));
   }
 };
-const userName = computed(() => userStore.userInfo.name || "管理员");
+const userName = computed(
+  () => userStore.userInfo?.realName || userStore.userInfo?.name || userStore.userInfo?.username || "管理员"
+);
 
 const moduleDescMap: Record<string, string> = {
   common: "校园管理、小程序配置、支付配置、通知配置等",
@@ -107,7 +96,7 @@ onMounted(() => {
           <img class="w-10 h-10 logo-shadow" src="@/assets/images/logo.png" alt="校园管理平台" />
           <span class="text-[22px] font-bold navbar-title-color">校园管理平台</span>
         </div>
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3">
           <span class="text-[15px] font-medium user-info-color">{{ userName }}</span>
           <el-button class="navbar-button" type="primary" link @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
@@ -150,6 +139,7 @@ onMounted(() => {
   top: 0;
   z-index: 1000;
   background: var(--el-bg-color);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--el-border-color-light);
   box-shadow: 0 1px 4px rgb(0 21 41 / 4%);
 }
@@ -185,40 +175,43 @@ onMounted(() => {
 }
 .module-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  max-width: 700px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
 }
 .module-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 20px;
+  padding: 32px 24px;
   text-align: center;
   cursor: pointer;
   background: var(--el-bg-color);
-  border-radius: 10px;
-  box-shadow: rgb(0 0 0 / 8%) 0 2px 8px 1px;
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -4px rgb(0 0 0 / 8%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 }
 .module-card:hover {
-  box-shadow: rgb(0 0 0 / 12%) 0 4px 16px 2px;
-  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -8px rgb(0 0 0 / 15%);
+  transform: translateY(-8px);
+  border-color: var(--el-color-primary-light-8);
 }
 .module-card:hover .card-icon {
-  background: var(--el-color-primary-light-3);
+  background: var(--el-color-primary);
+  transform: scale(1.1) rotate(5deg);
 }
 .card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  margin-bottom: 14px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
   color: #ffffff;
   background: var(--el-color-primary);
-  border-radius: 12px;
-  transition: background 0.3s ease;
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .version-text {
   margin-top: auto;

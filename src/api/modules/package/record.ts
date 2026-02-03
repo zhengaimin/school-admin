@@ -17,6 +17,6 @@ export function getPackageRecordExportInfoApi(params: PackageRecord.ReqGetPackag
 }
 
 /** 导出套餐购买记录 */
-export function exportPackageRecordsApi(params: PackageRecord.ReqGetPackageRecordsApi) {
+export function getPackageRecordsExportApi(params: PackageRecord.ReqGetPackageRecordsApi): Promise<Blob> {
   return http.get("/admin/package-records/export", params, { responseType: "blob" });
 }

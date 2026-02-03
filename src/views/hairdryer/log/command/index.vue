@@ -66,7 +66,7 @@ const columns: ColumnProps<DeviceCommand.IDeviceCommandItem>[] = [
 
 /** 查看详情 */
 const handleShowDetail = (row: DeviceCommand.IDeviceCommandItem) => {
-  detailModalRef.value?.acceptParams(row.id);
+  detailModalRef.value?.acceptParams({ title: "命令详情", type: "View", showConfirm: false }, row);
 };
 
 /** 删除命令 */

@@ -2,13 +2,18 @@
 import type { Refund } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 
-import { ref, reactive } from "vue";
+import { computed, ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { postAuditRefundApi } from "@/api/modules";
 import { REFUND_TYPE } from "@/config/modules";
 
 const visible = ref(false);
 const loading = ref(false);
+const parameter = ref({
+  title: "",
+  type: "Edit" as "Add" | "Edit" | "View",
+  showConfirm: true
+});
 const formRef = ref<FormInstance>();
 
 const params = reactive({
@@ -28,13 +33,26 @@ const rules = reactive<FormRules>({
 });
 
 const emit = defineEmits<{ refresh: [] }>();
+const isView = computed(() => parameter.value.type === "View");
 
-const handleClose = () => {
+async function axiosPostAuditRefundApi(id: number, data: Refund.ReqAuditRefundApi) {
+  try {
+    const result = await postAuditRefundApi(id, data);
+    if (result.code === 0) {
+      ElMessage.success("审核成功");
+    }
+    return result;
+  } catch (error) {
+    console.error("axiosPostAuditRefundApi:", error);
+    return { code: -1, data: null };
+  }
+}
+
+function handleClose() {
   visible.value = false;
   formRef.value?.resetFields();
-};
-
-const handleSubmit = async () => {
+}
+async function handleSubmit() {
   if (!formRef.value) return;
   const valid = await formRef.value.validate().catch(() => false);
   if (!valid) return;
@@ -48,20 +66,19 @@ const handleSubmit = async () => {
     if (params.refundType === REFUND_TYPE.PACKAGE && formData.approved) {
       data.actualAmount = formData.actualAmount;
     }
-    const result = await postAuditRefundApi(params.id, data);
-    if (result.code === 0) {
-      ElMessage.success("审核成功");
-      emit("refresh");
-      handleClose();
-    }
+    const result = await axiosPostAuditRefundApi(params.id, data);
+    if (result.code !== 0) return;
+    emit("refresh");
+    handleClose();
   } catch (error) {
     console.error("handleSubmit:", error);
   } finally {
     loading.value = false;
   }
-};
-
-const acceptParams = (row: Refund.IRefundItem) => {
+}
+function acceptParams(options: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }, row?: Refund.IRefundItem) {
+  parameter.value = { ...parameter.value, ...options };
+  if (!row) return;
   params.id = row.id;
   params.refundType = row.refundType;
   params.applyAmount = row.applyAmount;
@@ -70,19 +87,19 @@ const acceptParams = (row: Refund.IRefundItem) => {
   formData.actualAmount = row.refundType === REFUND_TYPE.PACKAGE ? row.applyAmount : undefined;
 
   visible.value = true;
-};
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="审核退款申请" width="500px" destroy-on-close :close-on-click-modal="false">
+  <el-dialog v-model="visible" :title="parameter.title" width="500px" destroy-on-close :close-on-click-modal="false">
     <div class="info-row">
       <span class="label">申请退款金额：</span>
       <span class="price">¥{{ Number(params.applyAmount || 0).toFixed(2) }}</span>
     </div>
 
-    <el-form ref="formRef" :model="formData" :rules="rules" label-width="110px">
+    <el-form ref="formRef" :model="formData" :rules="rules" :disabled="isView" label-width="110px">
       <el-form-item label="审核结果" prop="approved">
         <el-radio-group v-model="formData.approved">
           <el-radio :value="true">通过</el-radio>
@@ -117,7 +134,7 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="handleClose">取消</el-button>
-      <el-button type="primary" :loading="loading" @click="handleSubmit">确定</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" :loading="loading" @click="handleSubmit">确定</el-button>
     </template>
   </el-dialog>
 </template>

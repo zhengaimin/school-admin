@@ -1,1 +1,0 @@
-import{aa as r}from"./index-BXD89bSo.js";const e=t=>r.post("/admin/form/add",t),m=t=>r.get(`/admin/form/list?${t}`),s=t=>r.get(`/form/get_form?key=${t.key}`),a=t=>r.post("/admin/form/delete",t);export{e as a,m as b,s as c,a as f};

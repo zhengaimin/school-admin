@@ -82,7 +82,7 @@ const props = withDefaults(defineProps<Props>(), {
     "video/mp4",
     "audio/mpeg"
   ],
-  height: "150px",
+  height: "120px",
   width: "150px",
   borderRadius: "8px"
 });

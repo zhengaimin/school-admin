@@ -9,32 +9,44 @@ import { DEVICE_TYPE_I18N, PAYMENT_METHOD_I18N, PAYMENT_STATUS_I18N, getPaymentS
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<Payment.IPaymentDetail>();
+const parameter = ref({
+  title: "",
+  type: "View" as "Add" | "Edit" | "View",
+  showConfirm: false
+});
 
-const axiosGetPaymentDetailApi = async (id: number) => {
+async function axiosGetPaymentDetailApi(id: number) {
   loading.value = true;
   try {
     const result = await getPaymentDetailApi(id);
     if (result.code === 0) {
       detail.value = result.data;
     }
+    return result;
   } catch (error) {
     console.error("axiosGetPaymentDetailApi:", error);
+    return { code: -1, data: null };
   } finally {
     loading.value = false;
   }
-};
+}
 
-const acceptParams = async (row: Payment.IPaymentItem) => {
+async function acceptParams(
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: Payment.IPaymentItem
+) {
+  parameter.value = { ...parameter.value, ...params };
+  if (!row?.id) return;
   await axiosGetPaymentDetailApi(row.id);
 
   visible.value = true;
-};
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="充值记录详情" width="640px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="640px" destroy-on-close draggable align-center>
     <div v-loading="loading">
       <el-descriptions v-if="detail" :column="2" border>
         <el-descriptions-item label="订单号" :span="2">{{ detail.orderNo }}</el-descriptions-item>

@@ -22,6 +22,6 @@ export function getRefundExportInfoApi(params: Refund.ReqGetRefundExportInfoApi)
 }
 
 /** 导出退款记录 */
-export function exportRefundsApi(params: Refund.ReqGetRefundsApi) {
+export function getRefundsExportApi(params: Refund.ReqGetRefundsApi): Promise<Blob> {
   return http.get("/admin/refunds/export", params, { responseType: "blob" });
 }

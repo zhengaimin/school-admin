@@ -1,3 +1,5 @@
+import type { Login, System } from "@/api/interface";
+
 export type LayoutType = "vertical" | "classic" | "transverse" | "columns";
 
 export type AssemblySizeType = "large" | "default" | "small";
@@ -26,15 +28,14 @@ export interface GlobalState {
 }
 
 /* UserState */
+export type TUserInfo = Partial<Login.UserInfo> & {
+  name?: string;
+  [key: string]: any;
+};
+
 export interface UserState {
   token: string;
-  userInfo: {
-    name: string;
-    role_key?: string;
-    [key: string]: any;
-  };
-  permissions: string[];
-  moduleKeys: string[];
+  userInfo: TUserInfo;
   schoolMsg: { schoolId: string; schoolName: string };
   count: number;
 }
@@ -64,7 +65,7 @@ export interface ModuleItem {
 /* AuthState */
 export interface AuthState {
   routeName: string;
-  authButtonList: Menu.MenuOptions[];
+  authButtonList: Menu.ButtonPermission[];
   authMenuList: Menu.MenuOptions[];
   // 模块相关
   currentModule: string;
@@ -72,6 +73,11 @@ export interface AuthState {
   allModuleMenus: Record<string, Menu.MenuOptions[]>;
   // 全局路由（不属于任何模块）
   globalMenus: Menu.MenuOptions[];
+}
+
+/* 权限状态 */
+export interface PermissionState {
+  modulePermissions: Record<string, System.Permission[]>;
 }
 
 /* KeepAliveState */

@@ -19,9 +19,13 @@ const loading = ref(false);
 const configData = ref<DeviceConfig.IDeviceFeatureConfigListItem>();
 const schoolName = ref("");
 const parameter = ref({
-  title: "配置详情",
-  type: "Edit"
+  title: "",
+  type: "Edit" as "Add" | "Edit" | "View",
+  showConfirm: true
 });
+
+const isEdit = computed(() => parameter.value.type === "Edit");
+const isView = computed(() => parameter.value.type === "View");
 
 // 表单数据
 const formData = reactive({
@@ -77,11 +81,14 @@ const handleSave = async () => {
 /**
  * 接收参数
  */
-const acceptParams = (params: { title?: string; type?: string }, row?: DeviceConfig.IDeviceFeatureConfigListItem) => {
+const acceptParams = (
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: DeviceConfig.IDeviceFeatureConfigListItem
+) => {
   parameter.value = { ...parameter.value, ...params };
   schoolName.value = "";
 
-  if (row) {
+  if ((isEdit.value || isView.value) && row) {
     configData.value = row;
     schoolName.value = row.schoolName ?? "";
     initFormData(row);
@@ -95,7 +102,7 @@ defineExpose({ acceptParams });
 <template>
   <el-dialog v-model="visible" :title="parameter.title" width="640px" destroy-on-close draggable align-center>
     <SchoolInfo :name="schoolName" />
-    <el-form label-position="top">
+    <el-form label-position="top" :disabled="isView">
       <!-- 二维码配置 -->
       <el-form-item label="二维码">
         <UploadImg v-model:image-url="qrCodeUrl" :file-type="['image/jpeg', 'image/png', 'image/gif']" />
@@ -140,7 +147,7 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="loading" @click="handleSave">保存</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" :loading="loading" @click="handleSave">保存</el-button>
     </template>
   </el-dialog>
 </template>

@@ -25,7 +25,7 @@ const columns: ColumnProps<DeviceConfig.IDeviceFeatureConfigListItem>[] = [
 
 // 打开编辑弹窗
 const onEditConfig = (row: DeviceConfig.IDeviceFeatureConfigListItem) => {
-  configModalRef.value.acceptParams({ title: `${row.schoolName} - 编辑配置`, type: "Edit" }, row);
+  configModalRef.value.acceptParams({ title: `${row.schoolName} - 编辑配置`, type: "Edit", showConfirm: true }, row);
 };
 </script>
 

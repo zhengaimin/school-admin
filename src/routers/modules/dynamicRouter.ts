@@ -22,7 +22,7 @@ export const initDynamicRouter = async () => {
     await authStore.getAuthMenuList();
     // await authStore.getAuthButtonList();
 
-    // 当前版本所有权限已放开，移除菜单权限检查
+    // 菜单权限已在 getAuthMenuList 中过滤
 
     // 2.添加动态路由（加载所有模块的路由）
     authStore.allFlatMenuListGet.forEach(item => {

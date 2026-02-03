@@ -1,15 +1,237 @@
 import type {
   TDeviceTypeValue,
+  TDeviceStatusValue,
+  TDeviceBillModeValue,
   TDeviceCommandCodeValue,
   TDeviceCommandStatusValue,
   TDeviceCommandTypeValue,
   TDeviceCommandCreatedTypeValue,
-  TDeviceUsageStatusValue
+  TDeviceUsageStatusValue,
+  TDeviceFaceSyncStatusValue,
+  TDeviceFaceDesiredActionValue,
+  TDeviceFaceErrorCodeValue,
+  TDeviceTagControlActionValue,
+  TPhoneTypeValue,
+  TSipTypeValue
 } from "@/config/modules/device";
 
-import type { TEnableStatusValue } from "@/config/modules/common";
+import type { TEnableStatusValue, TYesNoFlagValue } from "@/config/modules/common";
 
 // 设备标签模块
+export namespace DeviceTag {
+  /** 设备标签详情 */
+  export interface IDeviceTagItemVo {
+    /** 标签ID */
+    id: number;
+    /** 标签名称 */
+    name: string;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 租户ID */
+    tenantId: number;
+    /** 租户名称 */
+    tenantName: string;
+    /** 状态 */
+    status: TEnableStatusValue;
+    /** 标签描述 */
+    description: string;
+    /** 排序 */
+    sort: number;
+    /** 关联设备数量 */
+    deviceCount: number;
+    /** 创建时间 */
+    createdAt: string;
+    /** 更新时间 */
+    updatedAt: string;
+  }
+
+  /** 设备标签列表 - 查询参数 */
+  export interface ReqGetDeviceTagsApi {
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+    /** 标签名称（模糊查询） */
+    name?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 租户ID */
+    tenantId?: number;
+    /** 状态筛选：-1不筛选，0禁用，1启用 */
+    status?: TEnableStatusValue | -1;
+  }
+
+  /** 设备标签列表 - 响应 data */
+  export interface ResGetDeviceTagsApi {
+    /** 列表 */
+    list: IDeviceTagItemVo[];
+    /** 总数 */
+    total: number;
+    /** 当前页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+  }
+
+  /** 设备标签选择项 */
+  export interface IDeviceTagSelectOptionVo {
+    /** 标签ID */
+    id: number;
+    /** 标签名称 */
+    name: string;
+    /** 学校ID */
+    schoolId: number;
+    /** 租户ID */
+    tenantId: number;
+    /** 关联设备数量 */
+    deviceCount: number;
+  }
+
+  /** 获取设备标签选择项 - 查询参数 */
+  export interface ReqGetDeviceTagSelectOptionsApi {
+    /** 学校ID */
+    schoolId?: number | -1;
+    /** 状态 */
+    status?: TEnableStatusValue | -1;
+  }
+
+  /** 获取设备标签选择项 - 响应 data */
+  export interface ResGetDeviceTagSelectOptionsApi {
+    /** 选择项列表 */
+    list: IDeviceTagSelectOptionVo[];
+  }
+
+  /** 新增设备标签 - 请求参数 */
+  export interface ReqPostDeviceTagApi {
+    /** 标签名称 */
+    name: string;
+    /** 所属学校ID */
+    schoolId: number;
+    /** 标签描述 */
+    description?: string;
+    /** 排序 */
+    sort?: number;
+  }
+
+  /** 新增设备标签 - 响应 data */
+  export interface ResPostDeviceTagApi {
+    /** 标签ID */
+    id: number;
+    /** 标签名称 */
+    name: string;
+  }
+
+  /** 更新设备标签 - 请求参数 */
+  export interface ReqPutDeviceTagApi {
+    /** 标签名称 */
+    name: string;
+    /** 标签描述 */
+    description?: string;
+    /** 排序 */
+    sort?: number;
+    /** 状态：-1不更新，0禁用，1启用 */
+    status?: TEnableStatusValue | -1;
+  }
+
+  /** 批量绑定设备到标签 - 请求参数 */
+  export interface ReqPostDeviceTagBatchAssignApi {
+    /** 设备ID列表 */
+    deviceIds: number[];
+    /** 设备标签ID列表 */
+    deviceTagIds: number[];
+  }
+
+  /** 批量绑定设备到标签 - 响应 data */
+  export interface ResPostDeviceTagBatchAssignApi {
+    /** 成功数 */
+    successCount: number;
+    /** 失败数 */
+    failCount: number;
+    /** 失败列表 */
+    failList: Array<Record<string, any>> | null;
+  }
+
+  /** 批量控制设备 - 请求参数 */
+  export interface ReqPostDeviceTagBatchControlApi {
+    /** 设备标签ID */
+    deviceTagId: number;
+    /** 操作 */
+    action: TDeviceTagControlActionValue;
+  }
+
+  /** 批量控制设备 - 成功命令项 */
+  export interface IDeviceTagControlCommandItemVo {
+    /** 设备ID */
+    deviceId: number;
+    /** 设备名称 */
+    deviceName: string;
+    /** 命令ID */
+    commandId: number;
+    /** 命令UUID */
+    cmdUuid: string;
+    /** 命令项 */
+    commandItem: string;
+    /** 描述 */
+    describe: string;
+    /** 状态 */
+    status: string;
+  }
+
+  /** 批量控制设备 - 失败项 */
+  export interface IDeviceTagControlFailItemVo {
+    /** 设备ID */
+    deviceId?: number;
+    /** 设备名称 */
+    deviceName?: string;
+    /** 命令项 */
+    commandItem?: string;
+    /** 描述 */
+    describe?: string;
+    /** 状态 */
+    status?: string;
+    /** 结果消息 */
+    message?: string;
+  }
+
+  /** 批量控制设备 - 响应 data */
+  export interface ResPostDeviceTagBatchControlApi {
+    /** 成功数 */
+    successCount: number;
+    /** 失败数 */
+    failCount: number;
+    /** 成功命令列表 */
+    successCommands: IDeviceTagControlCommandItemVo[];
+    /** 失败列表 */
+    failList: IDeviceTagControlFailItemVo[] | null;
+  }
+
+  /** 批量设置定时开关机 - 请求参数 */
+  export interface ReqPostDeviceTagBatchScheduleApi {
+    /** 设备标签ID */
+    deviceTagId: number;
+    /** 开机时间 */
+    powerOnTime: string;
+    /** 关机时间 */
+    powerOffTime: string;
+  }
+
+  /** 批量设置定时开关机 - 响应 data */
+  export interface ResPostDeviceTagBatchScheduleApi {
+    /** 成功数 */
+    successCount: number;
+    /** 失败数 */
+    failCount: number;
+    /** 失败列表 */
+    failList: Array<Record<string, any>> | null;
+  }
+
+  /** 设备标签详情 - 响应 data */
+  export type ResGetDeviceTagDetailApi = IDeviceTagItemVo;
+}
+
+// 设备基础标签模块
 export namespace DeviceBaseTag {
   /** 设备标签详情 */
   export interface IDeviceBaseTagItemVo {
@@ -333,6 +555,172 @@ export namespace DeviceCommand {
   }
 }
 
+// 公话配置模块
+export namespace DeviceDialConfig {
+  /** 公话配置项 */
+  export interface IDeviceDialConfigVo {
+    /** 配置ID */
+    id: number;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 租户ID */
+    tenantId?: number;
+    /** 租户名称 */
+    tenantName?: string;
+    /** 心跳时间（ms） */
+    heartbeatFrequency?: number;
+    /** 单次通话限定时长（分钟） */
+    callTime?: number;
+    /** 定时开机时间 */
+    powerOnTime?: string;
+    /** 定时关机时间 */
+    powerOffTime?: string;
+    /** 定时开关机时间 */
+    timeOnOff?: string;
+    /** 拨号类型 */
+    phoneType?: TPhoneTypeValue;
+    /** 是否显示留言按钮 */
+    messageFlag?: TYesNoFlagValue;
+    /** 是否全量同步人脸 */
+    downloadUserFlag?: TYesNoFlagValue;
+    /** 是否启用语音留言 */
+    messageSoundFlag?: TYesNoFlagValue;
+    /** 心理咨询身份认证 */
+    mhcFlag?: TYesNoFlagValue;
+    /** 刷脸记录人员信息 */
+    addPunchFace?: TYesNoFlagValue;
+    /** 禁拨号码 */
+    forbidPhone?: string;
+    /** 禁拨时间段 */
+    forbidCallTimes?: string;
+    /** sip用户名 */
+    sipUserName?: string;
+    /** sip密码 */
+    sipPassword?: string;
+    /** sip服务地址 */
+    sipDomain?: string;
+    /** Sip协议类型 */
+    sipTransportType?: TSipTypeValue;
+    /** 设备密码 */
+    password?: string;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+  }
+
+  /** 公话配置列表 - 请求参数 */
+  export interface ReqGetDeviceDialConfigListApi {
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+    /** 学校ID */
+    schoolId?: number;
+    /** 学校名称 */
+    schoolName?: string;
+  }
+
+  /** 公话配置列表 - 响应 data */
+  export interface ResGetDeviceDialConfigListApi {
+    /** 列表 */
+    list: IDeviceDialConfigVo[];
+    /** 总数 */
+    total: number;
+  }
+
+  /** 公话配置详情 - 响应 data */
+  export type ResGetDeviceDialConfigDetailApi = IDeviceDialConfigVo;
+
+  /** 添加公话配置 - 请求参数 */
+  export interface ReqPostDeviceDialConfigApi {
+    /** 学校ID */
+    schoolId: number;
+    /** 心跳时间（ms） */
+    heartbeatFrequency?: number;
+    /** 单次通话限定时长（分钟） */
+    callTime?: number;
+    /** 定时开机时间 */
+    powerOnTime?: string;
+    /** 定时关机时间 */
+    powerOffTime?: string;
+    /** 禁拨号码 */
+    forbidPhone?: string;
+    /** 拨号类型 */
+    phoneType?: TPhoneTypeValue;
+    /** 是否显示留言按钮 */
+    messageFlag?: TYesNoFlagValue;
+    /** 是否全量同步人脸 */
+    downloadUserFlag?: TYesNoFlagValue;
+    /** 是否启用语音留言 */
+    messageSoundFlag?: TYesNoFlagValue;
+    /** 心理咨询身份认证 */
+    mhcFlag?: TYesNoFlagValue;
+    /** 刷脸记录人员信息 */
+    addPunchFace?: TYesNoFlagValue;
+    /** 禁拨时间段 */
+    forbidCallTimes?: string;
+    /** sip用户名 */
+    sipUserName?: string;
+    /** sip密码 */
+    sipPassword?: string;
+    /** sip服务地址 */
+    sipDomain?: string;
+    /** Sip协议类型 */
+    sipTransportType?: TSipTypeValue;
+    /** 设备密码 */
+    password?: string;
+  }
+
+  /** 添加公话配置 - 响应 data */
+  export interface ResPostDeviceDialConfigApi {
+    /** 配置ID */
+    id: number;
+    /** 学校ID */
+    schoolId: number;
+  }
+
+  /** 修改公话配置 - 请求参数 */
+  export interface ReqPutDeviceDialConfigApi {
+    /** 心跳时间（ms） */
+    heartbeatFrequency?: number;
+    /** 单次通话限定时长（分钟） */
+    callTime?: number;
+    /** 定时开机时间 */
+    powerOnTime?: string;
+    /** 定时关机时间 */
+    powerOffTime?: string;
+    /** 禁拨号码 */
+    forbidPhone?: string;
+    /** 拨号类型 */
+    phoneType?: TPhoneTypeValue;
+    /** 是否显示留言按钮 */
+    messageFlag?: TYesNoFlagValue;
+    /** 是否全量同步人脸 */
+    downloadUserFlag?: TYesNoFlagValue;
+    /** 是否启用语音留言 */
+    messageSoundFlag?: TYesNoFlagValue;
+    /** 心理咨询身份认证 */
+    mhcFlag?: TYesNoFlagValue;
+    /** 刷脸记录人员信息 */
+    addPunchFace?: TYesNoFlagValue;
+    /** 禁拨时间段 */
+    forbidCallTimes?: string;
+    /** sip用户名 */
+    sipUserName?: string;
+    /** sip密码 */
+    sipPassword?: string;
+    /** sip服务地址 */
+    sipDomain?: string;
+    /** Sip协议类型 */
+    sipTransportType?: TSipTypeValue;
+    /** 设备密码 */
+    password?: string;
+  }
+}
+
 export namespace SchoolDeviceConfig {
   /** 学校设备类型配置项 */
   export interface ISchoolDeviceConfigItem {
@@ -403,10 +791,275 @@ export namespace SchoolDeviceConfig {
     /** 状态：1-启用，0-禁用 */
     status?: TEnableStatusValue;
   }
+}
 
-  /** 更新设备配置 - 响应 data */
-  export interface ResPutSchoolDeviceConfigApi {
+// 设备管理模块
+export namespace Device {
+  /** 设备标签信息 */
+  export interface IDeviceTagItemVo {
+    /** 标签ID */
+    id: number;
+    /** 标签名称 */
+    name: string;
+    /** 标签描述 */
+    description: string;
+    /** 排序值 */
+    sort: number;
+  }
+
+  /** 设备列表项 */
+  export interface IDeviceItemVo {
+    /** 设备ID */
+    id: number;
+    /** 设备名称 */
+    name: string;
+    /** 设备SN号 */
+    terminalSn: string;
+    /** 设备Mac地址 */
+    terminalMac: string;
+    /** 设备类型 */
+    terminalType: string;
+    /** 设备终端Key */
+    terminalKey: string;
+    /** 设备位置 */
+    location: string;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 设备组ID */
+    deviceGroupId: number | null;
+    /** 设备组名称 */
+    deviceGroupName: string;
+    /** 设备状态：0-离线，1-在线 */
+    status: TDeviceStatusValue;
+    /** 定时开机时间 */
+    powerOnTime: string | null;
+    /** 定时关机时间 */
+    powerOffTime: string | null;
+    /** 心跳频率（毫秒） */
+    heartbeatFrequency: number | null;
+    /** 单次通话限定时长（分钟） */
+    callTime: number | null;
+    /** 禁拨号码 */
+    forbidPhone: string | null;
+    /** 拨号类型 */
+    phoneType: TPhoneTypeValue | null;
+    /** 禁拨时间段 */
+    forbidCallTimes: string | null;
+    /** 是否显示留言按钮 */
+    messageFlag: TYesNoFlagValue | null;
+    /** 是否全量同步人脸 */
+    downloadUserFlag: TYesNoFlagValue | null;
+    /** 是否开启语音留言 */
+    messageSoundFlag: TYesNoFlagValue | null;
+    /** 心理咨询是否开启身份认证 */
+    mhcFlag: TYesNoFlagValue | null;
+    /** 刷脸时是否记录人员信息 */
+    addPunchFace: TYesNoFlagValue | null;
+    /** 预警通话时长（分钟） */
+    warnCallTime: number | null;
+    /** 计费模式 */
+    billMode: TDeviceBillModeValue | null;
+    /** 标签列表 */
+    tags: IDeviceTagItemVo[];
+    /** 创建时间 */
+    createdAt: string;
+    /** 更新时间 */
+    updatedAt: string;
+  }
+
+  /** 获取设备列表 - 查询参数 */
+  export interface ReqGetDevicesApi {
+    /** 设备名称（模糊查询） */
+    name?: string;
+    /** 设备SN号 */
+    terminalSn?: string;
+    /** 学校ID（全部传-1） */
+    schoolId?: number | -1;
+    /** 设备组ID（全部传-1） */
+    deviceGroupId?: number | -1;
+    /** 状态 0:离线 1:在线 -1:全部 */
+    status?: TDeviceStatusValue | -1;
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+  }
+
+  /** 获取设备列表 - 响应 data */
+  export interface ResGetDevicesApi {
+    /** 设备列表 */
+    list: IDeviceItemVo[];
+    /** 总数 */
+    total: number;
+    /** 当前页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+  }
+
+  /** 获取设备详情 - 响应 data */
+  export type ResGetDeviceDetailApi = IDeviceItemVo;
+
+  /** 新增设备 - 请求参数 */
+  export interface ReqPostDeviceApi {
+    /** 设备名称 */
+    name: string;
+    /** 终端KEY */
+    terminalKey: string;
+    /** 设备SN号 */
+    terminalSn: string;
+    /** 设备MAC地址 */
+    terminalMac: string;
+    /** 设备位置 */
+    location?: string;
+    /** 设备组ID，不填传-1 */
+    deviceGroupId?: number | -1;
+    /** 定时开机时间，格式：HH:MM */
+    powerOnTime?: string;
+    /** 定时关机时间，格式：HH:MM */
+    powerOffTime?: string;
+    /** 心跳频率(毫秒) */
+    heartbeatFrequency?: number;
+    /** 单次通话限定时长(分钟) */
+    callTime?: number;
+    /** 禁拨号码 */
+    forbidPhone?: string;
+    /** 拨号类型 */
+    phoneType?: TPhoneTypeValue;
+    /** 禁拨时间段 */
+    forbidCallTimes?: string;
+    /** 是否显示留言按钮：Y/N */
+    messageFlag?: TYesNoFlagValue;
+    /** 是否全量同步人脸：Y/N */
+    downloadUserFlag?: TYesNoFlagValue;
+    /** 是否开启语音留言：Y/N */
+    messageSoundFlag?: TYesNoFlagValue;
+    /** 心理咨询是否开启身份认证：Y/N */
+    mhcFlag?: TYesNoFlagValue;
+    /** 刷脸时是否记录人员信息：Y/N */
+    addPunchFace?: TYesNoFlagValue;
+    /** 预警通话时长 */
+    warnCallTime?: number;
+    /** 计费模式 */
+    billMode?: TDeviceBillModeValue;
+    /** 学校ID */
+    schoolId: number;
+    /** Sip用户名 */
+    sipUserName?: string;
+    /** Sip密码 */
+    sipPassword?: string;
+    /** Sip服务地址 */
+    sipDomain?: string;
+    /** Sip协议类型 */
+    sipTransportType?: TSipTypeValue;
+  }
+
+  /** 更新设备 - 请求参数 */
+  export interface ReqPutDeviceApi {
+    /** 设备名称 */
+    name?: string;
+    /** 终端KEY */
+    terminalKey?: string;
+    /** 设备Mac地址 */
+    terminalMac?: string;
+    /** 设备位置 */
+    location?: string;
+    /** 设备组ID */
+    deviceGroupId?: number | -1;
+    /** 定时开机时间 */
+    powerOnTime?: string;
+    /** 定时关机时间 */
+    powerOffTime?: string;
+    /** 心跳频率(毫秒) */
+    heartbeatFrequency?: number;
+    /** 单次通话限定时长(分钟) */
+    callTime?: number;
+    /** 禁拨号码 */
+    forbidPhone?: string;
+    /** 拨号类型 */
+    phoneType?: TPhoneTypeValue;
+    /** 禁拨时间段 */
+    forbidCallTimes?: string;
+    /** 是否显示留言按钮：Y/N */
+    messageFlag?: TYesNoFlagValue;
+    /** 是否全量同步人脸：Y/N */
+    downloadUserFlag?: TYesNoFlagValue;
+    /** 是否开启语音留言：Y/N */
+    messageSoundFlag?: TYesNoFlagValue;
+    /** 心理咨询是否开启身份认证：Y/N */
+    mhcFlag?: TYesNoFlagValue;
+    /** 刷脸时是否记录人员信息：Y/N */
+    addPunchFace?: TYesNoFlagValue;
+    /** 预警通话时长 */
+    warnCallTime?: number;
+    /** 计费模式 */
+    billMode?: TDeviceBillModeValue;
+    /** Sip用户名 */
+    sipUserName?: string;
+    /** Sip密码 */
+    sipPassword?: string;
+    /** Sip服务地址 */
+    sipDomain?: string;
+    /** Sip协议类型 */
+    sipTransportType?: TSipTypeValue;
+    /** 设备密码 */
+    password?: string;
+  }
+
+  /** 批量控制设备 - 请求参数 */
+  export interface ReqPostDeviceBatchControlApi {
+    /** 设备ID列表 */
+    deviceIds: number[];
+    /** 操作 */
+    action: TDeviceTagControlActionValue;
+  }
+
+  /** 批量控制设备 - 响应 data */
+  export interface ResPostDeviceBatchControlApi {
+    /** 响应消息 */
     message: string;
+  }
+
+  /** 设备列表导出 - 请求参数 */
+  export interface ReqPostDeviceExportApi {
+    /** 设备ID列表 */
+    deviceIds?: number[];
+    /** 设备名称 */
+    name?: string;
+    /** 设备SN号 */
+    terminalSn?: string;
+    /** 学校ID */
+    schoolId?: number;
+    /** 设备组ID */
+    deviceGroupId?: number;
+    /** 状态 0-离线 1-在线 */
+    status?: TDeviceStatusValue;
+  }
+
+  /** 设备列表导出 - 响应 data */
+  export interface ResPostDeviceExportApi {
+    /** 设备列表 */
+    list: IDeviceItemVo[];
+    /** 总数 */
+    total: number;
+    /** 当前页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+  }
+
+  /** 下载设备导入模板 - 请求参数 */
+  export interface ReqGetDeviceTemplateApi {
+    /** 学校ID */
+    schoolId?: number;
+  }
+
+  /** 设备导入 - 请求参数 */
+  export interface ReqPostDeviceImportApi {
+    /** 学校ID */
+    schoolId: number;
   }
 }
 
@@ -662,5 +1315,108 @@ export namespace DeviceUsage {
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
+  }
+}
+
+// 设备人脸库模块
+export namespace DeviceFace {
+  /** 设备人脸同步状态项 */
+  export interface IDeviceFaceStateItem {
+    /** 状态ID */
+    id: number;
+    /** 设备ID */
+    deviceId: number;
+    /** 学生ID */
+    studentId: number;
+    /** 学生姓名 */
+    studentName: string;
+    /** 学号 */
+    studentNo: string;
+    /** 同步状态 */
+    status: TDeviceFaceSyncStatusValue | null;
+    /** 期望动作 */
+    desiredAction: TDeviceFaceDesiredActionValue;
+    /** 期望版本 */
+    desiredVersion: number;
+    /** 已同步版本 */
+    syncedVersion: number;
+    /** 失败原因码 */
+    lastErrorCode?: TDeviceFaceErrorCodeValue | string;
+    /** 失败原因描述 */
+    lastErrorMsg?: string;
+    /** 最后同步时间 */
+    lastSyncedAt?: string;
+  }
+
+  /** 设备人脸库统计 */
+  export interface IDeviceFaceStateStats {
+    /** 总学生数 */
+    total: number;
+    /** 已同步数量 */
+    synced: number;
+    /** 待处理数量 */
+    pending: number;
+    /** 失败数量 */
+    failed: number;
+    /** 未建档数量 */
+    unrecorded: number;
+  }
+
+  /** 获取设备人脸库 - 请求参数 */
+  export interface ReqGetDeviceFaceStatesApi {
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+    /** 同步状态 */
+    status?: TDeviceFaceSyncStatusValue;
+    /** 学生姓名（模糊查询） */
+    studentName?: string;
+    /** 学号（模糊查询） */
+    studentNo?: string;
+  }
+
+  /** 获取设备人脸库 - 响应 data */
+  export interface ResGetDeviceFaceStatesApi {
+    /** 列表 */
+    list: IDeviceFaceStateItem[];
+    /** 总数 */
+    total: number;
+    /** 当前页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
+    /** 统计信息 */
+    stats?: IDeviceFaceStateStats;
+  }
+
+  /** 批量触发全量同步 - 请求参数 */
+  export interface ReqPostFaceSyncBatchApi {
+    /** 设备ID列表 */
+    deviceIds?: number[];
+    /** 标签ID */
+    tagId?: number;
+  }
+
+  /** 批量触发对账 - 请求参数 */
+  export interface ReqPostFaceSyncReconcileApi {
+    /** 设备ID列表 */
+    deviceIds?: number[];
+    /** 标签ID */
+    tagId?: number;
+  }
+
+  /** 批量重试 - 请求参数 */
+  export interface ReqPostFaceSyncRetryApi {
+    /** 设备ID列表 */
+    deviceIds?: number[];
+    /** 学生ID列表 */
+    studentIds?: number[];
+  }
+
+  /** 同步相关操作 - 响应 data */
+  export interface ResPostFaceSyncActionApi {
+    /** 响应消息 */
+    message: string;
   }
 }

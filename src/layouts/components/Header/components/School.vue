@@ -75,7 +75,6 @@ const axiosGetSchoolsListApi = async () => {
 
       schoolList.value = [ALL_SCHOOLS];
       syncSelectedSchool(ALL_SCHOOLS.id);
-      ElMessage.warning("请创建学校");
       return;
     }
 

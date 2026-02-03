@@ -24,7 +24,7 @@
       <el-table class="my-custom-table" :data="carbonCk_list">
         <el-table-column label="姓名" prop="name" width="170"> </el-table-column>
         <el-table-column label="用户账号" prop="username" align="center" width="120"> </el-table-column>
-        <el-table-column label="角色" prop="role_name" align="center"> </el-table-column>
+        <el-table-column label="角色" prop="roleName" align="center"> </el-table-column>
         <el-table-column label="状态" align="center">
           <template #default="scope">
             {{ scope.row.status == 1 ? "正常" : "禁用" }}

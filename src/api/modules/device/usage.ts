@@ -17,6 +17,6 @@ export function getDeviceUsageExportInfoApi(params: DeviceUsage.ReqGetDeviceUsag
 }
 
 /** 导出设备使用记录 */
-export function exportDeviceUsagesApi(params: DeviceUsage.ReqGetDeviceUsageListApi) {
+export function getDeviceUsagesExportApi(params: DeviceUsage.ReqGetDeviceUsageListApi): Promise<Blob> {
   return http.get("/admin/device-usages/export", params, { responseType: "blob" });
 }

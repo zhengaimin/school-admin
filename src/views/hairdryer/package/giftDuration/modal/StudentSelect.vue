@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ColumnProps } from "@/components/ProTable/interface";
-import type { OptionItem, StudentItem } from "../types";
+import type { OptionItem, StudentItem, StudentSelectProps } from "../types";
 
 import { nextTick, reactive, ref, watch } from "vue";
 import { studentsList } from "@/api/modules/InternalPage.js";
@@ -9,13 +9,9 @@ import ProTable from "@/components/ProTable/index.vue";
 import { useSchool } from "@/hooks/useSchool";
 import { useManage } from "@/hooks/useManage";
 
-interface Props {
-  /** 年级选项数据 */
-  gradeOptions?: OptionItem[];
-}
-
-withDefaults(defineProps<Props>(), {
-  gradeOptions: () => []
+withDefaults(defineProps<StudentSelectProps>(), {
+  gradeOptions: () => [],
+  title: ""
 });
 
 /** 弹窗可见状态 */
@@ -240,7 +236,7 @@ watch(
       destroy-on-close
       draggable
       align-center
-      title="选择学生"
+      :title="title"
       :width="1120"
       @open="handleDialogOpen"
     >

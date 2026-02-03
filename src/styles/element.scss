@@ -356,3 +356,10 @@
 .el-form .el-input-number .el-input__inner {
   text-align: left;
 }
+.el-input-number__increase,
+.el-input-number__decrease {
+  display: none;
+}
+.el-input-number {
+  --el-input-number-controls-height: 0;
+}

@@ -17,6 +17,6 @@ export function getPaymentExportInfoApi(params: Payment.ReqGetPaymentExportInfoA
 }
 
 /** 导出充值记录 */
-export function exportPaymentsApi(params: Payment.ReqGetPaymentsApi) {
+export function getPaymentsExportApi(params: Payment.ReqGetPaymentsApi): Promise<Blob> {
   return http.get("/admin/payments/export", params, { responseType: "blob" });
 }

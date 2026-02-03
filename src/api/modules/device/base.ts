@@ -27,7 +27,7 @@ export function deleteDeviceBaseApi(id) {
 }
 
 /** 下载导入模板 */
-export function getDeviceBaseTemplateApi(params: DeviceBase.ReqGetDeviceBaseTemplateApi) {
+export function getDeviceBaseTemplateApi(params: DeviceBase.ReqGetDeviceBaseTemplateApi): Promise<Blob> {
   return http.get("/admin/device-bases/template", params, { responseType: "blob" });
 }
 
@@ -49,6 +49,6 @@ export function getDeviceBaseExportInfoApi(params: DeviceBase.ReqGetDeviceBaseEx
 }
 
 /** 导出设备 */
-export function exportDeviceBasesApi(params: DeviceBase.ReqPostDeviceBaseExportApi) {
+export function postDeviceBaseExportApi(params: DeviceBase.ReqPostDeviceBaseExportApi): Promise<Blob> {
   return http.post("/admin/device-bases/export", params, { responseType: "blob" });
 }

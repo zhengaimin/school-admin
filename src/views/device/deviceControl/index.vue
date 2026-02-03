@@ -62,14 +62,14 @@
           >
             清除人员数据
           </el-button>
-          <el-button
+          <!-- <el-button
             :disabled="!(multipleSelection.length > 0)"
             type="success"
             class="search-btn"
             @click="updateStatus('count_user')"
           >
             查询人员数据
-          </el-button>
+          </el-button> -->
           <el-button :disabled="!(multipleSelection.length > 0)" type="success" class="search-btn" @click="bindTag">
             绑定标签
           </el-button>

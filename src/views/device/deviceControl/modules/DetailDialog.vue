@@ -21,36 +21,36 @@
           <el-descriptions-item label="定时关机时间">{{ detailForm.powerOffTime }}</el-descriptions-item>
           <el-descriptions-item label="是否显示留言按钮">
             <span v-if="detailForm.messageFlag">
-              {{ detailForm.messageFlag == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.messageFlag) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="是否全量同步人脸">
             <span v-if="detailForm.downloadUserFlag">
-              {{ detailForm.downloadUserFlag == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.downloadUserFlag) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="是否启用语音留言">
             <span v-if="detailForm.messageSoundFlag">
-              {{ detailForm.messageSoundFlag == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.messageSoundFlag) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="心理咨询身份认证">
             <span v-if="detailForm.mhcFlag">
-              {{ detailForm.mhcFlag == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.mhcFlag) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="刷脸记录人员信息">
             <span v-if="detailForm.addPunchFace">
-              {{ detailForm.addPunchFace == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.addPunchFace) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="禁拨号码">
             <span v-if="detailForm.forbidPhone">
-              {{ detailForm.forbidPhone == "Y" ? "是" : "否" }}
+              {{ getYesNoText(detailForm.forbidPhone) }}
             </span>
           </el-descriptions-item>
           <el-descriptions-item label="计费模式">
-            {{ { "0": "免费", Y: "音视频分开计费", N: "合并计费" }[detailForm.billMode] }}
+            {{ { "0": "免费", [YES_NO_FLAG.YES]: "音视频分开计费", [YES_NO_FLAG.NO]: "合并计费" }[detailForm.billMode] }}
           </el-descriptions-item>
           <el-descriptions-item label="预警通话时长（分钟）">
             {{ detailForm.warnCallTime }}
@@ -73,6 +73,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { PHONE_TYPE_I18N, SIP_TYPE_I18N } from "@/config/modules/device";
+import { YES_NO_FLAG, YES_NO_FLAG_I18N } from "@/config/modules/common";
 import { devicesDetail } from "@/api/modules/InternalPage.js";
 import { ElMessage } from "element-plus";
 
@@ -89,6 +90,9 @@ const openDialog = row => {
     }
   });
 };
+
+/** 获取是否文案 */
+const getYesNoText = value => (value === YES_NO_FLAG.YES ? YES_NO_FLAG_I18N[YES_NO_FLAG.YES] : YES_NO_FLAG_I18N[YES_NO_FLAG.NO]);
 
 defineExpose({ openDialog });
 </script>

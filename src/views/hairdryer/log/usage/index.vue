@@ -4,8 +4,9 @@ import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
-import { getDeviceUsageListApi, getGradesApi, getDepartmentsListApi, getClassesListApi } from "@/api/modules";
+import { getDeviceUsageListApi } from "@/api/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
+import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
 import { useSchool } from "@/hooks/useSchool";
 import {
   DEVICE_USAGE_STATUS_OPTIONS,
@@ -16,11 +17,6 @@ import {
 } from "@/config/modules";
 import DetailModal from "./modal/Detail.vue";
 import ExportModal from "./modal/Export.vue";
-
-interface OptionItem {
-  label: string;
-  value: number;
-}
 
 const { schoolId, guardSchool } = useSchool();
 
@@ -38,9 +34,21 @@ const { proTable, axiosGetTableList, refreshTableList } = useManage(
 
 const detailModalRef = ref();
 const exportModalRef = ref();
-const gradeOptions = ref<OptionItem[]>([]);
-const departmentOptions = ref<OptionItem[]>([]);
-const classOptions = ref<OptionItem[]>([]);
+const {
+  gradeOptions,
+  departmentOptions,
+  classOptions,
+  loadGradeOptions,
+  handleGradeCascade,
+  handleDepartmentCascade,
+  resetAllOptions
+} = useGradeDepartmentClassOptions({
+  schoolId,
+  requestOptions: {
+    department: { loading: false },
+    class: { loading: false }
+  }
+});
 
 const columns: ColumnProps<DeviceUsage.IDeviceUsageItem>[] = [
   { type: "index", label: "#", width: 60 },
@@ -121,61 +129,9 @@ const columns: ColumnProps<DeviceUsage.IDeviceUsageItem>[] = [
   { prop: "operation", label: "操作", width: 80, fixed: "right" }
 ];
 
-/** 获取年级列表 */
-const axiosGetGradeOptions = async () => {
-  try {
-    const result = await getGradesApi({ schoolId: Number(schoolId.value), page: 1, pageSize: 200 });
-    if (result.code === 0) {
-      const options = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-      gradeOptions.value.splice(0, gradeOptions.value.length, ...options);
-    }
-  } catch (error) {
-    console.error("axiosGetGradeOptions:", error);
-  }
-};
-/** 获取级部列表 */
-const axiosGetDepartmentOptions = async (gradeId: number) => {
-  try {
-    const result = await getDepartmentsListApi(
-      { schoolId: Number(schoolId.value), gradeId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      const options = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-      departmentOptions.value.splice(0, departmentOptions.value.length, ...options);
-    }
-  } catch (error) {
-    console.error("axiosGetDepartmentOptions:", error);
-  }
-};
-/** 获取班级列表 */
-const axiosGetClassOptions = async (gradeId: number, departmentId: number) => {
-  try {
-    const result = await getClassesListApi(
-      { schoolId: Number(schoolId.value), gradeId, departmentId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      const options = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-      classOptions.value.splice(0, classOptions.value.length, ...options);
-    }
-  } catch (error) {
-    console.error("axiosGetClassOptions:", error);
-  }
-};
-
 /** 查看详情 */
 const handleShowDetail = (row: DeviceUsage.IDeviceUsageItem) => {
-  detailModalRef.value?.acceptParams(row.id);
+  detailModalRef.value?.acceptParams({ title: "使用记录详情", type: "View", showConfirm: false }, row);
 };
 /** 打开导出弹窗 */
 const handleOpenExport = () => {
@@ -194,7 +150,10 @@ const handleOpenExport = () => {
     classId: searchParam.classId,
     gradeOptions: [...gradeOptions.value],
     departmentOptions: [...departmentOptions.value],
-    classOptions: [...classOptions.value]
+    classOptions: [...classOptions.value],
+    title: "批量导出",
+    type: "View",
+    showConfirm: true
   });
 };
 
@@ -202,25 +161,31 @@ const handleOpenExport = () => {
 watch(
   () => proTable.value?.searchParam?.gradeId,
   async gradeId => {
-    if (proTable.value?.searchParam) {
-      proTable.value.searchParam.departmentId = undefined;
-      proTable.value.searchParam.classId = undefined;
-    }
-    departmentOptions.value.length = 0;
-    classOptions.value.length = 0;
-    if (gradeId) await axiosGetDepartmentOptions(gradeId);
+    await handleGradeCascade({
+      gradeId: gradeId != null ? Number(gradeId) : undefined,
+      reset: () => {
+        if (proTable.value?.searchParam) {
+          proTable.value.searchParam.departmentId = undefined;
+          proTable.value.searchParam.classId = undefined;
+        }
+      }
+    });
   }
 );
 /** 监听级部变化，加载班级选项 */
 watch(
   () => proTable.value?.searchParam?.departmentId,
   async departmentId => {
-    if (proTable.value?.searchParam) {
-      proTable.value.searchParam.classId = undefined;
-    }
-    classOptions.value.length = 0;
     const gradeId = proTable.value?.searchParam?.gradeId;
-    if (gradeId && departmentId) await axiosGetClassOptions(gradeId, departmentId);
+    await handleDepartmentCascade({
+      gradeId: gradeId != null ? Number(gradeId) : undefined,
+      departmentId: departmentId != null ? Number(departmentId) : undefined,
+      reset: () => {
+        if (proTable.value?.searchParam) {
+          proTable.value.searchParam.classId = undefined;
+        }
+      }
+    });
   }
 );
 
@@ -228,10 +193,8 @@ watch(
 watch(
   schoolId,
   () => {
-    gradeOptions.value.length = 0;
-    departmentOptions.value.length = 0;
-    classOptions.value.length = 0;
-    axiosGetGradeOptions();
+    resetAllOptions();
+    loadGradeOptions();
     refreshTableList();
   },
   { immediate: true }

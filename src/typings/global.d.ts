@@ -1,5 +1,7 @@
 /* Menu */
 declare namespace Menu {
+  type ButtonPermission = string | { code: string; name?: string };
+
   interface MenuOptions {
     path: string;
     name: string;
@@ -7,6 +9,7 @@ declare namespace Menu {
     redirect?: string;
     meta: MetaProps;
     children?: MenuOptions[];
+    buttonList?: ButtonPermission[];
   }
   interface MetaProps {
     icon: string;

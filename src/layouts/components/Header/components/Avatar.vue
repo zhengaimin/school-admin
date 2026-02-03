@@ -1,12 +1,15 @@
 <template>
   <el-dropdown trigger="click">
     <div class="avatar">
-      <img src="@/assets/images/avatar1.jpeg" alt="avatar" />
+      <img :src="avatarSrc" alt="avatar" />
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item @click="openDialog('infoRef')" v-if="false">
-          <el-icon><User /></el-icon>{{ $t("header.personalData") }}
+        <el-dropdown-item @click="goToProfile">
+          <el-icon><User /></el-icon>个人信息
+        </el-dropdown-item>
+        <el-dropdown-item @click="goToChangePassword">
+          <el-icon><Edit /></el-icon>修改密码
         </el-dropdown-item>
         <el-dropdown-item>
           <el-icon><Memo /></el-icon>版本号：v{{ version }}
@@ -14,35 +17,37 @@
         <el-dropdown-item divided @click="setLogo" v-if="false && userInfo['is_admin']">
           <el-icon><Setting /></el-icon>系统设置
         </el-dropdown-item>
-        <el-dropdown-item v-if="false" divided @click="openDialog('passwordRef')">
-          <el-icon><Edit /></el-icon>{{ $t("header.changePassword") }}
-        </el-dropdown-item>
         <el-dropdown-item divided @click="logout">
           <el-icon><SwitchButton /></el-icon>{{ $t("header.logout") }}
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <!-- infoDialog -->
-  <InfoDialog ref="infoRef"></InfoDialog>
-  <!-- passwordDialog -->
-  <PasswordDialog ref="passwordRef"></PasswordDialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { LOGIN_URL } from "@/config";
 import { useRouter } from "vue-router";
+import { ROUTE_SYSTEM } from "@/config/router";
 // import { logoutApi } from "@/api/modules/login";
 import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
-import InfoDialog from "./InfoDialog.vue";
-import PasswordDialog from "./PasswordDialog.vue";
-import { version } from "../../../../../package.json";
+import { computed } from "vue";
+import defaultAvatar from "@/assets/images/avatar1.jpeg";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
+
+const version = __APP_INFO__.pkg.version;
 
 const router = useRouter();
 const userStore = useUserStore();
-const userInfo = useUserStore().userInfo;
+const userInfo = userStore.userInfo;
+const { getUploadPath } = useAssetsPath();
+const avatarSrc = computed(() => {
+  const avatar = userStore.userInfo?.avatar;
+  if (!avatar) return defaultAvatar;
+  const resolved = getUploadPath(avatar);
+  return resolved || defaultAvatar;
+});
 
 // 退出登录
 const logout = () => {
@@ -68,12 +73,12 @@ const setLogo = () => {
   router.push("/systemSetting");
 };
 
-// 打开修改密码和个人信息弹窗
-const infoRef = ref<InstanceType<typeof InfoDialog> | null>(null);
-const passwordRef = ref<InstanceType<typeof PasswordDialog> | null>(null);
-const openDialog = (ref: string) => {
-  if (ref == "infoRef") infoRef.value?.openDialog();
-  if (ref == "passwordRef") passwordRef.value?.openDialog();
+const goToProfile = () => {
+  router.push(ROUTE_SYSTEM.PROFILE);
+};
+
+const goToChangePassword = () => {
+  router.push(ROUTE_SYSTEM.CHANGE_PASSWORD);
 };
 </script>
 

@@ -76,6 +76,7 @@ export namespace Login {
     tenantId: number;
     tenantCode: string;
     tenantName: string;
+    permissions: string[];
   }
 
   export interface ResLogin {
@@ -570,12 +571,27 @@ export type { Department } from "./modules/department";
 export type { Class } from "./modules/class";
 // 学生模块
 export type { Student } from "./modules/student";
+// 亲情号模块
+export type { FamilyContact } from "./modules/family-contact";
+// 家长绑定状态模块
+export type { FamilyBindStatus } from "./modules/family-bindstatus";
 // 吹风机费率模块, 视频话机通话费率模块
 export type { RateDryer, RateVideo } from "./modules/rate";
 // 年级模块
 export type { Grade } from "./modules/grade";
-// 设备标签模块, 设备命令模块, 设备使用记录模块
-export type { DeviceBaseTag, DeviceCommand, SchoolDeviceConfig, DeviceUsage } from "./modules/device";
+// 设备管理模块, 设备标签模块, 设备命令模块, 公话配置模块, 设备使用记录模块, 设备人脸库模块
+export type {
+  Device,
+  DeviceTag,
+  DeviceBaseTag,
+  DeviceCommand,
+  DeviceDialConfig,
+  SchoolDeviceConfig,
+  DeviceUsage,
+  DeviceFace
+} from "./modules/device";
+// 设备组模块
+export type { DeviceGroup } from "./modules/device-group";
 // 年级套餐配置模块
 export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules/package";
 // 支付管理模块
@@ -586,3 +602,11 @@ export type { Refund } from "./modules/refund";
 export type { Merchant } from "./modules/merchant";
 // 系统管理模块
 export type { System } from "./modules/system";
+// 公共模块
+export type { Common } from "./modules/common";
+// 公告管理模块
+export type { Announcement } from "./modules/announcement";
+// 校园风采模块
+export type { SchoolMien } from "./modules/school-mien";
+// 人脸同步模块
+export type { FaceSync } from "./modules/face-sync";

@@ -1,1 +1,0 @@
-import{aa as e}from"./index-BXD89bSo.js";function s(a,t){return e.get(`/admin/school-rates/${a}/call-rate`,{},t)}function r(a,t){return e.put(`/admin/school-rates/${a}/call-rate`,t)}function l(a,t){return e.get(`/admin/school-rates/${a}/message-rate`,{},t)}function n(a,t){return e.put(`/admin/school-rates/${a}/message-rate`,t)}export{n as a,l as b,s as g,r as p};

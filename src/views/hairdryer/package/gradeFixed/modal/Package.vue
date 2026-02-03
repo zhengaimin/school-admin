@@ -29,6 +29,8 @@ const ruleForm = ref<Partial<GradePackage.ReqPostGradeFixedPackageApi> & { packa
 const gradeOptions = ref<{ id: number; name: string }[]>([]);
 const boundGrades = ref<{ id: number; name: string }[]>([]);
 
+const isAdd = computed(() => parameter.value.type === "Add");
+const isEdit = computed(() => parameter.value.type === "Edit");
 const isView = computed(() => parameter.value.type === "View");
 
 const mergedGradeOptions = computed(() => {
@@ -131,17 +133,15 @@ const onSubmitForm = async (formEl: any) => {
   await formEl.validate(async (valid: boolean) => {
     if (valid) {
       const form = unref(ruleForm);
-      const { type } = unref(parameter);
-
       try {
-        if (type === "Add") {
+        if (isAdd.value) {
           await postGradeFixedPackageApi({
             ...form,
             startTime: form.startTime ? formatMonthToDate(form.startTime, false) : "",
             endTime: form.endTime ? formatMonthToDate(form.endTime, true) : ""
           } as GradePackage.ReqPostGradeFixedPackageApi);
           ElMessage.success("添加成功");
-        } else if (type === "Edit" && form.packageTemplateId) {
+        } else if (isEdit.value && form.packageTemplateId) {
           await putGradeFixedPackageApi(form.packageTemplateId, {
             basePrice: form.basePrice!,
             totalMonths: form.totalMonths!,
@@ -171,10 +171,13 @@ const formatDateToMonth = (dateStr: string): string => {
   return dateStr.substring(0, 7); // 截取 YYYY-MM 部分
 };
 
-const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigVo) => {
+const acceptParams = async (
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: GradePackage.IGradePackageConfigVo
+) => {
   parameter.value = { ...parameter.value, ...params };
 
-  if (params.type === "Add") {
+  if (isAdd.value) {
     boundGrades.value = [];
     ruleForm.value = {
       ...getInitialFormData(),
@@ -182,7 +185,7 @@ const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigV
     };
     currentSchoolName.value = storeSchoolName.value;
     await axiosGetGradesApi();
-  } else if (row) {
+  } else if ((isEdit.value || isView.value) && row) {
     // 编辑或查看模式：调用详情接口
     try {
       const result = await getGradeFixedPackageDetailApi(row.packageTemplateId);

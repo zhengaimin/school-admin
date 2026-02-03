@@ -1,48 +1,34 @@
 <script setup lang="ts">
-import type { PackageRecord } from "@/api/interface";
-import type { TPackageTypeValue, TPackageRecordStatusValue } from "@/config/modules/package";
+import type {
+  PackagePurchaseExportAcceptParams,
+  PackagePurchaseExportFormData,
+  PackagePurchaseModalParams,
+  PackagePurchaseModalType
+} from "../types";
 
 import { reactive, ref, computed } from "vue";
 import { ElNotification } from "element-plus";
-import {
-  getPackageRecordExportInfoApi,
-  exportPackageRecordsApi,
-  getGradesApi,
-  getDepartmentsListApi,
-  getClassesListApi
-} from "@/api/modules";
+import { getPackageRecordExportInfoApi, getPackageRecordsExportApi } from "@/api/modules";
 import { PACKAGE_TYPE_OPTIONS, PACKAGE_RECORD_STATUS_OPTIONS, DEVICE_TYPE } from "@/config/modules";
-
-interface OptionItem {
-  label: string;
-  value: number;
-}
-
-interface FormData {
-  schoolId: number;
-  studentKeyword: string;
-  orderNo: string;
-  startDate: string;
-  endDate: string;
-  gradeId: number | null;
-  departmentId: number | null;
-  classId: number | null;
-  status: TPackageRecordStatusValue | null;
-  packageType: TPackageTypeValue | null;
-  minPrice: number | undefined;
-  maxPrice: number | undefined;
-}
+import { isNullOrUnDef } from "@/utils/is";
+import { buildPackagePurchaseExportAcceptPayload, buildPackagePurchaseExportRequestParams } from "../utils/payload";
+import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
 
 const visible = ref(false);
 const loading = ref(false);
 const exporting = ref(false);
+const parameter = ref<PackagePurchaseModalParams>({
+  title: "",
+  type: "View" as PackagePurchaseModalType,
+  showConfirm: true
+});
 
 const totalRecords = ref(0);
 const totalPages = ref(0);
 const selectedPage = ref(1);
 const pageSize = ref(10000);
 
-const formData = reactive<FormData>({
+const formData = reactive<PackagePurchaseExportFormData>({
   schoolId: 0,
   studentKeyword: "",
   orderNo: "",
@@ -57,9 +43,23 @@ const formData = reactive<FormData>({
   maxPrice: undefined
 });
 
-const gradeOptions = ref<OptionItem[]>([]);
-const departmentOptions = ref<OptionItem[]>([]);
-const classOptions = ref<OptionItem[]>([]);
+const schoolIdRef = computed(() => formData.schoolId);
+const {
+  gradeOptions,
+  departmentOptions,
+  classOptions,
+  loadGradeOptions,
+  loadDepartmentOptions,
+  loadClassOptions,
+  handleGradeCascade,
+  handleDepartmentCascade
+} = useGradeDepartmentClassOptions({
+  schoolId: schoolIdRef,
+  requestOptions: {
+    department: { loading: false },
+    class: { loading: false }
+  }
+});
 
 const pageOptions = computed(() => {
   if (!totalRecords.value || !totalPages.value) return [];
@@ -74,187 +74,73 @@ const pageOptions = computed(() => {
   });
 });
 
-/** 构建请求参数 */
-const buildRequestParams = (): PackageRecord.ReqGetPackageRecordsApi => ({
-  schoolId: formData.schoolId,
-  deviceType: DEVICE_TYPE.DRYER,
-  studentKeyword: formData.studentKeyword || undefined,
-  orderNo: formData.orderNo || undefined,
-  startDate: formData.startDate || undefined,
-  endDate: formData.endDate || undefined,
-  gradeId: formData.gradeId ?? -1,
-  departmentId: formData.departmentId ?? -1,
-  classId: formData.classId ?? -1,
-  status: formData.status ?? undefined,
-  packageType: formData.packageType ?? undefined,
-  minPrice: formData.minPrice,
-  maxPrice: formData.maxPrice,
-  page: selectedPage.value,
-  pageSize: pageSize.value
-});
-
 /** 获取导出信息 */
-const axiosGetExportInfo = async () => {
+async function axiosGetExportInfo() {
   loading.value = true;
   try {
-    const result = await getPackageRecordExportInfoApi(buildRequestParams());
+    const result = await getPackageRecordExportInfoApi(
+      buildPackagePurchaseExportRequestParams({
+        formData,
+        page: selectedPage.value,
+        pageSize: pageSize.value,
+        deviceType: DEVICE_TYPE.DRYER
+      })
+    );
     if (result.code === 0) {
       totalRecords.value = result.data.totalRecords;
       totalPages.value = result.data.totalPages;
       pageSize.value = result.data.pageSize || 10000;
       selectedPage.value = 1;
     }
+    return result;
   } catch (error) {
     console.error("axiosGetExportInfo:", error);
+    return { code: -1, data: null };
   } finally {
     loading.value = false;
   }
-};
-
-/** 获取年级列表 */
-const axiosGetGradeOptions = async () => {
-  try {
-    const result = await getGradesApi({ schoolId: formData.schoolId, page: 1, pageSize: 200 });
-    if (result.code === 0) {
-      gradeOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetGradeOptions:", error);
-  }
-};
-
-/** 获取级部列表 */
-const axiosGetDepartmentOptions = async (gradeId: number) => {
-  try {
-    const result = await getDepartmentsListApi(
-      { schoolId: formData.schoolId, gradeId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      departmentOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetDepartmentOptions:", error);
-  }
-};
-
-/** 获取班级列表 */
-const axiosGetClassOptions = async (gradeId: number, departmentId: number) => {
-  try {
-    const result = await getClassesListApi(
-      { schoolId: formData.schoolId, gradeId, departmentId, page: 1, pageSize: 200 },
-      { loading: false }
-    );
-    if (result.code === 0) {
-      classOptions.value = (result.data?.list || []).map((item: any) => ({
-        label: item.name,
-        value: item.id
-      }));
-    }
-  } catch (error) {
-    console.error("axiosGetClassOptions:", error);
-  }
-};
-
-/** 年级变更 */
-const onGradeChange = async (value: number | null) => {
-  formData.departmentId = null;
-  formData.classId = null;
-  departmentOptions.value = [];
-  classOptions.value = [];
-
-  if (value != null) {
-    await axiosGetDepartmentOptions(value);
-  }
-};
-
-/** 级部变更 */
-const onDepartmentChange = async (value: number | null) => {
-  formData.classId = null;
-  classOptions.value = [];
-
-  if (formData.gradeId != null && value != null) {
-    await axiosGetClassOptions(formData.gradeId, value);
-  }
-};
-
-/** 查询 */
-const onSearch = () => {
-  axiosGetExportInfo();
-};
-
-export interface AcceptParamsOptions {
-  schoolId: number;
-  studentKeyword?: string;
-  orderNo?: string;
-  startDate?: string;
-  endDate?: string;
-  gradeId?: number | null;
-  departmentId?: number | null;
-  classId?: number | null;
-  status?: TPackageRecordStatusValue | null;
-  packageType?: TPackageTypeValue | null;
-  minPrice?: number;
-  maxPrice?: number;
-  gradeOptions?: OptionItem[];
-  departmentOptions?: OptionItem[];
-  classOptions?: OptionItem[];
 }
 
-const acceptParams = async (options: AcceptParamsOptions) => {
-  formData.schoolId = options.schoolId;
-  formData.studentKeyword = options.studentKeyword || "";
-  formData.orderNo = options.orderNo || "";
-  formData.startDate = options.startDate || "";
-  formData.endDate = options.endDate || "";
-  formData.gradeId = options.gradeId != null && options.gradeId !== -1 ? Number(options.gradeId) : null;
-  formData.departmentId = options.departmentId != null && options.departmentId !== -1 ? Number(options.departmentId) : null;
-  formData.classId = options.classId != null && options.classId !== -1 ? Number(options.classId) : null;
-  formData.status = options.status ?? null;
-  formData.packageType = options.packageType ?? null;
-  formData.minPrice = options.minPrice;
-  formData.maxPrice = options.maxPrice;
-
-  if (formData.gradeId == null) {
-    formData.departmentId = null;
-    formData.classId = null;
-  } else if (formData.departmentId == null) {
-    formData.classId = null;
-  }
-
-  gradeOptions.value = options.gradeOptions || [];
-  departmentOptions.value = options.departmentOptions || [];
-  classOptions.value = options.classOptions || [];
-
-  if (!gradeOptions.value.length) {
-    await axiosGetGradeOptions();
-  }
-  if (formData.gradeId != null && !departmentOptions.value.length) {
-    await axiosGetDepartmentOptions(formData.gradeId);
-  }
-  if (formData.gradeId != null && formData.departmentId != null && !classOptions.value.length) {
-    await axiosGetClassOptions(formData.gradeId, formData.departmentId);
-  }
-
-  await axiosGetExportInfo();
-
-  visible.value = true;
-};
-
-const onExport = async () => {
+/** 处理年级变更 */
+async function handleGradeChange(value: number | null) {
+  await handleGradeCascade({
+    gradeId: isNullOrUnDef(value) ? null : value,
+    reset: () => {
+      formData.departmentId = null;
+      formData.classId = null;
+    }
+  });
+}
+/** 处理级部变更 */
+async function handleDepartmentChange(value: number | null) {
+  await handleDepartmentCascade({
+    gradeId: formData.gradeId,
+    departmentId: isNullOrUnDef(value) ? null : value,
+    reset: () => {
+      formData.classId = null;
+    }
+  });
+}
+/** 处理查询 */
+function handleSearch() {
+  axiosGetExportInfo();
+}
+/** 处理导出 */
+async function handleExport() {
   if (totalRecords.value === 0) return;
 
   exporting.value = true;
   ElNotification({ title: "提示", message: "数据导出中，请稍后", type: "info", duration: 0 });
 
   try {
-    const response = await exportPackageRecordsApi(buildRequestParams());
+    const response = await getPackageRecordsExportApi(
+      buildPackagePurchaseExportRequestParams({
+        formData,
+        page: selectedPage.value,
+        pageSize: pageSize.value,
+        deviceType: DEVICE_TYPE.DRYER
+      })
+    );
 
     const blob = new Blob([response as any], { type: "application/vnd.ms-excel;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
@@ -268,19 +154,44 @@ const onExport = async () => {
     ElNotification.closeAll();
     ElNotification({ title: "成功", message: "导出成功", type: "success" });
   } catch (error) {
-    console.error("onExport:", error);
+    console.error("handleExport:", error);
     ElNotification.closeAll();
     ElNotification({ title: "错误", message: "导出失败，请重试", type: "error" });
   } finally {
     exporting.value = false;
   }
-};
+}
+
+/** 接收参数 */
+async function acceptParams(options: PackagePurchaseExportAcceptParams) {
+  parameter.value = { ...parameter.value, ...options };
+  const payload = buildPackagePurchaseExportAcceptPayload(options);
+
+  Object.assign(formData, payload.formData);
+  gradeOptions.value = payload.gradeOptions;
+  departmentOptions.value = payload.departmentOptions;
+  classOptions.value = payload.classOptions;
+
+  if (!gradeOptions.value.length) {
+    await loadGradeOptions();
+  }
+  if (!isNullOrUnDef(formData.gradeId) && !departmentOptions.value.length) {
+    await loadDepartmentOptions(formData.gradeId);
+  }
+  if (!isNullOrUnDef(formData.gradeId) && !isNullOrUnDef(formData.departmentId) && !classOptions.value.length) {
+    await loadClassOptions(formData.gradeId, formData.departmentId);
+  }
+
+  await axiosGetExportInfo();
+
+  visible.value = true;
+}
 
 defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="批量导出" width="680px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="760px" destroy-on-close draggable align-center>
     <div v-loading="loading" class="export-container">
       <el-form :model="formData">
         <el-row :gutter="16">
@@ -296,14 +207,14 @@ defineExpose({ acceptParams });
           </el-col>
           <el-col :span="12">
             <el-form-item label="套餐类型">
-              <el-select v-model="formData.packageType" placeholder="请选择套餐类型" clearable style="width: 100%">
+              <el-select v-model="formData.packageType" placeholder="请选择套餐类型" clearable class="w-full">
                 <el-option v-for="item in PACKAGE_TYPE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态">
-              <el-select v-model="formData.status" placeholder="请选择状态" clearable style="width: 100%">
+              <el-select v-model="formData.status" placeholder="请选择状态" clearable class="w-full">
                 <el-option
                   v-for="item in PACKAGE_RECORD_STATUS_OPTIONS"
                   :key="item.value"
@@ -315,24 +226,12 @@ defineExpose({ acceptParams });
           </el-col>
           <el-col :span="12">
             <el-form-item label="最低价格">
-              <el-input-number
-                v-model="formData.minPrice"
-                :min="0"
-                placeholder="最低价格"
-                style="width: 100%"
-                :controls="false"
-              />
+              <el-input-number v-model="formData.minPrice" :min="0" placeholder="最低价格" class="w-full" :controls="false" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="最高价格">
-              <el-input-number
-                v-model="formData.maxPrice"
-                :min="0"
-                placeholder="最高价格"
-                style="width: 100%"
-                :controls="false"
-              />
+              <el-input-number v-model="formData.maxPrice" :min="0" placeholder="最高价格" class="w-full" :controls="false" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -342,7 +241,7 @@ defineExpose({ acceptParams });
                 type="date"
                 placeholder="选择开始日期"
                 value-format="YYYY-MM-DD"
-                style="width: 100%"
+                class="w-full"
               />
             </el-form-item>
           </el-col>
@@ -353,19 +252,13 @@ defineExpose({ acceptParams });
                 type="date"
                 placeholder="选择结束日期"
                 value-format="YYYY-MM-DD"
-                style="width: 100%"
+                class="w-full"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="年级">
-              <el-select
-                v-model="formData.gradeId"
-                placeholder="请选择年级"
-                clearable
-                style="width: 100%"
-                @change="onGradeChange"
-              >
+              <el-select v-model="formData.gradeId" placeholder="请选择年级" clearable class="w-full" @change="handleGradeChange">
                 <el-option v-for="item in gradeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -377,8 +270,8 @@ defineExpose({ acceptParams });
                 placeholder="请选择级部"
                 clearable
                 :disabled="!formData.gradeId"
-                style="width: 100%"
-                @change="onDepartmentChange"
+                class="w-full"
+                @change="handleDepartmentChange"
               >
                 <el-option v-for="item in departmentOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
@@ -391,14 +284,14 @@ defineExpose({ acceptParams });
                 placeholder="请选择班级"
                 clearable
                 :disabled="!formData.gradeId || !formData.departmentId"
-                style="width: 100%"
+                class="w-full"
               >
                 <el-option v-for="item in classOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-button type="primary" @click="onSearch">查询</el-button>
+            <el-button type="primary" @click="handleSearch">查询</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -411,7 +304,7 @@ defineExpose({ acceptParams });
         </div>
         <div class="settings-control">
           <span class="label">导出范围：</span>
-          <el-select v-model="selectedPage" placeholder="请选择导出批次" style="width: 200px">
+          <el-select v-model="selectedPage" placeholder="请选择导出批次" class="w-[200px]">
             <el-option v-for="item in pageOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </div>
@@ -421,48 +314,41 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="exporting" :disabled="loading || totalRecords === 0" @click="onExport">导出</el-button>
+      <el-button
+        v-if="parameter.showConfirm"
+        type="primary"
+        :loading="exporting"
+        :disabled="loading || totalRecords === 0"
+        @click="handleExport"
+      >
+        导出
+      </el-button>
     </template>
   </el-dialog>
 </template>
 
 <style scoped lang="scss">
 .export-container {
-  padding: 0 10px;
+  @apply px-[10px];
 }
 .export-settings {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  margin-top: 8px;
-  background-color: #f8f9fb;
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
+  @apply flex items-center justify-between p-4 mt-2 bg-[#f8f9fb] border border-[#ebeef5] rounded;
   .settings-info {
     .text-muted {
-      color: #606266;
+      @apply text-[#606266];
     }
     .text-primary {
-      margin: 0 4px;
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--el-color-primary);
+      @apply mx-1 text-lg font-bold text-[var(--el-color-primary)];
     }
   }
   .settings-control {
-    display: flex;
-    align-items: center;
+    @apply flex items-center;
     .label {
-      margin-right: 8px;
-      font-size: 14px;
-      color: #606266;
+      @apply mr-2 text-sm text-[#606266];
     }
   }
 }
 .tip-text {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #909399;
+  @apply mt-2 text-xs text-[#909399];
 }
 </style>

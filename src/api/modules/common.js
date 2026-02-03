@@ -19,3 +19,8 @@ export const img_upload = params => {
 export const industry_list = params => {
   return http.get(`/common/industry_list?${params}`);
 };
+
+//获取RSA公钥
+export const getRsaPublicKeyApi = () => {
+  return http.get(`/admin/public_key`, {}, { loading: false });
+};

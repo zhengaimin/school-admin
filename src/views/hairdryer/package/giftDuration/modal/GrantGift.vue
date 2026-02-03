@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus";
-import type { GiftGrantMode, OptionItem, StudentItem } from "../types";
+import type { GrantGiftProps, OptionItem, StudentItem } from "../types";
 
 import { reactive, ref, watch } from "vue";
 import { User } from "@element-plus/icons-vue";
@@ -13,12 +13,7 @@ import { useSchool } from "@/hooks/useSchool";
 import { DEVICE_TYPE } from "@/config/modules";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 
-interface Props {
-  /** 赠费模式 */
-  mode: GiftGrantMode;
-}
-
-const props = defineProps<Props>();
+const props = defineProps<GrantGiftProps>();
 
 const emit = defineEmits<{
   /** 提交成功后触发 */
@@ -221,15 +216,7 @@ watch(visible, async isOpen => {
 </script>
 
 <template>
-  <el-dialog
-    v-model="visible"
-    :title="mode === 'range' ? '批量添加赠费' : '选择学生赠费'"
-    :width="760"
-    :close-on-click-modal="false"
-    destroy-on-close
-    draggable
-    align-center
-  >
+  <el-dialog v-model="visible" :title="title" :width="760" :close-on-click-modal="false" destroy-on-close draggable align-center>
     <SchoolInfo :name="schoolName" />
 
     <el-form ref="grantFormRef" :model="form" :rules="rules" label-position="top">

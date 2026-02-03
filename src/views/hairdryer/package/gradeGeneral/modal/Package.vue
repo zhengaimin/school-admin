@@ -32,8 +32,9 @@ const ruleForm = ref<
 const gradeOptions = ref<{ id: number; name: string }[]>([]);
 const boundGrades = ref<{ id: number; name: string }[]>([]);
 
+const isAdd = computed(() => parameter.value.type === "Add");
+const isEdit = computed(() => parameter.value.type === "Edit");
 const isView = computed(() => parameter.value.type === "View");
-
 const mergedGradeOptions = computed(() => {
   const map = new Map<number, { id: number; name: string }>();
   [...boundGrades.value, ...gradeOptions.value].forEach(g => map.set(g.id, g));
@@ -47,23 +48,25 @@ const rules: FormRules = {
   totalMonths: [{ required: true, message: "请输入套餐月数", trigger: "blur" }]
 };
 
-const getInitialFormData = (): Partial<GradeGeneralPackage.ReqPostGradeGeneralPackageApi> => ({
-  schoolId: 0,
-  gradeIds: [],
-  deviceType: DEVICE_TYPE.DRYER,
-  basePrice: 0,
-  totalMonths: 1,
-  packageContent: {},
-  templateDescription: "",
-  usageRules: "",
-  firstMonthRatio: true
-});
+function getInitialFormData(): Partial<GradeGeneralPackage.ReqPostGradeGeneralPackageApi> {
+  return {
+    schoolId: 0,
+    gradeIds: [],
+    deviceType: DEVICE_TYPE.DRYER,
+    basePrice: 0,
+    totalMonths: 1,
+    packageContent: {},
+    templateDescription: "",
+    usageRules: "",
+    firstMonthRatio: true
+  };
+}
 
 /** 获取未配置的年级列表 */
-const axiosGetGradesApi = async (targetSchoolId?: number) => {
+async function axiosGetUnconfiguredGradesApi(targetSchoolId?: number) {
   try {
     const result = await getUnconfiguredGradesApi({
-      schoolId: targetSchoolId ?? Number(schoolId.value),
+      schoolId: targetSchoolId ?? Number(unref(schoolId)),
       configType: GRADE_CONFIG_TYPE.PACKAGE,
       deviceType: DEVICE_TYPE.DRYER,
       packageType: GRADE_PACKAGE_TYPE.GENERAL,
@@ -73,37 +76,84 @@ const axiosGetGradesApi = async (targetSchoolId?: number) => {
     if (result.code === 0) {
       gradeOptions.value = result.data?.grades ?? [];
     }
+    return result;
   } catch (error) {
-    console.error("axiosGetGradesApi:", error);
+    console.error("axiosGetUnconfiguredGradesApi:", error);
+    return { code: -1, data: null };
   }
-};
+}
+/** 获取详情 */
+async function axiosGetGradeGeneralPackageDetailApi(id: number) {
+  try {
+    const result = await getGradeGeneralPackageDetailApi(id);
+    return result;
+  } catch (error) {
+    console.error("axiosGetGradeGeneralPackageDetailApi:", error);
+    return { code: -1, data: null };
+  }
+}
+/** 新增 */
+async function axiosPostGradeGeneralPackageApi(form: Partial<GradeGeneralPackage.ReqPostGradeGeneralPackageApi>) {
+  try {
+    const payload: GradeGeneralPackage.ReqPostGradeGeneralPackageApi = {
+      schoolId: Number(form.schoolId ?? 0),
+      gradeIds: form.gradeIds ?? [],
+      deviceType: form.deviceType ?? DEVICE_TYPE.DRYER,
+      basePrice: form.basePrice ?? 0,
+      totalMonths: form.totalMonths ?? 1,
+      packageContent: form.packageContent,
+      templateDescription: form.templateDescription,
+      usageRules: form.usageRules,
+      firstMonthRatio: form.firstMonthRatio
+    };
+    const result = await postGradeGeneralPackageApi(payload);
+    if (result.code === 0) {
+      ElMessage.success("添加成功");
+    }
+    return result;
+  } catch (error) {
+    console.error("axiosPostGradeGeneralPackageApi:", error);
+    return { code: -1, data: null };
+  }
+}
+/** 更新 */
+async function axiosPutGradeGeneralPackageApi(id: number, form: Partial<GradeGeneralPackage.ReqPutGradeGeneralPackageApi>) {
+  try {
+    const payload: GradeGeneralPackage.ReqPutGradeGeneralPackageApi = {
+      basePrice: form.basePrice ?? 0,
+      totalMonths: form.totalMonths ?? 1,
+      status: form.status ?? PACKAGE_STATUS.ENABLED,
+      gradeIds: form.gradeIds,
+      packageContent: form.packageContent,
+      templateDescription: form.templateDescription,
+      usageRules: form.usageRules,
+      firstMonthRatio: form.firstMonthRatio
+    };
+    const result = await putGradeGeneralPackageApi(id, payload);
+    if (result.code === 0) {
+      ElMessage.success("编辑成功");
+    }
+    return result;
+  } catch (error) {
+    console.error("axiosPutGradeGeneralPackageApi:", error);
+    return { code: -1, data: null };
+  }
+}
 
-const handleDeviceTypeChange = () => {
+function handleDeviceTypeChange() {
   ruleForm.value.packageContent = {};
-};
-const onSubmitForm = async (formEl: any) => {
+}
+async function handleSubmitForm(formEl: any) {
   if (!formEl) return;
   await formEl.validate(async (valid: boolean) => {
     if (valid) {
       const form = unref(ruleForm);
-      const { type } = unref(parameter);
 
       try {
-        if (type === "Add") {
-          await postGradeGeneralPackageApi(form as GradeGeneralPackage.ReqPostGradeGeneralPackageApi);
-          ElMessage.success("添加成功");
-        } else if (type === "Edit" && form.packageTemplateId) {
-          await putGradeGeneralPackageApi(form.packageTemplateId, {
-            basePrice: form.basePrice!,
-            totalMonths: form.totalMonths!,
-            status: form.status ?? PACKAGE_STATUS.ENABLED,
-            gradeIds: form.gradeIds,
-            packageContent: form.packageContent,
-            templateDescription: form.templateDescription,
-            usageRules: form.usageRules,
-            firstMonthRatio: form.firstMonthRatio
-          });
-          ElMessage.success("编辑成功");
+        if (isAdd.value) {
+          await axiosPostGradeGeneralPackageApi(form);
+        } else if (isEdit.value && form.packageTemplateId) {
+          await axiosPutGradeGeneralPackageApi(form.packageTemplateId, form);
         }
         visible.value = false;
         emits("submit");
@@ -112,44 +162,43 @@ const onSubmitForm = async (formEl: any) => {
       }
     }
   });
-};
+}
 
-const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigVo) => {
+async function acceptParams(
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: GradePackage.IGradePackageConfigVo
+) {
   parameter.value = { ...parameter.value, ...params };
 
-  if (params.type === "Add") {
+  if (isAdd.value) {
     boundGrades.value = [];
     ruleForm.value = {
       ...getInitialFormData(),
-      schoolId: Number(schoolId.value)
+      schoolId: Number(unref(schoolId))
     };
     currentSchoolName.value = storeSchoolName.value;
-    await axiosGetGradesApi();
+    await axiosGetUnconfiguredGradesApi();
   } else if (row) {
     // 编辑或查看模式：调用详情接口
-    try {
-      const result = await getGradeGeneralPackageDetailApi(row.packageTemplateId);
-      if (result.code === 0 && result.data) {
-        const detail = result.data;
-        boundGrades.value = detail.boundGrades;
-        ruleForm.value = {
-          packageTemplateId: detail.id,
-          schoolId: row.schoolId,
-          gradeIds: detail.boundGrades.map(g => g.id),
-          deviceType: detail.deviceType,
-          basePrice: detail.basePrice,
-          totalMonths: detail.totalMonths,
-          packageContent: detail.packageContent as GradePackage.IPackageContent,
-          templateDescription: detail.templateDescription,
-          usageRules: detail.usageRules,
-          firstMonthRatio: detail.firstMonthRatio,
-          status: detail.status
-        };
-        currentSchoolName.value = row.schoolName ?? "";
-        await axiosGetGradesApi(row.schoolId);
-      }
-    } catch (error) {
-      console.error("获取详情失败", error);
+    const result = await axiosGetGradeGeneralPackageDetailApi(row.packageTemplateId);
+    if (result.code === 0 && result.data) {
+      const detail = result.data;
+      boundGrades.value = detail.boundGrades;
+      ruleForm.value = {
+        packageTemplateId: detail.id,
+        schoolId: row.schoolId,
+        gradeIds: detail.boundGrades.map(g => g.id),
+        deviceType: detail.deviceType,
+        basePrice: detail.basePrice,
+        totalMonths: detail.totalMonths,
+        packageContent: (detail.packageContent ?? {}) as GradePackage.IPackageContent,
+        templateDescription: detail.templateDescription,
+        usageRules: detail.usageRules,
+        firstMonthRatio: detail.firstMonthRatio,
+        status: detail.status
+      };
+      currentSchoolName.value = row.schoolName ?? "";
+      await axiosGetUnconfiguredGradesApi(row.schoolId);
     }
   }
 
@@ -157,7 +206,7 @@ const acceptParams = async (params: any, row?: GradePackage.IGradePackageConfigV
   nextTick(() => {
     ruleFormRef.value?.clearValidate();
   });
-};
+}
 
 defineExpose({ acceptParams });
 </script>
@@ -172,7 +221,7 @@ defineExpose({ acceptParams });
             <el-select
               v-model="ruleForm.deviceType"
               placeholder="请选择设备类型"
-              style="width: 100%"
+              class="w-full"
               disabled
               @change="handleDeviceTypeChange"
             >
@@ -188,7 +237,7 @@ defineExpose({ acceptParams });
               collapse-tags
               collapse-tags-tooltip
               placeholder="请选择年级"
-              style="width: 100%"
+              class="w-full"
             >
               <el-option v-for="item in mergedGradeOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
@@ -199,12 +248,12 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="基础价格" prop="basePrice">
-            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" style="width: 100%" />
+            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" class="w-full" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="套餐月数" prop="totalMonths">
-            <el-input-number v-model="ruleForm.totalMonths" :min="1" :precision="0" :controls="false" style="width: 100%" />
+            <el-input-number v-model="ruleForm.totalMonths" :min="1" :precision="0" :controls="false" class="w-full" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -213,12 +262,12 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.VIDEO" :gutter="24">
         <el-col :span="12">
           <el-form-item label="视频通话时长(分钟)">
-            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" style="width: 100%" />
+            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" class="w-full" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="留言条数">
-            <el-input-number v-model="ruleForm.packageContent!.messageCount" :min="0" :controls="false" style="width: 100%" />
+            <el-input-number v-model="ruleForm.packageContent!.messageCount" :min="0" :controls="false" class="w-full" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -232,7 +281,7 @@ defineExpose({ acceptParams });
               :min="0"
               :controls="false"
               placeholder="请输入吹风机使用时长"
-              style="width: 100%"
+              class="w-full"
             />
           </el-form-item>
         </el-col>
@@ -249,7 +298,13 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="24">
           <el-form-item label="模板说明">
-            <el-input v-model="ruleForm.templateDescription" type="textarea" :rows="2" placeholder="请输入模板说明" />
+            <el-input
+              v-model="ruleForm.templateDescription"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入模板说明"
+              class="w-full"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -257,7 +312,7 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button v-if="parameter.showConfirm" type="primary" @click="onSubmitForm(ruleFormRef)">确定</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" @click="handleSubmitForm(ruleFormRef)">确定</el-button>
     </template>
   </el-dialog>
 </template>

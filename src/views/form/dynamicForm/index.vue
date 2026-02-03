@@ -48,6 +48,7 @@
 <script setup lang="ts" name="dynamicForm">
 import { reactive, ref } from "vue";
 import type { FormInstance } from "element-plus";
+import type { DomainItem } from "./types";
 
 const formRef = ref<FormInstance>();
 const dynamicValidateForm = reactive<{
@@ -62,11 +63,6 @@ const dynamicValidateForm = reactive<{
   ],
   email: ""
 });
-
-interface DomainItem {
-  key: number;
-  value: string;
-}
 
 const removeDomain = (item: DomainItem) => {
   const index = dynamicValidateForm.domains.indexOf(item);

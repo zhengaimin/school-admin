@@ -1,5 +1,6 @@
 <script setup lang="ts" name="hairdryerRateSchoolForm">
 import type { FormInstance, FormRules } from "element-plus";
+import type { RateFormProps } from "../types";
 
 import { reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
@@ -7,11 +8,7 @@ import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 import { useSchool } from "@/hooks/useSchool";
 import { getSchoolDryerRateApi, putSchoolDryerRateApi } from "@/api/modules";
 
-interface Props {
-  schoolId?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RateFormProps>(), {
   schoolId: ""
 });
 

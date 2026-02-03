@@ -3,7 +3,7 @@ import type { RateDryer } from "@/api/interface";
 import { GRADE_CONFIG_TYPE, GRADE_SERVICE_TYPE } from "@/config/modules/grade";
 import { DEVICE_TYPE } from "@/config/modules";
 
-import { ref, unref, nextTick } from "vue";
+import { computed, ref, unref, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import {
   postGradeDryerRatesApi,
@@ -23,7 +23,8 @@ const visible = ref(false);
 const loading = ref(false);
 const parameter = ref({
   title: "",
-  type: "Add"
+  type: "Add" as "Add" | "Edit" | "View",
+  showConfirm: true
 });
 
 const editingRateTemplateId = ref<number | null>(null);
@@ -40,6 +41,9 @@ const ruleForm = ref<{
 });
 
 const gradeOptions = ref<{ id: number; name: string }[]>([]);
+const isAdd = computed(() => parameter.value.type === "Add");
+const isEdit = computed(() => parameter.value.type === "Edit");
+const isView = computed(() => parameter.value.type === "View");
 
 const rules = {
   gradeIds: [{ required: true, message: "请选择年级", trigger: "change" }],
@@ -92,12 +96,10 @@ const onSubmitForm = async (formEl: any) => {
     if (!valid) return;
 
     const form = unref(ruleForm);
-    const { type } = unref(parameter);
-
     if (form.rate === null) return;
 
     // 添加
-    if (type === "Add") {
+    if (isAdd.value) {
       await postGradeDryerRatesApi({
         schoolId: Number(schoolId.value),
         gradeIds: form.gradeIds,
@@ -107,7 +109,7 @@ const onSubmitForm = async (formEl: any) => {
       ElMessage.success("添加成功");
     }
     // 编辑
-    else if (type === "Edit" && unref(editingRateTemplateId)) {
+    else if (isEdit.value && unref(editingRateTemplateId)) {
       await putGradeDryerRateApi(unref(editingRateTemplateId)!, {
         gradeIds: form.gradeIds,
         rate: form.rate,
@@ -121,12 +123,15 @@ const onSubmitForm = async (formEl: any) => {
   });
 };
 
-const acceptParams = async (params: any, row?: RateDryer.IGradeDryerRateItemVo) => {
+const acceptParams = async (
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: RateDryer.IGradeDryerRateItemVo
+) => {
   parameter.value = { ...parameter.value, ...params };
   currentSchoolName.value = storeSchoolName.value;
   gradeOptions.value = [];
 
-  if (params.type === "Add") {
+  if (isAdd.value) {
     editingRateTemplateId.value = null;
     ruleForm.value = {
       gradeIds: [],
@@ -134,7 +139,7 @@ const acceptParams = async (params: any, row?: RateDryer.IGradeDryerRateItemVo) 
       description: ""
     };
     await axiosGetGradesOptions();
-  } else if (row?.rateTemplateID) {
+  } else if ((isEdit.value || isView.value) && row?.rateTemplateID) {
     editingRateTemplateId.value = row.rateTemplateID;
     loading.value = true;
     const [data, unconfiguredResult] = await Promise.all([
@@ -175,7 +180,7 @@ defineExpose({ acceptParams });
     <div v-loading="loading">
       <SchoolInfo :name="currentSchoolName" />
 
-      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="top">
+      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="适用年级" prop="gradeIds">
@@ -221,7 +226,7 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="onSubmitForm(ruleFormRef)">确定</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" @click="onSubmitForm(ruleFormRef)">确定</el-button>
     </template>
   </el-dialog>
 </template>

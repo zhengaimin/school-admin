@@ -8,12 +8,22 @@ import { DEVICE_USAGE_STATUS_I18N, getDeviceUsageStatusTagType, DEVICE_TYPE_I18N
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<DeviceUsage.IDeviceUsageDetail | null>(null);
+const parameter = ref({
+  title: "",
+  type: "View" as "Add" | "Edit" | "View",
+  showConfirm: false
+});
 
 /** 接收参数 */
-const acceptParams = async (id: number) => {
+const acceptParams = async (
+  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
+  row?: DeviceUsage.IDeviceUsageItem
+) => {
+  parameter.value = { ...parameter.value, ...params };
+  if (!row?.id) return;
   loading.value = true;
   try {
-    const { data } = await getDeviceUsageDetailApi(id);
+    const { data } = await getDeviceUsageDetailApi(row.id);
     detail.value = data;
     visible.value = true;
   } finally {
@@ -25,7 +35,7 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="使用记录详情" width="860px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="860px" destroy-on-close draggable align-center>
     <template v-if="detail">
       <!-- 基本信息 -->
       <el-descriptions :column="2" border>

@@ -4,9 +4,9 @@ export const ROUTE_MODULE_SELECT = "/moduleSelect";
 /** 公共模块路由 */
 export const ROUTE_COMMON = {
   /** 学校管理 */
-  SCHOOL: "/common/school",
+  SCHOOL: "/common/school/manage",
   /** 设备配置 */
-  SCHOOL_DEVICE_CONFIG: "/common/schoolDeviceConfig"
+  SCHOOL_DEVICE_CONFIG: "/common/school/deviceConfig"
 } as const;
 
 /** 校园管理模块路由 */
@@ -42,10 +42,20 @@ export const ROUTE_VIDEO = {
 export const ROUTE_SYSTEM = {
   /** 系统管理 */
   INDEX: "/system",
+  /** 个人信息 */
+  PROFILE: "/system/profile",
+  /** 修改密码 */
+  CHANGE_PASSWORD: "/system/password",
   /** 角色管理 */
   ROLE: "/permission/role",
   /** 用户管理 */
   USER: "/permission/user",
+  /** 平台用户 */
+  USER_PLATFORM: "/permission/user/platform",
+  /** 供应商用户 */
+  USER_SUPPLIER: "/permission/user/supplier",
+  /** 业务员用户 */
+  USER_SALESMAN: "/permission/user/salesman",
   /** 组织架构 */
   ORGANIZATION: "/permission/organization",
   /** 租户管理 */
@@ -56,8 +66,8 @@ export const ROUTE_SYSTEM = {
 export const ROUTE_HAIRDRYER = {
   /** 设备管理 */
   DEVICE: "/hairdryer",
-  DEVICE_TAGS: "/hairdryer/tags",
-  DEVICE_DEVICE: "/hairdryer/device",
+  DEVICE_TAGS: "/hairdryer/devices/tags",
+  DEVICE_DEVICE: "/hairdryer/devices/manage",
   DEVICE_CONFIG: "/hairdryer/config",
 
   /** 资金管理 */
