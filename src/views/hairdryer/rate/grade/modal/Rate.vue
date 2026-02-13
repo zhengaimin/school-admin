@@ -21,9 +21,9 @@ const emits = defineEmits(["submit"]);
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Add" as "Add" | "Edit" | "View",
+  type: "Add",
   showConfirm: true
 });
 
@@ -123,10 +123,7 @@ const onSubmitForm = async (formEl: any) => {
   });
 };
 
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: RateDryer.IGradeDryerRateItemVo
-) => {
+const acceptParams = async (params: TModalParams, row?: RateDryer.IGradeDryerRateItemVo) => {
   parameter.value = { ...parameter.value, ...params };
   currentSchoolName.value = storeSchoolName.value;
   gradeOptions.value = [];

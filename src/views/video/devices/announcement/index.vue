@@ -1,5 +1,5 @@
 <script setup lang="ts" name="announcement">
-import type { Announcement } from "@/api/interface";
+import type { Announcement, ResultData } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { AnnouncementRow } from "./types";
 
@@ -8,6 +8,7 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import AnnouncementModal from "./modal/Announcement.vue";
+import { buildAnnouncementListParams } from "./utils/payload";
 import {
   getAnnouncementsApi,
   postPublishAnnouncementsApi,
@@ -24,35 +25,30 @@ import {
   getAnnouncementStatusTagType
 } from "@/config/modules";
 
+/** 学校信息 */
 const { schoolId, isAllSchools } = useSchool();
+/** 选中行数据 */
 const { selectedList, isSelected, selectionChange } = useSelection("id");
 
+/** 弹窗引用 */
 const modalRef = ref();
 
-/** 获取公告列表 */
-async function axiosGetAnnouncementListApi(params: Announcement.ReqGetAnnouncementsApi) {
-  try {
-    return await getAnnouncementsApi(params);
-  } catch (error) {
-    console.error("axiosGetAnnouncementListApi:", error);
-    return { code: -1, msg: "请求失败", data: { list: [], total: 0, page: 1, pageSize: 10 } };
-  }
-}
-
-const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetAnnouncementListApi }, null, list =>
-  dateFormatter(list, ["publishAt", "createdAt", "updatedAt"])
+/** 表格管理 */
+const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetAnnouncementsApi }, null, list =>
+  dateFormatter(list, ["publishedAt", "createdAt"])
 );
 
+/** 表格列配置 */
 const columns: ColumnProps<AnnouncementRow>[] = [
   { type: "selection", width: 50, fixed: "left" },
   { type: "index", label: "#", width: 60 },
-  { prop: "schoolName", label: "学校", minWidth: 120 },
   {
     prop: "title",
     label: "标题",
     minWidth: 200,
-    search: { el: "input", props: { placeholder: "请输入标题" } }
+    search: { el: "input", key: "keyword", props: { placeholder: "请输入标题关键词" } }
   },
+  { prop: "content", label: "正文", minWidth: 240, showOverflowTooltip: true },
   {
     prop: "status",
     label: "状态",
@@ -61,21 +57,48 @@ const columns: ColumnProps<AnnouncementRow>[] = [
     fixed: "right",
     search: { el: "select", props: { placeholder: "请选择状态", clearable: true } }
   },
-  { prop: "publishAt", label: "发布时间", width: 170 },
-  {
-    prop: "startTime",
-    label: "开始时间",
-    isShow: false,
-    search: { el: "date-picker", props: { type: "datetime", placeholder: "开始时间", valueFormat: "YYYY-MM-DD HH:mm:ss" } }
-  },
-  {
-    prop: "endTime",
-    label: "结束时间",
-    isShow: false,
-    search: { el: "date-picker", props: { type: "datetime", placeholder: "结束时间", valueFormat: "YYYY-MM-DD HH:mm:ss" } }
-  },
+  { prop: "publishedAt", label: "发布时间", width: 170 },
+  { prop: "createdAt", label: "创建时间", width: 170 },
   { prop: "operation", label: "操作", width: 240, fixed: "right" }
 ];
+
+/** 获取公告列表 */
+async function axiosGetAnnouncementsApi(params: Record<string, any>): Promise<ResultData<Announcement.ResGetAnnouncementsApi>> {
+  try {
+    const payload = buildAnnouncementListParams(params);
+    return await getAnnouncementsApi(payload);
+  } catch (error) {
+    console.error("axiosGetAnnouncementsApi:", error);
+    return { code: -1, msg: "请求失败", data: { list: [], total: 0 } };
+  }
+}
+/** 发布公告 */
+async function axiosPostPublishAnnouncementsApi(ids: number[]) {
+  try {
+    return await postPublishAnnouncementsApi({ ids });
+  } catch (error) {
+    console.error("axiosPostPublishAnnouncementsApi:", error);
+    return { code: -1, data: null };
+  }
+}
+/** 撤回公告 */
+async function axiosPostRevokeAnnouncementsApi(ids: number[]) {
+  try {
+    return await postRevokeAnnouncementsApi({ ids });
+  } catch (error) {
+    console.error("axiosPostRevokeAnnouncementsApi:", error);
+    return { code: -1, data: null };
+  }
+}
+/** 删除公告 */
+async function axiosDeleteAnnouncementsApi(ids: number[]) {
+  try {
+    return await deleteAnnouncementsApi({ ids });
+  } catch (error) {
+    console.error("axiosDeleteAnnouncementsApi:", error);
+    return { code: -1, data: null };
+  }
+}
 
 /** 显示弹框 */
 function handleShowModal(type: "Add" | "Edit", row?: AnnouncementRow) {
@@ -90,34 +113,7 @@ function handleShowModal(type: "Add" | "Edit", row?: AnnouncementRow) {
   };
   modalRef.value?.acceptParams({ title: titleMap[type], type, showConfirm: true }, row);
 }
-
-async function axiosPostPublishAnnouncementsApi(ids: number[]) {
-  try {
-    return await postPublishAnnouncementsApi({ ids });
-  } catch (error) {
-    console.error("axiosPostPublishAnnouncementsApi:", error);
-    return { code: -1, data: null };
-  }
-}
-
-async function axiosPostRevokeAnnouncementsApi(ids: number[]) {
-  try {
-    return await postRevokeAnnouncementsApi({ ids });
-  } catch (error) {
-    console.error("axiosPostRevokeAnnouncementsApi:", error);
-    return { code: -1, data: null };
-  }
-}
-
-async function axiosDeleteAnnouncementsApi(ids: number[]) {
-  try {
-    return await deleteAnnouncementsApi({ ids });
-  } catch (error) {
-    console.error("axiosDeleteAnnouncementsApi:", error);
-    return { code: -1, data: null };
-  }
-}
-
+/** 批量发布 */
 async function handlePublish(rows: AnnouncementRow[]) {
   const validRows = rows.filter(row => row.status === ANNOUNCEMENT_STATUS.REVOKED);
   if (!validRows.length) {
@@ -142,7 +138,7 @@ async function handlePublish(rows: AnnouncementRow[]) {
     }
   }
 }
-
+/** 批量撤回 */
 async function handleRevoke(rows: AnnouncementRow[]) {
   const validRows = rows.filter(row => row.status === ANNOUNCEMENT_STATUS.PUBLISHED);
   if (!validRows.length) {
@@ -167,7 +163,7 @@ async function handleRevoke(rows: AnnouncementRow[]) {
     }
   }
 }
-
+/** 批量删除 */
 async function handleDelete(rows: AnnouncementRow[]) {
   const validRows = rows.filter(row => row.status === ANNOUNCEMENT_STATUS.REVOKED);
   if (!validRows.length) {
@@ -177,9 +173,7 @@ async function handleDelete(rows: AnnouncementRow[]) {
 
   try {
     await ElMessageBox.confirm(`确定删除选中的 ${validRows.length} 条公告吗？`, "提示", {
-      type: "warning",
-      confirmButtonText: "确定",
-      cancelButtonText: "取消"
+      type: "warning"
     });
     const result = await axiosDeleteAnnouncementsApi(validRows.map(row => row.id));
     if (result.code !== 0) return;
@@ -193,6 +187,7 @@ async function handleDelete(rows: AnnouncementRow[]) {
   }
 }
 
+/** 监听学校切换 */
 watch(schoolId, () => refreshTableList());
 </script>
 
@@ -223,10 +218,6 @@ watch(schoolId, () => refreshTableList());
         <el-tag :type="getAnnouncementStatusTagType(row.status)">
           {{ ANNOUNCEMENT_STATUS_I18N[row.status] || "--" }}
         </el-tag>
-      </template>
-
-      <template #publishAt="{ row }">
-        {{ row.publishAt || "--" }}
       </template>
 
       <template #operation="{ row }">

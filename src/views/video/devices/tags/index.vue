@@ -57,7 +57,7 @@ const columns: ColumnProps<DeviceTagRow>[] = [
 ];
 
 /** 显示弹框 */
-function handleShowModal(type: "Add" | "Edit" | "View", row?: DeviceTagRow) {
+function handleShowModal(type: TModalType, row?: DeviceTagRow) {
   if (type === "Add" && isAllSchools.value) {
     ElMessage.warning("请选择学校后再新增");
     return;

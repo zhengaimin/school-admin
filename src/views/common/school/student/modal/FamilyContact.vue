@@ -35,10 +35,8 @@ const parentForm = reactive<Partial<FamilyContact.ReqPostFamilyContactApi> & { i
 
 const parentRules: FormRules = {
   relationship: [{ required: true, message: "请选择关系", trigger: "change" }],
-  nickname: [{ required: true, message: "请输入别称", trigger: "blur" }],
   phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
-  isPrimary: [{ required: true, type: "boolean", message: "请选择主联系人", trigger: "change" }],
-  sortOrder: [{ required: true, message: "请输入显示排序", trigger: "blur" }]
+  isPrimary: [{ type: "boolean", message: "请选择主联系人", trigger: "change" }]
 };
 
 /** 重置亲情号表单 */

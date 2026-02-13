@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import type {
-  PackagePurchaseExportAcceptParams,
-  PackagePurchaseExportFormData,
-  PackagePurchaseModalParams,
-  PackagePurchaseModalType
-} from "../types";
+import type { PackagePurchaseExportAcceptParams, PackagePurchaseExportFormData, PackagePurchaseModalParams } from "../types";
 
 import { reactive, ref, computed } from "vue";
 import { ElNotification } from "element-plus";
@@ -19,7 +14,7 @@ const loading = ref(false);
 const exporting = ref(false);
 const parameter = ref<PackagePurchaseModalParams>({
   title: "",
-  type: "View" as PackagePurchaseModalType,
+  type: "View",
   showConfirm: true
 });
 

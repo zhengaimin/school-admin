@@ -13,12 +13,17 @@ export function getDeviceDetailApi(id: number) {
 
 /** 新增设备 */
 export function postDeviceApi(data: DeviceVideo.ReqPostDeviceApi) {
-  return http.post("/admin/devices", data);
+  return http.post<DeviceVideo.ResPostDeviceApi>("/admin/devices", data);
 }
 
 /** 更新设备 */
 export function putDeviceApi(id: number, data: DeviceVideo.ReqPutDeviceApi) {
-  return http.put(`/admin/devices/${id}`, data);
+  return http.put<DeviceVideo.ResPutDeviceApi>(`/admin/devices/${id}`, data);
+}
+
+/** 更换设备学校 */
+export function postDeviceChangeSchoolApi(id: number, data: DeviceVideo.ReqPostDeviceChangeSchoolApi) {
+  return http.post<DeviceVideo.ResPostDeviceChangeSchoolApi>(`/admin/devices/${id}/change-school`, data);
 }
 
 /** 删除设备 */
@@ -47,4 +52,21 @@ export function postDeviceImportApi(params: DeviceVideo.ReqPostDeviceImportApi, 
   formData.append("schoolId", String(params.schoolId));
   formData.append("file", file);
   return http.post("/admin/devices/import", formData);
+}
+
+/** 获取批量更新字段列表 */
+export function getDeviceBatchUpdateFieldsApi() {
+  return http.get<DeviceVideo.ResGetDeviceBatchUpdateFieldsApi>("/admin/devices/batch-update/fields");
+}
+
+/** 下载批量更新模板 */
+export function postDeviceBatchUpdateTemplateApi(data: DeviceVideo.ReqPostDeviceBatchUpdateTemplateApi): Promise<Blob> {
+  return http.post("/admin/devices/batch-update/template", data, { responseType: "blob" });
+}
+
+/** 批量更新设备配置 */
+export function postDeviceBatchUpdateApi(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+  return http.post<DeviceVideo.ResPostDeviceBatchUpdateApi>("/admin/devices/batch-update", formData);
 }

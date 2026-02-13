@@ -1,1 +1,0 @@
-import{h as e}from"./index-Bfhsg35M.js";const t=s=>e.post("/admin/user/add",s),a=s=>e.get(`/admin/user/list?${s}`),u=s=>e.post("/admin/user/update",s),d=s=>e.post("/admin/user/delete",s),n=s=>e.post("/admin/user/reset_password",s);export{n as a,d as b,t as c,u as d,a as u};

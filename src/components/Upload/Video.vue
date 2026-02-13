@@ -211,13 +211,13 @@ const handleUploadError = () => {
   }
 }
 .upload-box {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
   .upload-area {
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
   }
   .no-border {
     :deep(.el-upload) {
@@ -225,22 +225,22 @@ const handleUploadError = () => {
     }
   }
   :deep(.upload) {
+    box-sizing: border-box;
     display: flex;
     flex: 1;
     flex-direction: column;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
     overflow: hidden;
     .el-upload {
       position: relative;
+      box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      box-sizing: border-box;
       border: 1px dashed var(--el-border-color-darker);
       border-radius: v-bind(borderRadius);
       transition: var(--el-transition-duration-fast);
@@ -251,6 +251,7 @@ const handleUploadError = () => {
         }
       }
       .el-upload-dragger {
+        box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -258,7 +259,6 @@ const handleUploadError = () => {
         height: 100%;
         padding: 0;
         overflow: hidden;
-        box-sizing: border-box;
         background-color: transparent;
         border: 1px dashed var(--el-border-color-darker);
         border-radius: v-bind(borderRadius);
@@ -280,11 +280,11 @@ const handleUploadError = () => {
         line-height: 0;
       }
       .preview-video {
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
         display: block;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
         object-fit: contain;
       }
       .upload-empty {

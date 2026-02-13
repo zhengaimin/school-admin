@@ -228,6 +228,35 @@ export default {
         ]
       },
       {
+        path: ROUTE_COMMON.APK,
+        name: "apkManage",
+        component: "/common/apk/index",
+        meta: {
+          icon: "Download",
+          title: "APK 管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: ROUTE_COMMON.APK_MESSAGE_TEMPLATE,
+        name: "apkMessageTemplate",
+        component: "/common/apkMessageTemplate/index",
+        meta: {
+          icon: "ChatLineSquare",
+          title: "APK 错误话术配置",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false,
+          permission: [PERMISSION_CODE.APK_MESSAGE_TEMPLATE_LIST]
+        }
+      },
+      {
         path: "/moduleControl",
         name: "moduleControl",
         component: "/moduleControl/index",
@@ -700,9 +729,9 @@ export default {
             }
           },
           {
-            path: "/device/command",
+            path: "/device/log/command",
             name: "command",
-            component: "/device/command/index",
+            component: "/device/log/command/index",
             meta: {
               icon: "",
               title: "命令记录",

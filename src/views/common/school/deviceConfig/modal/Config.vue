@@ -14,9 +14,9 @@ const emits = defineEmits<{
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 const ruleFormRef = ref<FormInstance>();
@@ -64,10 +64,7 @@ const onSubmitForm = async (formEl: FormInstance | undefined) => {
 };
 
 /** 接收参数 */
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: SchoolDeviceConfig.ISchoolDeviceConfigItem
-) => {
+const acceptParams = async (params: TModalParams, row?: SchoolDeviceConfig.ISchoolDeviceConfigItem) => {
   parameter.value = { ...parameter.value, ...params };
 
   if ((isEdit.value || isView.value) && row) {

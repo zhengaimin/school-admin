@@ -6,9 +6,9 @@ import { DEVICE_COMMAND_CODE, DEVICE_COMMAND_CODE_I18N, DEVICE_COMMAND_CODE_OPTI
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 const tagId = ref<number | null>(null);
@@ -51,7 +51,7 @@ const onSubmitForm = async (formEl: any) => {
   });
 };
 
-const acceptParams = (params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }, row?: { id: number }) => {
+const acceptParams = (params: TModalParams, row?: { id: number }) => {
   parameter.value = { ...parameter.value, ...params };
   if (!row) return;
   tagId.value = row.id;

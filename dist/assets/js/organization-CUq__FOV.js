@@ -1,1 +1,0 @@
-import{h as a}from"./index-Bfhsg35M.js";const o=n=>a.post("/admin/organization/add",n),i=()=>a.get("/admin/organization/list"),r=n=>a.post("/admin/organization/update",n),e=n=>a.post("/admin/organization/delete",n),s=n=>a.get(`/admin/organization?${n}`),d=n=>a.get(`/admin/organization/info?id=${n.id}`);export{o as a,d as b,s as c,i as d,e,r as o};

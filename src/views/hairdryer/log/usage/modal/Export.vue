@@ -11,9 +11,9 @@ import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassO
 const visible = ref(false);
 const loading = ref(false);
 const exporting = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: true
 });
 

@@ -35,4 +35,4 @@ export type AnnouncementForm = Omit<Partial<Announcement.IAnnouncementItem>, "ta
 };
 
 /** 公告行数据 */
-export type AnnouncementRow = Announcement.IAnnouncementItem;
+export type AnnouncementRow = Announcement.IAnnouncementListItem;

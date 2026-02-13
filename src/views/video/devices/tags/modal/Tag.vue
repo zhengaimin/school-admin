@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DeviceTag } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 import type { DeviceTagForm } from "../types";
 
@@ -19,7 +20,7 @@ const visible = ref(false);
 // 加载状态
 const loading = ref(false);
 // 弹窗参数
-const parameter = ref<{ title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }>({
+const parameter = ref<TModalParams>({
   title: "",
   type: "Add",
   showConfirm: true
@@ -137,10 +138,7 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
 }
 
 // 接收参数
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceTag.IDeviceTagItemVo
-) {
+async function acceptParams(params: TModalParams, row?: DeviceTag.IDeviceTagItemVo) {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {

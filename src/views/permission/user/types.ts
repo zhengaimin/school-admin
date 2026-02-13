@@ -2,14 +2,7 @@ import type { System } from "@/api/interface";
 import type { TRoleLevelValue } from "@/config/modules";
 
 /** 用户弹窗参数 */
-export type TUserModalParams = {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
-};
+export type TUserModalParams = TModalParams;
 
 /** 用户表单模型 */
 export type TUserFormModel = System.ReqUserSave & {
@@ -23,19 +16,13 @@ export type TUserFormModel = System.ReqUserSave & {
 export type DataScopeType = System.ReqUserDataScopeSave["scopeType"];
 
 /** 数据权限弹窗参数 */
-export type DataScopeParams = {
+export type DataScopeParams = TModalParams & {
   /** 用户ID */
   userId: number;
   /** 用户姓名 */
   userName: string;
   /** 租户ID */
   tenantId?: number;
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
   /** 权限范围类型 */
   scopeType?: DataScopeType;
 };
@@ -43,14 +30,7 @@ export type DataScopeParams = {
 /** 数据权限弹窗接收结果 */
 export type DataScopeAcceptPayload = {
   /** 弹窗参数 */
-  parameter: {
-    /** 标题 */
-    title: string;
-    /** 弹窗类型 */
-    type: "Add" | "Edit" | "View";
-    /** 是否显示确认按钮 */
-    showConfirm: boolean;
-  };
+  parameter: TModalParams;
   /** 权限范围类型 */
   scopeType: DataScopeType;
   /** 用户ID */

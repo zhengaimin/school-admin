@@ -8,17 +8,14 @@ import { DEVICE_USAGE_STATUS_I18N, getDeviceUsageStatusTagType, DEVICE_TYPE_I18N
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<DeviceUsage.IDeviceUsageDetail | null>(null);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: false
 });
 
 /** 接收参数 */
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceUsage.IDeviceUsageItem
-) => {
+const acceptParams = async (params: TModalParams, row?: DeviceUsage.IDeviceUsageItem) => {
   parameter.value = { ...parameter.value, ...params };
   if (!row?.id) return;
   loading.value = true;

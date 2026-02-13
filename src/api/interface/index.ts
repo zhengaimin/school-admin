@@ -556,6 +556,8 @@ export namespace School {
     background?: string;
     /** 学校照片URLs */
     photos?: string[];
+    /** 服务器地址（成绩） */
+    scoreUrl?: string;
     /** 状态，不修改传-1 */
     status: number;
     /** 排序，不修改传-1 */
@@ -585,6 +587,7 @@ export type {
   DeviceTag,
   DeviceBaseTag,
   DeviceCommand,
+  DeviceCommandRecord,
   DeviceDialConfig,
   SchoolDeviceConfig,
   DeviceUsage,

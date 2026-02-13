@@ -1,6 +1,8 @@
 import type { Common } from "@/api/interface";
 
 import http from "@/api";
+export * from "./common/apk";
+export * from "./common/apk-message-template";
 
 /** 获取省市区 */
 export function locations(params: string) {

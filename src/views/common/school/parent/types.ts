@@ -7,13 +7,7 @@ export interface OptionItem {
 }
 
 /** 家长绑定状态导出参数 */
-export interface AcceptParamsOptions {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
+export type AcceptParamsOptions = TModalParams & {
   /** 学校ID */
   schoolId: number;
   /** 年级ID */
@@ -28,4 +22,4 @@ export interface AcceptParamsOptions {
   phone?: string;
   /** 微信绑定状态 */
   wechatBound?: boolean;
-}
+};

@@ -18,9 +18,9 @@ const visible = ref(false);
 const loading = ref(false);
 const configData = ref<DeviceConfig.IDeviceFeatureConfigListItem>();
 const schoolName = ref("");
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 
@@ -81,10 +81,7 @@ const handleSave = async () => {
 /**
  * 接收参数
  */
-const acceptParams = (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceConfig.IDeviceFeatureConfigListItem
-) => {
+const acceptParams = (params: TModalParams, row?: DeviceConfig.IDeviceFeatureConfigListItem) => {
   parameter.value = { ...parameter.value, ...params };
   schoolName.value = "";
 

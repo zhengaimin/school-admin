@@ -49,9 +49,6 @@
               {{ getYesNoText(detailForm.forbidPhone) }}
             </span>
           </el-descriptions-item>
-          <el-descriptions-item label="计费模式">
-            {{ { "0": "免费", [YES_NO_FLAG.YES]: "音视频分开计费", [YES_NO_FLAG.NO]: "合并计费" }[detailForm.billMode] }}
-          </el-descriptions-item>
           <el-descriptions-item label="预警通话时长（分钟）">
             {{ detailForm.warnCallTime }}
           </el-descriptions-item>

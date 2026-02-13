@@ -76,9 +76,9 @@ const { getUploadPath } = useAssetsPath();
 /** 弹窗显示状态 */
 const visible = ref(false);
 /** 弹窗参数 */
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: false
 });
 /** 加载状态 */
@@ -125,10 +125,7 @@ function handleClose() {
   visible.value = false;
 }
 /** 接收参数 */
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: TSchoolMienDetail
-) {
+async function acceptParams(params: TModalParams, row?: TSchoolMienDetail) {
   parameter.value = { ...parameter.value, ...params };
   if (!row?.id) return;
   currentSchoolName.value = row.schoolName ?? "";

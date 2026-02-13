@@ -11,9 +11,9 @@ import { DEVICE_TYPE_OPTIONS } from "@/config/modules";
 
 const visible = ref(false);
 const tagId = ref<number | null>(null);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: true
 });
 const proTable = ref();
@@ -47,7 +47,7 @@ const onRemoveDevice = (row: DeviceRow) => {
   });
 };
 
-const acceptParams = (params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }, row?: { id: number }) => {
+const acceptParams = (params: TModalParams, row?: { id: number }) => {
   parameter.value = { ...parameter.value, ...params };
   if (!row) return;
   tagId.value = row.id;

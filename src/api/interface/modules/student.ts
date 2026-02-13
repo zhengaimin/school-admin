@@ -29,6 +29,8 @@ export namespace Student {
     guardianName: string;
     /** 监护人电话 */
     guardianPhone: string;
+    /** 家庭住址 */
+    address: string;
     /** 学生类型：BOARDING-寄宿生，DAY-走读生 */
     studentType: TStudentTypeValue;
     /** 班级ID */
@@ -157,6 +159,8 @@ export namespace Student {
     faceImageUrl?: string;
     /** 家庭住址 */
     address?: string;
+    /** 状态 */
+    status?: TStudentStatusValue;
   }
 
   /** 新增学生 - 响应 data */
@@ -169,38 +173,30 @@ export namespace Student {
 
   /** 更新学生 - 请求参数 */
   export interface ReqPutStudentApi {
-    /** 学校ID */
-    schoolId?: number;
-    /** 年级ID */
-    gradeId?: number;
-    /** 级部ID */
-    departmentId?: number;
-    /** 班级ID */
-    classId?: number;
     /** 学生姓名 */
-    name?: string;
-    /** 学生UUID（系统唯一标识） */
-    uuid?: string;
+    name: string;
     /** 学号 */
     studentCode?: string;
     /** 身份证号 */
     idCard?: string;
     /** 性别 */
-    sex?: string;
+    sex?: TStudentSexValue;
     /** IC卡号 */
     cardNumber?: string;
     /** 联系电话 */
     phone?: string;
+    /** 家庭住址 */
+    address?: string;
     /** 监护人姓名 */
     guardianName?: string;
     /** 监护人电话 */
     guardianPhone?: string;
     /** 学生类型 */
-    studentType?: TStudentTypeValue;
+    studentType: TStudentTypeValue;
+    /** 状态：-1不更新，0停用，1在读，2毕业，3转学 */
+    status: TStudentStatusValue | -1;
     /** 人脸图片URL */
     faceImageUrl?: string;
-    /** 家庭住址 */
-    address?: string;
   }
 
   /** 更新学生 - 响应 data */

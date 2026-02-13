@@ -112,7 +112,7 @@ onMounted(() => {
       <div class="module-cards">
         <div v-for="item in moduleList" :key="item.key" class="module-card" @click="handleModuleClick(item)">
           <div class="card-icon">
-            <el-icon :size="36">
+            <el-icon :size="30">
               <component :is="item.icon" />
             </el-icon>
           </div>
@@ -187,15 +187,15 @@ onMounted(() => {
   text-align: center;
   cursor: pointer;
   background: var(--el-bg-color);
+  border: 1px solid transparent;
   border-radius: 16px;
   box-shadow: 0 4px 20px -4px rgb(0 0 0 / 8%);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
 }
 .module-card:hover {
+  border-color: var(--el-color-primary-light-8);
   box-shadow: 0 12px 32px -8px rgb(0 0 0 / 15%);
   transform: translateY(-8px);
-  border-color: var(--el-color-primary-light-8);
 }
 .module-card:hover .card-icon {
   background: var(--el-color-primary);
@@ -205,20 +205,20 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 20px;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
   color: #ffffff;
   background: var(--el-color-primary);
-  border-radius: 20px;
+  border-radius: 16px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .version-text {
-  margin-top: auto;
   padding: 16px 0;
-  text-align: center;
+  margin-top: auto;
   font-size: 12px;
   color: var(--el-text-color-placeholder);
+  text-align: center;
 }
 
 @media screen and (width <= 600px) {

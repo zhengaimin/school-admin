@@ -9,9 +9,9 @@ import { REFUND_TYPE } from "@/config/modules";
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 const formRef = ref<FormInstance>();
@@ -76,7 +76,7 @@ async function handleSubmit() {
     loading.value = false;
   }
 }
-function acceptParams(options: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }, row?: Refund.IRefundItem) {
+function acceptParams(options: TModalParams, row?: Refund.IRefundItem) {
   parameter.value = { ...parameter.value, ...options };
   if (!row) return;
   params.id = row.id;

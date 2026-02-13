@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SchoolMien } from "@/api/interface";
 import type { UploadUserFile } from "element-plus";
 import type { TSchoolMienForm, TSchoolMienRow } from "../types";
 
@@ -23,9 +24,9 @@ const visible = ref(false);
 /** 加载状态 */
 const loading = ref(false);
 /** 弹窗参数 */
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Add" as "Add" | "Edit" | "View",
+  type: "Add",
   showConfirm: true
 });
 
@@ -139,10 +140,7 @@ function handleClose() {
 }
 
 /** 接收参数 */
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: TSchoolMienRow
-) {
+async function acceptParams(params: TModalParams, row?: TSchoolMienRow) {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {

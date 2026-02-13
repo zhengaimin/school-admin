@@ -5,6 +5,8 @@ export * from "./grades";
 export * from "./rate";
 export * from "./schools";
 export * from "./common";
+export * from "./common/apk";
+export * from "./common/apk-message-template";
 export * from "./announcement";
 export * from "./family-contact";
 export * from "./family-bindstatus";

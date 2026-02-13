@@ -1,5 +1,5 @@
 import type { DeviceDialConfig } from "@/api/interface";
-import type { TPhoneTypeValue, TSipTypeValue, TYesNoFlagValue } from "@/config/modules";
+import type { TDialModeValue, TPhoneEntryValue, TPhoneTypeValue, TSipTypeValue, TYesNoFlagValue } from "@/config/modules";
 
 /** 公话配置行数据 */
 export type TDeviceDialConfigItem = DeviceDialConfig.IDeviceDialConfigVo;
@@ -37,10 +37,16 @@ export type DialConfigForm = {
   powerOffTime: string;
   /** 禁拨号码 */
   forbidPhone: string;
-  /** 拨号类型 */
-  phoneType: TPhoneTypeValue;
+  /** 拨号类型（已废弃，仅用于兼容旧数据） */
+  phoneType?: TPhoneTypeValue;
+  /** 拨号模式 */
+  dialMode: TDialModeValue;
+  /** 拨号入口集合 */
+  phoneTypes: TPhoneEntryValue[];
   /** 是否显示留言按钮 */
   messageFlag: TYesNoFlagValue;
+  /** 是否全量同步人脸 */
+  downloadUserFlag: TYesNoFlagValue;
   /** 是否启用语音留言 */
   messageSoundFlag: TYesNoFlagValue;
   /** 心理咨询身份认证 */
@@ -59,4 +65,12 @@ export type DialConfigForm = {
   sipTransportType: TSipTypeValue | "";
   /** SIP 用户名 */
   sipUserName: string;
+  /** 禁止呼入 */
+  callIncomingDisabled: TYesNoFlagValue;
+  /** 开启人脸 */
+  faceEnabled: TYesNoFlagValue;
+  /** SOS 标题 */
+  sosTitle: string;
+  /** 第三方地址 */
+  thirdPartyUrl: string;
 };

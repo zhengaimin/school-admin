@@ -11,7 +11,7 @@ import { getClassesListApi, getFamilyBindStatusListApi, getGradesApi } from "@/a
 import { dateFormatter, useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import { isNullOrUnDef } from "@/utils/is";
-import { WECHAT_BOUND_STATUS_I18N, WECHAT_BOUND_STATUS_OPTIONS } from "@/config/modules";
+import { WECHAT_BOUND_STATUS_OPTIONS, getWechatBoundStatusText } from "@/config/modules";
 import { buildFamilyBindStatusListParams } from "./utils/payload";
 
 /** 学校信息 */
@@ -198,7 +198,7 @@ watch(
 
       <template #wechatBound="{ row }">
         <el-tag :type="row.wechatBound ? 'success' : 'info'">
-          {{ WECHAT_BOUND_STATUS_I18N[row.wechatBound] || "--" }}
+          {{ getWechatBoundStatusText(row.wechatBound) }}
         </el-tag>
       </template>
 

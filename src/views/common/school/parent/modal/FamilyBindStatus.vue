@@ -3,7 +3,7 @@ import type { FamilyBindStatus } from "@/api/interface";
 
 import { ref } from "vue";
 import { getFamilyBindStatusSubscriptionsApi } from "@/api/modules";
-import { WECHAT_BOUND_STATUS_I18N } from "@/config/modules";
+import { getWechatBoundStatusText } from "@/config/modules";
 import { isNullOrUnDef } from "@/utils/is";
 
 /** 弹窗是否显示 */
@@ -108,7 +108,7 @@ defineExpose({ acceptParams });
       </el-descriptions-item>
       <el-descriptions-item label="微信绑定">
         <el-tag v-if="currentRow" :type="currentRow.wechatBound ? 'success' : 'info'">
-          {{ WECHAT_BOUND_STATUS_I18N[currentRow.wechatBound] || "--" }}
+          {{ getWechatBoundStatusText(currentRow.wechatBound) }}
         </el-tag>
         <span v-else>--</span>
       </el-descriptions-item>

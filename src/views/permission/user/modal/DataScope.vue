@@ -20,7 +20,7 @@ const visible = ref(false);
 /** 弹窗加载状态 */
 const loading = ref(false);
 /** 弹窗参数 */
-const parameter = ref<{ title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }>({
+const parameter = ref<TModalParams>({
   title: "",
   type: "Edit",
   showConfirm: true

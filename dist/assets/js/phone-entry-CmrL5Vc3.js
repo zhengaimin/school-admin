@@ -1,0 +1,1 @@
+var i=(s=>(s.VIDEO="video",s.SIM="sim",s.SIP="sip",s))(i||{});const e={video:"微信",sim:"SIM卡",sip:"SIP"},a=[{label:e.video,value:"video"},{label:e.sim,value:"sim"},{label:e.sip,value:"sip"}];export{e as P,i as a,a as b};

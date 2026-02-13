@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DeviceTag } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 import type { DeviceTagRow } from "../types";
 

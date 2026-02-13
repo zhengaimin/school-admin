@@ -148,7 +148,7 @@ async function handleImport(options: UploadRequestOptions) {
   importLoading.value = false;
 }
 /** 显示弹框 */
-function handleShowModal(type: "Add" | "Edit" | "View", row?: DeviceBase.IDeviceBaseItem) {
+function handleShowModal(type: TModalType, row?: DeviceBase.IDeviceBaseItem) {
   if (type === "Add" && isAllSchools.value) {
     ElMessage.warning("请选择学校后再新增");
     return;

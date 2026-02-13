@@ -187,7 +187,21 @@ export enum PERMISSION_CODE {
   SCHOOL_MIEN_LIST = "schoolMien:list",
   SCHOOL_MIEN_CREATE = "schoolMien:create",
   SCHOOL_MIEN_UPDATE = "schoolMien:update",
-  SCHOOL_MIEN_DELETE = "schoolMien:delete"
+  SCHOOL_MIEN_DELETE = "schoolMien:delete",
+
+  // APK 管理
+  APK_LIST = "apk:list",
+  APK_CREATE = "apk:create",
+  APK_UPDATE = "apk:update",
+  APK_DELETE = "apk:delete",
+  APK_UPGRADE = "apk:upgrade",
+
+  // APK 错误话术配置
+  APK_MESSAGE_TEMPLATE_LIST = "apk:message-template:list",
+  APK_MESSAGE_TEMPLATE_EDIT = "apk:message-template:edit",
+  APK_MESSAGE_TEMPLATE_RESET = "apk:message-template:reset",
+  APK_MESSAGE_TEMPLATE_EXPORT = "apk:message-template:export",
+  APK_MESSAGE_TEMPLATE_AUDIT = "apk:message-template:audit"
 }
 
 export type TPermissionCodeValue = (typeof PERMISSION_CODE)[keyof typeof PERMISSION_CODE];

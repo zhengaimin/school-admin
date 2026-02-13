@@ -1,0 +1,1 @@
+import{_ as o}from"./ChangeSchool.vue_vue_type_script_setup_true_lang-BydrreKq.js";import"./index-FmimWCzg.js";import"./video-aET_rZvu.js";import"./index-8SCU_7Fa.js";import"./index.vue_vue_type_script_setup_true_lang-CTWChpfC.js";export{o as default};

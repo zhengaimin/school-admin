@@ -6,7 +6,11 @@ export const ROUTE_COMMON = {
   /** 学校管理 */
   SCHOOL: "/common/school/manage",
   /** 设备配置 */
-  SCHOOL_DEVICE_CONFIG: "/common/school/deviceConfig"
+  SCHOOL_DEVICE_CONFIG: "/common/school/deviceConfig",
+  /** APK 管理 */
+  APK: "/common/apk",
+  /** APK 错误话术配置 */
+  APK_MESSAGE_TEMPLATE: "/common/apkMessageTemplate"
 } as const;
 
 /** 校园管理模块路由 */

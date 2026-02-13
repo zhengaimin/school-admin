@@ -700,12 +700,11 @@ defineExpose({ acceptParams });
 <style scoped>
 .tenant-option {
   display: flex;
+  gap: 12px;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
   width: 100%;
 }
-
 .tenant-option__name {
   flex: 1;
   min-width: 0;
@@ -713,7 +712,6 @@ defineExpose({ acceptParams });
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .tenant-option__contact {
   flex-shrink: 0;
   color: var(--el-text-color-secondary);

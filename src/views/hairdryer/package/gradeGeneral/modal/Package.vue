@@ -20,9 +20,9 @@ const currentSchoolName = ref("");
 const emits = defineEmits(["submit"]);
 
 const visible = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Add" as "Add" | "Edit" | "View",
+  type: "Add",
   showConfirm: true
 });
 const ruleFormRef = ref<FormInstance>();
@@ -164,10 +164,7 @@ async function handleSubmitForm(formEl: any) {
   });
 }
 
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: GradePackage.IGradePackageConfigVo
-) {
+async function acceptParams(params: TModalParams, row?: GradePackage.IGradePackageConfigVo) {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {

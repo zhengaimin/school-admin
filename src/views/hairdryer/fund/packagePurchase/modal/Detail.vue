@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PackageRecord } from "@/api/interface";
-import type { PackagePurchaseModalParams, PackagePurchaseModalType } from "../types";
+import type { PackagePurchaseModalParams } from "../types";
 
 import { ref } from "vue";
 import { getPackageRecordDetailApi } from "@/api/modules";
@@ -11,7 +11,7 @@ const loading = ref(false);
 const detail = ref<PackageRecord.IPackageRecordDetail>();
 const parameter = ref<PackagePurchaseModalParams>({
   title: "",
-  type: "View" as PackagePurchaseModalType,
+  type: "View",
   showConfirm: false
 });
 

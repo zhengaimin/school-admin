@@ -1,1 +1,0 @@
-import{_ as o}from"./GrantGift.vue_vue_type_script_setup_true_lang-BnzGyyfA.js";import"./index-Bfhsg35M.js";import"./class-BYhAeBkP.js";import"./department-mxTK29EW.js";import"./InternalPage-CezfkkQS.js";import"./useSchool-Oa1LyENa.js";import"./index.vue_vue_type_script_setup_true_lang-CfZtHbs4.js";export{o as default};

@@ -8,9 +8,9 @@ import { postDeviceFeatureConfigSyncApi } from "@/api/modules/device/config";
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 const deviceId = ref<number>(0);
@@ -38,10 +38,7 @@ async function axiosPostDeviceFeatureConfigSyncApi(params: DeviceConfig.ReqDevic
   }
 }
 /** 接收参数 */
-function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: { id: number; status: number }
-) {
+function acceptParams(params: TModalParams, row?: { id: number; status: number }) {
   parameter.value = { ...parameter.value, ...params };
   if (!row) return;
   deviceId.value = row.id;

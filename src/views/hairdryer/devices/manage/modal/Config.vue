@@ -18,9 +18,9 @@ const visible = ref(false);
 const loading = ref(false);
 const deviceId = ref<number>();
 const schoolName = ref("");
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "设备配置",
-  type: "Edit" as "Add" | "Edit" | "View",
+  type: "Edit",
   showConfirm: true
 });
 
@@ -101,10 +101,7 @@ async function handleSave() {
 }
 
 /** 接收参数 */
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceBase.IDeviceBaseItem
-) {
+async function acceptParams(params: TModalParams, row?: DeviceBase.IDeviceBaseItem) {
   parameter.value = { ...parameter.value, ...params };
 
   if ((isEdit.value || isView.value) && row?.id) {

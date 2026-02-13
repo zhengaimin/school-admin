@@ -92,7 +92,7 @@ const columns: ColumnProps<Student.IStudentItemVo>[] = [
   { prop: "guardianName", label: "监护人", width: 90 },
   { prop: "guardianPhone", label: "监护人电话", minWidth: 120 },
   { prop: "studentType", label: "学生类型", width: 100 },
-  { prop: "status", label: "状态", width: 90 },
+  { prop: "status", label: "状态", width: 90, fixed: "right" },
   { prop: "createdAt", label: "创建时间", minWidth: 160 },
   {
     prop: "gradeId",

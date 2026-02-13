@@ -15,9 +15,9 @@ import { formatTimestamp } from "@/hooks/useManage";
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<DeviceCommand.IDeviceCommandItem | null>(null);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: false
 });
 
@@ -46,10 +46,7 @@ const resultDataJson = computed(() => {
 });
 
 /** 接收参数 */
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceCommand.IDeviceCommandItem
-) => {
+const acceptParams = async (params: TModalParams, row?: DeviceCommand.IDeviceCommandItem) => {
   parameter.value = { ...parameter.value, ...params };
   if (!row?.id) return;
   await axiosGetDeviceCommandDetailApi(row.id);

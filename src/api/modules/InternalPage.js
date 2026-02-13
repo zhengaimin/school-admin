@@ -389,16 +389,6 @@ export const refundsDetail = params => {
 export const refundscheck = params => {
   return http.post(`/admin/refunds/${params.refundApplicationId}/audit`, params);
 };
-// 设备命令
-export const devicecommandsList = params => {
-  return http.get(`/admin/device-commands?${params}`);
-};
-export const devicecommandsDelete = params => {
-  return http.delete(`/admin/device-commands/${params.id}`);
-};
-export const devicecommandsDetail = params => {
-  return http.get(`/admin/device-commands/${params.id}`);
-};
 // 亲情号
 export const familycontactsAdd = params => {
   return http.post(`/admin/family-contacts`, params);

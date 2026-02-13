@@ -15,7 +15,7 @@ const currentSchoolName = ref("");
 const emits = defineEmits(["submit"]);
 
 const visible = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
   type: "Add",
   showConfirm: true
@@ -95,10 +95,7 @@ async function handleSubmitForm(formEl?: FormInstance) {
 }
 
 /** 接收参数 */
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: DeviceBase.IDeviceBaseItem
-) {
+async function acceptParams(params: TModalParams, row?: DeviceBase.IDeviceBaseItem) {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {

@@ -1,11 +1,5 @@
 /** 用户分配弹窗参数 */
-export type UserAssignParams = {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
+export type UserAssignParams = TModalParams & {
   /** 部门ID */
   departmentId: number;
   /** 部门名称 */

@@ -29,13 +29,7 @@ export interface FormData {
 }
 
 /** 导出弹窗接收参数 */
-export interface AcceptParamsOptions {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
+export type AcceptParamsOptions = TModalParams & {
   /** 学校ID */
   schoolId: number;
   /** 学生关键词 */
@@ -60,4 +54,4 @@ export interface AcceptParamsOptions {
   departmentOptions?: OptionItem[];
   /** 班级选项 */
   classOptions?: OptionItem[];
-}
+};

@@ -12,7 +12,7 @@ const emit = defineEmits<{ submit: [] }>();
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref<{ title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean; id?: number }>({
+const parameter = ref<TModalParams & { id?: number }>({
   title: "",
   type: "Add",
   showConfirm: true
@@ -91,10 +91,7 @@ const onSubmitForm = async () => {
 };
 
 /** 接收参数 */
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: System.Tenant
-) => {
+const acceptParams = async (params: TModalParams, row?: System.Tenant) => {
   parameter.value = { ...parameter.value, ...params, id: row?.id };
   Object.assign(ruleForm, getInitialFormData());
 

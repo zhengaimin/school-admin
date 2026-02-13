@@ -1,4 +1,5 @@
 <script setup lang="ts" name="hairdryerRateGrade">
+import type { RateDryer } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { GradeRateRow } from "./types";
 

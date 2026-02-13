@@ -11,7 +11,7 @@ const emit = defineEmits<{ submit: [] }>();
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref<{ title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean; id?: number }>({
+const parameter = ref<TModalParams & { id?: number }>({
   title: "",
   type: "Add",
   showConfirm: true
@@ -157,10 +157,7 @@ async function handleSubmitForm() {
 }
 
 /** 接收参数 */
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: System.OrgDepartment
-) {
+async function acceptParams(params: TModalParams, row?: System.OrgDepartment) {
   parameter.value = { ...parameter.value, ...params, id: row?.id };
   Object.assign(ruleForm, getInitialFormData());
 

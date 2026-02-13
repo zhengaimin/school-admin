@@ -45,7 +45,7 @@ const columns: ColumnProps<GradePackage.IGradePackageConfigVo>[] = [
 ];
 
 /** 显示弹框 */
-const onShowModal = (type: "Add" | "Edit" | "View", row?: GradePackage.IGradePackageConfigVo) => {
+const onShowModal = (type: TModalType, row?: GradePackage.IGradePackageConfigVo) => {
   if (type === "Add" && isAllSchools.value) {
     ElMessage.warning("请选择学校后再新增");
     return;

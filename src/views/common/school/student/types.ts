@@ -4,17 +4,10 @@ import type { GradeCascadeOption } from "@/hooks/useGradeDepartmentClassOptions"
 export type OptionItem = GradeCascadeOption;
 
 /** 学生弹窗类型（用于弹窗模式切换；取值：Add-新增，Edit-编辑，View-查看） */
-export type StudentModalType = "Add" | "Edit" | "View";
+export type StudentModalType = TModalType;
 
 /** 学生弹窗参数 */
-export interface StudentModalParams {
-  /** 标题 */
-  title: string;
-  /** 类型 */
-  type: StudentModalType;
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
-}
+export type StudentModalParams = TModalParams;
 
 /** 导入类型（用于区分导入场景；取值：1-导入学生信息，2-批量导入更新学生信息） */
 export type StudentImportType = 1 | 2;

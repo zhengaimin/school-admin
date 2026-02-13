@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { ResultData, Student } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
-import type { StudentModalParams, StudentModalType } from "../types";
+import type { StudentModalParams } from "../types";
 
 import { computed, nextTick, reactive, ref, unref } from "vue";
 import { ElMessage } from "element-plus";
 import { getStudentDetailApi, postCreateStudentApi, putUpdateStudentApi } from "@/api/modules";
 import { postUploadImgApi } from "@/api/modules/upload";
-import { STUDENT_SEX_OPTIONS, STUDENT_TYPE, STUDENT_TYPE_OPTIONS } from "@/config/modules";
+import {
+  STUDENT_SEX_OPTIONS,
+  STUDENT_STATUS,
+  STUDENT_STATUS_OPTIONS,
+  STUDENT_TYPE,
+  STUDENT_TYPE_OPTIONS
+} from "@/config/modules";
 import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
 import { useSchool } from "@/hooks/useSchool";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
@@ -23,7 +29,7 @@ const visible = ref(false);
 const modalLoading = ref(false);
 const parameter = ref<StudentModalParams>({
   title: "",
-  type: "Add" as StudentModalType,
+  type: "Add",
   showConfirm: true
 });
 const ruleFormRef = ref<FormInstance>();
@@ -55,17 +61,37 @@ const ruleForm = reactive<Partial<Student.IStudentItemVo>>({
   guardianName: "",
   guardianPhone: "",
   studentType: STUDENT_TYPE.BOARDING,
+  status: STUDENT_STATUS.ACTIVE,
   gradeId: undefined,
   departmentId: undefined,
   classId: undefined,
-  faceImageUrl: ""
+  faceImageUrl: "",
+  address: ""
 });
 
 const rules: FormRules = {
   name: [{ required: true, message: "请输入学生姓名", trigger: "blur" }],
   uuid: [{ required: true, message: "请输入唯一号", trigger: "blur" }],
+  studentType: [{ required: true, message: "请选择学生类型", trigger: "change" }],
+  status: [{ required: true, message: "请选择状态", trigger: "change" }],
   gradeId: [{ required: true, message: "请选择年级", trigger: "change" }],
-  classId: [{ required: true, message: "请选择班级", trigger: "change" }]
+  classId: [{ required: true, message: "请选择班级", trigger: "change" }],
+  phone: [
+    {
+      validator: (_rule, value, callback) => {
+        if (!value) {
+          callback();
+          return;
+        }
+        if (/^1[3-9]\d{9}$/.test(value)) {
+          callback();
+          return;
+        }
+        callback(new Error("请输入正确的手机号"));
+      },
+      trigger: "blur"
+    }
+  ]
 };
 
 const isAdd = computed(() => parameter.value.type === "Add");
@@ -85,10 +111,12 @@ function getInitialFormData(): Partial<Student.IStudentItemVo> {
     guardianName: "",
     guardianPhone: "",
     studentType: STUDENT_TYPE.BOARDING,
+    status: STUDENT_STATUS.ACTIVE,
     gradeId: undefined,
     departmentId: undefined,
     classId: undefined,
-    faceImageUrl: ""
+    faceImageUrl: "",
+    address: ""
   };
 }
 
@@ -160,13 +188,6 @@ async function handleDepartmentChange(departmentId?: number) {
     }
   });
 }
-/** 处理手机号校验 */
-function handleCheckPhone() {
-  if (ruleForm.phone && !/^1[3456789]\d{9}$/.test(ruleForm.phone)) {
-    ruleForm.phone = "";
-    ElMessage.warning("请输入正确的手机号");
-  }
-}
 /** 提交表单 */
 async function handleSubmitForm(formEl?: FormInstance) {
   if (!formEl) return;
@@ -196,7 +217,6 @@ async function handleSubmitForm(formEl?: FormInstance) {
 /** 接收参数 */
 async function acceptParams(params: StudentModalParams, row?: Student.IStudentItemVo) {
   parameter.value = { ...parameter.value, ...params };
-  visible.value = true;
 
   Object.assign(ruleForm, getInitialFormData());
 
@@ -218,6 +238,7 @@ async function acceptParams(params: StudentModalParams, row?: Student.IStudentIt
     }
   }
 
+  visible.value = true;
   nextTick(() => {
     ruleFormRef.value?.clearValidate();
   });
@@ -239,6 +260,17 @@ defineExpose({ acceptParams });
     <SchoolInfo :name="currentSchoolName" />
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
       <el-row :gutter="24">
+        <el-col :span="12">
+          <el-form-item label="个人图片" prop="faceImageUrl">
+            <UploadImg
+              v-model:image-url="ruleForm.faceImageUrl!"
+              width="160px"
+              height="160px"
+              :api="uploadAvatarApi"
+              :disabled="isView"
+            />
+          </el-form-item>
+        </el-col>
         <el-col :span="12">
           <el-form-item label="学生姓名" prop="name">
             <el-input v-model="ruleForm.name" placeholder="请输入学生姓名" />
@@ -304,6 +336,13 @@ defineExpose({ acceptParams });
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item label="状态" prop="status">
+            <el-select v-model="ruleForm.status" class="w-full" placeholder="请选择状态">
+              <el-option v-for="item in STUDENT_STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="性别" prop="sex">
             <el-select v-model="ruleForm.sex" class="w-full" placeholder="请选择性别">
               <el-option v-for="item in STUDENT_SEX_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
@@ -312,7 +351,7 @@ defineExpose({ acceptParams });
         </el-col>
         <el-col :span="12">
           <el-form-item label="电话" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入电话" @blur="handleCheckPhone" />
+            <el-input v-model="ruleForm.phone" placeholder="请输入电话" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -325,15 +364,9 @@ defineExpose({ acceptParams });
             <el-input v-model="ruleForm.guardianName" placeholder="请输入监护人姓名" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="个人图片" prop="faceImageUrl">
-            <UploadImg
-              v-model:image-url="ruleForm.faceImageUrl!"
-              width="100px"
-              height="100px"
-              :api="uploadAvatarApi"
-              :disabled="isView"
-            />
+        <el-col :span="24">
+          <el-form-item label="家庭住址" prop="address">
+            <el-input v-model="ruleForm.address" type="textarea" :rows="2" placeholder="请输入家庭住址" />
           </el-form-item>
         </el-col>
       </el-row>

@@ -15,9 +15,9 @@ import {
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<Refund.IRefundDetail>();
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: false
 });
 
@@ -37,10 +37,7 @@ async function axiosGetRefundDetailApi(id: number) {
   }
 }
 
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: Refund.IRefundItem
-) {
+async function acceptParams(params: TModalParams, row?: Refund.IRefundItem) {
   parameter.value = { ...parameter.value, ...params };
   if (!row?.id) return;
   await axiosGetRefundDetailApi(row.id);

@@ -115,17 +115,6 @@
         </el-row>
         <el-row>
           <el-col :span="11">
-            <el-form-item label="计费模式" prop="billMode">
-              <el-select v-model="form.billMode" style="width: 100%">
-                <el-option label="免费" value="0"></el-option>
-                <el-option label="音视频分开计费" :value="YES_NO_FLAG.YES"></el-option>
-                <el-option label="合并计费" :value="YES_NO_FLAG.NO"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="11">
             <el-form-item label="是否显示留言按钮" prop="messageFlag">
               <el-radio-group v-model="form.messageFlag">
                 <el-radio :value="YES_NO_FLAG.YES">是</el-radio>
@@ -229,6 +218,7 @@
 import { ref, reactive, computed, nextTick } from "vue";
 import { PHONE_TYPE_OPTIONS, SIP_TYPE_OPTIONS } from "@/config/modules/device";
 import { YES_NO_FLAG } from "@/config/modules/common";
+import { DEVICE_BILL_MODE } from "@/config/modules/device/bill-mode";
 import { devicesAdd, devicesUpdate, devicesDetail } from "@/api/modules/InternalPage.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/modules/user";
@@ -268,7 +258,7 @@ const form = reactive({
   addPunchFace: "",
   forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
   forbidCallTimes: "",
-  billMode: "",
+  billMode: DEVICE_BILL_MODE.MERGED,
   warnCallTime: "",
   sipDomain: "",
   sipPassword: "",
@@ -328,7 +318,7 @@ const openDialog = row => {
       addPunchFace: "",
       forbidCallTimesAry: [{ fstTime: "", fendTime: "" }],
       forbidCallTimes: "",
-      billMode: "",
+      billMode: DEVICE_BILL_MODE.MERGED,
       warnCallTime: "",
       sipDomain: "",
       sipPassword: "",

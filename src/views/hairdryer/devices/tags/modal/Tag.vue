@@ -14,7 +14,7 @@ const emits = defineEmits(["submit"]);
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({ title: "", type: "Add" as "Add" | "Edit" | "View", showConfirm: true });
+const parameter = ref<TModalParams>({ title: "", type: "Add", showConfirm: true });
 const editingTagId = ref<number | null>(null);
 const currentSchoolName = ref("");
 
@@ -77,7 +77,7 @@ const onSubmitForm = async (formEl: any) => {
   });
 };
 
-const acceptParams = (params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }, row?: TagRow) => {
+const acceptParams = (params: TModalParams, row?: TagRow) => {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {

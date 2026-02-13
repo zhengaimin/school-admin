@@ -1,6 +1,8 @@
 import type { Device as DeviceVideo } from "@/api/interface";
 import type { DeviceVideoForm } from "../types";
 
+import { DEVICE_BILL_MODE } from "@/config/modules";
+
 /** 规范化设备组ID */
 export function normalizeDeviceGroupId(value?: number | null, defaultId = -1) {
   return typeof value === "number" && !Number.isNaN(value) ? value : defaultId;
@@ -22,6 +24,12 @@ function normalizeNumberValue(value?: number | null) {
   return typeof value === "number" && !Number.isNaN(value) ? value : undefined;
 }
 
+/** 规范化扩展配置 */
+function normalizeExtraConfig(value?: Record<string, any>) {
+  if (!value || Array.isArray(value)) return undefined;
+  return value;
+}
+
 /** 生成新增设备请求参数 */
 export function buildPostDevicePayload(
   form: DeviceVideoForm,
@@ -41,25 +49,27 @@ export function buildPostDevicePayload(
     callTime: normalizeNumberValue(form.callTime),
     forbidPhone: normalizeOptionalString(form.forbidPhone),
     phoneType: form.phoneType ?? undefined,
+    dialMode: form.dialMode ?? undefined,
+    phoneTypes: form.phoneTypes,
     forbidCallTimes: normalizeOptionalString(form.forbidCallTimes),
     messageFlag: form.messageFlag ?? undefined,
-    downloadUserFlag: form.downloadUserFlag ?? undefined,
     messageSoundFlag: form.messageSoundFlag ?? undefined,
-    mhcFlag: form.mhcFlag ?? undefined,
     addPunchFace: form.addPunchFace ?? undefined,
     warnCallTime: normalizeNumberValue(form.warnCallTime),
-    billMode: form.billMode ?? undefined,
+    billMode: DEVICE_BILL_MODE.MERGED,
     sipUserName: normalizeOptionalString(form.sipUserName),
     sipPassword: normalizeOptionalString(form.sipPassword),
     sipDomain: normalizeOptionalString(form.sipDomain),
     sipTransportType: form.sipTransportType ?? undefined,
+    extraConfig: normalizeExtraConfig(form.extraConfig),
     schoolId
   };
 }
 
 /** 生成更新设备请求参数 */
-export function buildPutDevicePayload(form: DeviceVideoForm): DeviceVideo.ReqPutDeviceApi {
+export function buildPutDevicePayload(form: DeviceVideoForm, schoolId?: number): DeviceVideo.ReqPutDeviceApi {
   return {
+    schoolId: typeof schoolId === "number" && !Number.isNaN(schoolId) ? schoolId : undefined,
     name: normalizeOptionalString(form.name),
     terminalKey: normalizeOptionalString(form.terminalKey),
     terminalMac: normalizeOptionalString(form.terminalMac),
@@ -71,18 +81,19 @@ export function buildPutDevicePayload(form: DeviceVideoForm): DeviceVideo.ReqPut
     callTime: normalizeNumberValue(form.callTime),
     forbidPhone: normalizeOptionalString(form.forbidPhone),
     phoneType: form.phoneType ?? undefined,
+    dialMode: form.dialMode ?? undefined,
+    phoneTypes: form.phoneTypes,
     forbidCallTimes: normalizeOptionalString(form.forbidCallTimes),
     messageFlag: form.messageFlag ?? undefined,
-    downloadUserFlag: form.downloadUserFlag ?? undefined,
     messageSoundFlag: form.messageSoundFlag ?? undefined,
-    mhcFlag: form.mhcFlag ?? undefined,
     addPunchFace: form.addPunchFace ?? undefined,
     warnCallTime: normalizeNumberValue(form.warnCallTime),
-    billMode: form.billMode ?? undefined,
+    billMode: DEVICE_BILL_MODE.MERGED,
     sipUserName: normalizeOptionalString(form.sipUserName),
     sipPassword: normalizeOptionalString(form.sipPassword),
     sipDomain: normalizeOptionalString(form.sipDomain),
     sipTransportType: form.sipTransportType ?? undefined,
+    extraConfig: normalizeExtraConfig(form.extraConfig),
     password: normalizeOptionalString(form.password)
   };
 }

@@ -9,9 +9,9 @@ import { DEVICE_TYPE_I18N, PAYMENT_METHOD_I18N, PAYMENT_STATUS_I18N, getPaymentS
 const visible = ref(false);
 const loading = ref(false);
 const detail = ref<Payment.IPaymentDetail>();
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: false
 });
 
@@ -31,10 +31,7 @@ async function axiosGetPaymentDetailApi(id: number) {
   }
 }
 
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: Payment.IPaymentItem
-) {
+async function acceptParams(params: TModalParams, row?: Payment.IPaymentItem) {
   parameter.value = { ...parameter.value, ...params };
   if (!row?.id) return;
   await axiosGetPaymentDetailApi(row.id);

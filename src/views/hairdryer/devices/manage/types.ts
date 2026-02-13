@@ -10,14 +10,7 @@ export interface BatchTagForm {
 }
 
 /** 批量标签弹窗参数 */
-export interface BatchTagParams {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
-}
+export type BatchTagParams = TModalParams;
 
 /** 导出筛选表单 */
 export interface FormData {

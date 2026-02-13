@@ -2,6 +2,8 @@ export * from "./status";
 export * from "./type";
 export * from "./bill-mode";
 export * from "./phone";
+export * from "./dial-mode";
+export * from "./phone-entry";
 export * from "./sip";
 export * from "./command";
 export * from "./tag-control";

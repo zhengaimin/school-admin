@@ -1,1 +1,0 @@
-import{g as e,k as t,c as s,o as a,m as c}from"./index-Bfhsg35M.js";import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";const _={class:"table-box"},r=e({name:"hairdryerSchoolFixed"}),p=e({...r,setup(d){return(m,i)=>{const o=t("el-empty");return a(),s("div",_,[c(o,{description:"学校固定套餐 - 功能开发中..."})])}}}),x=n(p,[["__scopeId","data-v-29182a1d"]]);export{x as default};

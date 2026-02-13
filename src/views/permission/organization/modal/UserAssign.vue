@@ -12,7 +12,7 @@ const emit = defineEmits<{ submit: [{ departmentId: number; userIds: number[] }]
 const visible = ref(false);
 const loading = ref(false);
 const saving = ref(false);
-const parameter = ref<{ title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean }>({
+const parameter = ref<TModalParams>({
   title: "",
   type: "Edit",
   showConfirm: true
@@ -170,16 +170,14 @@ defineExpose({ acceptParams });
 
 <style scoped>
 :deep(.el-transfer) {
-  width: 100%;
   display: flex;
+  width: 100%;
 }
-
 :deep(.el-transfer-panel) {
   flex: 1;
-  min-width: 0;
   width: 0;
+  min-width: 0;
 }
-
 :deep(.el-transfer__buttons) {
   flex: 0 0 auto;
   align-self: center;

@@ -10,7 +10,7 @@ import { deleteDeviceDialConfigApi, getDeviceDialConfigListApi } from "@/api/mod
 import ProTable from "@/components/ProTable/index.vue";
 import Control from "./modal/Control.vue";
 import Detail from "./modal/Detail.vue";
-import { PHONE_TYPE_I18N, YES_NO_FLAG, YES_NO_FLAG_I18N } from "@/config/modules";
+import { DIAL_MODE_I18N, PHONE_ENTRY, PHONE_ENTRY_I18N, PHONE_TYPE, YES_NO_FLAG, YES_NO_FLAG_I18N } from "@/config/modules";
 import { useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 
@@ -32,7 +32,8 @@ const columns: ColumnProps<TDeviceDialConfigItem>[] = [
   { prop: "callTime", label: "单次通话限定时长（分钟）", minWidth: 180 },
   { prop: "powerOnTime", label: "定时开机时间", minWidth: 130 },
   { prop: "powerOffTime", label: "定时关机时间", minWidth: 130 },
-  { prop: "phoneType", label: "拨号类型", minWidth: 100 },
+  { prop: "dialMode", label: "拨号模式", minWidth: 140 },
+  { prop: "phoneTypes", label: "拨号入口", minWidth: 160 },
   { prop: "messageFlag", label: "是否显示留言按钮", minWidth: 160 },
   { prop: "operation", label: "操作", width: 200, fixed: "right" }
 ];
@@ -61,7 +62,7 @@ async function axiosDeleteDialConfigApi(id: number) {
 }
 
 /** 显示弹窗 */
-function handleShowModal(type: "Add" | "Edit" | "View", row?: TDeviceDialConfigItem) {
+function handleShowModal(type: TModalType, row?: TDeviceDialConfigItem) {
   if (type === "Add" && isAllSchools.value) {
     ElMessage.warning("请选择学校后再新增");
     return;
@@ -86,6 +87,18 @@ function handleDelete(row: TDeviceDialConfigItem) {
   if (!row?.id) return;
   deleteRow(row.id, row.schoolName ?? "");
 }
+/** 获取拨号入口文案 */
+function getPhoneEntriesText(row: TDeviceDialConfigItem) {
+  if (row.phoneTypes?.length) {
+    return row.phoneTypes.map(item => PHONE_ENTRY_I18N[item] || item).join("、");
+  }
+  if (row.phoneType === PHONE_TYPE.ALL) {
+    return [PHONE_ENTRY.VIDEO, PHONE_ENTRY.SIM, PHONE_ENTRY.SIP].map(item => PHONE_ENTRY_I18N[item]).join("、");
+  }
+  if (row.phoneType === PHONE_TYPE.VIDEO) return PHONE_ENTRY_I18N[PHONE_ENTRY.VIDEO];
+  if (row.phoneType === PHONE_TYPE.SIM) return PHONE_ENTRY_I18N[PHONE_ENTRY.SIM];
+  return "--";
+}
 
 /** 监听学校切换 */
 watch(schoolId, () => {
@@ -100,8 +113,12 @@ watch(schoolId, () => {
         <el-button v-if="canAdd" type="primary" :icon="CirclePlus" @click="handleShowModal('Add')">新增</el-button>
       </template>
 
-      <template #phoneType="{ row }">
-        {{ PHONE_TYPE_I18N[row.phoneType] || "--" }}
+      <template #dialMode="{ row }">
+        {{ DIAL_MODE_I18N[row.dialMode] || "--" }}
+      </template>
+
+      <template #phoneTypes="{ row }">
+        {{ getPhoneEntriesText(row) }}
       </template>
 
       <template #messageFlag="{ row }">

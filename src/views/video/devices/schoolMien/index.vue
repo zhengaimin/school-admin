@@ -1,4 +1,5 @@
 <script setup lang="ts" name="schoolMien">
+import type { SchoolMien } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { TSchoolMienItem } from "./types";
 

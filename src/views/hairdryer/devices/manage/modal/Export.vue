@@ -10,9 +10,9 @@ import { DEVICE_TYPE, VENDOR_CODE, DEVICE_STATUS_OPTIONS } from "@/config/module
 const visible = ref(false);
 const loading = ref(false);
 const exporting = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "View" as "Add" | "Edit" | "View",
+  type: "View",
   showConfirm: true
 });
 
@@ -89,10 +89,7 @@ async function axiosPostDeviceBaseExportApi(params: DeviceBase.ReqPostDeviceBase
   }
 }
 
-async function acceptParams(
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: AcceptParamsOptions
-) {
+async function acceptParams(params: TModalParams, row?: AcceptParamsOptions) {
   parameter.value = { ...parameter.value, ...params };
   const options = row || {};
   formData.schoolId = options.schoolId;

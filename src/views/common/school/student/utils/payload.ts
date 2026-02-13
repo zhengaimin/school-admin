@@ -1,10 +1,26 @@
 import type { FamilyContact, Student } from "@/api/interface";
-import { STUDENT_TYPE } from "@/config/modules";
+import type { TStudentSexValue } from "@/config/modules";
+import { STUDENT_SEX, STUDENT_STATUS, STUDENT_TYPE } from "@/config/modules";
 
 /** 处理文本字段 */
 function trimText(value?: string) {
   const result = value?.trim();
   return result ? result : undefined;
+}
+
+/** 处理必填文本字段 */
+function trimRequiredText(value?: string) {
+  return (value ?? "").trim();
+}
+
+/** 处理学生性别字段 */
+function normalizeStudentSex(value?: string) {
+  const normalizedValue = trimText(value);
+  if (!normalizedValue) {
+    return undefined;
+  }
+  const studentSexList: TStudentSexValue[] = [STUDENT_SEX.MALE, STUDENT_SEX.FEMALE];
+  return studentSexList.includes(normalizedValue as TStudentSexValue) ? (normalizedValue as TStudentSexValue) : undefined;
 }
 
 /** 构建新增学生参数 */
@@ -18,14 +34,15 @@ export function buildPostStudentPayload(form: Partial<Student.ReqPostStudentApi>
     uuid: (form.uuid ?? "").trim(),
     studentCode: trimText(form.studentCode),
     idCard: trimText(form.idCard),
-    sex: trimText(form.sex),
+    sex: normalizeStudentSex(form.sex),
     cardNumber: trimText(form.cardNumber),
     phone: trimText(form.phone),
     guardianName: trimText(form.guardianName),
     guardianPhone: trimText(form.guardianPhone),
     studentType: form.studentType ?? STUDENT_TYPE.BOARDING,
     faceImageUrl: trimText(form.faceImageUrl),
-    address: trimText(form.address)
+    address: trimText(form.address),
+    status: form.status ?? STUDENT_STATUS.ACTIVE
   };
   return payload;
 }
@@ -33,22 +50,18 @@ export function buildPostStudentPayload(form: Partial<Student.ReqPostStudentApi>
 /** 构建更新学生参数 */
 export function buildPutStudentPayload(form: Partial<Student.ReqPutStudentApi>) {
   const payload: Student.ReqPutStudentApi = {
-    schoolId: form.schoolId != null ? Number(form.schoolId) : undefined,
-    gradeId: form.gradeId != null ? Number(form.gradeId) : undefined,
-    departmentId: form.departmentId != null && String(form.departmentId) !== "" ? Number(form.departmentId) : -1,
-    classId: form.classId != null ? Number(form.classId) : undefined,
-    name: form.name != null ? form.name.trim() : undefined,
-    uuid: form.uuid != null ? form.uuid.trim() : undefined,
+    name: trimRequiredText(form.name),
     studentCode: trimText(form.studentCode),
+    sex: normalizeStudentSex(form.sex),
     idCard: trimText(form.idCard),
-    sex: trimText(form.sex),
     cardNumber: trimText(form.cardNumber),
     phone: trimText(form.phone),
+    address: trimText(form.address),
     guardianName: trimText(form.guardianName),
     guardianPhone: trimText(form.guardianPhone),
-    studentType: form.studentType,
-    faceImageUrl: trimText(form.faceImageUrl),
-    address: trimText(form.address)
+    studentType: form.studentType ?? STUDENT_TYPE.BOARDING,
+    status: form.status ?? STUDENT_STATUS.ACTIVE,
+    faceImageUrl: trimText(form.faceImageUrl)
   };
   return payload;
 }

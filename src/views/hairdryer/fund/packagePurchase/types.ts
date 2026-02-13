@@ -2,17 +2,10 @@ import type { TDeviceTypeValue } from "@/config/modules/device";
 import type { TPackageRecordStatusValue, TPackageTypeValue } from "@/config/modules/package";
 
 /** 弹窗类型（用于弹窗模式切换；取值：Add-新增，Edit-编辑，View-查看） */
-export type PackagePurchaseModalType = "Add" | "Edit" | "View";
+export type PackagePurchaseModalType = TModalType;
 
 /** 弹窗参数 */
-export interface PackagePurchaseModalParams {
-  /** 标题 */
-  title: string;
-  /** 类型 */
-  type: PackagePurchaseModalType;
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
-}
+export type PackagePurchaseModalParams = TModalParams;
 
 /** 导出选项 */
 export interface ExportOptionItem {

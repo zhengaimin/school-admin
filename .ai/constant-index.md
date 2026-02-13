@@ -24,6 +24,12 @@
 | `ROLE_TYPE` | 角色类型：admin-后台管理员，api-前台用户 | `string` | `TRoleTypeValue` | `src/config/modules/common/role.ts` |
 | `ROLE_LEVEL` | 角色级别：super-超级，platform-平台运营方，agent-代理商，custom-自定义 | `string` | `TRoleLevelValue` | `src/config/modules/common/role.ts` |
 | `SUPER_ADMIN_ROLE` | 超级管理员角色码：super_admin | `string` | `-` | `src/config/modules/common/role.ts` |
+| `APK_PACKAGE_STATUS` | APK 包状态：DRAFT-草稿，PUBLISHED-已发布，DISABLED-已下线 | `string` | `TApkPackageStatusValue` | `src/config/modules/common/apk.ts` |
+| `APK_UPGRADE_SCOPE` | APK 升级范围：DEVICE-设备，SCHOOL-学校，TAG-标签 | `string` | `TApkUpgradeScopeValue` | `src/config/modules/common/apk.ts` |
+| `APK_TERMINAL_TYPE` | APK 终端类型：TERMINAL_TYPE_GH_02-话机终端 | `string` | `TApkTerminalTypeValue` | `src/config/modules/common/apk.ts` |
+| `APK_MESSAGE_TEMPLATE_SCOPE` | APK 错误话术作用域：global-全局，tenant-租户，school-学校 | `string` | `TApkMessageTemplateScopeValue` | `src/config/modules/common/apk-message-template.ts` |
+| `APK_MESSAGE_TEMPLATE_CATEGORY` | APK 错误话术分类：DEVICE-设备，STUDENT-学生，MESSAGE-留言，SYSTEM-系统 | `string` | `TApkMessageTemplateCategoryValue` | `src/config/modules/common/apk-message-template.ts` |
+| `APK_MESSAGE_TEMPLATE_CHANNEL` | APK 错误话术固定渠道：GH_DEVICE_APK | `string` | `-` | `src/config/modules/common/apk-message-template.ts` |
 
 **相关导出：**
 
@@ -39,6 +45,14 @@
 - `ROLE_TYPE_I18N` / `ROLE_TYPE_OPTIONS` - 角色类型文案和选项
 - `ROLE_LEVEL_I18N` / `ROLE_LEVEL_OPTIONS` - 角色级别文案和选项
 - `SUPER_ADMIN_ROLE` - 超级管理员角色码
+- `APK_PACKAGE_STATUS_I18N` / `APK_PACKAGE_STATUS_OPTIONS` - APK 包状态文案和选项
+- `APK_UPGRADE_SCOPE_I18N` / `APK_UPGRADE_SCOPE_OPTIONS` - APK 升级范围文案和选项
+- `APK_TERMINAL_TYPE_I18N` / `APK_TERMINAL_TYPE_OPTIONS` - APK 终端类型文案和选项
+- `getApkPackageStatusTagType` - 获取 APK 包状态标签类型的辅助函数
+- `APK_MESSAGE_TEMPLATE_SCOPE_I18N` / `APK_MESSAGE_TEMPLATE_SCOPE_OPTIONS` - APK 错误话术作用域文案和选项
+- `APK_MESSAGE_TEMPLATE_CATEGORY_I18N` / `APK_MESSAGE_TEMPLATE_CATEGORY_OPTIONS` - APK 错误话术分类文案和选项
+- `APK_MESSAGE_TEMPLATE_CHANNEL` - APK 错误话术固定渠道
+- `getApkMessageTemplateScopeTagType` - 获取 APK 错误话术作用域标签类型的辅助函数
 
 ---
 
@@ -67,6 +81,8 @@
 | `DEVICE_STATUS`          | 设备状态：ONLINE-在线，OFFLINE-离线                                  | `number` | `TDeviceStatusValue`        | `src/config/modules/device/status.ts`    |
 | `DEVICE_BILL_MODE`       | 计费模式：0-免费，Y-音视频分开计费，N-音视频合并计费                 | `string` | `TDeviceBillModeValue`      | `src/config/modules/device/bill-mode.ts` |
 | `PHONE_TYPE`             | 拨号类型：all-全部，video-视频，sim-SIM卡                             | `string` | `TPhoneTypeValue`           | `src/config/modules/device/phone.ts`     |
+| `DIAL_MODE`              | 拨号模式：family-亲情号模式，free-自由拨号模式                         | `string` | `TDialModeValue`            | `src/config/modules/device/dial-mode.ts` |
+| `PHONE_ENTRY`            | 拨号入口：video-视频，sim-SIM卡，sip-SIP                               | `string` | `TPhoneEntryValue`          | `src/config/modules/device/phone-entry.ts` |
 | `SIP_TYPE`               | SIP类型：UDP，TCP，TLS，DTLS                                           | `string` | `TSipTypeValue`             | `src/config/modules/device/sip.ts`       |
 | `DEVICE_COMMAND_CODE`    | 设备命令代码：同步二维码/屏幕参数/超时时间，重启设备                  | `string` | `TDeviceCommandCodeValue`   | `src/config/modules/device/command.ts`   |
 | `DEVICE_TAG_CONTROL_ACTION` | 设备标签控制命令：重启/关机/更新配置/人员数据操作/查询人员数量 | `string` | `TDeviceTagControlActionValue` | `src/config/modules/device/tag-control.ts` |
@@ -83,6 +99,8 @@
 - `DEVICE_STATUS_I18N` / `DEVICE_STATUS_OPTIONS` - 设备状态文案和选项
 - `DEVICE_BILL_MODE_I18N` / `DEVICE_BILL_MODE_OPTIONS` - 计费模式文案和选项
 - `PHONE_TYPE_I18N` / `PHONE_TYPE_OPTIONS` - 拨号类型文案和选项
+- `DIAL_MODE_I18N` / `DIAL_MODE_OPTIONS` - 拨号模式文案和选项
+- `PHONE_ENTRY_I18N` / `PHONE_ENTRY_OPTIONS` - 拨号入口文案和选项
 - `SIP_TYPE_I18N` / `SIP_TYPE_OPTIONS` - SIP类型文案和选项
 - `DEVICE_COMMAND_CODE_I18N` / `DEVICE_COMMAND_CODE_OPTIONS` - 设备命令代码文案和选项
 - `DEVICE_TAG_CONTROL_ACTION_I18N` / `DEVICE_TAG_CONTROL_ACTION_OPTIONS` - 设备标签控制命令文案和选项
@@ -234,6 +252,14 @@
 **相关导出：**
 
 - `PERMISSION_CODE` - 权限编码枚举
+
+**新增权限码（APK 错误话术配置）：**
+
+- `APK_MESSAGE_TEMPLATE_LIST` - APK 错误话术列表
+- `APK_MESSAGE_TEMPLATE_EDIT` - APK 错误话术编辑
+- `APK_MESSAGE_TEMPLATE_RESET` - APK 错误话术恢复继承
+- `APK_MESSAGE_TEMPLATE_EXPORT` - APK 错误话术导出
+- `APK_MESSAGE_TEMPLATE_AUDIT` - APK 错误话术审计日志
 
 ---
 

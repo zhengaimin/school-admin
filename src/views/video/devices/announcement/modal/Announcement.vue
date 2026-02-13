@@ -30,9 +30,9 @@ const emits = defineEmits(["submit"]);
 
 const visible = ref(false);
 const loading = ref(false);
-const parameter = ref({
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Add" as "Add" | "Edit" | "View",
+  type: "Add",
   showConfirm: true
 });
 
@@ -285,10 +285,7 @@ const handleSubmitForm = async (formEl: any) => {
   });
 };
 
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: AnnouncementRow
-) => {
+const acceptParams = async (params: TModalParams, row?: AnnouncementRow) => {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {
@@ -459,13 +456,13 @@ defineExpose({ acceptParams });
   width: 100%;
 }
 :deep(.el-transfer) {
-  width: 100%;
   display: flex;
+  width: 100%;
 }
 :deep(.el-transfer-panel) {
   flex: 1;
-  min-width: 0;
   width: 0;
+  min-width: 0;
 }
 :deep(.el-transfer__buttons) {
   flex: 0 0 auto;

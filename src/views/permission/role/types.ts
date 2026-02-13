@@ -1,12 +1,5 @@
 /** 角色弹窗参数 */
-export type RoleModalParams = {
-  /** 标题 */
-  title: string;
-  /** 弹窗类型 */
-  type: "Add" | "Edit" | "View";
-  /** 是否显示确认按钮 */
-  showConfirm: boolean;
-};
+export type RoleModalParams = TModalParams;
 
 /** 权限树节点 */
 export type TPermissionTreeNode = {

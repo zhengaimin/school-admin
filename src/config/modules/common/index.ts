@@ -4,3 +4,5 @@ export * from "./role";
 export * from "./yes-no";
 export * from "./order";
 export * from "./wechat-bound";
+export * from "./apk";
+export * from "./apk-message-template";

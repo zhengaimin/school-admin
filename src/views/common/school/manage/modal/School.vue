@@ -6,22 +6,30 @@ import { ref, reactive, nextTick, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { postSchoolApi, putSchoolApi } from "@/api/modules";
 import { schoolsDetail } from "@/api/modules/InternalPage.js";
-import { useUserStore } from "@/stores/modules/user";
 import UploadImg from "@/components/Upload/Img.vue";
+import { useUserStore } from "@/stores/modules/user";
+import { buildPostSchoolPayload, buildPutSchoolPayload } from "../utils/payload";
 
+/** 触发提交事件 */
 const emit = defineEmits<{
   submit: [];
 }>();
 
+/** 用户信息仓库 */
+const userStore = useUserStore();
+/** 弹窗可见 */
 const visible = ref(false);
+/** 提交加载 */
 const loading = ref(false);
-const parameter = ref({
+/** 弹窗参数 */
+const parameter = ref<TModalParams>({
   title: "",
-  type: "Add" as "Add" | "Edit" | "View",
+  type: "Add",
   showConfirm: true
 });
-
-// 表单数据
+/** 表单实例 */
+const ruleFormRef = ref<FormInstance>();
+/** 表单数据 */
 const ruleForm = reactive<Partial<School.ISchoolItem>>({
   name: "",
   address: "",
@@ -35,18 +43,16 @@ const ruleForm = reactive<Partial<School.ISchoolItem>>({
   photos: [],
   scoreUrl: ""
 });
-
-// 表单验证规则
+/** 表单验证规则 */
 const rules: FormRules = {
   name: [{ required: true, message: "请输入学校名称", trigger: "blur" }]
 };
 
-const ruleFormRef = ref<FormInstance>();
-
-const userStore = useUserStore();
-
+/** 是否新增 */
 const isAdd = computed(() => parameter.value.type === "Add");
+/** 是否编辑 */
 const isEdit = computed(() => parameter.value.type === "Edit");
+/** 是否查看 */
 const isView = computed(() => parameter.value.type === "View");
 
 /** 获取初始表单数据 */
@@ -86,9 +92,8 @@ const handleCheckPhone = () => {
     ElMessage.warning("请输入正确的手机号");
   }
 };
-
 /** 提交表单 */
-const onSubmitForm = async () => {
+const handleSubmitForm = async () => {
   if (!ruleFormRef.value) return;
 
   await ruleFormRef.value.validate(async (valid: boolean) => {
@@ -96,36 +101,12 @@ const onSubmitForm = async () => {
       loading.value = true;
       try {
         if (isAdd.value) {
-          await postSchoolApi({
-            name: ruleForm.name!,
-            tenantId: Number(userStore.userInfo.tenantId),
-            address: ruleForm.address,
-            phone: ruleForm.phone,
-            principal: ruleForm.principal,
-            description: ruleForm.description,
-            motto: ruleForm.motto,
-            principalIntro: ruleForm.principalIntro,
-            badge: ruleForm.badge,
-            background: ruleForm.background,
-            photos: ruleForm.photos,
-            scoreUrl: ruleForm.scoreUrl
-          });
+          const payload = buildPostSchoolPayload(ruleForm, Number(userStore.userInfo.tenantId));
+          await postSchoolApi(payload);
           ElMessage.success("添加成功");
         } else if (isEdit.value && ruleForm.id) {
-          await putSchoolApi(ruleForm.id, {
-            name: ruleForm.name,
-            address: ruleForm.address,
-            phone: ruleForm.phone,
-            principal: ruleForm.principal,
-            description: ruleForm.description,
-            motto: ruleForm.motto,
-            principalIntro: ruleForm.principalIntro,
-            badge: ruleForm.badge,
-            background: ruleForm.background,
-            photos: ruleForm.photos,
-            status: -1,
-            sort: -1
-          });
+          const payload = buildPutSchoolPayload(ruleForm);
+          await putSchoolApi(ruleForm.id, payload);
           ElMessage.success("编辑成功");
         }
 
@@ -145,10 +126,7 @@ const onSubmitForm = async () => {
 };
 
 /** 接收参数 */
-const acceptParams = async (
-  params: { title: string; type: "Add" | "Edit" | "View"; showConfirm: boolean },
-  row?: School.ISchoolItem
-) => {
+const acceptParams = async (params: TModalParams, row?: School.ISchoolItem) => {
   parameter.value = { ...parameter.value, ...params };
 
   if (isAdd.value) {
@@ -244,7 +222,7 @@ defineExpose({ acceptParams });
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button v-if="parameter.showConfirm" type="primary" :loading="loading" @click="onSubmitForm">确定</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" :loading="loading" @click="handleSubmitForm">确定</el-button>
     </template>
   </el-dialog>
 </template>

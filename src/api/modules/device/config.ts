@@ -53,7 +53,7 @@ export function postDeviceDialConfigApi(data: DeviceDialConfig.ReqPostDeviceDial
 
 /** 修改公话配置 */
 export function putDeviceDialConfigApi(id: number, data: DeviceDialConfig.ReqPutDeviceDialConfigApi) {
-  return http.put(`/admin/device-config/${id}`, data);
+  return http.put<null>(`/admin/device-config/${id}`, data);
 }
 
 /** 更新单个设备配置 */

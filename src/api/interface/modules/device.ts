@@ -11,6 +11,8 @@ import type {
   TDeviceFaceDesiredActionValue,
   TDeviceFaceErrorCodeValue,
   TDeviceTagControlActionValue,
+  TDialModeValue,
+  TPhoneEntryValue,
   TPhoneTypeValue,
   TSipTypeValue
 } from "@/config/modules/device";
@@ -555,6 +557,120 @@ export namespace DeviceCommand {
   }
 }
 
+export namespace DeviceCommandRecord {
+  /** 设备命令记录列表项 */
+  export interface IDeviceCommandRecordItem {
+    /** 命令ID */
+    id: number;
+    /** 租户ID */
+    tenantId: number;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+    /** 命令UUID */
+    cmdUuid: string;
+    /** 设备ID */
+    deviceId: number;
+    /** 设备名称 */
+    deviceName: string;
+    /** 终端KEY */
+    terminalKey: string;
+    /** 终端SN */
+    terminalSn: string;
+    /** 命令类型 */
+    commandType: TDeviceCommandTypeValue;
+    /** 命令项 */
+    commandItem: string;
+    /** 命令名称 */
+    commandName: string;
+    /** 命令描述 */
+    describe: string;
+    /** 执行状态 */
+    status: TDeviceCommandStatusValue;
+    /** 执行状态文案 */
+    statusText: string;
+    /** 执行结果消息 */
+    message: string;
+    /** 执行时间 */
+    executedAt: string;
+    /** 创建时间 */
+    createdAt: string;
+  }
+
+  /** 设备命令记录详情 */
+  export interface IDeviceCommandRecordDetail {
+    /** 命令ID */
+    id: number;
+    /** 命令UUID */
+    cmdUuid: string;
+    /** 设备ID */
+    deviceId: number;
+    /** 设备名称 */
+    deviceName: string;
+    /** 终端KEY */
+    terminalKey: string;
+    /** 终端SN */
+    terminalSn: string;
+    /** 命令类型 */
+    commandType: TDeviceCommandTypeValue;
+    /** 命令项 */
+    commandItem: string;
+    /** 命令名称 */
+    commandName: string;
+    /** 命令描述 */
+    describe: string;
+    /** 命令参数 */
+    arg: string;
+    /** 执行状态 */
+    status: TDeviceCommandStatusValue;
+    /** 执行状态文案 */
+    statusText: string;
+    /** 执行结果消息 */
+    message: string;
+    /** 请求数据 */
+    requestData: string;
+    /** 执行时间 */
+    executedAt: string;
+    /** 创建时间 */
+    createdAt: string;
+    /** 更新时间 */
+    updatedAt: string;
+  }
+
+  /** 获取设备命令记录列表请求参数 */
+  export interface ReqGetDeviceCommandRecordListApi {
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+    /** 设备ID */
+    deviceId?: number;
+    /** 命令类型 */
+    commandType?: TDeviceCommandTypeValue[];
+    /** 执行状态 */
+    status?: TDeviceCommandStatusValue;
+    /** 设备名称 */
+    deviceName?: string;
+    /** 终端KEY */
+    terminalKey?: string;
+    /** 终端SN */
+    terminalSn?: string;
+    /** 学校ID */
+    schoolId?: number | string;
+    /** 租户ID */
+    tenantId?: number | string;
+  }
+
+  /** 获取设备命令记录列表响应 */
+  export interface ResGetDeviceCommandRecordListApi {
+    list: IDeviceCommandRecordItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }
+}
+
 // 公话配置模块
 export namespace DeviceDialConfig {
   /** 公话配置项 */
@@ -579,8 +695,12 @@ export namespace DeviceDialConfig {
     powerOffTime?: string;
     /** 定时开关机时间 */
     timeOnOff?: string;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType?: TPhoneTypeValue;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[];
     /** 是否显示留言按钮 */
     messageFlag?: TYesNoFlagValue;
     /** 是否全量同步人脸 */
@@ -605,6 +725,8 @@ export namespace DeviceDialConfig {
     sipTransportType?: TSipTypeValue;
     /** 设备密码 */
     password?: string;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any>;
     /** 创建时间 */
     createdAt?: string;
     /** 更新时间 */
@@ -648,8 +770,12 @@ export namespace DeviceDialConfig {
     powerOffTime?: string;
     /** 禁拨号码 */
     forbidPhone?: string;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType?: TPhoneTypeValue;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[];
     /** 是否显示留言按钮 */
     messageFlag?: TYesNoFlagValue;
     /** 是否全量同步人脸 */
@@ -672,6 +798,8 @@ export namespace DeviceDialConfig {
     sipTransportType?: TSipTypeValue;
     /** 设备密码 */
     password?: string;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any>;
   }
 
   /** 添加公话配置 - 响应 data */
@@ -694,8 +822,12 @@ export namespace DeviceDialConfig {
     powerOffTime?: string;
     /** 禁拨号码 */
     forbidPhone?: string;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType?: TPhoneTypeValue;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[];
     /** 是否显示留言按钮 */
     messageFlag?: TYesNoFlagValue;
     /** 是否全量同步人脸 */
@@ -718,6 +850,8 @@ export namespace DeviceDialConfig {
     sipTransportType?: TSipTypeValue;
     /** 设备密码 */
     password?: string;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any>;
   }
 }
 
@@ -843,8 +977,12 @@ export namespace Device {
     callTime: number | null;
     /** 禁拨号码 */
     forbidPhone: string | null;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType: TPhoneTypeValue | null;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue | null;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[] | null;
     /** 禁拨时间段 */
     forbidCallTimes: string | null;
     /** 是否显示留言按钮 */
@@ -861,6 +999,16 @@ export namespace Device {
     warnCallTime: number | null;
     /** 计费模式 */
     billMode: TDeviceBillModeValue | null;
+    /** SIP 用户名 */
+    sipUserName?: string | null;
+    /** SIP 密码 */
+    sipPassword?: string | null;
+    /** SIP 服务地址 */
+    sipDomain?: string | null;
+    /** SIP 协议类型 */
+    sipTransportType?: TSipTypeValue | null;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any> | null;
     /** 标签列表 */
     tags: IDeviceTagItemVo[];
     /** 创建时间 */
@@ -926,8 +1074,12 @@ export namespace Device {
     callTime?: number;
     /** 禁拨号码 */
     forbidPhone?: string;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType?: TPhoneTypeValue;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[];
     /** 禁拨时间段 */
     forbidCallTimes?: string;
     /** 是否显示留言按钮：Y/N */
@@ -954,10 +1106,40 @@ export namespace Device {
     sipDomain?: string;
     /** Sip协议类型 */
     sipTransportType?: TSipTypeValue;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any>;
+  }
+
+  /** 新增设备失败项 */
+  export interface IDeviceCreateFailureVo {
+    /** 行号 */
+    rowIndex: number;
+    /** 设备名称 */
+    deviceName: string;
+    /** 设备SN号 */
+    terminalSn: string;
+    /** 失败原因 */
+    reason: string;
+  }
+
+  /** 新增设备 - 响应 data */
+  export interface ResPostDeviceApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failCount: number;
+    /** 失败列表 */
+    failures: IDeviceCreateFailureVo[];
+    /** 失败文件下载地址 */
+    failureFileUrl?: string;
+    /** 失败文件名称 */
+    failureFileName?: string;
   }
 
   /** 更新设备 - 请求参数 */
   export interface ReqPutDeviceApi {
+    /** 学校ID */
+    schoolId?: number;
     /** 设备名称 */
     name?: string;
     /** 终端KEY */
@@ -978,8 +1160,12 @@ export namespace Device {
     callTime?: number;
     /** 禁拨号码 */
     forbidPhone?: string;
-    /** 拨号类型 */
+    /** 拨号类型（已废弃） */
     phoneType?: TPhoneTypeValue;
+    /** 拨号模式：family-亲情号模式，free-自由拨号模式 */
+    dialMode?: TDialModeValue;
+    /** 拨号入口集合：video/sim/sip */
+    phoneTypes?: TPhoneEntryValue[];
     /** 禁拨时间段 */
     forbidCallTimes?: string;
     /** 是否显示留言按钮：Y/N */
@@ -1006,6 +1192,28 @@ export namespace Device {
     sipTransportType?: TSipTypeValue;
     /** 设备密码 */
     password?: string;
+    /** 扩展配置 */
+    extraConfig?: Record<string, any>;
+  }
+
+  /** 更新设备 - 响应 data */
+  export interface ResPutDeviceApi {
+    /** 响应消息 */
+    message: string;
+  }
+
+  /** 更换设备学校 - 请求参数 */
+  export interface ReqPostDeviceChangeSchoolApi {
+    /** 学校ID，null 表示解绑学校 */
+    schoolId?: number | null;
+    /** 设备组ID，schoolId 有值时必填 */
+    deviceGroupId?: number | null;
+  }
+
+  /** 更换设备学校 - 响应 data */
+  export interface ResPostDeviceChangeSchoolApi {
+    /** 响应消息 */
+    message: string;
   }
 
   /** 批量控制设备 - 请求参数 */
@@ -1060,6 +1268,76 @@ export namespace Device {
   export interface ReqPostDeviceImportApi {
     /** 学校ID */
     schoolId: number;
+  }
+
+  /** 批量更新字段项 */
+  export interface IDeviceBatchUpdateFieldVo {
+    /** 配置key */
+    key: string;
+    /** 显示名称 */
+    name: string;
+    /** 字段类型 */
+    type: string;
+    /** 分类 */
+    category: string;
+    /** 是否必填 */
+    required: boolean;
+    /** 枚举选项 */
+    enumOptions?: string[];
+  }
+
+  /** 批量更新字段分类 */
+  export interface IDeviceBatchUpdateCategoryVo {
+    /** 分类key */
+    key: string;
+    /** 分类名称 */
+    name: string;
+  }
+
+  /** 批量更新字段列表 - 响应 data */
+  export interface ResGetDeviceBatchUpdateFieldsApi {
+    /** 字段列表 */
+    fields: IDeviceBatchUpdateFieldVo[];
+    /** 分类列表 */
+    categories: IDeviceBatchUpdateCategoryVo[];
+  }
+
+  /** 下载批量更新模板 - 请求参数 */
+  export interface ReqPostDeviceBatchUpdateTemplateApi {
+    /** 选择的字段key列表 */
+    fields: string[];
+    /** 学校ID */
+    schoolId?: number;
+    /** 是否包含现有数据 */
+    includeExistingData?: boolean;
+  }
+
+  /** 批量更新失败项 */
+  export interface IDeviceBatchUpdateFailureVo {
+    /** 行号 */
+    row: number;
+    /** 设备SN */
+    terminalSn: string;
+    /** 字段key */
+    field: string;
+    /** 字段名称 */
+    fieldName: string;
+    /** 字段值 */
+    value: string;
+    /** 错误原因 */
+    error: string;
+    /** 修正建议 */
+    suggestion: string;
+  }
+
+  /** 批量更新设备配置 - 响应 data */
+  export interface ResPostDeviceBatchUpdateApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failedCount: number;
+    /** 失败列表 */
+    failures: IDeviceBatchUpdateFailureVo[];
   }
 }
 
