@@ -140,6 +140,8 @@ const isView = computed(() => parameter.value.type === "View");
 const isSnDisabled = computed(() => !isAdd.value);
 /** 设备MAC禁用 */
 const isTerminalDisabled = computed(() => !isAdd.value);
+/** 设备组禁用（仅新增可选） */
+const isDeviceGroupDisabled = computed(() => !isAdd.value);
 
 /** 获取初始表单数据 */
 function getInitialFormData(): TDeviceFormState {
@@ -328,7 +330,7 @@ async function axiosPostDeviceApi(form: DeviceVideoForm, targetSchoolId: number)
 /** 更新设备 */
 async function axiosPutDeviceApi(id: number, form: DeviceVideoForm, targetSchoolId: number) {
   try {
-    const payload = buildPutDevicePayload(form, targetSchoolId);
+    const payload = buildPutDevicePayload(form, targetSchoolId, defaultDeviceGroupId);
     const result = await putDeviceApi(id, payload);
     if (result.code === 0) {
       ElMessage.success("编辑成功");
@@ -428,23 +430,6 @@ defineExpose({
               <el-input v-model="ruleForm.terminalMac" placeholder="请输入设备MAC地址" :disabled="isTerminalDisabled" />
             </el-form-item>
           </el-col>
-          <el-col :span="8" />
-        </el-row>
-
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="设备名称" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="请输入设备名称" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="设备位置" prop="location">
-              <el-input v-model="ruleForm.location" placeholder="请输入设备位置" />
-            </el-form-item>
-          </el-col>
           <el-col :span="8">
             <el-form-item label="设备组" prop="deviceGroupId">
               <el-select
@@ -455,6 +440,7 @@ defineExpose({
                 remote
                 reserve-keyword
                 :remote-method="handleDeviceGroupSearch"
+                :disabled="isDeviceGroupDisabled"
                 clearable
               >
                 <el-option label="不绑定" :value="-1" />
@@ -462,7 +448,24 @@ defineExpose({
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8" />
+        </el-row>
+
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="设备名称" prop="name">
+              <el-input v-model="ruleForm.name" placeholder="请输入设备名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="设备位置" prop="location">
+              <el-input v-model="ruleForm.location" placeholder="请输入设备位置" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="设备密码" prop="password">
+              <el-input v-model="ruleForm.password" placeholder="请输入设备密码" show-password />
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-row :gutter="24">
@@ -509,11 +512,6 @@ defineExpose({
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8" />
-          <el-col :span="8" />
-        </el-row>
-
-        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="预警通话时长（分钟）" prop="warnCallTime">
               <el-input-number
@@ -527,12 +525,6 @@ defineExpose({
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备密码" prop="password">
-              <el-input v-model="ruleForm.password" placeholder="请输入设备密码" show-password />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8" />
         </el-row>
 
         <el-row :gutter="24">
@@ -553,14 +545,14 @@ defineExpose({
               <el-input v-model="ruleForm.sipUserName" placeholder="请输入SIP用户名" class="w-full" />
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="SIP密码" prop="sipPassword">
               <el-input v-model="ruleForm.sipPassword" placeholder="请输入SIP密码" class="w-full" show-password />
             </el-form-item>
           </el-col>
+        </el-row>
+
+        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="定时开机时间">
               <el-time-select
@@ -585,28 +577,23 @@ defineExpose({
               />
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="SOS标题" prop="extraConfig.sos.title">
               <el-input v-model="extraConfigForm.sosTitle" placeholder="请输入 SOS 标题" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="第三方地址" prop="extraConfig.thirdParty.url">
-              <el-input v-model="extraConfigForm.thirdPartyUrl" placeholder="请输入第三方地址" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8" />
         </el-row>
 
         <el-row :gutter="24">
           <el-col :span="8">
+            <el-form-item label="第三方地址" prop="extraConfig.thirdParty.url">
+              <el-input v-model="extraConfigForm.thirdPartyUrl" type="textarea" placeholder="请输入第三方地址" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="禁拨号码" prop="forbidPhone">
               <el-input v-model="ruleForm.forbidPhone" type="textarea" placeholder="请输入禁拨号码，多个号码使用英文逗号分隔" />
             </el-form-item>
-            <el-text type="danger" size="small">提示：多个号码用“,”分隔，例如：110,120,119</el-text>
           </el-col>
         </el-row>
 

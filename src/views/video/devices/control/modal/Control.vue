@@ -1,215 +1,4 @@
-﻿<template>
-  <el-dialog
-    v-model="visible"
-    :close-on-click-modal="false"
-    :title="parameter.title"
-    width="1120px"
-    destroy-on-close
-    draggable
-    align-center
-  >
-    <SchoolInfo :name="props.schoolName" />
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="心跳时间（ms）" prop="heartbeatFrequency">
-            <el-input v-model="ruleForm.heartbeatFrequency" type="number" placeholder="请输入心跳时间（ms）" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="单次通话限定时长（分钟）" prop="callTime">
-            <el-input-number
-              v-model="ruleForm.callTime"
-              class="w-full"
-              :min="0"
-              :step="1"
-              :step-strictly="true"
-              :controls="false"
-              placeholder="请输入单次通话限定时长（分钟）"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="拨号模式" prop="dialMode">
-            <el-select v-model="ruleForm.dialMode" placeholder="请选择拨号模式" class="w-full">
-              <el-option v-for="item in DIAL_MODE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="拨号入口" prop="phoneTypes">
-            <el-select v-model="ruleForm.phoneTypes" placeholder="请选择拨号入口" class="w-full" multiple>
-              <el-option v-for="item in PHONE_ENTRY_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="SIP协议类型" prop="sipTransportType">
-            <el-select v-model="ruleForm.sipTransportType" placeholder="请选择SIP协议类型" class="w-full">
-              <el-option v-for="item in SIP_TYPE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="SIP服务地址" prop="sipDomain">
-            <el-input v-model="ruleForm.sipDomain" placeholder="请输入SIP服务地址" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="SIP用户名" prop="sipUserName">
-            <el-input v-model="ruleForm.sipUserName" placeholder="请输入SIP用户名" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="SIP密码" prop="sipPassword">
-            <el-input v-model="ruleForm.sipPassword" placeholder="请输入SIP密码" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="定时开机时间" prop="powerOnTime">
-            <el-time-select
-              v-model="ruleForm.powerOnTime"
-              class="w-full"
-              start="00:00"
-              step="00:10"
-              end="23:59"
-              placeholder="请选择定时开机时间"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="定时关机时间" prop="powerOffTime">
-            <el-time-select
-              v-model="ruleForm.powerOffTime"
-              class="w-full"
-              start="00:00"
-              step="00:10"
-              end="23:59"
-              placeholder="请选择定时关机时间"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="SOS标题" prop="sosTitle">
-            <el-input v-model="ruleForm.sosTitle" placeholder="请输入 SOS 标题" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="第三方地址" prop="thirdPartyUrl">
-            <el-input v-model="ruleForm.thirdPartyUrl" placeholder="请输入第三方地址" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8" />
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="8">
-          <el-form-item label="禁拨号码" prop="forbidPhone">
-            <el-input v-model="ruleForm.forbidPhone" type="textarea" placeholder="请输入禁拨号码，多个号码使用英文逗号分隔" />
-          </el-form-item>
-          <el-text type="danger" size="small">提示：多个号码用“,”分隔，例如：110,120,119</el-text>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="6">
-          <el-form-item label="是否显示留言按钮" prop="messageFlag">
-            <el-radio-group v-model="ruleForm.messageFlag">
-              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
-            <el-radio-group v-model="ruleForm.messageSoundFlag">
-              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="禁止呼入" prop="callIncomingDisabled">
-            <el-radio-group v-model="ruleForm.callIncomingDisabled">
-              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="开启人脸" prop="faceEnabled">
-            <el-radio-group v-model="ruleForm.faceEnabled">
-              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="刷脸记录人员信息" prop="addPunchFace">
-            <el-radio-group v-model="ruleForm.addPunchFace">
-              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24">
-        <el-col :span="24">
-          <el-form-item label="禁拨时间段">
-            <el-button type="primary" @click="handleAddForbidCallTimeItem">+ 新增</el-button>
-          </el-form-item>
-          <el-row v-for="(item, i) in ruleForm.forbidCallTimesAry" :key="i" :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="禁拨开始时间">
-                <el-time-select
-                  v-model="item.fstTime"
-                  class="w-full"
-                  start="00:00"
-                  step="00:10"
-                  end="23:59"
-                  placeholder="请选择禁拨开始时间"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="禁拨结束时间">
-                <el-time-select
-                  v-model="item.fendTime"
-                  class="w-full"
-                  start="00:00"
-                  step="00:10"
-                  end="23:59"
-                  placeholder="请选择禁拨结束时间"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="操作">
-                <el-button type="danger" link class="leading-8 p-0!" @click="handleDeleteForbidCallTimeItem(i)"> 删除 </el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-col>
-      </el-row>
-    </el-form>
-    <template #footer>
-      <el-button @click="visible = false">取消</el-button>
-      <el-button v-if="parameter.showConfirm" type="primary" @click="handleSubmitForm">确定</el-button>
-    </template>
-  </el-dialog>
-</template>
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { DeviceDialConfig } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 import type { ControlModalProps, DialConfigForm } from "../types";
@@ -435,3 +224,213 @@ async function acceptParams(params: TModalParams, row?: DeviceDialConfig.IDevice
 
 defineExpose({ acceptParams });
 </script>
+
+<template>
+  <el-dialog
+    v-model="visible"
+    :close-on-click-modal="false"
+    :title="parameter.title"
+    width="1120px"
+    destroy-on-close
+    draggable
+    align-center
+  >
+    <SchoolInfo :name="props.schoolName" />
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="心跳时间（ms）" prop="heartbeatFrequency">
+            <el-input v-model="ruleForm.heartbeatFrequency" type="number" placeholder="请输入心跳时间（ms）" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="单次通话限定时长（分钟）" prop="callTime">
+            <el-input-number
+              v-model="ruleForm.callTime"
+              class="w-full"
+              :min="0"
+              :step="1"
+              :step-strictly="true"
+              :controls="false"
+              placeholder="请输入单次通话限定时长（分钟）"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="拨号模式" prop="dialMode">
+            <el-select v-model="ruleForm.dialMode" placeholder="请选择拨号模式" class="w-full">
+              <el-option v-for="item in DIAL_MODE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="拨号入口" prop="phoneTypes">
+            <el-select v-model="ruleForm.phoneTypes" placeholder="请选择拨号入口" class="w-full" multiple>
+              <el-option v-for="item in PHONE_ENTRY_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" />
+        <el-col :span="8" />
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="SIP协议类型" prop="sipTransportType">
+            <el-select v-model="ruleForm.sipTransportType" placeholder="请选择SIP协议类型" class="w-full">
+              <el-option v-for="item in SIP_TYPE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="SIP服务地址" prop="sipDomain">
+            <el-input v-model="ruleForm.sipDomain" placeholder="请输入SIP服务地址" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="SIP用户名" prop="sipUserName">
+            <el-input v-model="ruleForm.sipUserName" placeholder="请输入SIP用户名" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="SIP密码" prop="sipPassword">
+            <el-input v-model="ruleForm.sipPassword" placeholder="请输入SIP密码" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="定时开机时间" prop="powerOnTime">
+            <el-time-select
+              v-model="ruleForm.powerOnTime"
+              class="w-full"
+              start="00:00"
+              step="00:10"
+              end="23:59"
+              placeholder="请选择定时开机时间"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="定时关机时间" prop="powerOffTime">
+            <el-time-select
+              v-model="ruleForm.powerOffTime"
+              class="w-full"
+              start="00:00"
+              step="00:10"
+              end="23:59"
+              placeholder="请选择定时关机时间"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="SOS标题" prop="sosTitle">
+            <el-input v-model="ruleForm.sosTitle" placeholder="请输入 SOS 标题" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="第三方地址" prop="thirdPartyUrl">
+            <el-input v-model="ruleForm.thirdPartyUrl" type="textarea" placeholder="请输入第三方地址" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="禁拨号码" prop="forbidPhone">
+            <el-input v-model="ruleForm.forbidPhone" type="textarea" placeholder="请输入禁拨号码，多个号码使用英文逗号分隔" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="6">
+          <el-form-item label="是否显示留言按钮" prop="messageFlag">
+            <el-radio-group v-model="ruleForm.messageFlag">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
+            <el-radio-group v-model="ruleForm.messageSoundFlag">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="禁止呼入" prop="callIncomingDisabled">
+            <el-radio-group v-model="ruleForm.callIncomingDisabled">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="开启人脸" prop="faceEnabled">
+            <el-radio-group v-model="ruleForm.faceEnabled">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="刷脸记录人员信息" prop="addPunchFace">
+            <el-radio-group v-model="ruleForm.addPunchFace">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="24">
+          <el-form-item label="禁拨时间段">
+            <el-button type="primary" @click="handleAddForbidCallTimeItem">+ 新增</el-button>
+          </el-form-item>
+          <el-row v-for="(item, i) in ruleForm.forbidCallTimesAry" :key="i" :gutter="24">
+            <el-col :span="8">
+              <el-form-item label="禁拨开始时间">
+                <el-time-select
+                  v-model="item.fstTime"
+                  class="w-full"
+                  start="00:00"
+                  step="00:10"
+                  end="23:59"
+                  placeholder="请选择禁拨开始时间"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="禁拨结束时间">
+                <el-time-select
+                  v-model="item.fendTime"
+                  class="w-full"
+                  start="00:00"
+                  step="00:10"
+                  end="23:59"
+                  placeholder="请选择禁拨结束时间"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="操作">
+                <el-button type="danger" link class="leading-8 p-0!" @click="handleDeleteForbidCallTimeItem(i)"> 删除 </el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </el-form>
+    <template #footer>
+      <el-button @click="visible = false">取消</el-button>
+      <el-button v-if="parameter.showConfirm" type="primary" @click="handleSubmitForm">确定</el-button>
+    </template>
+  </el-dialog>
+</template>

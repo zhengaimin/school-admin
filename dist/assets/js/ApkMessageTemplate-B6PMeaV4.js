@@ -1,0 +1,1 @@
+import{_ as o}from"./ApkMessageTemplate.vue_vue_type_script_setup_true_lang-D6lw_I7z.js";import"./index-BlDpqoLa.js";import"./apk-message-template-DvTLhGiW.js";import"./useManage-BNoYbZY0.js";export{o as default};

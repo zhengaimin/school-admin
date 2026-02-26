@@ -1,0 +1,1 @@
+import{_ as t}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as o,o as s,n}from"./index-BlDpqoLa.js";const c={},r={class:"card content-box"};function a(_,e){return s(),o("div",r,e[0]||(e[0]=[n("span",{class:"text"}," 字典管理（待完善） 🍓🍇🍈🍉",-1)]))}const i=t(c,[["render",a]]);export{i as default};

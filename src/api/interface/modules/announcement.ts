@@ -26,11 +26,11 @@ export namespace Announcement {
     content: string;
     /** 图片URL列表 */
     images?: string[];
-    /** 发布状态 */
+    /** 发布状态（文档未声明，兼容现网返回） */
     status?: TAnnouncementStatusValue;
-    /** 学校ID */
+    /** 学校ID（文档未声明，兼容现网返回） */
     schoolId?: number;
-    /** 学校名称 */
+    /** 学校名称（文档未声明，兼容现网返回） */
     schoolName?: string;
     /** 发布时间 */
     publishedAt?: string;
@@ -67,9 +67,9 @@ export namespace Announcement {
   /** 获取公告列表 - 查询参数 */
   export interface ReqGetAnnouncementsApi {
     /** 页码 */
-    page?: number;
+    page: number;
     /** 每页数量 */
-    pageSize?: number;
+    pageSize: number;
     /** 学校ID */
     schoolId?: number;
     /** 状态 */
@@ -86,10 +86,6 @@ export namespace Announcement {
     list: IAnnouncementListItem[];
     /** 总数 */
     total: number;
-    /** 当前页码 */
-    page?: number;
-    /** 每页数量 */
-    pageSize?: number;
   }
 
   /** 创建公告 - 请求参数 */

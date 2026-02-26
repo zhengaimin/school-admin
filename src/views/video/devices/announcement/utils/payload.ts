@@ -24,6 +24,12 @@ function normalizePage(value?: number | string | null) {
   if (!parsed || parsed < 1) return undefined;
   return parsed;
 }
+/** 处理每页数量 */
+function normalizePageSize(value?: number | string | null) {
+  const parsed = normalizePage(value);
+  if (!parsed) return undefined;
+  return parsed > 100 ? 100 : parsed;
+}
 
 /** 处理学校ID */
 function normalizeSchoolId(value?: number | string | null) {
@@ -42,9 +48,11 @@ function normalizeStatus(value?: number | string | null): TAnnouncementStatusVal
 
 /** 构建公告列表请求参数 */
 export function buildAnnouncementListParams(params: Record<string, any>): Announcement.ReqGetAnnouncementsApi {
+  const page = normalizePage(params.page) ?? 1;
+  const pageSize = normalizePageSize(params.pageSize) ?? 20;
   return {
-    page: normalizePage(params.page),
-    pageSize: normalizePage(params.pageSize),
+    page,
+    pageSize,
     schoolId: normalizeSchoolId(params.schoolId),
     status: normalizeStatus(params.status),
     keyword: normalizeText(params.keyword),

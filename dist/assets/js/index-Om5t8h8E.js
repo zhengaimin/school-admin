@@ -1,0 +1,1 @@
+import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c,o}from"./index-BlDpqoLa.js";const r={};function n(t,s){return o(),c("div",null,"组织架构")}const f=e(r,[["render",n]]);export{f as default};

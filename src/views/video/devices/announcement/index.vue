@@ -8,9 +8,11 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import AnnouncementModal from "./modal/Announcement.vue";
+import AnnouncementDetailModal from "./modal/Detail.vue";
 import { buildAnnouncementListParams } from "./utils/payload";
 import {
   getAnnouncementsApi,
+  getAnnouncementDetailApi,
   postPublishAnnouncementsApi,
   postRevokeAnnouncementsApi,
   deleteAnnouncementsApi
@@ -19,6 +21,9 @@ import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import { useSelection } from "@/hooks/useSelection";
 import {
+  ANNOUNCEMENT_AUDIENCE_I18N,
+  ANNOUNCEMENT_SCOPE,
+  ANNOUNCEMENT_SCOPE_I18N,
   ANNOUNCEMENT_STATUS,
   ANNOUNCEMENT_STATUS_I18N,
   ANNOUNCEMENT_STATUS_OPTIONS,
@@ -32,6 +37,12 @@ const { selectedList, isSelected, selectionChange } = useSelection("id");
 
 /** 弹窗引用 */
 const modalRef = ref();
+/** 详情弹窗引用 */
+const detailModalRef = ref();
+/** 投放规则文本缓存 */
+const targetTextMap = ref<Record<number, string>>({});
+/** 投放规则加载序号 */
+const targetTextLoadingToken = ref(0);
 
 /** 表格管理 */
 const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetAnnouncementsApi }, null, list =>
@@ -49,6 +60,7 @@ const columns: ColumnProps<AnnouncementRow>[] = [
     search: { el: "input", key: "keyword", props: { placeholder: "请输入标题关键词" } }
   },
   { prop: "content", label: "正文", minWidth: 240, showOverflowTooltip: true },
+  { prop: "targets", label: "投放规则", minWidth: 260, showOverflowTooltip: true },
   {
     prop: "status",
     label: "状态",
@@ -59,17 +71,30 @@ const columns: ColumnProps<AnnouncementRow>[] = [
   },
   { prop: "publishedAt", label: "发布时间", width: 170 },
   { prop: "createdAt", label: "创建时间", width: 170 },
-  { prop: "operation", label: "操作", width: 240, fixed: "right" }
+  { prop: "operation", label: "操作", width: 300, fixed: "right" }
 ];
 
 /** 获取公告列表 */
 async function axiosGetAnnouncementsApi(params: Record<string, any>): Promise<ResultData<Announcement.ResGetAnnouncementsApi>> {
   try {
     const payload = buildAnnouncementListParams(params);
-    return await getAnnouncementsApi(payload);
+    const result = await getAnnouncementsApi(payload);
+    if (result.code === 0) {
+      void loadTargetTextList(result.data?.list || []);
+    }
+    return result;
   } catch (error) {
     console.error("axiosGetAnnouncementsApi:", error);
     return { code: -1, msg: "请求失败", data: { list: [], total: 0 } };
+  }
+}
+/** 获取公告详情 */
+async function axiosGetAnnouncementDetailApi(id: number) {
+  try {
+    return await getAnnouncementDetailApi(id);
+  } catch (error) {
+    console.error("axiosGetAnnouncementDetailApi:", error);
+    return { code: -1, data: null };
   }
 }
 /** 发布公告 */
@@ -99,8 +124,80 @@ async function axiosDeleteAnnouncementsApi(ids: number[]) {
     return { code: -1, data: null };
   }
 }
+/** 获取投放规则文案 */
+function formatTargetsText(targets: Announcement.IAnnouncementTarget[] = []) {
+  if (!targets.length) return "--";
 
-/** 显示弹框 */
+  const groupedTargets = new Map<
+    string,
+    {
+      audienceType: Announcement.IAnnouncementTarget["audienceType"];
+      scopeType: Announcement.IAnnouncementTarget["scopeType"];
+      scopeIds: number[];
+    }
+  >();
+
+  targets.forEach(target => {
+    const mapKey = `${target.audienceType}-${target.scopeType}`;
+    const currentTarget = groupedTargets.get(mapKey) ?? {
+      audienceType: target.audienceType,
+      scopeType: target.scopeType,
+      scopeIds: []
+    };
+    if (target.scopeType !== ANNOUNCEMENT_SCOPE.SCHOOL_ALL && target.scopeId > 0) {
+      currentTarget.scopeIds.push(target.scopeId);
+    }
+    groupedTargets.set(mapKey, currentTarget);
+  });
+
+  return Array.from(groupedTargets.values())
+    .map(target => {
+      const audienceText = ANNOUNCEMENT_AUDIENCE_I18N[target.audienceType] || target.audienceType;
+      const scopeText = ANNOUNCEMENT_SCOPE_I18N[target.scopeType] || target.scopeType;
+      if (target.scopeType === ANNOUNCEMENT_SCOPE.SCHOOL_ALL) {
+        return `${audienceText}-${scopeText}`;
+      }
+      const scopeIds = Array.from(new Set(target.scopeIds)).sort((first, second) => first - second);
+      if (!scopeIds.length) return `${audienceText}-${scopeText}`;
+      return `${audienceText}-${scopeText}(${scopeIds.join("、")})`;
+    })
+    .join("；");
+}
+/** 加载投放规则文案 */
+async function loadTargetTextList(rows: AnnouncementRow[]) {
+  const loadingToken = targetTextLoadingToken.value + 1;
+  targetTextLoadingToken.value = loadingToken;
+
+  const idList = rows.map(row => row.id).filter(id => id > 0);
+  targetTextMap.value = idList.reduce(
+    (map, id) => {
+      map[id] = targetTextMap.value[id] || "--";
+      return map;
+    },
+    {} as Record<number, string>
+  );
+
+  await Promise.all(
+    idList.map(async id => {
+      const result = await axiosGetAnnouncementDetailApi(id);
+      if (loadingToken !== targetTextLoadingToken.value) return;
+      if (result.code !== 0) {
+        targetTextMap.value = { ...targetTextMap.value, [id]: "--" };
+        return;
+      }
+      targetTextMap.value = {
+        ...targetTextMap.value,
+        [id]: formatTargetsText(result.data?.targets || [])
+      };
+    })
+  );
+}
+/** 获取投放规则文案 */
+function getTargetsText(row: AnnouncementRow) {
+  return targetTextMap.value[row.id] || "--";
+}
+
+/** 显示新增/编辑弹框 */
 function handleShowModal(type: "Add" | "Edit", row?: AnnouncementRow) {
   if (type === "Add" && isAllSchools.value) {
     ElMessage.warning("请选择学校后再新增");
@@ -112,6 +209,10 @@ function handleShowModal(type: "Add" | "Edit", row?: AnnouncementRow) {
     Edit: "编辑公告"
   };
   modalRef.value?.acceptParams({ title: titleMap[type], type, showConfirm: true }, row);
+}
+/** 显示查看弹框 */
+function handleShowDetailModal(row: AnnouncementRow) {
+  detailModalRef.value?.acceptParams({ title: "查看公告", type: "View", showConfirm: false }, row);
 }
 /** 批量发布 */
 async function handlePublish(rows: AnnouncementRow[]) {
@@ -220,7 +321,12 @@ watch(schoolId, () => refreshTableList());
         </el-tag>
       </template>
 
+      <template #targets="{ row }">
+        <span>{{ getTargetsText(row) }}</span>
+      </template>
+
       <template #operation="{ row }">
+        <el-button type="primary" link @click="handleShowDetailModal(row)">查看</el-button>
         <el-button
           type="primary"
           link
@@ -242,5 +348,6 @@ watch(schoolId, () => refreshTableList());
     </ProTable>
 
     <AnnouncementModal ref="modalRef" @submit="refreshTableList" />
+    <AnnouncementDetailModal ref="detailModalRef" />
   </div>
 </template>

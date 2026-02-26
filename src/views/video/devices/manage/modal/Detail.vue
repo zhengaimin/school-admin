@@ -10,6 +10,7 @@ import {
   PHONE_ENTRY_I18N,
   PHONE_TYPE_I18N,
   SIP_TYPE_I18N,
+  YES_NO_FLAG,
   YES_NO_FLAG_I18N
 } from "@/config/modules";
 
@@ -80,15 +81,21 @@ function getBillModeText(value?: DeviceVideo.IDeviceItemVo["billMode"]) {
   if (!value) return "--";
   return DEVICE_BILL_MODE_I18N[value] || value;
 }
-/** 获取扩展配置文本 */
-function getExtraConfigText(value?: DeviceVideo.IDeviceItemVo["extraConfig"]) {
-  if (!value) return "--";
-  try {
-    return JSON.stringify(value, null, 2);
-  } catch (error) {
-    console.error("getExtraConfigText:", error);
-    return "--";
+/** 获取扩展配置开关文案 */
+function getExtraConfigYesNoText(value: unknown) {
+  if (typeof value === "boolean") return value ? YES_NO_FLAG_I18N[YES_NO_FLAG.YES] : YES_NO_FLAG_I18N[YES_NO_FLAG.NO];
+  if (typeof value === "number") return value === 1 ? YES_NO_FLAG_I18N[YES_NO_FLAG.YES] : YES_NO_FLAG_I18N[YES_NO_FLAG.NO];
+  if (typeof value === "string") {
+    const normalizedValue = value.trim().toLowerCase();
+    if (["y", "yes", "true", "1"].includes(normalizedValue)) return YES_NO_FLAG_I18N[YES_NO_FLAG.YES];
+    if (["n", "no", "false", "0"].includes(normalizedValue)) return YES_NO_FLAG_I18N[YES_NO_FLAG.NO];
   }
+  return "--";
+}
+/** 获取扩展配置字符串 */
+function getExtraConfigString(value: unknown) {
+  if (typeof value !== "string") return "--";
+  return value || "--";
 }
 
 /** 接收参数 */
@@ -160,9 +167,27 @@ defineExpose({ acceptParams });
         </div>
 
         <el-divider content-position="left">扩展配置</el-divider>
-        <el-descriptions :column="1" border>
-          <el-descriptions-item label="extraConfig">
-            <pre class="m-0 whitespace-pre-wrap break-all">{{ getExtraConfigText(detail.extraConfig) }}</pre>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="禁止呼入">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["call.incoming.disabled"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="开启人脸">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["face.enabled"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="图片留言按钮显示">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["message.image.button.visible"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="视频留言按钮显示">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["message.video.button.visible"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="SOS按钮显示">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["sos.button.visible"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="SOS标题">
+            {{ getExtraConfigString(detail.extraConfig?.["sos.title"]) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="第三方地址">
+            {{ getExtraConfigString(detail.extraConfig?.["thirdParty.url"]) }}
           </el-descriptions-item>
         </el-descriptions>
       </template>

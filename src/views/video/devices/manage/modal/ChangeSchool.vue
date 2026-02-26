@@ -144,10 +144,22 @@ function handleRemoteSchoolSearch(keyword: string) {
   void fetchSchoolOptions(keyword);
 }
 
+/** 学校下拉展开状态变化 */
+function handleSchoolVisibleChange(visibleValue: boolean) {
+  if (!visibleValue) return;
+  void fetchSchoolOptions();
+}
+
 /** 设备组远程搜索 */
 function handleRemoteDeviceGroupSearch(keyword: string) {
   if (ruleForm.schoolId == null) return;
   void fetchDeviceGroupOptions(ruleForm.schoolId, keyword);
+}
+
+/** 设备组下拉展开状态变化 */
+function handleDeviceGroupVisibleChange(visibleValue: boolean) {
+  if (!visibleValue || ruleForm.schoolId == null) return;
+  void fetchDeviceGroupOptions(ruleForm.schoolId);
 }
 
 /** 提交 */
@@ -251,10 +263,11 @@ defineExpose({
               reserve-keyword
               clearable
               :remote-method="handleRemoteSchoolSearch"
+              :visible-change="handleSchoolVisibleChange"
               :loading="schoolOptionsLoading"
               placeholder="请输入学校名称搜索"
             >
-              <el-option v-for="item in schoolOptions" :key="item.id" :label="item.name || `学校-${item.id}`" :value="item.id" />
+              <el-option v-for="item in schoolOptions" :key="item.id" :label="item.name || ''" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -270,6 +283,7 @@ defineExpose({
               clearable
               :disabled="ruleForm.schoolId == null"
               :remote-method="handleRemoteDeviceGroupSearch"
+              :visible-change="handleDeviceGroupVisibleChange"
               :loading="deviceGroupOptionsLoading"
               placeholder="请选择设备组"
             >

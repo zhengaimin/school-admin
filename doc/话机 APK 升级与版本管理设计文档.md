@@ -22,19 +22,19 @@
 
 ### 2.1 现有能力
 
-| 模块 | 现状 |
-|------|------|
-| 设备版本字段 | `devices` 表已有 `app_version`、`app_version_code` 字段 |
-| 命令下发 | 设备通过 `GetCommandList` 拉取命令，`ProcessCommandResult` 回传结果 |
-| 文件上传 | `FileService` 支持文件上传，需扩展支持 `.apk` 类型和更大文件 |
+| 模块         | 现状                                                                |
+| ------------ | ------------------------------------------------------------------- |
+| 设备版本字段 | `devices` 表已有 `app_version`、`app_version_code` 字段             |
+| 命令下发     | 设备通过 `GetCommandList` 拉取命令，`ProcessCommandResult` 回传结果 |
+| 文件上传     | `FileService` 支持文件上传，需扩展支持 `.apk` 类型和更大文件        |
 
 ### 2.2 需要新增
 
-| 模块 | 说明 |
-|------|------|
-| APK 包管理 | 新增 `apk_packages` 表存储版本信息 |
+| 模块         | 说明                                          |
+| ------------ | --------------------------------------------- |
+| APK 包管理   | 新增 `apk_packages` 表存储版本信息            |
 | 目标版本配置 | `devices` 表新增 `target_apk_package_id` 字段 |
-| 升级命令 | 新增 `GH_COMMAND_UPDATE_APK` 命令类型 |
+| 升级命令     | 新增 `GH_COMMAND_UPDATE_APK` 命令类型         |
 
 ## 3. 需求说明
 
@@ -47,13 +47,14 @@
 
 #### 3.1.1 上传约束
 
-| 约束项 | 限制 | 说明 |
-|--------|------|------|
-| 文件类型 | `.apk` | 仅允许 APK 文件 |
-| 文件大小 | ≤ 200MB | 超过则拒绝上传 |
+| 约束项   | 限制     | 说明                    |
+| -------- | -------- | ----------------------- |
+| 文件类型 | `.apk`   | 仅允许 APK 文件         |
+| 文件大小 | ≤ 200MB  | 超过则拒绝上传          |
 | 校验失败 | 拒绝保存 | SHA256 计算失败时不入库 |
 
 上传流程：
+
 1. 校验文件扩展名为 `.apk`
 2. 校验文件大小 ≤ 200MB
 3. 计算 SHA256 校验值
@@ -63,11 +64,11 @@
 
 ### 3.2 升级范围（一期支持）
 
-| 范围 | 说明 |
-|------|------|
+| 范围 | 说明                           |
+| ---- | ------------------------------ |
 | 设备 | 指定设备 ID 列表，支持批量选择 |
-| 学校 | 指定学校下的所有设备 |
-| 标签 | 带指定标签的所有设备 |
+| 学校 | 指定学校下的所有设备           |
+| 标签 | 带指定标签的所有设备           |
 
 ### 3.3 升级策略
 
@@ -84,12 +85,12 @@
 
 ### 4.1 核心设计
 
-| 模块 | 方案 |
-|------|------|
-| 版本管理 | 新增 `apk_packages` 表存储 APK 元信息 |
-| 升级配置 | `devices.target_apk_package_id` 存储目标版本 |
+| 模块     | 方案                                            |
+| -------- | ----------------------------------------------- |
+| 版本管理 | 新增 `apk_packages` 表存储 APK 元信息           |
+| 升级配置 | `devices.target_apk_package_id` 存储目标版本    |
 | 命令下发 | 设备心跳时按需生成 `GH_COMMAND_UPDATE_APK` 命令 |
-| 结果记录 | 复用 `device_commands` 表 |
+| 结果记录 | 复用 `device_commands` 表                       |
 
 ### 4.2 升级流程
 
@@ -109,27 +110,27 @@
 
 #### 4.3.1 权限码定义
 
-| 权限码 | 说明 |
-|--------|------|
-| `apk:list` | 查看 APK 列表/详情/下载 |
-| `apk:create` | 上传 APK |
-| `apk:update` | 更新 APK 信息、发布、下线 |
-| `apk:delete` | 删除 APK |
-| `apk:upgrade` | 设置设备升级目标版本 |
+| 权限码        | 说明                      |
+| ------------- | ------------------------- |
+| `apk:list`    | 查看 APK 列表/详情/下载   |
+| `apk:create`  | 上传 APK                  |
+| `apk:update`  | 更新 APK 信息、发布、下线 |
+| `apk:delete`  | 删除 APK                  |
+| `apk:upgrade` | 设置设备升级目标版本      |
 
 #### 4.3.2 接口权限映射
 
-| 接口 | 方法 | 权限码 |
-|------|------|--------|
-| `/admin/apk-packages` | GET | `apk:list` |
-| `/admin/apk-packages` | POST | `apk:create` |
-| `/admin/apk-packages/:id` | GET | `apk:list` |
-| `/admin/apk-packages/:id` | PUT | `apk:update` |
-| `/admin/apk-packages/:id` | DELETE | `apk:delete` |
-| `/admin/apk-packages/:id/publish` | POST | `apk:update` |
-| `/admin/apk-packages/:id/disable` | POST | `apk:update` |
-| `/admin/apk-packages/:id/download` | GET | `apk:list` |
-| `/admin/apk-packages/batch-upgrade` | POST | `apk:upgrade` |
+| 接口                                | 方法   | 权限码        |
+| ----------------------------------- | ------ | ------------- |
+| `/admin/apk-packages`               | GET    | `apk:list`    |
+| `/admin/apk-packages`               | POST   | `apk:create`  |
+| `/admin/apk-packages/:id`           | GET    | `apk:list`    |
+| `/admin/apk-packages/:id`           | PUT    | `apk:update`  |
+| `/admin/apk-packages/:id`           | DELETE | `apk:delete`  |
+| `/admin/apk-packages/:id/publish`   | POST   | `apk:update`  |
+| `/admin/apk-packages/:id/disable`   | POST   | `apk:update`  |
+| `/admin/apk-packages/:id/download`  | GET    | `apk:list`    |
+| `/admin/apk-packages/batch-upgrade` | POST   | `apk:upgrade` |
 
 #### 4.3.3 设备端下载
 
@@ -143,13 +144,14 @@
 
 ### 4.5 删除约束
 
-| APK 状态 | 是否允许删除 | 说明 |
-|----------|-------------|------|
-| DRAFT | ✅ | 未发布，可直接删除 |
-| PUBLISHED | ❌ | 必须先下线 |
-| DISABLED | ⚠️ | 需检查无引用 |
+| APK 状态  | 是否允许删除 | 说明               |
+| --------- | ------------ | ------------------ |
+| DRAFT     | ✅           | 未发布，可直接删除 |
+| PUBLISHED | ❌           | 必须先下线         |
+| DISABLED  | ⚠️           | 需检查无引用       |
 
 **DISABLED 状态删除前检查：**
+
 1. 无设备的 `target_apk_package_id` 指向该 APK
 2. 无 PENDING 状态的升级命令引用该 APK
 
@@ -159,28 +161,29 @@
 
 ### 5.1 新增 `apk_packages` 表
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | bigint | 主键 |
-| tenant_id | bigint | 租户ID，0表示平台级 |
-| terminal_type | varchar(50) | 设备类型，默认 `TERMINAL_TYPE_GH_02` |
-| package_name | varchar(200) | APK包名 |
-| version_name | varchar(50) | 版本名，如 `1.0.1` |
-| version_code | int | 版本号，用于比较 |
-| file_id | bigint | 关联 files 表 |
-| file_size | bigint | 文件大小(字节) |
-| download_url | varchar(500) | 下载地址，完整URL |
-| checksum | varchar(128) | SHA256 校验值 |
-| changelog | text | 更新日志 |
-| status | varchar(20) | DRAFT/PUBLISHED/DISABLED |
-| published_at | timestamp | 发布时间 |
-| created_by | bigint | 创建人 |
-| created_at | timestamp | 创建时间 |
-| updated_at | timestamp | 更新时间 |
+| 字段          | 类型         | 说明                                 |
+| ------------- | ------------ | ------------------------------------ |
+| id            | bigint       | 主键                                 |
+| tenant_id     | bigint       | 租户ID，0表示平台级                  |
+| terminal_type | varchar(50)  | 设备类型，默认 `TERMINAL_TYPE_GH_02` |
+| package_name  | varchar(200) | APK包名                              |
+| version_name  | varchar(50)  | 版本名，如 `1.0.1`                   |
+| version_code  | int          | 版本号，用于比较                     |
+| file_id       | bigint       | 关联 files 表                        |
+| file_size     | bigint       | 文件大小(字节)                       |
+| download_url  | varchar(500) | 下载地址，完整URL                    |
+| checksum      | varchar(128) | SHA256 校验值                        |
+| changelog     | text         | 更新日志                             |
+| status        | varchar(20)  | DRAFT/PUBLISHED/DISABLED             |
+| published_at  | timestamp    | 发布时间                             |
+| created_by    | bigint       | 创建人                               |
+| created_at    | timestamp    | 创建时间                             |
+| updated_at    | timestamp    | 更新时间                             |
 
 **唯一约束**：`(tenant_id, terminal_type, version_code)`
 
 **状态说明**：
+
 - `DRAFT`：草稿，不可被选为目标版本
 - `PUBLISHED`：已发布，可被选为目标版本
 - `DISABLED`：已下线，不可被选为目标版本
@@ -189,21 +192,22 @@
 
 新增字段：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
+| 字段                  | 类型   | 说明        |
+| --------------------- | ------ | ----------- |
 | target_apk_package_id | bigint | 目标APK包ID |
 
 ### 5.3 修改 `device_commands` 表
 
 新增字段：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
+| 字段           | 类型   | 说明                          |
+| -------------- | ------ | ----------------------------- |
 | apk_package_id | bigint | 目标APK包ID（仅升级命令使用） |
 
 **幂等约束**：同一设备对同一 APK 版本只能有一条 PENDING 状态的命令。
 
 创建命令时使用以下逻辑保证幂等：
+
 ```sql
 -- 先查询是否存在
 SELECT id FROM device_commands
@@ -217,17 +221,17 @@ INSERT INTO device_commands (...) VALUES (...);
 
 ### 6.1 APK 包管理接口概览
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/admin/apk-packages` | 上传APK |
-| GET | `/admin/apk-packages` | 列表查询 |
-| GET | `/admin/apk-packages/{id}` | 详情 |
-| PUT | `/admin/apk-packages/{id}` | 更新APK信息 |
-| DELETE | `/admin/apk-packages/{id}` | 删除APK |
-| POST | `/admin/apk-packages/{id}/publish` | 发布 |
-| POST | `/admin/apk-packages/{id}/disable` | 下线 |
-| GET | `/admin/apk-packages/{id}/download` | 后台下载 |
-| POST | `/admin/apk-packages/batch-upgrade` | 批量设置升级目标 |
+| 方法   | 路径                                | 说明             |
+| ------ | ----------------------------------- | ---------------- |
+| POST   | `/admin/apk-packages`               | 上传APK          |
+| GET    | `/admin/apk-packages`               | 列表查询         |
+| GET    | `/admin/apk-packages/{id}`          | 详情             |
+| PUT    | `/admin/apk-packages/{id}`          | 更新APK信息      |
+| DELETE | `/admin/apk-packages/{id}`          | 删除APK          |
+| POST   | `/admin/apk-packages/{id}/publish`  | 发布             |
+| POST   | `/admin/apk-packages/{id}/disable`  | 下线             |
+| GET    | `/admin/apk-packages/{id}/download` | 后台下载         |
+| POST   | `/admin/apk-packages/batch-upgrade` | 批量设置升级目标 |
 
 ### 6.2 上传 APK
 
@@ -239,10 +243,10 @@ POST /admin/apk-packages
 
 **请求参数**（multipart/form-data）：
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| file | file | 是 | APK 文件，≤ 200MB |
-| changelog | string | 否 | 更新日志 |
+| 字段      | 类型   | 必填 | 说明              |
+| --------- | ------ | ---- | ----------------- |
+| file      | file   | 是   | APK 文件，≤ 200MB |
+| changelog | string | 否   | 更新日志          |
 
 **响应**：
 
@@ -268,12 +272,12 @@ GET /admin/apk-packages
 
 **请求参数**（Query）：
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| page | int | 否 | 页码，默认 1 |
-| pageSize | int | 否 | 每页数量，默认 20 |
-| status | string | 否 | 状态筛选：DRAFT/PUBLISHED/DISABLED |
-| terminalType | string | 否 | 设备类型筛选 |
+| 字段         | 类型   | 必填 | 说明                               |
+| ------------ | ------ | ---- | ---------------------------------- |
+| page         | int    | 否   | 页码，默认 1                       |
+| pageSize     | int    | 否   | 每页数量，默认 20                  |
+| status       | string | 否   | 状态筛选：DRAFT/PUBLISHED/DISABLED |
+| terminalType | string | 否   | 设备类型筛选                       |
 
 **响应**：
 
@@ -333,9 +337,9 @@ PUT /admin/apk-packages/{id}
 
 **请求参数**：
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| changelog | string | 否 | 更新日志 |
+| 字段      | 类型   | 必填 | 说明     |
+| --------- | ------ | ---- | -------- |
+| changelog | string | 否   | 更新日志 |
 
 ### 6.6 删除 APK
 
@@ -347,10 +351,10 @@ DELETE /admin/apk-packages/{id}
 
 **错误响应**：
 
-| 错误码 | 说明 |
-|--------|------|
-| 400 | PUBLISHED 状态不允许删除 |
-| 400 | 存在设备引用，不允许删除 |
+| 错误码 | 说明                     |
+| ------ | ------------------------ |
+| 400    | PUBLISHED 状态不允许删除 |
+| 400    | 存在设备引用，不允许删除 |
 
 ### 6.7 发布 APK
 
@@ -384,13 +388,13 @@ POST /admin/apk-packages/batch-upgrade
 
 **请求参数**：
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| apkPackageId | int64 | 是 | 目标APK包ID |
-| scope | string | 是 | 范围：DEVICE/SCHOOL/TAG |
-| schoolIds | []int64 | 否 | scope=SCHOOL 时必填，支持多个学校 |
-| tagIds | []int64 | 否 | scope=TAG 时必填，支持多个标签 |
-| deviceIds | []int64 | 否 | scope=DEVICE 时必填，支持多个设备 |
+| 字段         | 类型    | 必填 | 说明                              |
+| ------------ | ------- | ---- | --------------------------------- |
+| apkPackageId | int64   | 是   | 目标APK包ID                       |
+| scope        | string  | 是   | 范围：DEVICE/SCHOOL/TAG           |
+| schoolIds    | []int64 | 否   | scope=SCHOOL 时必填，支持多个学校 |
+| tagIds       | []int64 | 否   | scope=TAG 时必填，支持多个标签    |
+| deviceIds    | []int64 | 否   | scope=DEVICE 时必填，支持多个设备 |
 
 **响应**：
 
@@ -411,6 +415,7 @@ GET /open/apk-packages/{id}/download
 **鉴权方式**：通过请求中的 SN 码验证设备是否存在，复用现有 open 接口认证机制。
 
 **校验逻辑**：
+
 1. 校验设备 SN 码有效
 2. 校验 APK 状态为 PUBLISHED
 
@@ -429,6 +434,7 @@ GET /open/apk-packages/{id}/download
 ```
 
 **说明**：
+
 - `downloadUrl` 存储完整 URL，前端上传时提供
 - 设备下载后需校验 SHA256
 
@@ -456,22 +462,22 @@ GET /open/apk-packages/{id}/download
 
 ## 9. 异常处理
 
-| 场景 | 处理方式 |
-|------|----------|
-| 目标版本已下线 | 设备心跳时检测，置空目标版本 |
-| 升级成功 | 置空目标版本 |
-| 升级失败 | 命令标记 FAILED，置空目标版本 |
-| 命令超时 | TTL 48小时，超时后标记 TIMEOUT |
-| 设备离线 | 上线后自动检查并创建命令 |
+| 场景           | 处理方式                       |
+| -------------- | ------------------------------ |
+| 目标版本已下线 | 设备心跳时检测，置空目标版本   |
+| 升级成功       | 置空目标版本                   |
+| 升级失败       | 命令标记 FAILED，置空目标版本  |
+| 命令超时       | TTL 48小时，超时后标记 TIMEOUT |
+| 设备离线       | 上线后自动检查并创建命令       |
 
 ### 9.1 目标版本置空说明
 
 **`target_apk_package_id` 字段含义**：
 
-| 值 | 含义 |
-|-----|------|
+| 值             | 含义                                       |
+| -------------- | ------------------------------------------ |
 | 有值（如 123） | 管理员设置了目标版本，设备需要升级到该版本 |
-| NULL | 没有目标版本，设备不需要升级 |
+| NULL           | 没有目标版本，设备不需要升级               |
 
 **置空操作**：将 `devices.target_apk_package_id` 设置为 `NULL`，表示清除升级任务。
 
@@ -501,12 +507,12 @@ GET /open/apk-packages/{id}/download
 
 **触发时机与位置**：
 
-| 场景 | 触发时机 | 触发位置 | 说明 |
-|------|----------|----------|------|
-| 升级成功 | 设备回传成功结果时 | `ProcessCommandResult` | 设备安装完成，回传 SUCCESS |
-| 升级失败 | 设备回传失败结果时 | `ProcessCommandResult` | 设备安装失败，回传 FAILED |
-| 设备版本已达标 | 设备心跳拉取命令时 | `GetCommandList` | 检测到 `app_version_code >= target` |
-| 目标包已下线 | 设备心跳拉取命令时 | `GetCommandList` | 检测到 APK `status != PUBLISHED` |
+| 场景           | 触发时机           | 触发位置               | 说明                                |
+| -------------- | ------------------ | ---------------------- | ----------------------------------- |
+| 升级成功       | 设备回传成功结果时 | `ProcessCommandResult` | 设备安装完成，回传 SUCCESS          |
+| 升级失败       | 设备回传失败结果时 | `ProcessCommandResult` | 设备安装失败，回传 FAILED           |
+| 设备版本已达标 | 设备心跳拉取命令时 | `GetCommandList`       | 检测到 `app_version_code >= target` |
+| 目标包已下线   | 设备心跳拉取命令时 | `GetCommandList`       | 检测到 APK `status != PUBLISHED`    |
 
 **各场景流程图**：
 

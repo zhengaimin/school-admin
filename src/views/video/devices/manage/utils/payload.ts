@@ -8,6 +8,12 @@ export function normalizeDeviceGroupId(value?: number | null, defaultId = -1) {
   return typeof value === "number" && !Number.isNaN(value) ? value : defaultId;
 }
 
+/** 规范化提交设备组ID（未绑定不传） */
+function normalizeSubmitDeviceGroupId(value?: number | null, defaultId = -1) {
+  if (typeof value !== "number" || Number.isNaN(value) || value === defaultId) return undefined;
+  return value;
+}
+
 /** 规范化必填字符串 */
 function normalizeRequiredString(value?: string | null) {
   return value?.trim?.() || "";
@@ -42,7 +48,7 @@ export function buildPostDevicePayload(
     terminalMac: normalizeRequiredString(form.terminalMac),
     name: normalizeRequiredString(form.name),
     location: normalizeOptionalString(form.location),
-    deviceGroupId: normalizeDeviceGroupId(form.deviceGroupId, defaultDeviceGroupId),
+    deviceGroupId: normalizeSubmitDeviceGroupId(form.deviceGroupId, defaultDeviceGroupId),
     powerOnTime: normalizeOptionalString(form.powerOnTime),
     powerOffTime: normalizeOptionalString(form.powerOffTime),
     heartbeatFrequency: normalizeNumberValue(form.heartbeatFrequency),
@@ -67,14 +73,18 @@ export function buildPostDevicePayload(
 }
 
 /** 生成更新设备请求参数 */
-export function buildPutDevicePayload(form: DeviceVideoForm, schoolId?: number): DeviceVideo.ReqPutDeviceApi {
+export function buildPutDevicePayload(
+  form: DeviceVideoForm,
+  schoolId?: number,
+  defaultDeviceGroupId = -1
+): DeviceVideo.ReqPutDeviceApi {
   return {
     schoolId: typeof schoolId === "number" && !Number.isNaN(schoolId) ? schoolId : undefined,
     name: normalizeOptionalString(form.name),
     terminalKey: normalizeOptionalString(form.terminalKey),
     terminalMac: normalizeOptionalString(form.terminalMac),
     location: normalizeOptionalString(form.location),
-    deviceGroupId: typeof form.deviceGroupId === "number" ? form.deviceGroupId : undefined,
+    deviceGroupId: normalizeSubmitDeviceGroupId(form.deviceGroupId, defaultDeviceGroupId),
     powerOnTime: normalizeOptionalString(form.powerOnTime),
     powerOffTime: normalizeOptionalString(form.powerOffTime),
     heartbeatFrequency: normalizeNumberValue(form.heartbeatFrequency),

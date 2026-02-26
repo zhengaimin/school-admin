@@ -132,15 +132,12 @@ defineExpose({ acceptParams });
   border-top: none;
   border-bottom: none;
 }
-
 :deep(.el-collapse-item__header) {
   border-bottom: none;
 }
-
 :deep(.el-collapse-item__wrap) {
   border-bottom: none;
 }
-
 .request-data {
   max-height: 220px;
   padding: 8px;
