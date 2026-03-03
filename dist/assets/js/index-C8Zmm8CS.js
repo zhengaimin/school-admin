@@ -1,1 +1,0 @@
-import{h as e}from"./index-BlDpqoLa.js";function a(t){return e.get("/admin/payments",t)}function p(t){return e.get(`/admin/payments/${t}`)}function i(t){return e.get("/admin/payments/export-info",t,{loading:!1})}function o(t){return e.get("/admin/payments/export",t,{responseType:"blob"})}export{a,o as b,i as c,p as g};

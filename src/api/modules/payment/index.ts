@@ -20,3 +20,13 @@ export function getPaymentExportInfoApi(params: Payment.ReqGetPaymentExportInfoA
 export function getPaymentsExportApi(params: Payment.ReqGetPaymentsApi): Promise<Blob> {
   return http.get("/admin/payments/export", params, { responseType: "blob" });
 }
+
+/** 获取租户支付配置 */
+export function getTenantPaymentConfigApi(tenantId: number | string) {
+  return http.get<Payment.ResGetTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}`);
+}
+
+/** 创建或更新租户支付配置 */
+export function putTenantPaymentConfigApi(tenantId: number | string, params: Payment.ReqPutTenantPaymentConfigApi) {
+  return http.put<Payment.ResPutTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}`, params);
+}

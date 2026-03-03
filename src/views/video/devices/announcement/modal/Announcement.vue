@@ -75,7 +75,7 @@ const getInitialFormData = (): AnnouncementForm => ({
   images: [],
   targets: [
     {
-      audienceType: ANNOUNCEMENT_AUDIENCE.PARENT,
+      audienceType: ANNOUNCEMENT_AUDIENCE.PUBLIC_SCREEN,
       scopeType: ANNOUNCEMENT_SCOPE.SCHOOL_ALL,
       scopeId: 0,
       scopeIds: []

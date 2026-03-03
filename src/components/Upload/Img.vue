@@ -16,6 +16,7 @@ interface UploadFileProps {
   height?: string; // 组件高度 ==> 非必传（默认为 150px）
   width?: string; // 组件宽度 ==> 非必传（默认为 150px）
   borderRadius?: string; // 组件边框圆角 ==> 非必传（默认为 8px）
+  isFullPath?: boolean; // 绑定值是否使用完整路径 ==> 非必传（默认为 false）
 }
 
 // 接受父组件参数
@@ -27,7 +28,8 @@ const props = withDefaults(defineProps<UploadFileProps>(), {
   fileType: () => ["image/jpeg", "image/png", "image/gif"],
   height: "120px",
   width: "150px",
-  borderRadius: "8px"
+  borderRadius: "8px",
+  isFullPath: false
 });
 
 // 生成组件唯一id
@@ -52,6 +54,15 @@ const { getUploadPath } = useAssetsPath();
 const displayImageUrl = computed(() => getUploadPath(props.imageUrl));
 
 /**
+ * @description 处理回传给父组件的图片地址
+ * @param fileUrl 上传返回的图片地址
+ */
+const resolveEmitImageUrl = (fileUrl?: string) => {
+  if (!fileUrl) return "";
+  return props.isFullPath ? getUploadPath(fileUrl) : fileUrl;
+};
+
+/**
  * @description 图片上传
  * @param options upload 所有配置项
  * */
@@ -62,7 +73,7 @@ const handleHttpUpload = async (options: UploadRequestOptions) => {
   try {
     const api = props.api ?? postUploadImgApi;
     const { data } = await api(options.file);
-    emit("update:imageUrl", data.fileUrl);
+    emit("update:imageUrl", resolveEmitImageUrl(data.fileUrl));
     // 调用 el-form 内部的校验方法（可自动校验）
     if (formItemContext?.prop) formContext?.validateField([formItemContext.prop as string]);
   } catch (error) {

@@ -2,7 +2,6 @@
 import type { Common } from "@/api/interface";
 
 import { ref } from "vue";
-import { getApkMessageTemplateDetailApi } from "@/api/modules";
 import {
   APK_MESSAGE_TEMPLATE_CATEGORY_I18N,
   APK_MESSAGE_TEMPLATE_SCOPE_I18N,
@@ -14,7 +13,7 @@ import { formatTimestamp } from "@/hooks/useManage";
 /** 弹窗可见 */
 const visible = ref(false);
 /** 详情数据 */
-const detail = ref<Common.IApkMessageTemplateDetailVo | null>(null);
+const detail = ref<Common.IApkMessageTemplateItemVo | null>(null);
 /** 弹窗参数 */
 const parameter = ref<TModalParams>({
   title: "",
@@ -39,25 +38,10 @@ function formatDateTime(value?: string) {
   return formatTimestamp(value, "YYYY-MM-DD HH:mm:ss") || "--";
 }
 
-/** 获取详情 */
-async function axiosGetApkMessageTemplateDetailApi(id: number) {
-  try {
-    return await getApkMessageTemplateDetailApi(id);
-  } catch (error) {
-    console.error("axiosGetApkMessageTemplateDetailApi:", error);
-    return { code: -1, data: null };
-  }
-}
-
 /** 接收参数 */
-async function acceptParams(params: TModalParams, row?: Common.IApkMessageTemplateItemVo) {
+function acceptParams(params: TModalParams, row?: Common.IApkMessageTemplateItemVo) {
   parameter.value = { ...parameter.value, ...params };
-  detail.value = null;
-  if (!row?.id) return;
-  const result = await axiosGetApkMessageTemplateDetailApi(row.id);
-  if (result.code === 0) {
-    detail.value = result.data;
-  }
+  detail.value = row || null;
   visible.value = true;
 }
 

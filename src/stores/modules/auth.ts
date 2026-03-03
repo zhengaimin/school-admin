@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
 import { getAuthMenuListApi } from "@/api/modules/login";
-import { ROLE_LEVEL, SUPER_ADMIN_ROLE } from "@/config/modules";
-import { ROUTE_SYSTEM } from "@/config/router";
-// import { getPermissionModulesApi } from "@/api/modules/system";
+import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "@/config/router";
+import { getPermissionModulesApi } from "@/api/modules/system";
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
@@ -15,17 +15,9 @@ const id = generatePrefix("auth");
 
 // 模块路由前缀映射
 const MODULE_PATH_MAP: Record<string, string[]> = {
-  common: [
-    "/systemAuthority",
-    "/InternalPage",
-    "/moduleControl",
-    "/paymentConfig",
-    "/notificationConfig",
-    "/operationLog",
-    "/dataScreening"
-  ],
+  common: ["/systemAuthority", "/InternalPage", "/moduleControl", "/notificationConfig", "/operationLog", "/dataScreening"],
   video: ["/device", "/fund", "/messagesall", "/merchant", "/video"],
-  hairdryer: ["/hairdryer", "/hairdryerFund", "/hairdryerLog", "/hairdryerRate", "/hairdryerPackage"],
+  hairdryer: ["/hairdryer", "/hairdryerFund", "/hairdryerLog", "/hairdryerRate", "/hairdryerPackage", "/paymentConfig"],
   system: ["/system", "/permission"]
 };
 
@@ -51,15 +43,58 @@ const MODULE_KEY_MAP: Record<string, string[]> = {
   hairdryer: ["device", "payment", "refund", "packageRecord", "gift", "hairdryer"]
 };
 
-const PLATFORM_USER_MENU_PATHS = new Set<string>([ROUTE_SYSTEM.USER, ROUTE_SYSTEM.USER_SUPPLIER, ROUTE_SYSTEM.USER_SALESMAN]);
-
-/** 判断是否平台用户 */
-const isPlatformUser = (userInfo?: Record<string, any>): boolean => {
-  return userInfo?.role_level === ROLE_LEVEL.PLATFORM;
-};
-
 // 这些页面不切换当前模块，避免清空原有菜单
 const SKIP_MODULE_SWITCH_PATHS = new Set<string>([ROUTE_SYSTEM.PROFILE, ROUTE_SYSTEM.CHANGE_PASSWORD]);
+const LEGACY_PAYMENT_CONFIG_PATH = "/paymentConfig";
+const LEGACY_PAYMENT_CONFIG_COMPONENT = "/paymentConfig/index";
+const HAIRDRYER_PAYMENT_CONFIG_COMPONENT = "/hairdryer/paymentConfig/index";
+const HAIRDRYER_PAYMENT_CONFIG_NAME = "hairdryerPaymentConfig";
+
+/** 判断是否旧版支付金额配置菜单 */
+const isLegacyPaymentConfigMenu = (menu: Menu.MenuOptions): boolean => {
+  return menu.path === LEGACY_PAYMENT_CONFIG_PATH || menu.component === LEGACY_PAYMENT_CONFIG_COMPONENT;
+};
+
+/** 合并菜单并按 path 去重 */
+const mergeMenusByPath = (baseMenus: Menu.MenuOptions[], appendMenus: Menu.MenuOptions[]): Menu.MenuOptions[] => {
+  const merged = [...baseMenus];
+  const pathSet = new Set(merged.map(menu => menu.path));
+  appendMenus.forEach(menu => {
+    if (pathSet.has(menu.path)) return;
+    merged.push(menu);
+    pathSet.add(menu.path);
+  });
+  return merged;
+};
+
+/** 兼容旧菜单：将公共模块中的支付金额配置迁移到吹风机模块 */
+const migrateLegacyPaymentConfigMenu = (rawMenus: Record<string, Menu.MenuOptions[]>): Record<string, Menu.MenuOptions[]> => {
+  const commonMenus = Array.isArray(rawMenus.common) ? [...rawMenus.common] : [];
+  if (commonMenus.length === 0) return rawMenus;
+
+  const legacyPaymentMenus: Menu.MenuOptions[] = [];
+  const nextCommonMenus: Menu.MenuOptions[] = [];
+  commonMenus.forEach(menu => {
+    if (!isLegacyPaymentConfigMenu(menu)) {
+      nextCommonMenus.push(menu);
+      return;
+    }
+    legacyPaymentMenus.push({
+      ...menu,
+      path: ROUTE_HAIRDRYER.PAYMENT_CONFIG,
+      name: HAIRDRYER_PAYMENT_CONFIG_NAME,
+      component: HAIRDRYER_PAYMENT_CONFIG_COMPONENT
+    });
+  });
+
+  if (legacyPaymentMenus.length === 0) return rawMenus;
+
+  return {
+    ...rawMenus,
+    common: nextCommonMenus,
+    hairdryer: mergeMenusByPath(rawMenus.hairdryer || [], legacyPaymentMenus)
+  };
+};
 
 /**
  * 从权限模块响应中提取 moduleKey 数组
@@ -88,6 +123,29 @@ export const hasModuleAccess = (moduleKey: string, userModuleKeys: string[]): bo
 };
 
 /**
+ * 刷新权限模块并返回最新权限上下文（moduleKeys + permissionCodes）
+ * 菜单构建必须基于 /admin/permissions/modules 返回值
+ */
+const refreshPermissionContext = async (permissionStore: ReturnType<typeof usePermissionStore>) => {
+  try {
+    const result = await getPermissionModulesApi(undefined, { loading: false, errorTip: false });
+    if (result?.code === 0) {
+      permissionStore.setModulePermissionsByModules(result);
+    } else {
+      permissionStore.resetModulePermissions();
+    }
+  } catch (error) {
+    console.warn("refreshPermissionContext:", error);
+    permissionStore.resetModulePermissions();
+  }
+
+  return {
+    permissions: permissionStore.permissionCodesGet ?? [],
+    userModuleKeys: permissionStore.moduleKeysGet ?? []
+  };
+};
+
+/**
  * 根据路由路径获取模块 key
  */
 export const getModuleByPath = (path: string): string => {
@@ -103,39 +161,30 @@ export const getModuleByPath = (path: string): string => {
  * 根据权限过滤菜单
  * @param menus 菜单列表
  * @param permissions 用户权限码列表
- * @param userModuleKeys 用户拥有的 moduleKey 列表
  * @param isSuperAdmin 是否为超级管理员
- * @param platformUser 是否平台用户
  */
-const filterMenusByPermission = (
-  menus: Menu.MenuOptions[],
-  permissions: string[],
-  userModuleKeys: string[],
-  isSuperAdmin: boolean,
-  platformUser: boolean
-): Menu.MenuOptions[] => {
+const filterMenusByPermission = (menus: Menu.MenuOptions[], permissions: string[], isSuperAdmin: boolean): Menu.MenuOptions[] => {
   return menus
     .map(menu => ({ ...menu, children: menu.children ? [...menu.children] : undefined }))
     .filter(menu => {
       // 超级管理员跳过权限检查
       if (isSuperAdmin) {
         if (menu.children?.length) {
-          menu.children = filterMenusByPermission(menu.children, permissions, userModuleKeys, isSuperAdmin, platformUser);
+          menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
         }
         return true;
       }
 
       // 检查菜单权限：无 permission 字段则默认允许访问
       const menuPermissions = menu.meta?.permission;
-      const isPlatformUserMenu = platformUser && PLATFORM_USER_MENU_PATHS.has(menu.path);
       if (menuPermissions?.length) {
-        const hasPermission = isPlatformUserMenu || menuPermissions.some(code => permissions.includes(code));
+        const hasPermission = menuPermissions.some(code => permissions.includes(code));
         if (!hasPermission) return false;
       }
 
       // 递归处理子菜单
       if (menu.children?.length) {
-        menu.children = filterMenusByPermission(menu.children, permissions, userModuleKeys, isSuperAdmin, platformUser);
+        menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
         // 如果子菜单全部被过滤掉，父菜单也不显示（除非父菜单本身有组件）
         if (menu.children.length === 0 && !menu.component) return false;
       }
@@ -196,38 +245,32 @@ export const useAuthStore = defineStore(id, {
       const userStore = useUserStore();
       const permissionStore = usePermissionStore();
       const userInfo = userStore.userInfo;
-      const permissions = permissionStore.permissionCodesGet ?? [];
-      const userModuleKeys = permissionStore.moduleKeysGet ?? [];
+      const { permissions, userModuleKeys } = await refreshPermissionContext(permissionStore);
       const isSuperAdmin = userInfo?.roleCode === SUPER_ADMIN_ROLE;
-      const platformUser = isPlatformUser(userInfo);
 
       //获取前端固定的菜单
       const { data, systemData, modules, isOperator } = await getAuthMenuListApi();
 
       // 保存全局路由（应用权限过滤）
-      this.globalMenus = filterMenusByPermission(data || [], permissions, userModuleKeys, isSuperAdmin, platformUser);
+      this.globalMenus = filterMenusByPermission(data || [], permissions, isSuperAdmin);
 
       // 保存模块列表
-      this.moduleList = modules || [];
+      const allModules = modules || [];
+      this.moduleList = isSuperAdmin ? allModules : allModules.filter(module => hasModuleAccess(module.key, userModuleKeys));
 
       // 保存所有模块菜单（应用权限过滤）
       let rawMenus: Record<string, Menu.MenuOptions[]> = systemData || {};
       if (userInfo["roleCode"] == "maintainer") {
         rawMenus = !Array.isArray(isOperator) && isOperator ? isOperator : rawMenus;
       }
+      rawMenus = migrateLegacyPaymentConfigMenu(rawMenus);
 
       // 对每个模块的菜单应用权限过滤
       this.allModuleMenus = {};
       Object.entries(rawMenus).forEach(([moduleKey, menus]) => {
         // 检查用户是否有访问该模块的权限
         if (isSuperAdmin || hasModuleAccess(moduleKey, userModuleKeys)) {
-          this.allModuleMenus[moduleKey] = filterMenusByPermission(
-            menus,
-            permissions,
-            userModuleKeys,
-            isSuperAdmin,
-            platformUser
-          );
+          this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin);
         }
       });
 
@@ -250,7 +293,19 @@ export const useAuthStore = defineStore(id, {
     },
     // 设置当前模块的菜单
     setCurrentModuleMenu() {
-      const menus = this.allModuleMenus[this.currentModule];
+      let moduleKey = this.currentModule;
+      let menus = this.allModuleMenus[moduleKey];
+
+      // 当前模块不可访问时，回退到第一个可访问且有菜单的模块
+      if (!menus?.length) {
+        const fallback = this.moduleList.find(item => (this.allModuleMenus[item.key] || []).length > 0);
+        if (fallback) {
+          moduleKey = fallback.key;
+          this.currentModule = fallback.key;
+          menus = this.allModuleMenus[moduleKey];
+        }
+      }
+
       this.authMenuList = menus || [];
     },
     // Set RouteName

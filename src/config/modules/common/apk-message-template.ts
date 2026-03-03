@@ -62,6 +62,36 @@ export const APK_MESSAGE_TEMPLATE_CATEGORY_OPTIONS: Array<{ label: string; value
   }
 ];
 
+/** APK 错误话术审计动作：update-更新，reset_inherit-恢复继承 */
+export enum APK_MESSAGE_TEMPLATE_AUDIT_ACTION {
+  /** 更新 */
+  UPDATE = "update",
+  /** 恢复继承 */
+  RESET_INHERIT = "reset_inherit"
+}
+
+export type TApkMessageTemplateAuditActionValue =
+  (typeof APK_MESSAGE_TEMPLATE_AUDIT_ACTION)[keyof typeof APK_MESSAGE_TEMPLATE_AUDIT_ACTION];
+
+export const APK_MESSAGE_TEMPLATE_AUDIT_ACTION_I18N: Record<TApkMessageTemplateAuditActionValue, string> = {
+  [APK_MESSAGE_TEMPLATE_AUDIT_ACTION.UPDATE]: "更新",
+  [APK_MESSAGE_TEMPLATE_AUDIT_ACTION.RESET_INHERIT]: "恢复继承"
+};
+
+export const APK_MESSAGE_TEMPLATE_AUDIT_ACTION_OPTIONS: Array<{
+  label: string;
+  value: TApkMessageTemplateAuditActionValue;
+}> = [
+  {
+    label: APK_MESSAGE_TEMPLATE_AUDIT_ACTION_I18N[APK_MESSAGE_TEMPLATE_AUDIT_ACTION.UPDATE],
+    value: APK_MESSAGE_TEMPLATE_AUDIT_ACTION.UPDATE
+  },
+  {
+    label: APK_MESSAGE_TEMPLATE_AUDIT_ACTION_I18N[APK_MESSAGE_TEMPLATE_AUDIT_ACTION.RESET_INHERIT],
+    value: APK_MESSAGE_TEMPLATE_AUDIT_ACTION.RESET_INHERIT
+  }
+];
+
 /** APK 错误话术固定渠道 */
 export const APK_MESSAGE_TEMPLATE_CHANNEL = "GH_DEVICE_APK";
 

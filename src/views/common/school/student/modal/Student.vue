@@ -15,6 +15,7 @@ import {
   STUDENT_TYPE_OPTIONS
 } from "@/config/modules";
 import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
 import { useSchool } from "@/hooks/useSchool";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 import UploadImg from "@/components/Upload/Img.vue";
@@ -25,6 +26,7 @@ const emit = defineEmits<{
 }>();
 
 const { schoolId, schoolName } = useSchool();
+const { getUploadPath } = useAssetsPath();
 const visible = ref(false);
 const modalLoading = ref(false);
 const parameter = ref<StudentModalParams>({
@@ -188,12 +190,21 @@ async function handleDepartmentChange(departmentId?: number) {
     }
   });
 }
+
+/** 获取提交表单数据 */
+function getSubmitFormData() {
+  const form = unref(ruleForm);
+  return {
+    ...form,
+    faceImageUrl: form.faceImageUrl ? getUploadPath(form.faceImageUrl) : form.faceImageUrl
+  };
+}
 /** 提交表单 */
 async function handleSubmitForm(formEl?: FormInstance) {
   if (!formEl) return;
   await formEl.validate(async (valid: boolean) => {
     if (valid) {
-      const form = unref(ruleForm);
+      const form = getSubmitFormData();
       try {
         if (isAdd.value) {
           const result = await axiosPostCreateStudentApi({
@@ -268,6 +279,7 @@ defineExpose({ acceptParams });
               height="160px"
               :api="uploadAvatarApi"
               :disabled="isView"
+              is-full-path
             />
           </el-form-item>
         </el-col>

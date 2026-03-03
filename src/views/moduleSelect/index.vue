@@ -50,7 +50,7 @@ const userName = computed(
 
 const moduleDescMap: Record<string, string> = {
   common: "校园管理、小程序配置、支付配置、通知配置等",
-  video: "话机设备管理、资金管理、套餐配置、日志管理等",
+  video: "公话设备管理、资金管理、套餐配置、日志管理等",
   hairdryer: "吹风机设备管理、资金管理、日志管理等",
   system: "角色管理、用户管理、权限配置等"
 };

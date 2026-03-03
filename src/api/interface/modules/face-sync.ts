@@ -76,6 +76,46 @@ export namespace FaceSync {
     stats?: IDeviceFaceStateStats;
   }
 
+  /** 按设备查询人脸同步状态 - 列表项 */
+  export interface IDeviceFaceSyncStateByDeviceItem {
+    /** 设备ID */
+    deviceId: number;
+    /** 学生ID */
+    studentId: number;
+    /** 学生姓名 */
+    studentName: string;
+    /** 期望动作 */
+    desiredAction: TDeviceFaceDesiredActionValue;
+    /** 期望版本 */
+    desiredVersion: number;
+    /** 已同步版本 */
+    syncedVersion: number;
+    /** 同步状态 */
+    status: TDeviceFaceSyncStatusValue;
+    /** 最近失败码 */
+    lastErrorCode: TDeviceFaceErrorCodeValue | string | null;
+    /** 最近失败描述 */
+    lastErrorMsg: string | null;
+  }
+
+  /** 按设备查询人脸同步状态 - 请求参数 */
+  export interface ReqGetDeviceFaceSyncStatesByDeviceApi {
+    /** 同步状态 */
+    status?: TDeviceFaceSyncStatusValue;
+    /** 页码 */
+    page?: number;
+    /** 每页条数 */
+    pageSize?: number;
+  }
+
+  /** 按设备查询人脸同步状态 - 响应 data */
+  export interface ResGetDeviceFaceSyncStatesByDeviceApi {
+    /** 总数 */
+    total: number;
+    /** 列表 */
+    list: IDeviceFaceSyncStateByDeviceItem[];
+  }
+
   /** 学生维度人脸同步状态项 */
   export interface IStudentFaceStateItem {
     /** 状态ID */

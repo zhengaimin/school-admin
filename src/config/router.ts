@@ -23,7 +23,7 @@ export const ROUTE_INTERNAL_PAGE = {
   CLASS: "/InternalPage/class"
 } as const;
 
-/** 话机模块路由 */
+/** 公话模块路由 */
 export const ROUTE_VIDEO = {
   /** 费率配置 */
   RATE: "/video/rate",
@@ -39,7 +39,9 @@ export const ROUTE_VIDEO = {
   PACKAGE_GIFT_TIME: "/video/package/giftTime",
 
   /** 商户号配置 */
-  MERCHANT: "/video/merchant"
+  MERCHANT: "/video/merchant",
+  /** 支付金额配置 */
+  PAYMENT_CONFIG: "/video/paymentConfig"
 } as const;
 
 /** 系统管理模块路由 */
@@ -98,5 +100,7 @@ export const ROUTE_HAIRDRYER = {
   PACKAGE_GIFT_DURATION: "/hairdryer/package/giftDuration",
 
   /** 商户号配置 */
-  MERCHANT: "/hairdryer/merchant"
+  MERCHANT: "/hairdryer/merchant",
+  /** 支付金额配置 */
+  PAYMENT_CONFIG: "/hairdryer/paymentConfig"
 } as const;

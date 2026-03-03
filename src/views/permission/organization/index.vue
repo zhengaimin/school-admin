@@ -7,7 +7,12 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
 import { getOrgDepartmentListApi, deleteOrgDepartmentApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
-import { ORG_DEPARTMENT_STATUS, ORG_DEPARTMENT_STATUS_I18N, ORG_DEPARTMENT_STATUS_OPTIONS } from "@/config/modules";
+import {
+  ORG_DEPARTMENT_STATUS,
+  ORG_DEPARTMENT_STATUS_I18N,
+  ORG_DEPARTMENT_STATUS_OPTIONS,
+  PERMISSION_CODE
+} from "@/config/modules";
 import DepartmentModal from "./modal/Department.vue";
 import UserAssignModal from "./modal/UserAssign.vue";
 
@@ -72,7 +77,9 @@ function handleDelete(row: System.OrgDepartment) {
   <div class="flex flex-col h-full">
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="组织架构">
       <template #toolButton>
-        <el-button type="primary" :icon="CirclePlus" @click="handleShowModal('Add')">新增部门</el-button>
+        <el-button v-permission="PERMISSION_CODE.ORG_CREATE" type="primary" :icon="CirclePlus" @click="handleShowModal('Add')">
+          新增部门
+        </el-button>
       </template>
 
       <template #status="{ row }">
@@ -82,9 +89,18 @@ function handleDelete(row: System.OrgDepartment) {
       </template>
 
       <template #operation="{ row }">
-        <el-button type="primary" link @click="handleShowModal('Edit', row)">编辑</el-button>
-        <el-button type="primary" link @click="handleShowUserAssign(row)">分配用户</el-button>
-        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+        <el-button v-permission="PERMISSION_CODE.ORG_UPDATE" type="primary" link @click="handleShowModal('Edit', row)">
+          编辑
+        </el-button>
+        <el-button
+          v-permission="[PERMISSION_CODE.USER_UPDATE, PERMISSION_CODE.ORG_UPDATE]"
+          type="primary"
+          link
+          @click="handleShowUserAssign(row)"
+        >
+          分配用户
+        </el-button>
+        <el-button v-permission="PERMISSION_CODE.ORG_DELETE" type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>
 

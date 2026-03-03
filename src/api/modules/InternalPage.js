@@ -582,10 +582,12 @@ export const modulesList = params => {
 };
 // 金额配置
 export const paymentconfigstenant = params => {
-  return http.get(`/admin/payment-configs/tenant/${params.tenantId}`);
+  const { tenantId, deviceType } = params;
+  return http.get(`/admin/payment-configs/tenant/${tenantId}`, { deviceType });
 };
 export const paymentconfigsadd = params => {
-  return http.put(`/admin/payment-configs/tenant/${params.tenantId}`, params);
+  const { tenantId, ...payload } = params;
+  return http.put(`/admin/payment-configs/tenant/${tenantId}`, payload);
 };
 // 通知配置
 export const notificationList = params => {

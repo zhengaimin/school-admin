@@ -7,7 +7,7 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import { deleteTenantApi, getTenantListApi } from "@/api/modules";
-import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS } from "@/config/modules";
+import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS, PERMISSION_CODE } from "@/config/modules";
 import TenantModal from "./modal/Tenant.vue";
 
 const requestTenantList = async (params: System.ReqTenantList) => {
@@ -78,7 +78,9 @@ const handleDelete = (row: System.Tenant) => {
   <div class="table-box">
     <ProTable ref="proTable" :columns="columns" :request-api="requestTenantList" :pagination="false" table-header="租户管理">
       <template #toolButton>
-        <el-button type="primary" :icon="CirclePlus" @click="onShowModal('Add')">新增租户</el-button>
+        <el-button v-permission="PERMISSION_CODE.TENANT_CREATE" type="primary" :icon="CirclePlus" @click="onShowModal('Add')">
+          新增租户
+        </el-button>
       </template>
       <template #status="{ row }">
         <el-tag :type="row.status === ENABLE_STATUS.ENABLED ? 'success' : 'info'">
@@ -86,8 +88,10 @@ const handleDelete = (row: System.Tenant) => {
         </el-tag>
       </template>
       <template #operation="{ row }">
-        <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>
-        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+        <el-button v-permission="PERMISSION_CODE.TENANT_UPDATE" type="primary" link @click="onShowModal('Edit', row)">
+          编辑
+        </el-button>
+        <el-button v-permission="PERMISSION_CODE.TENANT_DELETE" type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>
     <TenantModal ref="modalRef" @submit="refreshTableList" />

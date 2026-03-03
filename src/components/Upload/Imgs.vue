@@ -62,6 +62,7 @@ interface UploadFileProps {
   height?: string; // 组件高度 ==> 非必传（默认为 150px）
   width?: string; // 组件宽度 ==> 非必传（默认为 150px）
   borderRadius?: string; // 组件边框圆角 ==> 非必传（默认为 8px）
+  isFullPath?: boolean; // 绑定值是否使用完整路径 ==> 非必传（默认为 false）
 }
 
 const props = withDefaults(defineProps<UploadFileProps>(), {
@@ -73,7 +74,8 @@ const props = withDefaults(defineProps<UploadFileProps>(), {
   fileType: () => ["image/jpeg", "image/png", "image/gif"],
   height: "120px",
   width: "150px",
-  borderRadius: "8px"
+  borderRadius: "8px",
+  isFullPath: false
 });
 
 // 获取 el-form 组件上下文
@@ -89,6 +91,27 @@ const _fileList = ref<UploadUserFile[]>(props.fileList);
 const { getUploadPath } = useAssetsPath();
 
 const getDisplayUrl = (url?: string) => getUploadPath(url ?? "");
+
+/**
+ * @description 处理回传给父组件的图片地址
+ * @param fileUrl 上传返回的图片地址
+ */
+const resolveEmitImageUrl = (fileUrl?: string) => {
+  if (!fileUrl) return "";
+  return props.isFullPath ? getUploadPath(fileUrl) : fileUrl;
+};
+
+/**
+ * @description 构建回传给父组件的图片列表
+ */
+const buildEmitFileList = () => {
+  return _fileList.value.map(item => {
+    return {
+      ...item,
+      url: resolveEmitImageUrl(item.url)
+    };
+  });
+};
 
 // 监听 props.fileList 列表默认值改变
 watch(
@@ -148,8 +171,10 @@ const emit = defineEmits<{
 }>();
 const uploadSuccess = (response: { fileUrl: string } | undefined, uploadFile: UploadFile) => {
   if (!response) return;
-  uploadFile.url = response.fileUrl;
-  emit("update:fileList", _fileList.value);
+  uploadFile.url = resolveEmitImageUrl(response.fileUrl);
+  const fileList = buildEmitFileList();
+  _fileList.value = fileList;
+  emit("update:fileList", fileList);
   // 调用 el-form 内部的校验方法（可自动校验）
   if (formItemContext?.prop) formContext?.validateField([formItemContext.prop as string]);
   ElNotification({
@@ -165,7 +190,9 @@ const uploadSuccess = (response: { fileUrl: string } | undefined, uploadFile: Up
  * */
 const handleRemove = (file: UploadFile) => {
   _fileList.value = _fileList.value.filter(item => item.url !== file.url || item.name !== file.name);
-  emit("update:fileList", _fileList.value);
+  const fileList = buildEmitFileList();
+  _fileList.value = fileList;
+  emit("update:fileList", fileList);
 };
 
 /**

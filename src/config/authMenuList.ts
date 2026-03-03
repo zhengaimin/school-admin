@@ -1,7 +1,115 @@
 import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "./router";
 import { PERMISSION_CODE } from "@/config/modules";
 
-export default {
+const permissionOf = (...codes: PERMISSION_CODE[]) => codes;
+
+const MENU_PERMISSION_EXCLUDE_PATHS = new Set<string>([ROUTE_MODULE_SELECT, ROUTE_SYSTEM.PROFILE, ROUTE_SYSTEM.CHANGE_PASSWORD]);
+
+const MODULE_DEFAULT_PERMISSION_MAP: Record<string, PERMISSION_CODE[]> = {
+  common: permissionOf(PERMISSION_CODE.SCHOOL_LIST),
+  video: permissionOf(PERMISSION_CODE.DEVICE_LIST),
+  hairdryer: permissionOf(PERMISSION_CODE.DEVICE_LIST),
+  system: permissionOf(PERMISSION_CODE.USER_LIST)
+};
+
+const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE[] }> = [
+  // common
+  { prefix: ROUTE_COMMON.APK_MESSAGE_TEMPLATE, permission: permissionOf(PERMISSION_CODE.APK_MESSAGE_TEMPLATE_LIST) },
+  { prefix: ROUTE_COMMON.APK, permission: permissionOf(PERMISSION_CODE.APK_LIST) },
+  { prefix: ROUTE_COMMON.SCHOOL_DEVICE_CONFIG, permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
+  { prefix: ROUTE_COMMON.SCHOOL, permission: permissionOf(PERMISSION_CODE.SCHOOL_LIST) },
+  { prefix: "/common/school/student", permission: permissionOf(PERMISSION_CODE.STUDENT_LIST) },
+  { prefix: "/common/school/parent", permission: permissionOf(PERMISSION_CODE.PARENT_BALANCE_READ) },
+  { prefix: "/systemAuthority/teacherAdmin", permission: permissionOf(PERMISSION_CODE.TEACHER_STUDENT_READ) },
+  { prefix: ROUTE_INTERNAL_PAGE.GRADE, permission: permissionOf(PERMISSION_CODE.GRADE_LIST) },
+  { prefix: ROUTE_INTERNAL_PAGE.DEPARTMENT, permission: permissionOf(PERMISSION_CODE.DEPARTMENT_LIST) },
+  { prefix: ROUTE_INTERNAL_PAGE.CLASS, permission: permissionOf(PERMISSION_CODE.CLASS_LIST) },
+  { prefix: "/moduleControl", permission: permissionOf(PERMISSION_CODE.MINIAPP_LIST) },
+  { prefix: "/notificationConfig", permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
+  { prefix: "/operationLog", permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
+
+  // video
+  { prefix: "/device/grouping", permission: permissionOf(PERMISSION_CODE.DEVICE_GROUP_LIST) },
+  { prefix: "/video/devices/tags", permission: permissionOf(PERMISSION_CODE.DEVICE_TAG_LIST) },
+  { prefix: "/video/devices/manage", permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
+  { prefix: "/video/devices/control", permission: permissionOf(PERMISSION_CODE.DEVICE_CONTROL) },
+  { prefix: "/device/SOSControl", permission: permissionOf(PERMISSION_CODE.DEVICE_CONTROL) },
+  { prefix: "/device/TimeControl", permission: permissionOf(PERMISSION_CODE.DEVICE_CONTROL) },
+  { prefix: "/video/devices/schoolMien", permission: permissionOf(PERMISSION_CODE.SCHOOL_MIEN_LIST) },
+  { prefix: "/video/devices/announcement", permission: permissionOf(PERMISSION_CODE.ANNOUNCEMENT_LIST) },
+  { prefix: "/fund/refund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+  { prefix: "/fund/packagerefund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+  { prefix: "/fund/packagePurchase", permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
+  { prefix: "/fund/consumption", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: "/fund/recordAll", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: "/fund/record", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: "/fund/phoneList", permission: permissionOf(PERMISSION_CODE.FAMILY_CONTACT_LIST) },
+  { prefix: "/fund", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_VIDEO.PACKAGE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
+  { prefix: ROUTE_VIDEO.RATE, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
+  { prefix: "/messagesall", permission: permissionOf(PERMISSION_CODE.MESSAGE_LIST) },
+  { prefix: "/device/messages", permission: permissionOf(PERMISSION_CODE.MESSAGE_LIST) },
+  { prefix: "/device/log/command", permission: permissionOf(PERMISSION_CODE.DEVICE_EVENT_LOG_LIST) },
+  { prefix: ROUTE_VIDEO.MERCHANT, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_VIDEO.PAYMENT_CONFIG, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: "/device", permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
+
+  // hairdryer
+  { prefix: ROUTE_HAIRDRYER.DEVICE_TAGS, permission: permissionOf(PERMISSION_CODE.DEVICE_TAG_LIST) },
+  { prefix: ROUTE_HAIRDRYER.DEVICE_DEVICE, permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
+  { prefix: ROUTE_HAIRDRYER.DEVICE_CONFIG, permission: permissionOf(PERMISSION_CODE.DEVICE_CONTROL) },
+  { prefix: ROUTE_HAIRDRYER.DEVICE, permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_REFUND, permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_PACKAGE_REFUND, permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_PACKAGE_PURCHASE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_RECHARGE, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_HAIRDRYER.PACKAGE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
+  { prefix: ROUTE_HAIRDRYER.RATE, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
+  { prefix: ROUTE_HAIRDRYER.LOG_USAGE, permission: permissionOf(PERMISSION_CODE.DEVICE_USAGE_LIST) },
+  { prefix: ROUTE_HAIRDRYER.LOG_COMMAND, permission: permissionOf(PERMISSION_CODE.DEVICE_EVENT_LOG_LIST) },
+  { prefix: ROUTE_HAIRDRYER.LOG, permission: permissionOf(PERMISSION_CODE.DEVICE_USAGE_LIST) },
+  { prefix: ROUTE_HAIRDRYER.MERCHANT, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_HAIRDRYER.PAYMENT_CONFIG, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+
+  // system
+  { prefix: ROUTE_SYSTEM.TENANT, permission: permissionOf(PERMISSION_CODE.TENANT_LIST) },
+  { prefix: ROUTE_SYSTEM.ORGANIZATION, permission: permissionOf(PERMISSION_CODE.ORG_LIST) },
+  { prefix: ROUTE_SYSTEM.ROLE, permission: permissionOf(PERMISSION_CODE.ROLE_LIST) },
+  { prefix: ROUTE_SYSTEM.USER, permission: permissionOf(PERMISSION_CODE.USER_LIST) }
+];
+
+const resolvePermissionByPath = (path: string): PERMISSION_CODE[] | undefined => {
+  const matched = PATH_PERMISSION_RULES.find(rule => path.startsWith(rule.prefix));
+  return matched?.permission;
+};
+
+const resolveMenuPermission = (
+  menu: Menu.MenuOptions,
+  moduleKey: string,
+  parentPermission?: PERMISSION_CODE[]
+): PERMISSION_CODE[] | undefined => {
+  const explicitPermission = menu.meta?.permission as PERMISSION_CODE[] | undefined;
+  if (explicitPermission?.length) return explicitPermission;
+  const pathPermission = resolvePermissionByPath(menu.path);
+  if (pathPermission?.length) return pathPermission;
+  if (parentPermission?.length) return parentPermission;
+  return MODULE_DEFAULT_PERMISSION_MAP[moduleKey];
+};
+
+const applyMenuPermissions = (menus: Menu.MenuOptions[], moduleKey: string, parentPermission?: PERMISSION_CODE[]) => {
+  menus.forEach(menu => {
+    const currentPermission = resolveMenuPermission(menu, moduleKey, parentPermission);
+    if (!MENU_PERMISSION_EXCLUDE_PATHS.has(menu.path) && currentPermission?.length) {
+      menu.meta.permission = permissionOf(...currentPermission);
+    }
+    if (menu.children?.length) {
+      applyMenuPermissions(menu.children, moduleKey, currentPermission);
+    }
+  });
+};
+
+const authMenuList = {
   code: 200,
   data: [
     {
@@ -27,7 +135,7 @@ export default {
     },
     {
       key: "video",
-      label: "话机模块",
+      label: "公话模块",
       icon: "Phone"
     },
     {
@@ -253,7 +361,7 @@ export default {
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: [PERMISSION_CODE.APK_MESSAGE_TEMPLATE_LIST]
+          permission: permissionOf(PERMISSION_CODE.APK_MESSAGE_TEMPLATE_LIST)
         }
       },
       {
@@ -263,20 +371,6 @@ export default {
         meta: {
           icon: "Grid",
           title: "小程序模块配置",
-          isLink: "",
-          isHide: false,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: false
-        }
-      },
-      {
-        path: "/paymentConfig",
-        name: "paymentConfig",
-        component: "/paymentConfig/index",
-        meta: {
-          icon: "WalletFilled",
-          title: "支付金额配置",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -320,7 +414,7 @@ export default {
         component: "/device/index",
         meta: {
           icon: "UploadFilled",
-          title: "设备管理",
+          title: "公话管理",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -348,7 +442,7 @@ export default {
             component: "/video/devices/tags/index",
             meta: {
               icon: "",
-              title: "设备标签",
+              title: "公话标签",
               isLink: "",
               isHide: false,
               isFull: false,
@@ -745,12 +839,26 @@ export default {
         ]
       },
       {
-        path: "/video/merchant",
+        path: ROUTE_VIDEO.MERCHANT,
         name: "videoMerchant",
         component: "/video/merchant/index",
         meta: {
           icon: "Tools",
           title: "商户号配置",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: ROUTE_VIDEO.PAYMENT_CONFIG,
+        name: "videoPaymentConfig",
+        component: "/video/paymentConfig/index",
+        meta: {
+          icon: "WalletFilled",
+          title: "支付金额配置",
           isLink: "",
           isHide: false,
           isFull: false,
@@ -1050,6 +1158,20 @@ export default {
           isAffix: false,
           isKeepAlive: false
         }
+      },
+      {
+        path: ROUTE_HAIRDRYER.PAYMENT_CONFIG,
+        name: "hairdryerPaymentConfig",
+        component: "/hairdryer/paymentConfig/index",
+        meta: {
+          icon: "WalletFilled",
+          title: "支付金额配置",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
       }
     ],
     system: [
@@ -1093,7 +1215,7 @@ export default {
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: [PERMISSION_CODE.TENANT_LIST]
+          permission: permissionOf(PERMISSION_CODE.TENANT_LIST)
         }
       },
       {
@@ -1108,7 +1230,7 @@ export default {
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: [PERMISSION_CODE.ORG_LIST]
+          permission: permissionOf(PERMISSION_CODE.ORG_LIST)
         }
       },
       {
@@ -1123,7 +1245,7 @@ export default {
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: [PERMISSION_CODE.ROLE_LIST]
+          permission: permissionOf(PERMISSION_CODE.ROLE_LIST)
         }
       },
       {
@@ -1138,7 +1260,7 @@ export default {
           isFull: false,
           isAffix: false,
           isKeepAlive: false,
-          permission: [PERMISSION_CODE.USER_LIST]
+          permission: permissionOf(PERMISSION_CODE.USER_LIST)
         },
         redirect: ROUTE_SYSTEM.USER_PLATFORM,
         children: [
@@ -1154,7 +1276,7 @@ export default {
               isFull: false,
               isAffix: false,
               isKeepAlive: false,
-              permission: [PERMISSION_CODE.USER_LIST]
+              permission: permissionOf(PERMISSION_CODE.USER_LIST)
             }
           },
           {
@@ -1169,7 +1291,7 @@ export default {
               isFull: false,
               isAffix: false,
               isKeepAlive: false,
-              permission: [PERMISSION_CODE.USER_LIST]
+              permission: permissionOf(PERMISSION_CODE.USER_LIST)
             }
           },
           {
@@ -1184,7 +1306,7 @@ export default {
               isFull: false,
               isAffix: false,
               isKeepAlive: false,
-              permission: [PERMISSION_CODE.USER_LIST]
+              permission: permissionOf(PERMISSION_CODE.USER_LIST)
             }
           }
         ]
@@ -1194,3 +1316,10 @@ export default {
   isOperator: [],
   msg: "成功"
 };
+
+applyMenuPermissions(authMenuList.data || [], "global");
+Object.entries(authMenuList.systemData || {}).forEach(([moduleKey, menus]) => {
+  applyMenuPermissions(menus, moduleKey);
+});
+
+export default authMenuList;

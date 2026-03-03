@@ -6,6 +6,11 @@ export function getFaceSyncDeviceStatesApi(deviceId: number, params: FaceSync.Re
   return http.get<FaceSync.ResGetDeviceFaceStatesApi>(`/admin/face-sync/devices/${deviceId}/states`, params);
 }
 
+/** 按设备查询人脸同步状态 */
+export function getFaceSyncDeviceStatesByDeviceApi(deviceId: number, params?: FaceSync.ReqGetDeviceFaceSyncStatesByDeviceApi) {
+  return http.get<FaceSync.ResGetDeviceFaceSyncStatesByDeviceApi>(`/admin/face-sync/devices/${deviceId}/states`, params);
+}
+
 /** 获取学生人脸同步状态列表 */
 export function getFaceSyncStudentStatesApi(studentId: number, params: FaceSync.ReqGetStudentFaceStatesApi) {
   return http.get<FaceSync.ResGetStudentFaceStatesApi>(`/admin/face-sync/students/${studentId}/states`, params);

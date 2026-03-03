@@ -7,7 +7,14 @@ import { getRoleListApi, deleteRoleApi } from "@/api/modules";
 import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
 import RoleModal from "./modal/Role.vue";
-import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS, ROLE_LEVEL, ROLE_LEVEL_OPTIONS } from "@/config/modules";
+import {
+  ENABLE_STATUS,
+  ENABLE_STATUS_I18N,
+  ENABLE_STATUS_OPTIONS,
+  PERMISSION_CODE,
+  ROLE_LEVEL,
+  ROLE_LEVEL_OPTIONS
+} from "@/config/modules";
 import { useManage } from "@/hooks/useManage";
 import { useUserStore } from "@/stores/modules/user";
 import { storeToRefs } from "pinia";
@@ -80,7 +87,14 @@ function handleDelete(row: System.Role) {
   <div class="table-box">
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="角色管理">
       <template #toolButton>
-        <el-button type="primary" :icon="CirclePlus" @click="handleShowRoleModal('Add')">新增角色</el-button>
+        <el-button
+          v-permission="PERMISSION_CODE.ROLE_CREATE"
+          type="primary"
+          :icon="CirclePlus"
+          @click="handleShowRoleModal('Add')"
+        >
+          新增角色
+        </el-button>
       </template>
 
       <template #status="{ row }">
@@ -90,8 +104,10 @@ function handleDelete(row: System.Role) {
       </template>
 
       <template #operation="{ row }">
-        <el-button type="primary" link @click="handleShowRoleModal('Edit', row)">编辑</el-button>
-        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+        <el-button v-permission="PERMISSION_CODE.ROLE_UPDATE" type="primary" link @click="handleShowRoleModal('Edit', row)">
+          编辑
+        </el-button>
+        <el-button v-permission="PERMISSION_CODE.ROLE_DELETE" type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>
 

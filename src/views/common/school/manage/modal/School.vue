@@ -44,8 +44,22 @@ const ruleForm = reactive<Partial<School.ISchoolItem>>({
   scoreUrl: ""
 });
 /** 表单验证规则 */
+const validatePhone = (_rule: any, value: string, callback: (error?: Error) => void) => {
+  if (!value) {
+    callback(new Error("请输入联系方式"));
+    return;
+  }
+  if (!/^1[3456789]\d{9}$/.test(value)) {
+    callback(new Error("请输入正确的手机号"));
+    return;
+  }
+  callback();
+};
+
+/** 表单验证规则 */
 const rules: FormRules = {
-  name: [{ required: true, message: "请输入学校名称", trigger: "blur" }]
+  name: [{ required: true, message: "请输入学校名称", trigger: "blur" }],
+  phone: [{ required: true, validator: validatePhone, trigger: "blur" }]
 };
 
 /** 是否新增 */
@@ -85,13 +99,6 @@ const axiosGetSchoolDetailApi = async (id: number) => {
   }
 };
 
-/** 处理手机号校验 */
-const handleCheckPhone = () => {
-  if (ruleForm.phone && !/^1[3456789]\d{9}$/.test(ruleForm.phone)) {
-    ruleForm.phone = "";
-    ElMessage.warning("请输入正确的手机号");
-  }
-};
 /** 提交表单 */
 const handleSubmitForm = async () => {
   if (!ruleFormRef.value) return;
@@ -170,7 +177,7 @@ defineExpose({ acceptParams });
         </el-col>
         <el-col :span="12">
           <el-form-item label="联系方式" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" @blur="handleCheckPhone" />
+            <el-input v-model="ruleForm.phone" placeholder="请输入联系方式" />
           </el-form-item>
         </el-col>
         <el-col :span="12">

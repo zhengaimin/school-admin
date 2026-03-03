@@ -14,6 +14,7 @@ import {
   ENABLE_STATUS,
   ENABLE_STATUS_I18N,
   ENABLE_STATUS_OPTIONS,
+  PERMISSION_CODE,
   ROLE_LEVEL,
   ROLE_LEVEL_I18N,
   ROLE_LEVEL_OPTIONS
@@ -157,7 +158,14 @@ function handleDelete(row: System.AdminUser) {
   <div class="table-box">
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" :table-header="tableHeader">
       <template #toolButton>
-        <el-button type="primary" :icon="CirclePlus" @click="handleShowUserModal('Add')">新增用户</el-button>
+        <el-button
+          v-permission="PERMISSION_CODE.USER_CREATE"
+          type="primary"
+          :icon="CirclePlus"
+          @click="handleShowUserModal('Add')"
+        >
+          新增用户
+        </el-button>
       </template>
 
       <template #status="{ row }">
@@ -167,8 +175,11 @@ function handleDelete(row: System.AdminUser) {
       </template>
 
       <template #operation="{ row }">
-        <el-button type="primary" link @click="handleShowUserModal('Edit', row)">编辑</el-button>
+        <el-button v-permission="PERMISSION_CODE.USER_UPDATE" type="primary" link @click="handleShowUserModal('Edit', row)">
+          编辑
+        </el-button>
         <el-button
+          v-permission="PERMISSION_CODE.USER_UPDATE"
           v-if="!isSupplierRole(row.roleLevel ?? pageRoleLevel)"
           type="primary"
           link
@@ -176,8 +187,10 @@ function handleDelete(row: System.AdminUser) {
         >
           数据权限
         </el-button>
-        <el-button type="warning" link @click="handleResetPassword(row)">重置密码</el-button>
-        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+        <el-button v-permission="PERMISSION_CODE.USER_RESET_PWD" type="warning" link @click="handleResetPassword(row)">
+          重置密码
+        </el-button>
+        <el-button v-permission="PERMISSION_CODE.USER_DELETE" type="danger" link @click="handleDelete(row)">删除</el-button>
       </template>
     </ProTable>
 

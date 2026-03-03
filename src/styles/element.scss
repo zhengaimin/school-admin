@@ -363,3 +363,7 @@
 .el-input-number {
   --el-input-number-controls-height: 0;
 }
+.el-input-number.is-without-controls .el-input__wrapper {
+  padding-right: 15px;
+  padding-left: 15px;
+}

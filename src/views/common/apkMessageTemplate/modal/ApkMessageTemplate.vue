@@ -4,7 +4,7 @@ import type { FormInstance, FormRules } from "element-plus";
 
 import { computed, nextTick, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { getApkMessageTemplateDetailApi, putUpdateApkMessageTemplateApi } from "@/api/modules";
+import { putUpdateApkMessageTemplateApi } from "@/api/modules";
 import {
   APK_MESSAGE_TEMPLATE_CATEGORY_I18N,
   APK_MESSAGE_TEMPLATE_SCOPE_I18N,
@@ -76,16 +76,6 @@ function formatDateTime(value?: string) {
   return formatTimestamp(value, "YYYY-MM-DD HH:mm:ss") || "--";
 }
 
-/** 获取错误话术详情 */
-async function axiosGetApkMessageTemplateDetailApi(id: number) {
-  try {
-    return await getApkMessageTemplateDetailApi(id);
-  } catch (error) {
-    console.error("axiosGetApkMessageTemplateDetailApi:", error);
-    return { code: -1, data: null };
-  }
-}
-
 /** 更新错误话术 */
 async function axiosPutUpdateApkMessageTemplateApi(id: number, form: typeof ruleForm.value) {
   try {
@@ -119,33 +109,28 @@ async function handleSubmitForm(formEl?: FormInstance) {
 }
 
 /** 接收参数 */
-async function acceptParams(params: TModalParams, row?: Common.IApkMessageTemplateItemVo) {
+function acceptParams(params: TModalParams, row?: Common.IApkMessageTemplateItemVo) {
   parameter.value = { ...parameter.value, ...params };
   currentId.value = row?.id;
-  ruleForm.value = {
-    shrgKey: "",
-    message: "",
-    description: "",
-    version: 0,
-    isEnabled: true
-  };
-
-  if (row?.id) {
-    const result = await axiosGetApkMessageTemplateDetailApi(row.id);
-    if (result.code === 0 && result.data) {
-      ruleForm.value = {
-        shrgKey: result.data.shrgKey || "",
-        category: result.data.category,
-        scope: result.data.scope,
-        effectiveScope: result.data.effectiveScope,
-        message: result.data.message || "",
-        description: result.data.description || "",
-        version: result.data.version,
-        isEnabled: result.data.isEnabled,
-        updatedAt: result.data.updatedAt
+  ruleForm.value = row
+    ? {
+        shrgKey: row.shrgKey || "",
+        category: row.category,
+        scope: row.scope,
+        effectiveScope: row.effectiveScope,
+        message: row.message || "",
+        description: row.description || "",
+        version: row.version,
+        isEnabled: row.isEnabled,
+        updatedAt: row.updatedAt
+      }
+    : {
+        shrgKey: "",
+        message: "",
+        description: "",
+        version: 0,
+        isEnabled: true
       };
-    }
-  }
 
   visible.value = true;
   nextTick(() => {

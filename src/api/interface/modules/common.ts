@@ -1,4 +1,5 @@
 import type {
+  TApkMessageTemplateAuditActionValue,
   TApkMessageTemplateCategoryValue,
   TApkMessageTemplateScopeValue
 } from "@/config/modules/common/apk-message-template";
@@ -49,7 +50,7 @@ export namespace Common {
     /** 作用域 */
     scope: TApkMessageTemplateScopeValue;
     /** 操作动作 */
-    action: "create" | "update" | "reset_inherit";
+    action: TApkMessageTemplateAuditActionValue;
     /** 变更前话术 */
     beforeMessage?: string;
     /** 变更后话术 */
@@ -68,6 +69,10 @@ export namespace Common {
 
   /** 获取 APK 错误话术列表 - 请求参数 */
   export interface ReqGetApkMessageTemplatesApi {
+    /** 渠道 */
+    channel?: string;
+    /** 语义键 */
+    shrgKey?: string;
     /** 页码 */
     page?: number;
     /** 每页数量 */
@@ -76,12 +81,14 @@ export namespace Common {
     scope?: TApkMessageTemplateScopeValue;
     /** 分类筛选 */
     category?: TApkMessageTemplateCategoryValue;
-    /** 语义键/文案关键字 */
+    /** 语义键/文案关键字（兼容旧筛选字段） */
     keyword?: string;
-    /** 排序 */
+    /** 排序（兼容旧筛选字段） */
     sort?: string;
     /** 学校ID（可选） */
     schoolId?: number;
+    /** 租户ID（可选） */
+    tenantId?: number;
   }
 
   /** 获取 APK 错误话术列表 - 响应 data */
@@ -107,26 +114,47 @@ export namespace Common {
     description?: string;
     /** 乐观锁版本号 */
     version: number;
-    /** 是否启用 */
-    isEnabled?: boolean;
   }
 
-  /** 恢复继承 - 请求参数 */
+  /** 通过记录 ID 恢复继承 - 请求参数 */
   export interface ReqPostResetInheritApkMessageTemplateApi {
     /** 乐观锁版本号 */
     version: number;
   }
 
+  /** 通过业务主键恢复继承范围 */
+  export type TApkMessageTemplateResetByKeyScopeValue = Exclude<TApkMessageTemplateScopeValue, "global">;
+
+  /** 按业务主键恢复继承 - 请求参数 */
+  export interface ReqPostResetByKeyApkMessageTemplateApi {
+    /** 渠道 */
+    channel?: string;
+    /** 语义键 */
+    shrgKey: string;
+    /** 恢复作用域 */
+    scope: TApkMessageTemplateResetByKeyScopeValue;
+    /** 租户ID（scope=tenant 时必填） */
+    tenantId?: number;
+    /** 学校ID（scope=school 时必填） */
+    schoolId?: number;
+  }
+
   /** 导出 APK 错误话术 - 请求参数 */
   export interface ReqExportApkMessageTemplatesApi {
+    /** 渠道 */
+    channel?: string;
+    /** 语义键 */
+    shrgKey?: string;
     /** 作用域筛选 */
     scope?: TApkMessageTemplateScopeValue;
     /** 分类筛选 */
     category?: TApkMessageTemplateCategoryValue;
-    /** 语义键/文案关键字 */
-    keyword?: string;
     /** 学校ID（可选） */
     schoolId?: number;
+    /** 租户ID（可选） */
+    tenantId?: number;
+    /** 语义键/文案关键字（兼容旧筛选字段） */
+    keyword?: string;
   }
 
   /** 获取 APK 错误话术审计日志 - 请求参数 */
@@ -137,10 +165,14 @@ export namespace Common {
     pageSize?: number;
     /** 语义键 */
     shrgKey?: string;
-    /** 作用域 */
-    scope?: TApkMessageTemplateScopeValue;
+    /** 操作动作 */
+    action?: TApkMessageTemplateAuditActionValue;
+    /** 租户ID（可选） */
+    tenantId?: number;
     /** 学校ID（可选） */
     schoolId?: number;
+    /** 作用域（兼容旧筛选字段） */
+    scope?: TApkMessageTemplateScopeValue;
   }
 
   /** 获取 APK 错误话术审计日志 - 响应 data */

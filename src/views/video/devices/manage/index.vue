@@ -49,6 +49,7 @@ import ChangeSchoolModal from "./modal/ChangeSchool.vue";
 import DetailModal from "./modal/Detail.vue";
 import DeviceModal from "./modal/Device.vue";
 import ExportModal from "./modal/Export.vue";
+import FaceStatesModal from "./modal/FaceStates.vue";
 import ImportResultModal from "./modal/ImportResult.vue";
 /** 设备组分页大小 */
 const deviceGroupPageSize = 200;
@@ -73,6 +74,8 @@ const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
 const modalRef = ref<InstanceType<typeof DeviceModal> | null>(null);
 /** 详情弹窗引用 */
 const detailModalRef = ref<InstanceType<typeof DetailModal> | null>(null);
+/** 人脸状态弹窗引用 */
+const faceStatesModalRef = ref<InstanceType<typeof FaceStatesModal> | null>(null);
 /** 更换学校弹窗引用 */
 const changeSchoolModalRef = ref<InstanceType<typeof ChangeSchoolModal> | null>(null);
 /** 批量标签弹窗引用 */
@@ -223,7 +226,7 @@ const columns: ColumnProps<DeviceRow>[] = [
   },
   { prop: "createdAt", label: "创建时间", width: 170 },
   { prop: "updatedAt", label: "更新时间", width: 170 },
-  { prop: "operation", label: "操作", width: 260, fixed: "right" }
+  { prop: "operation", label: "操作", width: 320, fixed: "right" }
 ];
 /** 表头操作按钮配置 */
 const headerActions: HeaderAction[] = [
@@ -691,6 +694,11 @@ function handleShowModal(type: "Add" | "Edit", row?: DeviceRow) {
 function handleShowDetail(row: DeviceRow) {
   detailModalRef.value?.acceptParams({ title: "设备详情", type: "View", showConfirm: false }, row);
 }
+/** 显示人脸状态弹窗 */
+function handleShowFaceStates(row: DeviceRow) {
+  if (!row?.id) return;
+  faceStatesModalRef.value?.acceptParams({ title: "人脸同步状态", type: "View", showConfirm: false }, row);
+}
 /** 显示更换学校弹窗 */
 function handleShowChangeSchool(row: DeviceRow) {
   if (!row?.id) return;
@@ -956,6 +964,7 @@ watch(schoolId, () => {
       </template>
       <template #operation="{ row }">
         <el-button type="primary" link @click="handleShowDetail(row)">查看</el-button>
+        <el-button type="success" link @click="handleShowFaceStates(row)">查看人脸</el-button>
         <el-button type="primary" link @click="handleShowModal('Edit', row)">编辑</el-button>
         <el-button type="warning" link @click="handleShowChangeSchool(row)">更换</el-button>
         <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
@@ -1079,6 +1088,7 @@ watch(schoolId, () => {
     </el-dialog>
 
     <DetailModal ref="detailModalRef" />
+    <FaceStatesModal ref="faceStatesModalRef" />
     <ChangeSchoolModal ref="changeSchoolModalRef" @submit="refreshTableList" />
     <DeviceModal
       ref="modalRef"

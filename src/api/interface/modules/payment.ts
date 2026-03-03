@@ -127,4 +127,44 @@ export namespace Payment {
     /** 每页数量 */
     pageSize: number;
   }
+
+  /** 租户支付配置 */
+  export interface IPaymentConfigInfo {
+    /** 配置ID */
+    id: number;
+    /** 租户ID */
+    tenantId: number;
+    /** 租户名称 */
+    tenantName?: string;
+    /** 固定金额列表（JSON字符串） */
+    fixedAmounts?: string;
+    /** 单笔支付最小金额 */
+    minAmount?: number | null;
+    /** 单笔支付最大金额 */
+    maxAmount?: number | null;
+    /** 备注 */
+    remark?: string;
+    /** 创建时间 */
+    createdAt?: string;
+    /** 更新时间 */
+    updatedAt?: string;
+  }
+
+  /** 获取租户支付配置 - 响应 data */
+  export type ResGetTenantPaymentConfigApi = IPaymentConfigInfo;
+
+  /** 创建或更新租户支付配置 - 请求参数 */
+  export interface ReqPutTenantPaymentConfigApi {
+    /** 固定金额列表，JSON字符串，如：[10,20,50,100] */
+    fixedAmounts?: string;
+    /** 单笔支付最小金额 */
+    minAmount?: number;
+    /** 单笔支付最大金额 */
+    maxAmount?: number;
+    /** 备注 */
+    remark?: string;
+  }
+
+  /** 创建或更新租户支付配置 - 响应 data */
+  export type ResPutTenantPaymentConfigApi = IPaymentConfigInfo;
 }

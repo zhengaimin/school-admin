@@ -32,7 +32,7 @@ export const permissionMenuTreeConfig: {
   lockedPaths: string[];
 } = {
   groups: [
-    { key: "video", label: "话机模块", menus: filterMenus(systemMenus.video || []) },
+    { key: "video", label: "公话模块", menus: filterMenus(systemMenus.video || []) },
     { key: "hairdryer", label: "吹风机模块", menus: filterMenus(systemMenus.hairdryer || []) },
     { key: "common", label: "公共模块", menus: filterMenus(systemMenus.common || []) },
     { key: "system", label: "权限模块", menus: filterMenus(systemMenus.system || []) }

@@ -4,7 +4,7 @@ import type {
   TApkMessageTemplateScopeValue
 } from "@/config/modules/common/apk-message-template";
 
-import { APK_MESSAGE_TEMPLATE_CATEGORY, APK_MESSAGE_TEMPLATE_SCOPE } from "@/config/modules";
+import { APK_MESSAGE_TEMPLATE_CATEGORY, APK_MESSAGE_TEMPLATE_CHANNEL, APK_MESSAGE_TEMPLATE_SCOPE } from "@/config/modules";
 import { isNullOrUnDef } from "@/utils/is";
 
 /** 处理文本字段 */
@@ -30,6 +30,13 @@ function normalizePage(value?: number | string | null) {
 
 /** 处理学校ID */
 function normalizeSchoolId(value?: number | string | null) {
+  const parsed = normalizeNumber(value);
+  if (!parsed || parsed <= 0 || parsed === -1) return undefined;
+  return parsed;
+}
+
+/** 处理租户ID */
+function normalizeTenantId(value?: number | string | null) {
   const parsed = normalizeNumber(value);
   if (!parsed || parsed <= 0 || parsed === -1) return undefined;
   return parsed;
@@ -62,12 +69,16 @@ function normalizeCategory(value?: string): TApkMessageTemplateCategoryValue | u
 
 /** 构建错误话术列表请求参数 */
 export function buildApkMessageTemplatesListParams(params: Record<string, any>): Common.ReqGetApkMessageTemplatesApi {
+  const shrgKey = normalizeText(params.shrgKey || params.keyword);
   return {
+    channel: APK_MESSAGE_TEMPLATE_CHANNEL,
     page: normalizePage(params.page),
     pageSize: normalizePage(params.pageSize),
+    shrgKey,
     scope: normalizeScope(params.scope),
     category: normalizeCategory(params.category),
-    keyword: normalizeText(params.keyword),
+    keyword: shrgKey,
+    tenantId: normalizeTenantId(params.tenantId),
     schoolId: normalizeSchoolId(params.schoolId),
     sort: normalizeText(params.sort)
   };
@@ -83,8 +94,7 @@ export function buildPutUpdateApkMessageTemplatePayload(params: {
   return {
     message: params.message.trim(),
     description: normalizeText(params.description),
-    version: params.version,
-    isEnabled: params.isEnabled
+    version: params.version
   };
 }
 
@@ -95,10 +105,14 @@ export function buildPostResetInheritApkMessageTemplatePayload(version: number):
 
 /** 构建导出请求参数 */
 export function buildExportApkMessageTemplatesParams(params: Record<string, any>): Common.ReqExportApkMessageTemplatesApi {
+  const shrgKey = normalizeText(params.shrgKey || params.keyword);
   return {
+    channel: APK_MESSAGE_TEMPLATE_CHANNEL,
+    shrgKey,
     scope: normalizeScope(params.scope),
     category: normalizeCategory(params.category),
-    keyword: normalizeText(params.keyword),
+    keyword: shrgKey,
+    tenantId: normalizeTenantId(params.tenantId),
     schoolId: normalizeSchoolId(params.schoolId)
   };
 }

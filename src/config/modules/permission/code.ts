@@ -196,12 +196,18 @@ export enum PERMISSION_CODE {
   APK_DELETE = "apk:delete",
   APK_UPGRADE = "apk:upgrade",
 
+  // 设备事件日志
+  DEVICE_EVENT_LOG_LIST = "deviceEventLog:list",
+
   // APK 错误话术配置
-  APK_MESSAGE_TEMPLATE_LIST = "apk:message-template:list",
-  APK_MESSAGE_TEMPLATE_EDIT = "apk:message-template:edit",
-  APK_MESSAGE_TEMPLATE_RESET = "apk:message-template:reset",
-  APK_MESSAGE_TEMPLATE_EXPORT = "apk:message-template:export",
-  APK_MESSAGE_TEMPLATE_AUDIT = "apk:message-template:audit"
+  APK_MESSAGE_TEMPLATE_LIST = "apk_message_template:list",
+  APK_MESSAGE_TEMPLATE_UPDATE = "apk_message_template:update",
+  APK_MESSAGE_TEMPLATE_RESET_INHERIT = "apk_message_template:reset_inherit",
+  APK_MESSAGE_TEMPLATE_EXPORT = "apk_message_template:export",
+  APK_MESSAGE_TEMPLATE_AUDIT = "apk_message_template:audit"
 }
 
 export type TPermissionCodeValue = (typeof PERMISSION_CODE)[keyof typeof PERMISSION_CODE];
+
+/** 权限码列表（从 PERMISSION_CODE 提取） */
+export const PERMISSION_CODE_LIST: TPermissionCodeValue[] = Object.values(PERMISSION_CODE);

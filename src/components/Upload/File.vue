@@ -49,6 +49,7 @@ import { ref, computed, inject } from "vue";
 import { Document, Edit, Delete, Plus } from "@element-plus/icons-vue";
 import { generateUUID } from "@/utils";
 import { uploadFileApi } from "@/api/modules/upload";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 import type { UploadProps, UploadRequestOptions } from "element-plus";
 import type { Upload } from "@/api/interface";
@@ -63,6 +64,7 @@ interface Props {
   height?: string;
   width?: string;
   borderRadius?: string;
+  isFullPath?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,10 +86,12 @@ const props = withDefaults(defineProps<Props>(), {
   ],
   height: "120px",
   width: "150px",
-  borderRadius: "8px"
+  borderRadius: "8px",
+  isFullPath: false
 });
 
 const fileUrl = defineModel<string>({ default: "" });
+const { getUploadPath } = useAssetsPath();
 
 const uuid = ref("id-" + generateUUID());
 
@@ -103,6 +107,12 @@ const fileName = computed(() => {
   const parts = fileUrl.value.split("/");
   return parts[parts.length - 1] || "文件";
 });
+
+/** 处理回传给父组件的文件地址 */
+const resolveEmitFileUrl = (url?: string) => {
+  if (!url) return "";
+  return props.isFullPath ? getUploadPath(url) : url;
+};
 
 /** 处理文件上传 */
 const handleHttpUpload = async (options: UploadRequestOptions) => {
@@ -177,7 +187,7 @@ const handleBeforeUpload: UploadProps["beforeUpload"] = rawFile => {
 /** 处理上传成功 */
 const handleUploadSuccess = (response: Upload.ResFileUpload | undefined) => {
   if (!response) return;
-  fileUrl.value = response.fileUrl;
+  fileUrl.value = resolveEmitFileUrl(response.fileUrl);
   if (formItemContext?.prop) {
     formContext?.validateField([formItemContext.prop as string]);
   }

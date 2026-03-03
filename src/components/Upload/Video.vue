@@ -69,6 +69,7 @@ interface Props {
   height?: string;
   width?: string;
   borderRadius?: string;
+  isFullPath?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,7 +79,8 @@ const props = withDefaults(defineProps<Props>(), {
   fileType: () => ["video/mp4"],
   height: "120px",
   width: "150px",
-  borderRadius: "8px"
+  borderRadius: "8px",
+  isFullPath: false
 });
 
 const fileUrl = defineModel<string>({ default: "" });
@@ -93,6 +95,12 @@ const formItemContext = inject(formItemContextKey, void 0);
 const selfDisabled = computed(() => {
   return props.disabled || formContext?.disabled;
 });
+
+/** 处理回传给父组件的视频地址 */
+const resolveEmitFileUrl = (url?: string) => {
+  if (!url) return "";
+  return props.isFullPath ? getUploadPath(url) : url;
+};
 
 /** 处理视频上传 */
 const handleHttpUpload = async (options: UploadRequestOptions) => {
@@ -166,7 +174,7 @@ const handleBeforeUpload: UploadProps["beforeUpload"] = rawFile => {
 /** 处理上传成功 */
 const handleUploadSuccess = (response: Upload.ResFileUpload | undefined) => {
   if (!response) return;
-  fileUrl.value = response.fileUrl;
+  fileUrl.value = resolveEmitFileUrl(response.fileUrl);
   if (formItemContext?.prop) {
     formContext?.validateField([formItemContext.prop as string]);
   }
