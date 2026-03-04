@@ -1,0 +1,5 @@
+# dual-git-workflow 变更记录
+
+| id                | 类型 | 摘要                                                                                                                  | 状态 | 日期       | 关联代码                                                                                                                                                                                                               |
+| ----------------- | ---- | --------------------------------------------------------------------------------------------------------------------- | ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ITEM-20260304-004 | req  | 新增双远端 Git 工具：支持 GitHub/GitLab 同步推送，并引入 `.gitignore.github` / `.gitignore.gitlab` 独立模板与切换命令 | done | 2026-03-04 | scripts/git-dual-tools.mjs, scripts/git-dual-tools-lib.mjs, scripts/**tests**/git-dual-tools-lib.test.mjs, package.json, README.md, .gitignore.github, .gitignore.gitlab, .aimin-skill/doc/design/dual-git-workflow.md |

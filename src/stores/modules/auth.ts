@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
 import { getAuthMenuListApi } from "@/api/modules/login";
-import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { isSuperRoleLevel } from "@/config/modules";
 import { ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "@/config/router";
 import { getPermissionModulesApi } from "@/api/modules/system";
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
@@ -246,7 +246,7 @@ export const useAuthStore = defineStore(id, {
       const permissionStore = usePermissionStore();
       const userInfo = userStore.userInfo;
       const { permissions, userModuleKeys } = await refreshPermissionContext(permissionStore);
-      const isSuperAdmin = userInfo?.roleCode === SUPER_ADMIN_ROLE;
+      const isSuperAdmin = isSuperRoleLevel(userInfo?.roleLevel);
 
       //获取前端固定的菜单
       const { data, systemData, modules, isOperator } = await getAuthMenuListApi();

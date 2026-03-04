@@ -1,12 +1,25 @@
 stages:
+  - doc_gate
   - deploy
   - sonarqube_check
+
+doc_gate:
+  stage: doc_gate
+  image:
+    name: node:20
+    entrypoint: [""]
+  script:
+    - node -v
+    - node scripts/check-aimin-skill-gate.mjs
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == 'main'
 
 sonarqube_check:
   stage: sonarqube_check
   image:
     name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""] 
+    entrypoint: [""]
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"

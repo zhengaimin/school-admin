@@ -1,5 +1,7 @@
 # 文档驱动开发（结合 SuperPowers）设计方案
 
+> 说明：本文为历史设计稿。当前执行流程以 `./aimin-skill-workflow-v2.md` 与 `../changes/item-id-rule.md` 为准。
+
 **日期：** 2026-03-03  
 **状态：** Approved  
 **目标：** 建立“先文档、后开发、变更必回写、硬门禁”的团队工作流，并支持多 agent 并发。

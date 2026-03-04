@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { isSuperRoleLevel } from "@/config/modules";
 import { useAuthStore } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
@@ -24,7 +24,7 @@ export const useAuthButtons = () => {
     const permissions = permissionStore.permissionCodesGet ?? [];
     return new Proxy({} as Record<string, boolean>, {
       get: (_target, key) => {
-        if (userStore.userInfo?.roleCode === SUPER_ADMIN_ROLE) return true;
+        if (isSuperRoleLevel(userStore.userInfo?.roleLevel)) return true;
         if (typeof key !== "string") return false;
         if (buttonList.length > 0) return buttonList.includes(key);
         return permissions.includes(key);

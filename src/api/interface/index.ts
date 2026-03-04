@@ -1,4 +1,4 @@
-import type { DEVICE_TYPE, TDeviceCommandCodeValue } from "@/config/modules";
+import type { DEVICE_TYPE, TDeviceCommandCodeValue, TRoleLevelValue } from "@/config/modules";
 
 // 请求响应参数（不包含data）
 export interface Result {
@@ -72,6 +72,7 @@ export namespace Login {
     username: string;
     realName: string;
     roleCode: string;
+    roleLevel?: TRoleLevelValue;
     roleName: string;
     tenantId: number;
     tenantCode: string;

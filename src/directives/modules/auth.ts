@@ -3,7 +3,7 @@
  * 按钮权限指令
  */
 import type { Directive } from "vue";
-import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { isSuperRoleLevel, type TRoleLevelValue } from "@/config/modules";
 import { useAuthStore } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
@@ -19,9 +19,9 @@ const hasButtonPermission = (
   value: string | string[] | null | undefined,
   buttonList: unknown,
   permissions: string[],
-  roleCode?: string
+  roleLevel?: TRoleLevelValue
 ) => {
-  if (roleCode === SUPER_ADMIN_ROLE) return true;
+  if (isSuperRoleLevel(roleLevel)) return true;
   if (!value || (Array.isArray(value) && value.length === 0)) return true;
   const values = Array.isArray(value) ? value : [value];
   const buttonCodes = normalizeButtonList(buttonList);
@@ -46,7 +46,7 @@ const auth: Directive = {
       binding.value,
       authStore.authButtonList,
       permissionStore.permissionCodesGet ?? [],
-      userStore.userInfo?.roleCode
+      userStore.userInfo?.roleLevel
     );
     if (!allowed) {
       removeElement(el);
@@ -60,7 +60,7 @@ const auth: Directive = {
       binding.value,
       authStore.authButtonList,
       permissionStore.permissionCodesGet ?? [],
-      userStore.userInfo?.roleCode
+      userStore.userInfo?.roleLevel
     );
     if (!allowed) {
       removeElement(el);

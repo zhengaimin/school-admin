@@ -1,4 +1,4 @@
-import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { isSuperRoleLevel } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
 
@@ -13,7 +13,7 @@ export const usePermission = () => {
    * 检查是否为超级管理员
    */
   const isSuperAdmin = (): boolean => {
-    return userStore.userInfo?.roleCode === SUPER_ADMIN_ROLE;
+    return isSuperRoleLevel(userStore.userInfo?.roleLevel);
   };
 
   /**

@@ -1,5 +1,7 @@
 # Doc-Driven SuperPowers Workflow Implementation Plan
 
+> Note: This plan is historical. Current active process and path conventions are in `./aimin-skill-workflow-v2.md`.
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** 在当前仓库落地“文档驱动 + 硬门禁”流程，确保任何代码改动都关联文档更新，并支持多 agent 并发。

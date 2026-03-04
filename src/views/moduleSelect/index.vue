@@ -6,7 +6,7 @@ import { useAuthStore, hasModuleAccess, normalizePermissionModules } from "@/sto
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
 import { getPermissionModulesApi } from "@/api/modules";
-import { SUPER_ADMIN_ROLE } from "@/config/modules";
+import { isSuperRoleLevel } from "@/config/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
 
@@ -15,13 +15,14 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const permissionStore = usePermissionStore();
 const version = __APP_INFO__.pkg.version;
+const PERMISSION_MODULE_KEY = "system";
 
 const availableModules = ref<ModuleItem[]>([]);
 
 const moduleList = computed(() => {
-  // super_admin 显示所有模块
-  if (userStore.userInfo?.roleCode === SUPER_ADMIN_ROLE) {
-    return authStore.moduleListGet;
+  // 超级级别账号仅显示权限模块
+  if (isSuperRoleLevel(userStore.userInfo?.roleLevel)) {
+    return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
   }
   return availableModules.value;
 });

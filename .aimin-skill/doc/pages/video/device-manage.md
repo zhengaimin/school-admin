@@ -21,4 +21,4 @@
 
 1. 查询人脸状态必须使用设备行的 `id` 作为路径参数。
 2. 同步状态仅允许：`PENDING`、`SYNCED`、`FAILED`。
-3. 页面文档仅维护当前生效逻辑；变更历史统一记录在 `doc/changes/pages/video-device-manage.md`。
+3. 页面文档仅维护当前生效逻辑；变更历史统一记录在 `.aimin-skill/doc/changes/pages/video-device-manage.md`。

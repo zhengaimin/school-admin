@@ -1,4 +1,4 @@
-/** 超级管理员角色码 */
+/** 超级管理员角色码（历史兼容，新的权限判断请使用 roleLevel） */
 export const SUPER_ADMIN_ROLE = "super_admin";
 
 /** 角色类型：admin-后台管理员，api-前台用户 */
@@ -48,3 +48,9 @@ export const ROLE_LEVEL_OPTIONS: Array<{ label: string; value: TRoleLevelValue }
   { label: ROLE_LEVEL_I18N[ROLE_LEVEL.AGENT], value: ROLE_LEVEL.AGENT },
   { label: ROLE_LEVEL_I18N[ROLE_LEVEL.CUSTOM], value: ROLE_LEVEL.CUSTOM }
 ];
+
+/** 角色级别判断工具 */
+export const isSuperRoleLevel = (roleLevel?: TRoleLevelValue): boolean => roleLevel === ROLE_LEVEL.SUPER;
+export const isPlatformRoleLevel = (roleLevel?: TRoleLevelValue): boolean => roleLevel === ROLE_LEVEL.PLATFORM;
+export const isAgentRoleLevel = (roleLevel?: TRoleLevelValue): boolean => roleLevel === ROLE_LEVEL.AGENT;
+export const isCustomRoleLevel = (roleLevel?: TRoleLevelValue): boolean => roleLevel === ROLE_LEVEL.CUSTOM;

@@ -16,9 +16,9 @@
 1. 创建事项时，先分配 `ITEM-ID`，再进入开发。
 2. 同一个事项在所有文档中必须使用同一个 `ITEM-ID`。
 3. 每个事项必须双轨落档：
-   - `doc/changes/sessions/YYYY-MM-DD.md`
-   - `doc/changes/pages/*.md` 或 `doc/changes/design/*.md`
-4. 月度索引 `doc/changes/YYYY-MM.md` 只记录摘要+链接，不重复写明细。
+   - `.aimin-skill/doc/changes/sessions/YYYY-MM-DD.md`
+   - `.aimin-skill/doc/changes/pages/*.md` 或 `.aimin-skill/doc/changes/design/*.md`
+4. 月度索引 `.aimin-skill/doc/changes/YYYY-MM.md` 只记录摘要+链接，不重复写明细。
 
 ## 状态流转
 
