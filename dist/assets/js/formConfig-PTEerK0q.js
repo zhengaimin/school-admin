@@ -1,1 +1,0 @@
-import{N as t,O as e}from"./index-CvihLU3k.js";const r=e("form"),i=t(r,{state:()=>({configObj:{},logoForm:{}}),getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{i as f};

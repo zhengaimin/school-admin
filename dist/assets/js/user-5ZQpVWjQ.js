@@ -1,0 +1,1 @@
+import{h as e}from"./index-B6EVOzBT.js";const n=s=>e.get("/admin/users",s),a=s=>e.get(`/admin/users/${s}`),p=s=>e.post("/admin/users",s),i=(s,t)=>e.put(`/admin/users/${s}`,t),d=s=>e.put("/admin/users/batch-org-department",s),u=s=>e.delete(`/admin/users/${s}`),m=(s,t={})=>e.post(`/admin/users/${s}/reset-password`,t);export{a,i as b,d as c,u as d,m as e,n as g,p};

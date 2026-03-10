@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as o,o as c}from"./index-CvihLU3k.js";const t={},r={class:"table-box"};function s(n,_){return c(),o("div",r,"设计中")}const i=e(t,[["render",s]]);export{i as default};
