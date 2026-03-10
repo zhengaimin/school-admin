@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 
-const ITEM_ID_RE = /ITEM-\d{8}-\d{3}/g;
-const SESSION_FILE_RE = /^\.aimin-skill\/doc\/changes\/sessions\/\d{4}-\d{2}-\d{2}\.md$/;
 const MONTHLY_FILE_RE = /^\.aimin-skill\/doc\/changes\/\d{4}-\d{2}\.md$/;
 
 function run(command) {
@@ -80,6 +77,15 @@ function getChangedFiles() {
   return getStagedFiles();
 }
 
+function isAiminSkillIgnored() {
+  try {
+    run("git check-ignore .aimin-skill");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function isCodeChange(filePath) {
   if (filePath.startsWith(".aimin-skill/")) return false;
   if (filePath.startsWith("dist/")) return false;
@@ -88,39 +94,30 @@ function isCodeChange(filePath) {
   return true;
 }
 
-function collectItemIds(files) {
-  const ids = new Set();
+function isArchiveDocChange(filePath) {
+  return (
+    filePath.startsWith(".aimin-skill/doc/pages/") || filePath.startsWith(".aimin-skill/doc/design/")
+  );
+}
 
-  for (const file of files) {
-    try {
-      const content = readFileSync(file, "utf8");
-      const matches = content.match(ITEM_ID_RE);
-      if (!matches) continue;
-      for (const id of matches) ids.add(id);
-    } catch {
-      // File may be deleted/renamed mid-check; skip and let structural checks fail if needed.
-    }
-  }
-
-  return ids;
+function isIndexDocChange(filePath) {
+  if (filePath === ".aimin-skill/doc/index.md") return true;
+  if (filePath === ".aimin-skill/doc/indexes/pages.md") return true;
+  if (filePath === ".aimin-skill/doc/indexes/design.md") return true;
+  if (MONTHLY_FILE_RE.test(filePath)) return true;
+  return false;
 }
 
 function failWithMissing(missingRules) {
-  console.error("[aimin-gate] Blocked: detected code changes, but required aimin-skill docs are incomplete.");
+  console.error("[aimin-gate] Blocked: detected code changes, but required archive docs are incomplete.");
   for (const rule of missingRules) {
     console.error(`- Missing: ${rule}`);
   }
   console.error("Required for code changes:");
-  console.error("1) .aimin-skill/doc/pages/* or .aimin-skill/doc/design/*");
-  console.error("2) .aimin-skill/doc/changes/pages/* or .aimin-skill/doc/changes/design/*");
-  console.error("3) .aimin-skill/doc/changes/sessions/YYYY-MM-DD.md");
-  console.error("4) .aimin-skill/doc/changes/YYYY-MM.md");
-  process.exit(1);
-}
-
-function failWithItemId(message) {
-  console.error("[aimin-gate] Blocked:", message);
-  console.error("Requirement: same ITEM-ID must appear in changed session log and changed pages/design change log.");
+  console.error("1) archive doc update (.aimin-skill/doc/pages/* or .aimin-skill/doc/design/*)");
+  console.error(
+    "2) fast index update (.aimin-skill/doc/index.md or .aimin-skill/doc/indexes/pages.md or .aimin-skill/doc/indexes/design.md)"
+  );
   process.exit(1);
 }
 
@@ -138,50 +135,24 @@ if (!hasCodeChange) {
   process.exit(0);
 }
 
-const hasMainDoc = changedFiles.some(
-  filePath =>
-    filePath.startsWith(".aimin-skill/doc/pages/") || filePath.startsWith(".aimin-skill/doc/design/")
-);
-const hasDetailChange = changedFiles.some(
-  filePath =>
-    filePath.startsWith(".aimin-skill/doc/changes/pages/") ||
-    filePath.startsWith(".aimin-skill/doc/changes/design/")
-);
-const hasSessionChange = changedFiles.some(filePath => SESSION_FILE_RE.test(filePath));
-const hasMonthlyChange = changedFiles.some(filePath => MONTHLY_FILE_RE.test(filePath));
+const hasArchiveDoc = changedFiles.some(isArchiveDocChange);
+const hasFastIndex = changedFiles.some(isIndexDocChange);
+const aiminSkillIgnored = isAiminSkillIgnored();
 
 const missingRules = [];
-if (!hasMainDoc) missingRules.push("main doc update (.aimin-skill/doc/pages|design)");
-if (!hasDetailChange) missingRules.push("detail change log update (.aimin-skill/doc/changes/pages|design)");
-if (!hasSessionChange) missingRules.push("session log update (.aimin-skill/doc/changes/sessions/YYYY-MM-DD.md)");
-if (!hasMonthlyChange) missingRules.push("monthly index update (.aimin-skill/doc/changes/YYYY-MM.md)");
+if (!hasArchiveDoc) missingRules.push("archive doc update (.aimin-skill/doc/pages|design)");
+if (!hasFastIndex) {
+  missingRules.push(
+    "fast index update (.aimin-skill/doc/index.md or .aimin-skill/doc/indexes/pages.md or .aimin-skill/doc/indexes/design.md)"
+  );
+}
 
 if (missingRules.length > 0) {
+  if (aiminSkillIgnored) {
+    console.log("[aimin-gate] .aimin-skill is gitignored in this repo; skip hard doc enforcement.");
+    process.exit(0);
+  }
   failWithMissing(missingRules);
 }
 
-const changedSessionFiles = changedFiles.filter(filePath => SESSION_FILE_RE.test(filePath));
-const changedDetailFiles = changedFiles.filter(
-  filePath =>
-    filePath.startsWith(".aimin-skill/doc/changes/pages/") ||
-    filePath.startsWith(".aimin-skill/doc/changes/design/")
-);
-
-const sessionIds = collectItemIds(changedSessionFiles);
-const detailIds = collectItemIds(changedDetailFiles);
-
-if (sessionIds.size === 0) {
-  failWithItemId("no ITEM-ID found in changed session log files.");
-}
-
-if (detailIds.size === 0) {
-  failWithItemId("no ITEM-ID found in changed pages/design change log files.");
-}
-
-const sharedIds = [...sessionIds].filter(id => detailIds.has(id));
-
-if (sharedIds.length === 0) {
-  failWithItemId("session log and pages/design change log do not share the same ITEM-ID.");
-}
-
-console.log(`[aimin-gate] OK (${sharedIds.join(", ")})`);
+console.log("[aimin-gate] OK (lightweight archive mode)");

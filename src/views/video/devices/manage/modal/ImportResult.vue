@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
+import { ElMessage } from "element-plus";
 import type { DeviceImportResult } from "../types";
 
 const props = defineProps<{
@@ -17,6 +18,69 @@ const visible = computed({
   get: () => props.modelValue,
   set: value => emit("update:modelValue", value)
 });
+
+const canDownloadFailureExcel = computed(() => result.value.failCount > 0);
+
+function getDefaultFailureFileName() {
+  const now = new Date();
+  const year = String(now.getFullYear());
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `设备导入失败明细-${year}${month}${day}.xls`;
+}
+
+function sanitizeExcelCell(value: unknown) {
+  let text = String(value ?? "")
+    .replace(/\r?\n/g, " ")
+    .replace(/\t/g, " ");
+  if (/^[=+\-@]/.test(text)) {
+    text = `'${text}`;
+  }
+  return text;
+}
+
+function downloadByBlob(content: string, filename: string) {
+  const blob = new Blob([`\uFEFF${content}`], { type: "application/vnd.ms-excel;charset=utf-8" });
+  const blobUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(blobUrl);
+}
+
+function downloadFailureExcel() {
+  if (result.value.failureFileUrl) {
+    const link = document.createElement("a");
+    link.href = result.value.failureFileUrl;
+    if (result.value.failureFileName) {
+      link.download = result.value.failureFileName;
+    }
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return;
+  }
+
+  if (!result.value.failures.length) {
+    ElMessage.warning("暂无可下载的失败记录");
+    return;
+  }
+
+  const headers = ["行号", "设备SN", "名称", "失败原因"];
+  const rows = result.value.failures.map(item => [
+    sanitizeExcelCell(item.rowIndex),
+    sanitizeExcelCell(item.terminalSn || item.deviceSn || ""),
+    sanitizeExcelCell(item.name || ""),
+    sanitizeExcelCell(item.reason)
+  ]);
+  const content = [headers, ...rows].map(row => row.join("\t")).join("\n");
+  downloadByBlob(content, result.value.failureFileName || getDefaultFailureFileName());
+}
 </script>
 
 <template>
@@ -35,6 +99,7 @@ const visible = computed({
       <el-table-column prop="reason" label="失败原因" min-width="200" show-overflow-tooltip />
     </el-table>
     <template #footer>
+      <el-button v-if="canDownloadFailureExcel" type="warning" @click="downloadFailureExcel">下载错误Excel</el-button>
       <el-button type="primary" @click="visible = false">关闭</el-button>
     </template>
   </el-dialog>

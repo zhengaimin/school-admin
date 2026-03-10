@@ -31,7 +31,7 @@ const pageSize = ref(1000);
 
 /** 导出筛选条件 */
 const formData = reactive<FamilyBindStatus.ReqGetFamilyBindStatusExportInfoApi>({
-  schoolId: undefined,
+  schoolId: -1,
   gradeId: undefined,
   classId: undefined,
   studentNo: undefined,

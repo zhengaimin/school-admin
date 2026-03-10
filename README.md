@@ -6,12 +6,12 @@
 
 ## aimin-skill 协作流程
 
-1. 可执行事项（需求、bug、改动请求）先分配 `ITEM-ID`，格式 `ITEM-YYYYMMDD-序号`。
-2. 开发前先更新主档：`.aimin-skill/doc/pages/*` 或 `.aimin-skill/doc/design/*`。
-3. 同步写入双轨变更：
-   - `.aimin-skill/doc/changes/sessions/YYYY-MM-DD.md`
-   - `.aimin-skill/doc/changes/pages/*.md` 或 `.aimin-skill/doc/changes/design/*.md`
-4. 更新月度索引：`.aimin-skill/doc/changes/YYYY-MM.md`。
+1. 纯咨询（不改仓库）直接回答，不走文档门禁。
+2. 可执行事项（需求、bug、改动请求）分配 `ITEM-ID`（`ITEM-YYYYMMDD-序号`）。
+3. 代码改动时仅强制两类文档：
+   - 归档主档：`.aimin-skill/doc/pages/*` 或 `.aimin-skill/doc/design/*`
+   - 快速索引：`.aimin-skill/doc/indexes/pages.md` 或 `.aimin-skill/doc/indexes/design.md`
+4. 全局/设计规则变更后，受影响页面主档补充“关联设计（软链接）”。
 5. 提交前必须通过门禁：`npm run aimin:gate`。
 
 ## 常用命令

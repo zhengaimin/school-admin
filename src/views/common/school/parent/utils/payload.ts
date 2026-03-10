@@ -27,8 +27,9 @@ function normalizeWechatBound(value?: boolean | string | number | null) {
 
 /** 构建公共筛选参数 */
 function buildFamilyBindStatusBaseParams(params: Record<string, any>): FamilyBindStatus.ReqGetFamilyBindStatusExportInfoApi {
+  const schoolId = normalizeId(params.schoolId) ?? -1;
   return {
-    schoolId: normalizeId(params.schoolId),
+    schoolId,
     gradeId: normalizeId(params.gradeId),
     classId: normalizeId(params.classId),
     studentNo: normalizeText(params.studentNo),

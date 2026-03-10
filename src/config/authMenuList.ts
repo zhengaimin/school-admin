@@ -19,7 +19,8 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: ROUTE_COMMON.SCHOOL_DEVICE_CONFIG, permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
   { prefix: ROUTE_COMMON.SCHOOL, permission: permissionOf(PERMISSION_CODE.SCHOOL_LIST) },
   { prefix: "/common/school/student", permission: permissionOf(PERMISSION_CODE.STUDENT_LIST) },
-  { prefix: "/common/school/parent", permission: permissionOf(PERMISSION_CODE.PARENT_BALANCE_READ) },
+  { prefix: ROUTE_COMMON.SCHOOL_FAMILY_CONTACT, permission: permissionOf(PERMISSION_CODE.FAMILY_CONTACT_LIST) },
+  { prefix: "/common/school/parent", permission: permissionOf(PERMISSION_CODE.FAMILY_BIND_STATUS_LIST) },
   { prefix: "/systemAuthority/teacherAdmin", permission: permissionOf(PERMISSION_CODE.TEACHER_STUDENT_READ) },
   { prefix: ROUTE_INTERNAL_PAGE.GRADE, permission: permissionOf(PERMISSION_CODE.GRADE_LIST) },
   { prefix: ROUTE_INTERNAL_PAGE.DEPARTMENT, permission: permissionOf(PERMISSION_CODE.DEPARTMENT_LIST) },
@@ -256,6 +257,20 @@ const authMenuList = {
             meta: {
               icon: "",
               title: "学生管理",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_COMMON.SCHOOL_FAMILY_CONTACT,
+            name: "familyContactManage",
+            component: "/common/school/family-contact/index",
+            meta: {
+              icon: "",
+              title: "亲情号管理",
               isLink: "",
               isHide: false,
               isFull: false,

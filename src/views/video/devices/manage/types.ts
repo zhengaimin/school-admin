@@ -23,6 +23,10 @@ export interface DeviceImportResult {
   failCount: number;
   /** 失败详情 */
   failures: DeviceImportFailure[];
+  /** 失败文件下载地址 */
+  failureFileUrl?: string;
+  /** 失败文件名称 */
+  failureFileName?: string;
 }
 
 /** 批量更新字段 */

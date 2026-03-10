@@ -30,3 +30,7 @@ export function deleteFamilyContactApi(id: number) {
 export function getFamilyContactRelationshipOptionsApi() {
   return http.get<FamilyContact.ResGetFamilyContactRelationshipOptionsApi>("/admin/family-contacts/relationship-options");
 }
+/** 设置主联系人 */
+export function putFamilyContactPrimaryApi(data: FamilyContact.ReqPutFamilyContactPrimaryApi) {
+  return http.put<FamilyContact.ResPutFamilyContactPrimaryApi>("/admin/family-contacts/primary", data);
+}

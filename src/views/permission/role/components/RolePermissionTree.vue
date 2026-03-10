@@ -5,6 +5,7 @@ import type { TPermissionTreeNode } from "../types";
 
 import { ref, nextTick, watch } from "vue";
 import { ElTree } from "element-plus";
+import { getPermissionCodeLabel } from "@/config/modules";
 
 const props = withDefaults(defineProps<{ modules?: System.PermissionModule[] }>(), {
   modules: () => []
@@ -44,14 +45,21 @@ const buildPermissionTree = (modules: System.PermissionModule[]) => {
       const permissions = module.permissions || [];
       const children = permissions
         .filter(permission => typeof permission.id === "number")
-        .map(permission => ({
-          id: permission.id,
-          name: permission.name || permission.action || permission.code,
-          isPermission: true,
-          permissionId: permission.id,
-          permissionCode: permission.code,
-          permissionAction: permission.action
-        }));
+        .map(permission => {
+          const permissionCode = permission.code || "";
+          const codeLabel = getPermissionCodeLabel(permissionCode);
+          const name =
+            codeLabel && codeLabel !== permissionCode ? codeLabel : permission.name || permission.action || permissionCode;
+
+          return {
+            id: permission.id,
+            name,
+            isPermission: true,
+            permissionId: permission.id,
+            permissionCode: permissionCode,
+            permissionAction: permission.action
+          };
+        });
 
       return {
         id: `module:${module.moduleKey}`,

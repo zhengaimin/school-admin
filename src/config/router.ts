@@ -7,6 +7,8 @@ export const ROUTE_COMMON = {
   SCHOOL: "/common/school/manage",
   /** 设备配置 */
   SCHOOL_DEVICE_CONFIG: "/common/school/deviceConfig",
+  /** 亲情号管理 */
+  SCHOOL_FAMILY_CONTACT: "/common/school/family-contact",
   /** APK 管理 */
   APK: "/common/apk",
   /** APK 错误话术配置 */

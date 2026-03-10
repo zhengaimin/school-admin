@@ -49,13 +49,13 @@ export namespace FamilyContact {
     /** 每页数量 */
     pageSize?: number;
     /** 学生ID筛选 */
-    studentId?: number;
+    studentId?: number | -1;
     /** 手机号筛选（模糊搜索） */
     phone?: string;
     /** 称谓类型筛选 */
-    relationship?: TFamilyContactRelationshipValue;
+    relationship?: TFamilyContactRelationshipValue | -1;
     /** 学校ID */
-    schoolId?: number;
+    schoolId?: number | -1;
     /** 筛选(-1表示不筛选 1表示要查主联系人 其他值表示查非主联系人) */
     isPrimary?: number;
   }
@@ -133,5 +133,17 @@ export namespace FamilyContact {
   export interface ResGetFamilyContactRelationshipOptionsApi {
     /** 称谓选项 */
     relationships: IFamilyContactRelationshipOptionVo[];
+  }
+
+  /** 设置主联系人 - 请求参数 */
+  export interface ReqPutFamilyContactPrimaryApi {
+    /** 亲情号ID */
+    contactId: number;
+  }
+
+  /** 设置主联系人 - 响应 data */
+  export interface ResPutFamilyContactPrimaryApi {
+    /** 响应消息 */
+    message: string;
   }
 }

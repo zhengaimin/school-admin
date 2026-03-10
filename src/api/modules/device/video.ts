@@ -47,11 +47,11 @@ export function getDeviceTemplateApi(params?: DeviceVideo.ReqGetDeviceTemplateAp
 }
 
 /** 设备导入 */
-export function postDeviceImportApi(params: DeviceVideo.ReqPostDeviceImportApi, file: File) {
+export function postDeviceImportApi(params: DeviceVideo.ReqPostDeviceImportApi) {
   const formData = new FormData();
-  formData.append("schoolId", String(params.schoolId));
-  formData.append("file", file);
-  return http.post("/admin/devices/import", formData);
+  formData.append("schoolId", params.schoolId);
+  formData.append("file", params.file);
+  return http.post<DeviceVideo.ResPostDeviceImportApi>("/admin/devices/import", formData);
 }
 
 /** 获取批量更新字段列表 */

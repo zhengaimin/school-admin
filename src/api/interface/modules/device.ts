@@ -1267,7 +1267,37 @@ export namespace Device {
   /** 设备导入 - 请求参数 */
   export interface ReqPostDeviceImportApi {
     /** 学校ID */
-    schoolId: number;
+    schoolId: string;
+    /** 导入文件 */
+    file: File;
+  }
+
+  /** 设备导入失败项 */
+  export interface IDeviceImportFailureVo {
+    /** 行号 */
+    rowIndex: number;
+    /** 终端序列号 */
+    terminalSn?: string;
+    /** 设备序列号 */
+    deviceSn?: string;
+    /** 名称 */
+    name?: string;
+    /** 失败原因 */
+    reason: string;
+  }
+
+  /** 设备导入 - 响应 data */
+  export interface ResPostDeviceImportApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failCount: number;
+    /** 失败详情 */
+    failures: IDeviceImportFailureVo[];
+    /** 失败文件下载地址 */
+    failureFileUrl?: string;
+    /** 失败文件名称 */
+    failureFileName?: string;
   }
 
   /** 批量更新字段项 */

@@ -91,7 +91,7 @@ async function axiosGetFamilyBindStatusListApi(
 ): Promise<ResultData<FamilyBindStatus.ResGetFamilyBindStatusListApi>> {
   try {
     const payload = buildFamilyBindStatusListParams(params);
-    if (isNullOrUnDef(payload.schoolId)) {
+    if (isNullOrUnDef(payload.schoolId) || Number(payload.schoolId) <= 0) {
       return { code: 0, msg: "未选择学校", data: { list: [], total: 0 } };
     }
     return await getFamilyBindStatusListApi(payload);

@@ -27,7 +27,7 @@ export namespace FamilyBindStatus {
     /** 微信是否绑定 */
     wechatBound: boolean;
     /** 微信绑定时间（可为空） */
-    wechatBindTime?: string;
+    wechatBindTime?: string | null;
     /** 订阅设备组数量 */
     subscribedGroupCount: number;
   }
@@ -35,7 +35,7 @@ export namespace FamilyBindStatus {
   /** 获取家长绑定状态列表 - 请求参数 */
   export interface ReqGetFamilyBindStatusListApi {
     /** 学校ID */
-    schoolId?: number;
+    schoolId: number;
     /** 年级ID */
     gradeId?: number;
     /** 班级ID */
@@ -79,7 +79,7 @@ export namespace FamilyBindStatus {
   /** 获取导出信息 - 请求参数 */
   export interface ReqGetFamilyBindStatusExportInfoApi {
     /** 学校ID */
-    schoolId?: number;
+    schoolId: number;
     /** 年级ID */
     gradeId?: number;
     /** 班级ID */

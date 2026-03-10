@@ -651,7 +651,7 @@ async function handleImport(options: UploadRequestOptions) {
   if (!schoolId.value) return;
   importLoading.value = true;
   try {
-    const result = await postDeviceImportApi({ schoolId: +schoolId.value }, options.file as File);
+    const result = await postDeviceImportApi({ schoolId: String(schoolId.value), file: options.file as File });
     if (result.code !== 0) return;
     const data = result.data as DeviceImportResult | undefined;
     if (data?.successCount !== undefined) {
@@ -662,6 +662,9 @@ async function handleImport(options: UploadRequestOptions) {
       }));
       importResult.value = { ...data, failures };
       importResultDialogVisible.value = true;
+      if (data.failCount > 0) {
+        ElMessage.warning(`导入完成，失败 ${data.failCount} 条，请下载错误Excel修正后重试`);
+      }
       if (data.successCount > 0) {
         refreshTableList();
       }
