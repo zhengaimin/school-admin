@@ -7,8 +7,9 @@ import { ElMessage } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import DetailModal from "./modal/Detail.vue";
 import { buildDeviceCommandRecordListParams } from "./utils/payload";
+import { formatCommandLogTimeToChina } from "./utils/time";
 import { deleteDeviceCommandRecordApi, getDeviceCommandRecordListApi } from "@/api/modules";
-import { dateFormatter, useManage } from "@/hooks/useManage";
+import { useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import {
   DEVICE_COMMAND_STATUS,
@@ -28,10 +29,11 @@ const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
   },
   null,
   list =>
-    dateFormatter(list, [
-      { field: "createdAt", isUnix: false },
-      { field: "executedAt", isUnix: false }
-    ])
+    (list || []).map(item => ({
+      ...item,
+      createdAt: formatCommandLogTimeToChina(item.createdAt),
+      executedAt: formatCommandLogTimeToChina(item.executedAt)
+    }))
 );
 
 const detailModalRef = ref<InstanceType<typeof DetailModal> | null>(null);

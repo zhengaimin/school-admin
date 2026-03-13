@@ -5,7 +5,7 @@ import { computed, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { getDeviceCommandRecordDetailApi } from "@/api/modules";
 import { DEVICE_COMMAND_STATUS_I18N, DEVICE_COMMAND_TYPE_I18N, getDeviceCommandStatusTagType } from "@/config/modules";
-import { formatTimestamp } from "@/hooks/useManage";
+import { formatCommandLogTimeToChina } from "../utils/time";
 
 /** 弹窗显示状态 */
 const visible = ref(false);
@@ -35,7 +35,7 @@ const requestDataJson = computed(() => {
 
 /** 格式化详情时间 */
 function formatDetailTime(value?: string) {
-  const formattedTime = formatTimestamp(value, "YYYY-MM-DD HH:mm:ss");
+  const formattedTime = formatCommandLogTimeToChina(value, "YYYY-MM-DD HH:mm:ss");
   return formattedTime || value || "--";
 }
 

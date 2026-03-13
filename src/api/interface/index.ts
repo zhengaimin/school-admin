@@ -589,6 +589,7 @@ export type {
   DeviceBaseTag,
   DeviceCommand,
   DeviceCommandRecord,
+  DeviceEventLog,
   DeviceDialConfig,
   SchoolDeviceConfig,
   DeviceUsage,

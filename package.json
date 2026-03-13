@@ -11,6 +11,7 @@
     "build:dev": "vite build --mode development",
     "build:test": "vite build --mode test",
     "build:pro": "node scripts/bump-version.js && vite build --mode production",
+    "sync:ai-context": "node scripts/sync-ai-context.mjs",
     "aimin:gate": "node scripts/check-aimin-skill-gate.mjs",
     "docs:gate": "npm run aimin:gate",
     "type:check": "vue-tsc --noEmit --skipLibCheck",

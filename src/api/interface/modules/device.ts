@@ -6,6 +6,7 @@ import type {
   TDeviceCommandStatusValue,
   TDeviceCommandTypeValue,
   TDeviceCommandCreatedTypeValue,
+  TDeviceEventTypeValue,
   TDeviceUsageStatusValue,
   TDeviceFaceSyncStatusValue,
   TDeviceFaceDesiredActionValue,
@@ -668,6 +669,97 @@ export namespace DeviceCommandRecord {
     total: number;
     page: number;
     pageSize: number;
+  }
+}
+
+// 设备事件日志模块
+export namespace DeviceEventLog {
+  /** 设备事件日志列表项 */
+  export interface IDeviceEventLogItem {
+    /** 日志ID */
+    id: number;
+    /** 终端SN */
+    terminalSn: string;
+    /** 学生ID */
+    studentId?: number | null;
+    /** 设备名称 */
+    deviceName?: string;
+    /** 学校名称 */
+    schoolName?: string;
+    /** 事件类型 */
+    eventType: TDeviceEventTypeValue | string;
+    /** 事件类型名称 */
+    eventTypeName?: string;
+    /** 事件数据 */
+    eventData?: Record<string, any> | string | null;
+    /** 事件时间 */
+    eventTime: string;
+  }
+
+  /** 获取设备事件日志列表请求参数 */
+  export interface ReqGetDeviceEventLogListApi {
+    /** 页码 */
+    page?: number;
+    /** 每页数量 */
+    pageSize?: number;
+    /** 终端SN */
+    terminalSn?: string;
+    /** 学生ID */
+    studentId?: number;
+    /** 学校ID */
+    schoolId?: number;
+    /** 事件类型 */
+    eventType?: TDeviceEventTypeValue | string;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+  }
+
+  /** 获取设备事件日志列表响应 */
+  export interface ResGetDeviceEventLogListApi {
+    list: IDeviceEventLogItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }
+
+  /** 设备事件日志统计请求参数 */
+  export interface ReqGetDeviceEventLogStatisticsApi {
+    /** 学校ID */
+    schoolId?: number;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** 分组方式 */
+    groupBy?: "type" | "terminal" | "day";
+  }
+
+  /** 按类型统计项 */
+  export interface IDeviceEventLogTypeCountItem {
+    eventType: TDeviceEventTypeValue | string;
+    eventTypeName?: string;
+    count: number;
+  }
+
+  /** 按设备统计项 */
+  export interface IDeviceEventLogDeviceCountItem {
+    terminalSn: string;
+    count: number;
+  }
+
+  /** 按日期统计项 */
+  export interface IDeviceEventLogDayCountItem {
+    date: string;
+    count: number;
+  }
+
+  /** 设备事件日志统计响应 */
+  export interface ResGetDeviceEventLogStatisticsApi {
+    byType: IDeviceEventLogTypeCountItem[];
+    byDevice: IDeviceEventLogDeviceCountItem[];
+    byDay: IDeviceEventLogDayCountItem[];
   }
 }
 

@@ -4,5 +4,6 @@ export * from "./config";
 export * from "./tags";
 export * from "./video-tags";
 export * from "./command";
+export * from "./event-log";
 export * from "./usage";
 export * from "./face";

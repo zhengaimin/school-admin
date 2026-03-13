@@ -51,6 +51,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: "/messagesall", permission: permissionOf(PERMISSION_CODE.MESSAGE_LIST) },
   { prefix: "/device/messages", permission: permissionOf(PERMISSION_CODE.MESSAGE_LIST) },
   { prefix: "/device/log/command", permission: permissionOf(PERMISSION_CODE.DEVICE_EVENT_LOG_LIST) },
+  { prefix: "/device/log/event", permission: permissionOf(PERMISSION_CODE.DEVICE_EVENT_LOG_LIST) },
   { prefix: ROUTE_VIDEO.MERCHANT, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_VIDEO.PAYMENT_CONFIG, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/device", permission: permissionOf(PERMISSION_CODE.DEVICE_LIST) },
@@ -844,6 +845,20 @@ const authMenuList = {
             meta: {
               icon: "",
               title: "命令记录",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: "/device/log/event",
+            name: "deviceEventLog",
+            component: "/device/log/event/index",
+            meta: {
+              icon: "",
+              title: "公话日志",
               isLink: "",
               isHide: false,
               isFull: false,

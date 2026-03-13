@@ -87,7 +87,12 @@ const columns: ColumnProps<Student.IStudentItemVo>[] = [
   { prop: "totalBalance", label: "总余额（元）", minWidth: 120, align: "center" },
   { prop: "availableBalance", label: "可用余额（元）", minWidth: 120, align: "center" },
   { prop: "sex", label: "性别", width: 80 },
-  { prop: "cardNumber", label: "IC卡号", minWidth: 140 },
+  {
+    prop: "cardNumber",
+    label: "IC卡号",
+    minWidth: 140,
+    search: { el: "input", props: { placeholder: "请输入卡号" } }
+  },
   { prop: "phone", label: "电话", minWidth: 120 },
   { prop: "guardianName", label: "监护人", width: 90 },
   { prop: "guardianPhone", label: "监护人电话", minWidth: 120 },

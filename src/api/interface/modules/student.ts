@@ -113,6 +113,8 @@ export namespace Student {
     departmentId?: number;
     /** 唯一号 */
     uuid?: string;
+    /** 卡号（精准查询） */
+    cardNumber?: string;
     /** 排序字段 */
     order?: string;
   }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { ElMessage } from "element-plus";
+import http from "@/api";
+import { useAssetsPath } from "@/hooks/useAssetsPath";
 import type { DeviceImportResult } from "../types";
 
 const props = defineProps<{
@@ -13,6 +15,7 @@ const emit = defineEmits<{
 }>();
 
 const { result } = toRefs(props);
+const { getUploadPath } = useAssetsPath();
 
 const visible = computed({
   get: () => props.modelValue,
@@ -41,6 +44,10 @@ function sanitizeExcelCell(value: unknown) {
 
 function downloadByBlob(content: string, filename: string) {
   const blob = new Blob([`\uFEFF${content}`], { type: "application/vnd.ms-excel;charset=utf-8" });
+  downloadBlob(blob, filename);
+}
+
+function downloadBlob(blob: Blob, filename: string) {
   const blobUrl = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = blobUrl;
@@ -51,19 +58,21 @@ function downloadByBlob(content: string, filename: string) {
   window.URL.revokeObjectURL(blobUrl);
 }
 
-function downloadFailureExcel() {
+async function downloadFailureExcel() {
   if (result.value.failureFileUrl) {
-    const link = document.createElement("a");
-    link.href = result.value.failureFileUrl;
-    if (result.value.failureFileName) {
-      link.download = result.value.failureFileName;
+    try {
+      const downloadUrl = getUploadPath(result.value.failureFileUrl);
+      const blob = await http.get(downloadUrl, {}, { responseType: "blob", loading: false, cancel: false });
+      if (blob.type.includes("text/html")) {
+        throw new Error("remote download returned html");
+      }
+      const filename = result.value.failureFileName || getDefaultFailureFileName();
+      downloadBlob(blob, filename);
+      return;
+    } catch (error) {
+      console.error("downloadFailureExcel remote:", error);
+      ElMessage.warning("远程错误文件下载失败，已切换本地失败明细下载");
     }
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    return;
   }
 
   if (!result.value.failures.length) {

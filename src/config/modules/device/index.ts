@@ -6,6 +6,7 @@ export * from "./dial-mode";
 export * from "./phone-entry";
 export * from "./sip";
 export * from "./command";
+export * from "./event-log";
 export * from "./tag-control";
 export * from "./vendor";
 export * from "./usage-status";

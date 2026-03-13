@@ -1,4 +1,4 @@
-import type { DeviceCommandRecord } from "@/api/interface";
+﻿import type { DeviceCommandRecord } from "@/api/interface";
 import type { TDeviceCommandStatusValue, TDeviceCommandTypeValue } from "@/config/modules";
 
 import { isNullOrUnDef } from "@/utils/is";
