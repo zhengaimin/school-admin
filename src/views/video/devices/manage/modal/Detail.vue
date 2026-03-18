@@ -133,7 +133,6 @@ defineExpose({ acceptParams });
         <el-descriptions :column="2" border>
           <el-descriptions-item label="心跳频率(ms)">{{ detail.heartbeatFrequency ?? "--" }}</el-descriptions-item>
           <el-descriptions-item label="单次通话时长(分钟)">{{ detail.callTime ?? "--" }}</el-descriptions-item>
-          <el-descriptions-item label="预警通话时长(分钟)">{{ detail.warnCallTime ?? "--" }}</el-descriptions-item>
           <el-descriptions-item label="拨号类型">{{ getPhoneTypeText(detail.phoneType) }}</el-descriptions-item>
           <el-descriptions-item label="拨号模式">{{ getDialModeText(detail.dialMode) }}</el-descriptions-item>
           <el-descriptions-item label="拨号入口">{{ getPhoneTypesText(detail.phoneTypes) }}</el-descriptions-item>

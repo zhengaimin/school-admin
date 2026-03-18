@@ -150,7 +150,7 @@ function getInitialFormData(): TDeviceFormState {
     billMode: DEVICE_BILL_MODE.MERGED,
     phoneType: undefined,
     dialMode: DIAL_MODE.FAMILY,
-    phoneTypes: [PHONE_ENTRY.VIDEO],
+    phoneTypes: [PHONE_ENTRY.SIP],
     messageFlag: YES_NO_FLAG.NO,
     downloadUserFlag: YES_NO_FLAG.NO,
     messageSoundFlag: YES_NO_FLAG.NO,
@@ -161,6 +161,39 @@ function getInitialFormData(): TDeviceFormState {
     extraConfig: {}
   };
 }
+
+const freeDialPhoneEntrySet = new Set<string>([PHONE_ENTRY.SIP, PHONE_ENTRY.SIM]);
+const freeDialPhoneEntryOptions = PHONE_ENTRY_OPTIONS.filter(phoneEntryOption =>
+  freeDialPhoneEntrySet.has(phoneEntryOption.value)
+);
+
+const phoneEntryOptions = computed(() =>
+  ruleForm.value.dialMode === DIAL_MODE.FREE ? freeDialPhoneEntryOptions : PHONE_ENTRY_OPTIONS
+);
+
+function isPhoneEntryValue(value: string): value is NonNullable<DeviceVideo.IDeviceItemVo["phoneTypes"]>[number] {
+  return value === PHONE_ENTRY.VIDEO || value === PHONE_ENTRY.SIM || value === PHONE_ENTRY.SIP;
+}
+
+function normalizePhoneTypesFromSelectValue(value: string | string[]) {
+  const values = Array.isArray(value) ? value : value ? [value] : [];
+  return values.filter(isPhoneEntryValue);
+}
+
+const phoneTypesSelectValue = computed({
+  get() {
+    if (ruleForm.value.dialMode === DIAL_MODE.FREE) return ruleForm.value.phoneTypes?.[0] || "";
+    return ruleForm.value.phoneTypes;
+  },
+  set(value: string | string[]) {
+    if (ruleForm.value.dialMode === DIAL_MODE.FREE) {
+      const singleValue = normalizePhoneTypesFromSelectValue(value)[0];
+      ruleForm.value.phoneTypes = singleValue ? [singleValue] : [];
+      return;
+    }
+    ruleForm.value.phoneTypes = normalizePhoneTypesFromSelectValue(value);
+  }
+});
 /** 根据 SN 生成终端 Key */
 function normalizeTerminalKeyBySn(terminalSn?: string | null) {
   return terminalSn?.trim?.() || "";
@@ -179,6 +212,21 @@ function normalizePhoneTypes(
   if (legacyPhoneType === PHONE_TYPE.VIDEO) return [PHONE_ENTRY.VIDEO];
   if (legacyPhoneType === PHONE_TYPE.SIM) return [PHONE_ENTRY.SIM];
   return [PHONE_ENTRY.VIDEO];
+}
+
+/** 自由拨号模式下规范化拨号入口 */
+function normalizeFreeDialPhoneTypes(phoneTypes?: DeviceVideo.IDeviceItemVo["phoneTypes"]) {
+  const targetPhoneType = (phoneTypes || []).find(phoneTypeItem => freeDialPhoneEntrySet.has(phoneTypeItem));
+  return [targetPhoneType || PHONE_ENTRY.SIP];
+}
+
+/** 按拨号模式规范化拨号入口 */
+function normalizePhoneTypesByDialMode(
+  dialMode?: DeviceVideo.IDeviceItemVo["dialMode"],
+  phoneTypes?: DeviceVideo.IDeviceItemVo["phoneTypes"]
+) {
+  if (dialMode === DIAL_MODE.FREE) return normalizeFreeDialPhoneTypes(phoneTypes);
+  return phoneTypes?.length ? phoneTypes : [PHONE_ENTRY.VIDEO];
 }
 /** 解析学校ID */
 function getSchoolIdValue(value?: number | string) {
@@ -212,14 +260,16 @@ function stringifyForbidCallTimes(forbidCallTimesAry: TForbidCallTimeItem[]) {
 
 /** 设备详情转换为表单结构 */
 function transformDetailToFormState(detail: DeviceVideo.ResGetDeviceDetailApi): TDeviceFormState {
+  const dialMode = detail.dialMode || DIAL_MODE.FAMILY;
+  const normalizedPhoneTypes = normalizePhoneTypesByDialMode(dialMode, normalizePhoneTypes(detail.phoneTypes, detail.phoneType));
   return {
     ...detail,
     terminalKey: normalizeTerminalKeyBySn(detail.terminalSn),
     deviceGroupId: normalizeDeviceGroupId(detail.deviceGroupId, defaultDeviceGroupId),
     billMode: DEVICE_BILL_MODE.MERGED,
     phoneType: detail.phoneType ?? undefined,
-    dialMode: detail.dialMode || DIAL_MODE.FAMILY,
-    phoneTypes: normalizePhoneTypes(detail.phoneTypes, detail.phoneType),
+    dialMode,
+    phoneTypes: normalizedPhoneTypes,
     messageFlag: normalizeYesNoFlag(detail.messageFlag),
     downloadUserFlag: normalizeYesNoFlag(detail.downloadUserFlag),
     messageSoundFlag: normalizeYesNoFlag(detail.messageSoundFlag),
@@ -386,6 +436,18 @@ function handleDeleteForbidCallTimeItem(index: number) {
   ruleForm.value.forbidCallTimesAry.splice(index, 1);
 }
 
+/** 拨号模式变更 */
+function handleDialModeChange() {
+  if (ruleForm.value.dialMode !== DIAL_MODE.FREE) return;
+  ruleForm.value.phoneTypes = [PHONE_ENTRY.SIP];
+}
+
+/** 拨号入口变更 */
+function handlePhoneTypesChange() {
+  if (ruleForm.value.dialMode !== DIAL_MODE.FREE) return;
+  ruleForm.value.phoneTypes = normalizeFreeDialPhoneTypes(ruleForm.value.phoneTypes);
+}
+
 /** 接收参数 */
 async function acceptParams(params: TModalParams & { schoolId?: number }, row?: DeviceVideo.IDeviceItemVo) {
   parameter.value = { ...parameter.value, ...params };
@@ -495,36 +557,37 @@ defineExpose({
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="拨号模式" prop="dialMode">
-              <el-select v-model="ruleForm.dialMode" class="w-full" placeholder="请选择拨号模式" clearable>
-                <el-option v-for="item in DIAL_MODE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
+          <el-col :span="8" />
         </el-row>
 
         <el-row :gutter="24">
           <el-col :span="8">
-            <el-form-item label="拨号入口" prop="phoneTypes">
-              <el-select v-model="ruleForm.phoneTypes" class="w-full" placeholder="请选择拨号入口" multiple>
-                <el-option v-for="item in PHONE_ENTRY_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+            <el-form-item label="拨号模式" prop="dialMode">
+              <el-select
+                v-model="ruleForm.dialMode"
+                class="w-full"
+                placeholder="请选择拨号模式"
+                clearable
+                @change="handleDialModeChange"
+              >
+                <el-option v-for="item in DIAL_MODE_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="预警通话时长（分钟）" prop="warnCallTime">
-              <el-input-number
-                v-model="ruleForm.warnCallTime"
+            <el-form-item label="拨号入口" prop="phoneTypes">
+              <el-select
+                v-model="phoneTypesSelectValue"
                 class="w-full"
-                :min="0"
-                :step="1"
-                :step-strictly="true"
-                :controls="false"
-                placeholder="请输入预警通话时长（分钟）"
-              />
+                placeholder="请选择拨号入口"
+                :multiple="ruleForm.dialMode !== DIAL_MODE.FREE"
+                @change="handlePhoneTypesChange"
+              >
+                <el-option v-for="item in phoneEntryOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8" />
         </el-row>
 
         <el-row :gutter="24">
