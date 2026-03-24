@@ -9,8 +9,8 @@
 1. 纯咨询（不改仓库）直接回答，不走文档门禁。
 2. 可执行事项（需求、bug、改动请求）分配 `ITEM-ID`（`ITEM-YYYYMMDD-序号`）。
 3. 代码改动时仅强制两类文档：
-   - 归档主档：`.aimin-skill/doc/pages/*` 或 `.aimin-skill/doc/design/*`
-   - 快速索引：`.aimin-skill/doc/indexes/pages.md` 或 `.aimin-skill/doc/indexes/design.md`
+   - 归档主档：`.aimin-skill/docs/pages/*` 或 `.aimin-skill/docs/design/*`
+   - 快速索引：`.aimin-skill/docs/indexes/pages.md` 或 `.aimin-skill/docs/indexes/design.md`
 4. 全局/设计规则变更后，受影响页面主档补充“关联设计（软链接）”。
 5. 提交前必须通过门禁：`npm run aimin:gate`。
 
@@ -34,3 +34,4 @@
    - GitLab：`.gitignore.gitlab`
 4. 需要切换当前根 `.gitignore` 时执行：
    - `npm run git:ignore:github` 或 `npm run git:ignore:gitlab`
+

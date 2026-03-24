@@ -112,8 +112,8 @@ export namespace Common {
     message: string;
     /** 说明 */
     description?: string;
-    /** 乐观锁版本号 */
-    version: number;
+    /** 是否启用 */
+    isEnabled: boolean;
   }
 
   /** 通过记录 ID 恢复继承 - 请求参数 */

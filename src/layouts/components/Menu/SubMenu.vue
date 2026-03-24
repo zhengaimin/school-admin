@@ -1,32 +1,34 @@
 <template>
-  <template v-for="subItem in menuList" :key="subItem.path">
-    <el-sub-menu v-if="subItem.children?.length" :index="subItem.path">
-      <template #title>
+  <div class="sub-menu-root">
+    <template v-for="subItem in menuList" :key="subItem.path">
+      <el-sub-menu v-if="subItem.children?.length" :index="subItem.path">
+        <template #title>
+          <el-icon v-if="subItem.meta.icon">
+            <!-- {{ subItem.meta.icon }} -->
+            <component :is="subItem.meta.icon"></component>
+          </el-icon>
+          <span class="sle">{{ subItem.meta.title }}</span>
+        </template>
+        <SubMenu :menu-list="subItem.children" />
+      </el-sub-menu>
+      <!-- 没有子菜单 -->
+      <el-menu-item v-else :index="subItem.path" @click="handleClickMenu(subItem)">
         <el-icon v-if="subItem.meta.icon">
-          <!-- {{ subItem.meta.icon }} -->
+          <!-- <img
+            v-if="subItem.meta.icon == 'nengtan'"
+            style="width: 20px; height: 20px"
+            src="@/assets/images/menu/nengtan.svg"
+            alt=""
+            srcset=""
+          /> -->
           <component :is="subItem.meta.icon"></component>
         </el-icon>
-        <span class="sle">{{ subItem.meta.title }}</span>
-      </template>
-      <SubMenu :menu-list="subItem.children" />
-    </el-sub-menu>
-    <!-- 没有子菜单 -->
-    <el-menu-item v-else :index="subItem.path" @click="handleClickMenu(subItem)">
-      <el-icon v-if="subItem.meta.icon">
-        <!-- <img
-          v-if="subItem.meta.icon == 'nengtan'"
-          style="width: 20px; height: 20px"
-          src="@/assets/images/menu/nengtan.svg"
-          alt=""
-          srcset=""
-        /> -->
-        <component :is="subItem.meta.icon"></component>
-      </el-icon>
-      <template #title>
-        <span class="sle">{{ subItem.meta.title }}</span>
-      </template>
-    </el-menu-item>
-  </template>
+        <template #title>
+          <span class="sle">{{ subItem.meta.title }}</span>
+        </template>
+      </el-menu-item>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -96,5 +98,9 @@ function handleClickMenu(subItem: Menu.MenuOptions) {
       }
     }
   }
+}
+
+.sub-menu-root {
+  display: contents;
 }
 </style>

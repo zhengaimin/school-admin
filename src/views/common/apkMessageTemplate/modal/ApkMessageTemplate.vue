@@ -36,14 +36,12 @@ const ruleForm = ref<{
   effectiveScope?: TApkMessageTemplateScopeValue;
   message: string;
   description: string;
-  version: number;
   isEnabled: boolean;
   updatedAt?: string;
 }>({
   shrgKey: "",
   message: "",
   description: "",
-  version: 0,
   isEnabled: true
 });
 
@@ -56,7 +54,8 @@ const rules: FormRules = {
     { required: true, message: "请输入错误话术", trigger: "blur" },
     { min: 1, max: 512, message: "错误话术长度需在 1-512 字符之间", trigger: "blur" }
   ],
-  description: [{ min: 0, max: 256, message: "说明长度不能超过 256 字符", trigger: "blur" }]
+  description: [{ min: 0, max: 256, message: "说明长度不能超过 256 字符", trigger: "blur" }],
+  isEnabled: [{ required: true, message: "请选择是否启用", trigger: "change" }]
 };
 
 /** 格式化作用域文案 */
@@ -82,7 +81,6 @@ async function axiosPutUpdateApkMessageTemplateApi(id: number, form: typeof rule
     const payload = buildPutUpdateApkMessageTemplatePayload({
       message: form.message,
       description: form.description,
-      version: form.version,
       isEnabled: form.isEnabled
     });
     const result = await putUpdateApkMessageTemplateApi(id, payload);
@@ -120,15 +118,13 @@ function acceptParams(params: TModalParams, row?: Common.IApkMessageTemplateItem
         effectiveScope: row.effectiveScope,
         message: row.message || "",
         description: row.description || "",
-        version: row.version,
-        isEnabled: row.isEnabled,
+        isEnabled: row.isEnabled ?? true,
         updatedAt: row.updatedAt
       }
     : {
         shrgKey: "",
         message: "",
         description: "",
-        version: 0,
         isEnabled: true
       };
 
@@ -188,7 +184,7 @@ defineExpose({ acceptParams });
 
       <el-row :gutter="24">
         <el-col :span="12">
-          <el-form-item label="是否启用">
+          <el-form-item label="是否启用" prop="isEnabled">
             <el-switch v-model="ruleForm.isEnabled" inline-prompt active-text="启用" inactive-text="禁用" />
           </el-form-item>
         </el-col>

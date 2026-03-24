@@ -7,45 +7,26 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import { postChangeUserPasswordApi } from "@/api/modules";
 import { usePublicKey } from "@/hooks/usePublicKey";
+import PasswordFormFields from "./components/PasswordFormFields.vue";
+import { createPasswordFormData, createPasswordFormRules, resetPasswordForm } from "./utils";
 
 const { publicKey, rsaEncrypt } = usePublicKey();
-
-/** 校验确认新密码 */
-const handleValidateConfirmPassword = (_rule: unknown, value: string, callback: (error?: Error) => void) => {
-  if (!value) {
-    callback(new Error("请确认新密码"));
-    return;
-  }
-  if (value !== form.value.newPassword) {
-    callback(new Error("两次输入的新密码不一致"));
-    return;
-  }
-  callback();
-};
-
-/** 表单校验规则 */
-const formRules: FormRules = {
-  oldPassword: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
-  newPassword: [
-    { required: true, message: "请输入新密码", trigger: "blur" },
-    { min: 6, message: "新密码至少 6 位", trigger: "blur" }
-  ],
-  confirmPassword: [{ validator: handleValidateConfirmPassword, trigger: "blur" }]
-};
 
 /** 表单实例 */
 const formRef = ref<FormInstance>();
 /** 保存提交状态 */
 const submitting = ref(false);
 /** 表单数据 */
-const form = ref<TPasswordForm>({
-  oldPassword: "",
-  newPassword: "",
-  confirmPassword: ""
-});
+const form = ref<TPasswordForm>(createPasswordFormData());
+/** 表单校验规则 */
+const formRules: FormRules = createPasswordFormRules(() => form.value.newPassword);
 
-/** 修改密码 */
-const axiosPostChangeUserPasswordApi = async (params: System.ReqUserChangePassword) => {
+/**
+ * 修改密码。
+ * @param params 修改密码请求参数
+ * @returns 接口返回消息
+ */
+async function axiosPostChangeUserPasswordApi(params: System.ReqUserChangePassword) {
   try {
     const result = await postChangeUserPasswordApi(params);
     return result.code === 0 ? result.data?.message || "修改成功" : "";
@@ -53,18 +34,22 @@ const axiosPostChangeUserPasswordApi = async (params: System.ReqUserChangePasswo
     console.error("axiosPostChangeUserPasswordApi:", error);
     throw error;
   }
-};
+}
 
-/** 处理表单重置 */
-const handleReset = () => {
-  form.value.oldPassword = "";
-  form.value.newPassword = "";
-  form.value.confirmPassword = "";
+/**
+ * 处理表单重置。
+ * @returns 无返回值
+ */
+function handleReset() {
+  resetPasswordForm(form.value);
   formRef.value?.clearValidate();
-};
+}
 
-/** 处理表单提交 */
-const handleSubmit = async () => {
+/**
+ * 处理表单提交。
+ * @returns 无返回值
+ */
+async function handleSubmit() {
   if (submitting.value) return;
   const formEl = formRef.value;
   if (!formEl) return;
@@ -106,7 +91,7 @@ const handleSubmit = async () => {
   } finally {
     submitting.value = false;
   }
-};
+}
 </script>
 
 <template>
@@ -120,31 +105,7 @@ const handleSubmit = async () => {
 
       <div class="flex-1 overflow-y-auto p-4">
         <el-form ref="formRef" :model="form" :rules="formRules" label-position="top">
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item label="旧密码" prop="oldPassword">
-                <el-input v-model="form.oldPassword" type="password" show-password placeholder="请输入旧密码" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="新密码" prop="newPassword">
-                <el-input
-                  v-model="form.newPassword"
-                  type="password"
-                  show-password
-                  placeholder="大写字母，小写字母，0-9 ，特殊符号支持.@#$!"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="24">
-            <el-col :span="12">
-              <el-form-item label="确认新密码" prop="confirmPassword">
-                <el-input v-model="form.confirmPassword" type="password" show-password placeholder="请再次输入新密码" />
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <PasswordFormFields v-model="form" />
         </el-form>
       </div>
 

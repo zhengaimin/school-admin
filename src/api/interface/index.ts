@@ -601,6 +601,8 @@ export type { DeviceGroup } from "./modules/device-group";
 export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules/package";
 // 支付管理模块
 export type { Payment } from "./modules/payment";
+// 通话记录模块
+export type { CallRecord } from "./modules/call-record";
 // 退款模块
 export type { Refund } from "./modules/refund";
 // 商户号配置模块
@@ -615,3 +617,5 @@ export type { Announcement } from "./modules/announcement";
 export type { SchoolMien } from "./modules/school-mien";
 // 人脸同步模块
 export type { FaceSync } from "./modules/face-sync";
+// APK 首页布局配置模块
+export type { ApkHomepageLayout } from "./modules/apk-homepage-layout";

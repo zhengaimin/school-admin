@@ -43,7 +43,11 @@ export const ROUTE_VIDEO = {
   /** 商户号配置 */
   MERCHANT: "/video/merchant",
   /** 支付金额配置 */
-  PAYMENT_CONFIG: "/video/paymentConfig"
+  PAYMENT_CONFIG: "/video/paymentConfig",
+  /** 首页布局配置 */
+  HOME_LAYOUT: "/video/devices/homeLayout",
+  /** 通话记录 */
+  LOG_CALL_RECORD: "/video/fund/phoneList"
 } as const;
 
 /** 系统管理模块路由 */

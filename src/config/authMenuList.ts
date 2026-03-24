@@ -38,13 +38,14 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: "/device/TimeControl", permission: permissionOf(PERMISSION_CODE.DEVICE_CONTROL) },
   { prefix: "/video/devices/schoolMien", permission: permissionOf(PERMISSION_CODE.SCHOOL_MIEN_LIST) },
   { prefix: "/video/devices/announcement", permission: permissionOf(PERMISSION_CODE.ANNOUNCEMENT_LIST) },
+  { prefix: ROUTE_VIDEO.HOME_LAYOUT, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
   { prefix: "/fund/refund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
   { prefix: "/fund/packagerefund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
   { prefix: "/fund/packagePurchase", permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: "/fund/consumption", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/fund/recordAll", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/fund/record", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
-  { prefix: "/fund/phoneList", permission: permissionOf(PERMISSION_CODE.FAMILY_CONTACT_LIST) },
+  { prefix: ROUTE_VIDEO.LOG_CALL_RECORD, permission: permissionOf(PERMISSION_CODE.FAMILY_CONTACT_LIST) },
   { prefix: "/fund", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_VIDEO.PACKAGE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: ROUTE_VIDEO.RATE, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
@@ -563,6 +564,20 @@ const authMenuList = {
               isAffix: false,
               isKeepAlive: false
             }
+          },
+          {
+            path: ROUTE_VIDEO.HOME_LAYOUT,
+            name: "videoHomeLayout",
+            component: "/video/devices/homeLayout/index",
+            meta: {
+              icon: "",
+              title: "首页布局配置",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
           }
         ]
       },
@@ -811,9 +826,9 @@ const authMenuList = {
         },
         children: [
           {
-            path: "/fund/phoneList",
-            name: "phoneList",
-            component: "/fund/phoneList/index",
+            path: ROUTE_VIDEO.LOG_CALL_RECORD,
+            name: "videoPhoneList",
+            component: "/video/fund/phoneList/index",
             meta: {
               icon: "",
               title: "通话记录",

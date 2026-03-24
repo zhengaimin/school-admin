@@ -7,8 +7,8 @@ export function getAnnouncementsApi(params: Announcement.ReqGetAnnouncementsApi)
 }
 
 /** 获取公告详情 */
-export function getAnnouncementDetailApi(id: number) {
-  return http.get<Announcement.ResGetAnnouncementDetailApi>(`/admin/announcements/${id}`);
+export function getAnnouncementDetailApi(id: number, options?: any) {
+  return http.get<Announcement.ResGetAnnouncementDetailApi>(`/admin/announcements/${id}`, undefined, options);
 }
 
 /** 创建公告 */

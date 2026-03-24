@@ -57,7 +57,7 @@ function getInitialForm(): DialConfigForm {
     schoolId: "",
     heartbeatFrequency: "",
     callTime: "",
-    powerOnTime: "",
+    powerOnTime: "06:00",
     powerOffTime: "",
     forbidPhone: "",
     phoneType: undefined,

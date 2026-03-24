@@ -88,13 +88,12 @@ export function buildApkMessageTemplatesListParams(params: Record<string, any>):
 export function buildPutUpdateApkMessageTemplatePayload(params: {
   message: string;
   description?: string;
-  version: number;
-  isEnabled?: boolean;
+  isEnabled: boolean;
 }): Common.ReqPutUpdateApkMessageTemplateApi {
   return {
     message: params.message.trim(),
     description: normalizeText(params.description),
-    version: params.version
+    isEnabled: params.isEnabled
   };
 }
 
