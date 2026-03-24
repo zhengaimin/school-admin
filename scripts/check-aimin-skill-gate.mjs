@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
 
-const MONTHLY_FILE_RE = /^\.aimin-skill\/doc\/changes\/\d{4}-\d{2}\.md$/;
+const CHANGELOG_FILE_RE = /^\.aimin-skill\/docs\/changes\/(?:by-date\/\d{4}-\d{2}-\d{2}|\d{4}-\d{2})\.md$/;
 
 function run(command) {
   return execSync(command, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
@@ -96,15 +96,15 @@ function isCodeChange(filePath) {
 
 function isArchiveDocChange(filePath) {
   return (
-    filePath.startsWith(".aimin-skill/doc/pages/") || filePath.startsWith(".aimin-skill/doc/design/")
+    filePath.startsWith(".aimin-skill/docs/pages/") || filePath.startsWith(".aimin-skill/docs/design/")
   );
 }
 
 function isIndexDocChange(filePath) {
-  if (filePath === ".aimin-skill/doc/index.md") return true;
-  if (filePath === ".aimin-skill/doc/indexes/pages.md") return true;
-  if (filePath === ".aimin-skill/doc/indexes/design.md") return true;
-  if (MONTHLY_FILE_RE.test(filePath)) return true;
+  if (filePath === ".aimin-skill/docs/index.md") return true;
+  if (filePath === ".aimin-skill/docs/indexes/pages.md") return true;
+  if (filePath === ".aimin-skill/docs/indexes/design.md") return true;
+  if (CHANGELOG_FILE_RE.test(filePath)) return true;
   return false;
 }
 
@@ -114,9 +114,9 @@ function failWithMissing(missingRules) {
     console.error(`- Missing: ${rule}`);
   }
   console.error("Required for code changes:");
-  console.error("1) archive doc update (.aimin-skill/doc/pages/* or .aimin-skill/doc/design/*)");
+  console.error("1) archive doc update (.aimin-skill/docs/pages/* or .aimin-skill/docs/design/*)");
   console.error(
-    "2) fast index update (.aimin-skill/doc/index.md or .aimin-skill/doc/indexes/pages.md or .aimin-skill/doc/indexes/design.md)"
+    "2) fast index update (.aimin-skill/docs/index.md or .aimin-skill/docs/indexes/pages.md or .aimin-skill/docs/indexes/design.md)"
   );
   process.exit(1);
 }
@@ -140,10 +140,10 @@ const hasFastIndex = changedFiles.some(isIndexDocChange);
 const aiminSkillIgnored = isAiminSkillIgnored();
 
 const missingRules = [];
-if (!hasArchiveDoc) missingRules.push("archive doc update (.aimin-skill/doc/pages|design)");
+if (!hasArchiveDoc) missingRules.push("archive doc update (.aimin-skill/docs/pages|design)");
 if (!hasFastIndex) {
   missingRules.push(
-    "fast index update (.aimin-skill/doc/index.md or .aimin-skill/doc/indexes/pages.md or .aimin-skill/doc/indexes/design.md)"
+    "fast index update (.aimin-skill/docs/index.md or .aimin-skill/docs/indexes/pages.md or .aimin-skill/docs/indexes/design.md)"
   );
 }
 
@@ -156,3 +156,4 @@ if (missingRules.length > 0) {
 }
 
 console.log("[aimin-gate] OK (lightweight archive mode)");
+

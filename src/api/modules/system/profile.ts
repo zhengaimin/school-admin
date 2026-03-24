@@ -15,5 +15,5 @@ export const putUpdateUserProfileApi = (params: System.ReqUserProfileUpdate, opt
 
 /** 修改密码 */
 export const postChangeUserPasswordApi = (params: System.ReqUserChangePassword) => {
-  return http.post<System.ResUserChangePassword>("/admin/users/change-password", params);
+  return http.post<System.ResUserChangePassword>("/admin/profile/change-password", params);
 };

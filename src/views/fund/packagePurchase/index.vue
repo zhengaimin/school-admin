@@ -10,6 +10,12 @@
         <el-input v-model="filterForm.orderNo" style="width: calc(100% - 90px)"></el-input>
       </div>
       <div>
+        <label for="name">设备类型</label>
+        <el-select v-model="filterForm.deviceType" style="width: calc(100% - 90px)">
+          <el-option v-for="v in deviceTypeList" :key="v.id" :label="v.name" :value="v.id"></el-option>
+        </el-select>
+      </div>
+      <div>
         <label for="name">开始时间</label>
         <el-date-picker
           v-model="filterForm.startDate"
@@ -191,6 +197,7 @@ export default {
       filterForm: {
         studentKeyword: "",
         orderNo: "",
+        deviceType: -1,
         startDate: "",
         endDate: "",
         gradeId: "",
@@ -200,9 +207,10 @@ export default {
       gradesList: [],
       departmentsList: [],
       classList: [],
-      statusList: [
-        { id: "1", name: "在线" },
-        { id: "0", name: "离线" }
+      deviceTypeList: [
+        { id: -1, name: "全部" },
+        { id: DEVICE_TYPE.VIDEO, name: "视频话机" },
+        { id: DEVICE_TYPE.DRYER, name: "吹风机" }
       ],
       //新增权限系统
       dialogVisibledetail: false,
@@ -298,6 +306,7 @@ export default {
     reset() {
       this.filterForm.studentKeyword = "";
       this.filterForm.orderNo = "";
+      this.filterForm.deviceType = -1;
       this.filterForm.startDate = "";
       this.filterForm.endDate = "";
       this.filterForm.gradeId = "";
@@ -305,15 +314,20 @@ export default {
       this.filterForm.classId = "";
       this.fetchTenantList();
     },
+    getDeviceType() {
+      if (this.filterForm.deviceType === -1 || this.filterForm.deviceType === "-1" || !this.filterForm.deviceType) return "";
+      return this.filterForm.deviceType;
+    },
     fetchTenantList() {
       if (this.isloading1) return;
       this.isloading1 = true;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let deviceType = this.getDeviceType();
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       packagerecordsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -353,10 +367,11 @@ export default {
       this.exportDialog = true;
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let deviceType = this.getDeviceType();
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `deviceType=${DEVICE_TYPE.VIDEO}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       packagerecordsexportinfo(params).then(res => {
         if (res.code == 0 && res.data) {
           this.totalInfo = res.data.totalRecords;
@@ -366,10 +381,11 @@ export default {
     confirmexport() {
       this.filterForm.startDate = this.filterForm.startDate ? this.filterForm.startDate : "";
       this.filterForm.endDate = this.filterForm.endDate ? this.filterForm.endDate : "";
+      let deviceType = this.getDeviceType();
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let url = `${this.exportmessageUrl}?deviceType=${DEVICE_TYPE.VIDEO}&page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let url = `${this.exportmessageUrl}?${deviceType ? `deviceType=${deviceType}&` : ""}page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
       ElNotification({
         title: "提示",
         message: "数据导出中，请稍后",

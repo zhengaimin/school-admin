@@ -148,6 +148,7 @@ function getInitialFormData(): TDeviceFormState {
   return {
     deviceGroupId: defaultDeviceGroupId,
     billMode: DEVICE_BILL_MODE.MERGED,
+    powerOnTime: "06:00",
     phoneType: undefined,
     dialMode: DIAL_MODE.FAMILY,
     phoneTypes: [PHONE_ENTRY.SIP],

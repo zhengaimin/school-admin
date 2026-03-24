@@ -1,4 +1,5 @@
 <script setup lang="ts" name="deviceConfig">
+import type { ResultData, SchoolDeviceConfig } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { ConfigRow } from "./types";
 
@@ -12,7 +13,7 @@ import ConfigModal from "./modal/Config.vue";
 
 const { schoolId } = useSchool();
 
-const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: getSchoolDeviceConfigListApi }, null, list =>
+const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetSchoolDeviceConfigListApi }, null, list =>
   dateFormatter(list, [
     { field: "createdAt", isUnix: false },
     { field: "updatedAt", isUnix: false }
@@ -26,6 +27,50 @@ const onShowModal = (row: ConfigRow) => {
   modalRef.value?.acceptParams({ title: "编辑配置", type: "Edit", showConfirm: true }, row);
 };
 
+/**
+ * 设备类型筛选项（-1 代表全部）。
+ */
+const deviceTypeQueryOptions = [{ label: "全部", value: -1 }, ...DEVICE_TYPE_OPTIONS];
+
+/**
+ * 构建设备配置列表查询参数。
+ * @param params 原始查询参数
+ * @returns 处理后的查询参数
+ */
+function buildSchoolDeviceConfigListParams(params: Record<string, any>) {
+  const payload = { ...params };
+  if (payload.deviceType === -1 || payload.deviceType === "-1" || payload.deviceType === "" || payload.deviceType == null) {
+    delete payload.deviceType;
+  }
+  return payload;
+}
+
+/**
+ * 获取设备配置列表。
+ * @param params 查询参数
+ * @returns 列表结果
+ */
+async function axiosGetSchoolDeviceConfigListApi(
+  params: Record<string, any>
+): Promise<ResultData<SchoolDeviceConfig.ResGetSchoolDeviceConfigListApi>> {
+  try {
+    const payload = buildSchoolDeviceConfigListParams(params);
+    return await getSchoolDeviceConfigListApi(payload);
+  } catch (error) {
+    console.error("axiosGetSchoolDeviceConfigListApi:", error);
+    return {
+      code: -1,
+      msg: "请求失败",
+      data: {
+        list: [],
+        total: 0,
+        page: Number(params.page ?? 1),
+        pageSize: Number(params.pageSize ?? 10)
+      }
+    };
+  }
+}
+
 const columns: ColumnProps<ConfigRow>[] = [
   { type: "index", label: "#", width: 60 },
   {
@@ -38,8 +83,8 @@ const columns: ColumnProps<ConfigRow>[] = [
     prop: "deviceType",
     label: "设备类型",
     width: 100,
-    enum: DEVICE_TYPE_OPTIONS,
-    search: { el: "select", props: { placeholder: "请选择设备类型" } }
+    enum: deviceTypeQueryOptions,
+    search: { el: "select", defaultValue: -1, props: { placeholder: "请选择设备类型" } }
   },
   {
     prop: "vendorCode",

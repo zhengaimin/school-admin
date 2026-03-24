@@ -3,7 +3,7 @@ import type { Announcement, ResultData } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { AnnouncementRow } from "./types";
 
-import { ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
@@ -43,6 +43,12 @@ const detailModalRef = ref();
 const targetTextMap = ref<Record<number, string>>({});
 /** 投放规则加载序号 */
 const targetTextLoadingToken = ref(0);
+/** 公告详情静默请求配置 */
+const ANNOUNCEMENT_DETAIL_SILENT_REQUEST_OPTIONS = {
+  loading: false,
+  errorTip: false,
+  cancel: false
+};
 
 /** 表格管理 */
 const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetAnnouncementsApi }, null, list =>
@@ -89,9 +95,9 @@ async function axiosGetAnnouncementsApi(params: Record<string, any>): Promise<Re
   }
 }
 /** 获取公告详情 */
-async function axiosGetAnnouncementDetailApi(id: number) {
+async function axiosGetAnnouncementDetailApi(id: number, options: Record<string, any> = {}) {
   try {
-    return await getAnnouncementDetailApi(id);
+    return await getAnnouncementDetailApi(id, options);
   } catch (error) {
     console.error("axiosGetAnnouncementDetailApi:", error);
     return { code: -1, data: null };
@@ -179,7 +185,7 @@ async function loadTargetTextList(rows: AnnouncementRow[]) {
 
   await Promise.all(
     idList.map(async id => {
-      const result = await axiosGetAnnouncementDetailApi(id);
+      const result = await axiosGetAnnouncementDetailApi(id, ANNOUNCEMENT_DETAIL_SILENT_REQUEST_OPTIONS);
       if (loadingToken !== targetTextLoadingToken.value) return;
       if (result.code !== 0) {
         targetTextMap.value = { ...targetTextMap.value, [id]: "--" };
@@ -290,6 +296,10 @@ async function handleDelete(rows: AnnouncementRow[]) {
 
 /** 监听学校切换 */
 watch(schoolId, () => refreshTableList());
+/** 页面卸载时失效化投放规则异步回写 */
+onBeforeUnmount(() => {
+  targetTextLoadingToken.value += 1;
+});
 </script>
 
 <template>
