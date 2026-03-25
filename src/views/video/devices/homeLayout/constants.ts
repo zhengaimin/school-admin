@@ -7,6 +7,12 @@ import type {
   THomeModuleKey,
   THomeStatisticsItem
 } from "./types";
+import {
+  APK_HOMEPAGE_LAYOUT_HEIGHT_MODE,
+  APK_HOMEPAGE_LAYOUT_SYNC_STATUS,
+  APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N,
+  APK_HOMEPAGE_LAYOUT_SYNC_STATUS_OPTIONS
+} from "@/config/modules";
 
 /** 预览区宽度（像素） */
 export const HOME_SCREEN_WIDTH = 534;
@@ -25,7 +31,13 @@ export const HOME_MAIN_HEIGHT = 638;
 export const ANNOUNCEMENT_MOCK_LIST: THomeAnnouncementItem[] = [
   { id: 1, title: "春季运动会报名已开始", content: "请各班于本周五前完成报名信息填报。" },
   { id: 2, title: "周五晚自习调整通知", content: "本周五晚自习调整至综合楼三层，请相互转告。" },
-  { id: 3, title: "宿舍卫生评比结果公布", content: "本周优秀宿舍名单已发布，请到班主任处查看明细。", textColor: "#325b89", textSize: 11 }
+  {
+    id: 3,
+    title: "宿舍卫生评比结果公布",
+    content: "本周优秀宿舍名单已发布，请到班主任处查看明细。",
+    textColor: "#325b89",
+    textSize: 11
+  }
 ];
 /** 留言模块 mock 数据 */
 export const MESSAGE_MOCK_LIST: THomeMessageItem[] = [
@@ -45,7 +57,7 @@ export const DEFAULT_MODULE_LIST: THomeModuleItem[] = [
     title: "校园风采",
     description: "图片/视频轮播区域",
     visible: true,
-    heightMode: "fixed",
+    heightMode: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED,
     height: 200,
     minHeight: 120,
     maxHeight: 320
@@ -55,7 +67,7 @@ export const DEFAULT_MODULE_LIST: THomeModuleItem[] = [
     title: "校园公告",
     description: "公告滚动展示区域",
     visible: true,
-    heightMode: "fixed",
+    heightMode: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED,
     height: 286,
     minHeight: 120,
     maxHeight: 360
@@ -65,7 +77,7 @@ export const DEFAULT_MODULE_LIST: THomeModuleItem[] = [
     title: "未读留言",
     description: "留言提醒横条区域",
     visible: true,
-    heightMode: "fixed",
+    heightMode: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED,
     height: 52,
     minHeight: 48,
     maxHeight: 120
@@ -75,7 +87,7 @@ export const DEFAULT_MODULE_LIST: THomeModuleItem[] = [
     title: "设备统计",
     description: "设备在线统计区域",
     visible: true,
-    heightMode: "fixed",
+    heightMode: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED,
     height: 52,
     minHeight: 48,
     maxHeight: 120
@@ -96,17 +108,11 @@ export const HOME_MODULE_CODE_KEY_MAP: Record<THomeLayoutModuleCode, THomeModule
   messageList: "unreadMessage",
   statistics: "statistics"
 };
+
+/** 同步状态常量 */
+export const HOME_LAYOUT_SYNC_STATUS = APK_HOMEPAGE_LAYOUT_SYNC_STATUS;
 /** 同步状态文案映射 */
-export const HOME_LAYOUT_SYNC_STATUS_I18N: Record<THomeLayoutSyncStatus, string> = {
-  pending: "待更新",
-  success: "已更新",
-  failed: "失败",
-  offline: "离线"
-};
+export const HOME_LAYOUT_SYNC_STATUS_I18N: Record<THomeLayoutSyncStatus, string> = APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N;
 /** 同步状态筛选项 */
-export const HOME_LAYOUT_SYNC_STATUS_OPTIONS: Array<{ label: string; value: THomeLayoutSyncStatus }> = [
-  { label: HOME_LAYOUT_SYNC_STATUS_I18N.pending, value: "pending" },
-  { label: HOME_LAYOUT_SYNC_STATUS_I18N.success, value: "success" },
-  { label: HOME_LAYOUT_SYNC_STATUS_I18N.failed, value: "failed" },
-  { label: HOME_LAYOUT_SYNC_STATUS_I18N.offline, value: "offline" }
-];
+export const HOME_LAYOUT_SYNC_STATUS_OPTIONS: Array<{ label: string; value: THomeLayoutSyncStatus }> =
+  APK_HOMEPAGE_LAYOUT_SYNC_STATUS_OPTIONS;

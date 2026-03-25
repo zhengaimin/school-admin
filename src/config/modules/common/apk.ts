@@ -65,6 +65,74 @@ export const APK_TERMINAL_TYPE_OPTIONS: Array<{ label: string; value: TApkTermin
   }
 ];
 
+/** APK 首页布局高度模式：FIXED-固定，ADAPTIVE-自适应 */
+export enum APK_HOMEPAGE_LAYOUT_HEIGHT_MODE {
+  /** 固定高度 */
+  FIXED = "FIXED",
+  /** 自适应高度 */
+  ADAPTIVE = "ADAPTIVE"
+}
+
+export type TApkHomepageLayoutHeightModeValue =
+  (typeof APK_HOMEPAGE_LAYOUT_HEIGHT_MODE)[keyof typeof APK_HOMEPAGE_LAYOUT_HEIGHT_MODE];
+
+export const APK_HOMEPAGE_LAYOUT_HEIGHT_MODE_I18N: Record<TApkHomepageLayoutHeightModeValue, string> = {
+  [APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED]: "固定",
+  [APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE]: "自适应"
+};
+
+export const APK_HOMEPAGE_LAYOUT_HEIGHT_MODE_OPTIONS: Array<{ label: string; value: TApkHomepageLayoutHeightModeValue }> = [
+  {
+    label: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE_I18N[APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED],
+    value: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED
+  },
+  {
+    label: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE_I18N[APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE],
+    value: APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE
+  }
+];
+
+/** APK 首页布局同步状态：pending-待更新，success-已更新，failed-失败，offline-离线 */
+export enum APK_HOMEPAGE_LAYOUT_SYNC_STATUS {
+  /** 待更新 */
+  PENDING = "pending",
+  /** 已更新 */
+  SUCCESS = "success",
+  /** 失败 */
+  FAILED = "failed",
+  /** 离线 */
+  OFFLINE = "offline"
+}
+
+export type TApkHomepageLayoutSyncStatusValue =
+  (typeof APK_HOMEPAGE_LAYOUT_SYNC_STATUS)[keyof typeof APK_HOMEPAGE_LAYOUT_SYNC_STATUS];
+
+export const APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N: Record<TApkHomepageLayoutSyncStatusValue, string> = {
+  [APK_HOMEPAGE_LAYOUT_SYNC_STATUS.PENDING]: "待更新",
+  [APK_HOMEPAGE_LAYOUT_SYNC_STATUS.SUCCESS]: "已更新",
+  [APK_HOMEPAGE_LAYOUT_SYNC_STATUS.FAILED]: "失败",
+  [APK_HOMEPAGE_LAYOUT_SYNC_STATUS.OFFLINE]: "离线"
+};
+
+export const APK_HOMEPAGE_LAYOUT_SYNC_STATUS_OPTIONS: Array<{ label: string; value: TApkHomepageLayoutSyncStatusValue }> = [
+  {
+    label: APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N[APK_HOMEPAGE_LAYOUT_SYNC_STATUS.PENDING],
+    value: APK_HOMEPAGE_LAYOUT_SYNC_STATUS.PENDING
+  },
+  {
+    label: APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N[APK_HOMEPAGE_LAYOUT_SYNC_STATUS.SUCCESS],
+    value: APK_HOMEPAGE_LAYOUT_SYNC_STATUS.SUCCESS
+  },
+  {
+    label: APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N[APK_HOMEPAGE_LAYOUT_SYNC_STATUS.FAILED],
+    value: APK_HOMEPAGE_LAYOUT_SYNC_STATUS.FAILED
+  },
+  {
+    label: APK_HOMEPAGE_LAYOUT_SYNC_STATUS_I18N[APK_HOMEPAGE_LAYOUT_SYNC_STATUS.OFFLINE],
+    value: APK_HOMEPAGE_LAYOUT_SYNC_STATUS.OFFLINE
+  }
+];
+
 export const getApkPackageStatusTagType = (status: TApkPackageStatusValue): "success" | "warning" | "info" => {
   const tagTypeMap: Record<TApkPackageStatusValue, "success" | "warning" | "info"> = {
     [APK_PACKAGE_STATUS.DRAFT]: "info",

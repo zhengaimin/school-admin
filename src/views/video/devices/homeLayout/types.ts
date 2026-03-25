@@ -1,7 +1,7 @@
 import type { ApkHomepageLayout } from "@/api/interface";
 
 export type THomeModuleKey = "schoolMien" | "announcement" | "unreadMessage" | "statistics";
-export type THomeHeightMode = "fixed" | "auto";
+export type THomeHeightMode = ApkHomepageLayout.THomepageLayoutHeightMode;
 export type THomeLayoutModuleCode = ApkHomepageLayout.THomepageLayoutModuleCode;
 export type THomeLayoutVisibleFlag = ApkHomepageLayout.THomepageLayoutVisible;
 export type THomeLayoutSyncStatus = ApkHomepageLayout.TApkHomepageLayoutSyncStatus;

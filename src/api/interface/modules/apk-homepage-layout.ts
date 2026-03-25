@@ -1,13 +1,18 @@
+import type { TApkHomepageLayoutHeightModeValue, TApkHomepageLayoutSyncStatusValue, TYesNoFlagValue } from "@/config/modules";
+
 // APK 首页布局配置模块
 export namespace ApkHomepageLayout {
   /** 首页布局模块编码 */
   export type THomepageLayoutModuleCode = "schoolMien" | "noticeList" | "messageList" | "statistics";
 
   /** 首页布局模块显示标记 */
-  export type THomepageLayoutVisible = "Y" | "N";
+  export type THomepageLayoutVisible = TYesNoFlagValue;
+
+  /** 首页布局模块高度模式 */
+  export type THomepageLayoutHeightMode = TApkHomepageLayoutHeightModeValue;
 
   /** 首页布局设备同步状态 */
-  export type TApkHomepageLayoutSyncStatus = "pending" | "success" | "failed" | "offline";
+  export type TApkHomepageLayoutSyncStatus = TApkHomepageLayoutSyncStatusValue;
 
   /** 首页布局模块项 */
   export interface IHomepageLayoutModule {
@@ -17,6 +22,8 @@ export namespace ApkHomepageLayout {
     visible: THomepageLayoutVisible;
     /** 模块高度 */
     height: number;
+    /** 模块高度模式 */
+    heightMode: THomepageLayoutHeightMode;
     /** 模块排序 */
     sort: number;
   }

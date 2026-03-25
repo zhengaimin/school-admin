@@ -1,4 +1,5 @@
 import type { ApkHomepageLayout } from "@/api/interface";
+import { APK_HOMEPAGE_LAYOUT_HEIGHT_MODE, YES_NO_FLAG } from "@/config/modules";
 
 import {
   DEFAULT_MODULE_LIST,
@@ -73,7 +74,8 @@ export function getAnnouncementContentStyle(item: THomeAnnouncementItem): Record
  */
 export function resolveMessageLoopList() {
   if (MESSAGE_MOCK_LIST.length === 0) return [];
-  if (MESSAGE_MOCK_LIST.length < 5) return [...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST];
+  if (MESSAGE_MOCK_LIST.length < 5)
+    return [...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST];
   return [...MESSAGE_MOCK_LIST, ...MESSAGE_MOCK_LIST];
 }
 /**
@@ -101,7 +103,9 @@ export function resolveHomeLayoutMetrics(moduleList: THomeModuleItem[]): THomeLa
 
   const gapHeight = HOME_MAIN_MODULE_GAP * Math.max(visibleModuleList.length - 1, 0);
   const maxContentHeight = HOME_MAIN_HEIGHT - gapHeight;
-  const autoModuleItem = visibleModuleList.find(moduleItem => isAutoHeightSupported(moduleItem.key) && moduleItem.heightMode === "auto");
+  const autoModuleItem = visibleModuleList.find(
+    moduleItem => isAutoHeightSupported(moduleItem.key) && moduleItem.heightMode === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE
+  );
   const fixedModuleList = autoModuleItem
     ? visibleModuleList.filter(moduleItem => moduleItem.key !== autoModuleItem.key)
     : visibleModuleList;
@@ -153,8 +157,11 @@ export function resolveModuleListByApiLayoutModules(
 
     const mergedModuleItem: THomeModuleItem = {
       ...defaultModuleItem,
-      visible: moduleItem.visible === "Y",
-      heightMode: "fixed",
+      visible: moduleItem.visible === YES_NO_FLAG.YES,
+      heightMode:
+        moduleItem.heightMode === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE
+          ? APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE
+          : APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED,
       height: moduleItem.height
     };
     clampModuleHeight(mergedModuleItem);
@@ -181,8 +188,9 @@ export function resolveApiLayoutModulesByModuleList(moduleList: THomeModuleItem[
     const renderedHeight = layoutMetrics.moduleHeightMap[moduleItem.key] || moduleItem.height;
     return {
       code: HOME_MODULE_KEY_CODE_MAP[moduleItem.key],
-      visible: moduleItem.visible ? "Y" : "N",
-      height: moduleItem.heightMode === "auto" ? renderedHeight : moduleItem.height,
+      visible: moduleItem.visible ? YES_NO_FLAG.YES : YES_NO_FLAG.NO,
+      height: moduleItem.heightMode === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE ? renderedHeight : moduleItem.height,
+      heightMode: moduleItem.heightMode,
       sort: index + 1
     };
   });

@@ -1,0 +1,1 @@
+import{h as a}from"./index-Bn3ffO3D.js";const e=()=>a.get("/admin/monitor/real_time_data?instrument_id=1"),r=t=>a.post("/admin/user/layout/add",t),u=t=>a.post("/admin/user/layout/update",t),n=t=>a.get(`/admin/user/layout/info?layout_model=${t.layout_model}`);export{r as a,n as b,u as l,e as r};

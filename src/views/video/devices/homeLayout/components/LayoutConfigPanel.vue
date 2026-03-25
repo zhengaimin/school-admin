@@ -3,6 +3,7 @@ import type { THomeHeightMode, THomeModuleItem } from "../types";
 
 import { computed } from "vue";
 import draggable from "vuedraggable";
+import { APK_HOMEPAGE_LAYOUT_HEIGHT_MODE } from "@/config/modules";
 import { HOME_MAIN_HEIGHT } from "../constants";
 import { clampModuleHeight, getModuleTagType, isAutoHeightSupported, resolveHomeLayoutMetrics } from "../utils";
 
@@ -51,11 +52,11 @@ function handleModuleHeightChange(moduleItem: THomeModuleItem): void {
 function handleHeightModeChange(moduleItem: THomeModuleItem, mode: THomeHeightMode): void {
   moduleItem.heightMode = mode;
   if (!isAutoHeightSupported(moduleItem.key)) return;
-  if (mode !== "auto") return;
+  if (mode !== APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE) return;
   moduleList.value.forEach(item => {
     if (!isAutoHeightSupported(item.key)) return;
     if (item.key === moduleItem.key) return;
-    item.heightMode = "fixed";
+    item.heightMode = APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED;
   });
 }
 /**
@@ -65,8 +66,13 @@ function handleHeightModeChange(moduleItem: THomeModuleItem, mode: THomeHeightMo
  * @returns 无返回值
  */
 function handleHeightModeInputChange(moduleItem: THomeModuleItem, value: string | number | boolean | undefined): void {
-  if (value !== "fixed" && value !== "auto") return;
-  handleHeightModeChange(moduleItem, value);
+  if (value === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED) {
+    handleHeightModeChange(moduleItem, APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED);
+    return;
+  }
+  if (value === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE) {
+    handleHeightModeChange(moduleItem, APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE);
+  }
 }
 /**
  * 处理全部显示。
@@ -144,8 +150,8 @@ function handleResetClick(): void {
               :disabled="props.disabled"
               @change="value => handleHeightModeInputChange(element, value)"
             >
-              <el-radio-button value="fixed">固定</el-radio-button>
-              <el-radio-button value="auto">自适应</el-radio-button>
+              <el-radio-button :value="APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.FIXED">固定</el-radio-button>
+              <el-radio-button :value="APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE">自适应</el-radio-button>
             </el-radio-group>
           </div>
 
@@ -156,7 +162,7 @@ function handleResetClick(): void {
               :min="element.minHeight"
               :max="element.maxHeight"
               :step="2"
-              :disabled="props.disabled || !element.visible || element.heightMode === 'auto'"
+              :disabled="props.disabled || !element.visible || element.heightMode === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE"
               @change="() => handleModuleHeightChange(element)"
             />
             <el-input-number
@@ -165,7 +171,7 @@ function handleResetClick(): void {
               :max="element.maxHeight"
               :step="2"
               controls-position="right"
-              :disabled="props.disabled || !element.visible || element.heightMode === 'auto'"
+              :disabled="props.disabled || !element.visible || element.heightMode === APK_HOMEPAGE_LAYOUT_HEIGHT_MODE.ADAPTIVE"
               @change="() => handleModuleHeightChange(element)"
             />
           </div>
@@ -185,27 +191,23 @@ function handleResetClick(): void {
   background: #ffffff;
   border: 1px solid #e6ecf5;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(16, 47, 86, 0.06);
+  box-shadow: 0 8px 20px rgb(16 47 86 / 6%);
 }
-
 .panel-header__title {
   font-size: 18px;
   font-weight: 600;
   color: #1d2f4b;
 }
-
 .panel-header__desc {
   margin-top: 6px;
   font-size: 13px;
   color: #6a7d97;
 }
-
 .panel-actions {
   display: flex;
   gap: 10px;
   margin: 14px 0;
 }
-
 .panel-metrics {
   display: flex;
   gap: 14px;
@@ -213,17 +215,14 @@ function handleResetClick(): void {
   font-size: 12px;
   color: #5d7391;
 }
-
 .panel-metrics__warn {
   color: #be4a2e;
 }
-
 .module-list {
   height: calc(100% - 126px);
   padding-right: 6px;
   overflow-y: auto;
 }
-
 .module-item {
   padding: 12px;
   margin-bottom: 12px;
@@ -231,61 +230,52 @@ function handleResetClick(): void {
   border: 1px solid #d8e5f7;
   border-radius: 10px;
 }
-
 .module-item--chosen {
   background: #edf4ff;
   border-color: #7ea6e8;
 }
-
 .module-item__head {
   display: flex;
-  align-items: center;
   gap: 8px;
+  align-items: center;
 }
-
 .drag-handle {
-  cursor: grab;
-  color: #91a7c7;
   font-weight: 700;
+  color: #91a7c7;
   letter-spacing: 1px;
+  cursor: grab;
   user-select: none;
 }
-
 .module-item__index {
   width: 22px;
   height: 22px;
-  line-height: 22px;
-  text-align: center;
   font-size: 12px;
+  line-height: 22px;
   color: #4d6485;
+  text-align: center;
   background: #e2ebf8;
   border-radius: 50%;
 }
-
 .module-item__title {
   flex: 1;
   font-size: 14px;
   font-weight: 600;
   color: #1f3858;
 }
-
 .module-item__desc {
   margin-top: 8px;
   font-size: 12px;
   color: #7a8faa;
 }
-
 .module-item__row {
   display: flex;
-  align-items: center;
   gap: 12px;
+  align-items: center;
   margin-top: 10px;
 }
-
 .module-item__row--height :deep(.el-slider) {
   flex: 1;
 }
-
 .module-item__label {
   width: 56px;
   font-size: 12px;

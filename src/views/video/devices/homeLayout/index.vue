@@ -12,7 +12,7 @@ import {
   putApkHomepageLayoutConfigApi
 } from "@/api/modules";
 import { useSchool } from "@/hooks/useSchool";
-import { HOME_LAYOUT_SYNC_STATUS_I18N, HOME_LAYOUT_SYNC_STATUS_OPTIONS } from "./constants";
+import { HOME_LAYOUT_SYNC_STATUS, HOME_LAYOUT_SYNC_STATUS_I18N, HOME_LAYOUT_SYNC_STATUS_OPTIONS } from "./constants";
 import LayoutConfigPanel from "./components/LayoutConfigPanel.vue";
 import HomePreviewScreen from "./components/HomePreviewScreen.vue";
 import { createDefaultModuleList, resolveApiLayoutModulesByModuleList, resolveModuleListByApiLayoutModules } from "./utils";
@@ -66,7 +66,7 @@ const panelDisabled = computed(function () {
  */
 async function axiosGetApkHomepageLayoutConfigApi(currentSchoolIdValue: number) {
   try {
-    return await getApkHomepageLayoutConfigApi(currentSchoolIdValue);
+    return await getApkHomepageLayoutConfigApi(currentSchoolIdValue, {}, { loading: false });
   } catch (error) {
     console.error("axiosGetApkHomepageLayoutConfigApi:", error);
     return { code: -1, msg: "请求失败", data: null };
@@ -338,7 +338,14 @@ function handleSyncStatusFilterChange(value: string | number | boolean | undefin
     void handleLoadDeviceStateList(true);
     return;
   }
-  if (value !== "pending" && value !== "success" && value !== "failed" && value !== "offline") return;
+  if (
+    value !== HOME_LAYOUT_SYNC_STATUS.PENDING &&
+    value !== HOME_LAYOUT_SYNC_STATUS.SUCCESS &&
+    value !== HOME_LAYOUT_SYNC_STATUS.FAILED &&
+    value !== HOME_LAYOUT_SYNC_STATUS.OFFLINE
+  ) {
+    return;
+  }
 
   syncStatusFilter.value = value;
   deviceQuery.value.status = value;
@@ -369,9 +376,9 @@ function handleDevicePageSizeChange(pageSize: number): void {
  * @returns 标签类型
  */
 function getSyncStatusTagType(status: THomeLayoutSyncStatus): "success" | "warning" | "danger" | "info" {
-  if (status === "success") return "success";
-  if (status === "failed") return "danger";
-  if (status === "offline") return "info";
+  if (status === HOME_LAYOUT_SYNC_STATUS.SUCCESS) return "success";
+  if (status === HOME_LAYOUT_SYNC_STATUS.FAILED) return "danger";
+  if (status === HOME_LAYOUT_SYNC_STATUS.OFFLINE) return "info";
   return "warning";
 }
 /**
@@ -389,7 +396,7 @@ function resolveSyncStatusText(status: THomeLayoutSyncStatus | undefined): strin
  * @returns 是否可重试
  */
 function canRetryDevice(row: ApkHomepageLayout.IApkHomepageLayoutDeviceStateItem): boolean {
-  return row.syncStatus === "failed" || row.syncStatus === "offline";
+  return row.syncStatus === HOME_LAYOUT_SYNC_STATUS.FAILED || row.syncStatus === HOME_LAYOUT_SYNC_STATUS.OFFLINE;
 }
 
 watch(
@@ -419,7 +426,9 @@ watch(
         </div>
         <div class="workspace-header__actions">
           <el-button :disabled="!hasSchool" :loading="layoutLoading" @click="handleLoadLayoutConfig">刷新布局</el-button>
-          <el-button type="primary" :disabled="!hasSchool" :loading="layoutSaving" @click="handleSaveLayoutConfig">保存配置</el-button>
+          <el-button type="primary" :disabled="!hasSchool" :loading="layoutSaving" @click="handleSaveLayoutConfig"
+            >保存配置</el-button
+          >
           <el-button type="warning" plain :disabled="!hasSchool" :loading="layoutResetting" @click="handleResetRemoteLayout">
             重置服务端默认布局
           </el-button>
