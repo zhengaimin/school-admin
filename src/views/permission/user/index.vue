@@ -46,6 +46,11 @@ const columns: ColumnProps<System.AdminUser>[] = [
     enum: ROLE_LEVEL_OPTIONS
   },
   {
+    prop: "roleName",
+    label: "角色名称",
+    minWidth: 140
+  },
+  {
     prop: "status",
     label: "状态",
     width: 100,

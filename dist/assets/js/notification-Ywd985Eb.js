@@ -1,0 +1,1 @@
+import{h as n}from"./index-DQgIvTt8.js";const e=i=>n.post("/admin/notification_sender/add",i),o=()=>n.get("/admin/notification_sender/list"),r=i=>n.get(`/admin/notification_sender/info?id=${i.id}`),a=i=>n.post("/admin/notification_sender/delete",i),d=i=>n.get(`/admin/notification_receiver/info?id=${i.id}`);export{d as a,r as b,a as c,o as d,e as n};

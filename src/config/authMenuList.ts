@@ -66,6 +66,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: ROUTE_HAIRDRYER.FUND_PACKAGE_REFUND, permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND_PACKAGE_PURCHASE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND_RECHARGE, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_CARD_RECHARGE, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.PACKAGE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: ROUTE_HAIRDRYER.RATE, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
@@ -992,6 +993,20 @@ const authMenuList = {
             meta: {
               icon: "",
               title: "充值记录",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_HAIRDRYER.FUND_CARD_RECHARGE,
+            name: "hairdryerFundCardRecharge",
+            component: "/hairdryer/fund/cardRecharge/index",
+            meta: {
+              icon: "",
+              title: "圈存记录",
               isLink: "",
               isHide: false,
               isFull: false,

@@ -601,6 +601,8 @@ export type { DeviceGroup } from "./modules/device-group";
 export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules/package";
 // 支付管理模块
 export type { Payment } from "./modules/payment";
+// 吹风机圈存记录模块
+export type { DryerCardRecharge } from "./modules/dryer-card-recharge";
 // 通话记录模块
 export type { CallRecord } from "./modules/call-record";
 // 退款模块

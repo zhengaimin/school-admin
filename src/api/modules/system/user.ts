@@ -1,11 +1,11 @@
-import type { System, ResPage } from "@/api/interface";
+import type { System } from "@/api/interface";
 import http from "@/api";
 
 /** 用户管理 API */
 
 /** 获取用户列表 */
 export const getAdminUserListApi = (params: System.ReqUserList) => {
-  return http.get<ResPage<System.AdminUser>>("/admin/users", params);
+  return http.get<System.ResGetAdminUserListApi>("/admin/users", params);
 };
 
 /** 获取用户详情 */

@@ -73,4 +73,8 @@ export type DialConfigForm = {
   sosTitle: string;
   /** 第三方地址 */
   thirdPartyUrl: string;
+  /** 吹风机圈存开关 */
+  dryerCardRechargeEnabled: TYesNoFlagValue;
+  /** 吹风机圈存金额（单位元，逗号分隔） */
+  dryerCardRechargeAmountOptions: string;
 };

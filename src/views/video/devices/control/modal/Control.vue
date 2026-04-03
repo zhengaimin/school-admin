@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import type { DeviceDialConfig } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 import type { ControlModalProps, DialConfigForm } from "../types";
@@ -18,7 +18,11 @@ import {
   YES_NO_FLAG_OPTIONS
 } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
-import { buildPostDeviceDialConfigPayload, buildPutDeviceDialConfigPayload } from "../utils/payload";
+import {
+  buildPostDeviceDialConfigPayload,
+  buildPutDeviceDialConfigPayload,
+  normalizeDryerCardRechargeAmountOptions
+} from "../utils/payload";
 
 const props = withDefaults(defineProps<ControlModalProps>(), {
   schoolName: ""
@@ -41,7 +45,10 @@ const ruleFormRef = ref<FormInstance>();
 /** 表单数据 */
 const ruleForm = reactive<DialConfigForm>(getInitialForm());
 /** 表单校验规则 */
-const rules = reactive<FormRules>({});
+const rules = reactive<FormRules>({
+  dryerCardRechargeEnabled: [{ required: true, message: "请选择吹风机圈存开关", trigger: "change" }],
+  dryerCardRechargeAmountOptions: [{ validator: validateDryerCardRechargeAmountOptions, trigger: "blur" }]
+});
 
 /** 是否编辑 */
 const isEdit = computed(() => parameter.value.type === "Edit");
@@ -77,7 +84,9 @@ function getInitialForm(): DialConfigForm {
     callIncomingDisabled: YES_NO_FLAG.NO,
     faceEnabled: YES_NO_FLAG.NO,
     sosTitle: "",
-    thirdPartyUrl: ""
+    thirdPartyUrl: "",
+    dryerCardRechargeEnabled: YES_NO_FLAG.NO,
+    dryerCardRechargeAmountOptions: ""
   };
 }
 
@@ -120,7 +129,8 @@ function parseExtraConfigFlag(value: unknown) {
   if (typeof value === "number") return value === 1 ? YES_NO_FLAG.YES : YES_NO_FLAG.NO;
   if (typeof value === "string") {
     const normalizedValue = value.trim().toLowerCase();
-    if (["y", "yes", "true", "1"].includes(normalizedValue)) return YES_NO_FLAG.YES;
+    if (["y", "yes", "true", "1"].indexOf(normalizedValue) >= 0) return YES_NO_FLAG.YES;
+    if (["n", "no", "false", "0"].indexOf(normalizedValue) >= 0) return YES_NO_FLAG.NO;
   }
   return YES_NO_FLAG.NO;
 }
@@ -128,6 +138,29 @@ function parseExtraConfigFlag(value: unknown) {
 /** 解析扩展配置字符串 */
 function parseExtraConfigString(value: unknown) {
   return typeof value === "string" ? value : "";
+}
+
+/** 解析吹风机圈存金额。 */
+function parseDryerCardRechargeAmountOptions(value: unknown) {
+  return normalizeDryerCardRechargeAmountOptions(value);
+}
+
+/** 校验吹风机圈存金额。 */
+function validateDryerCardRechargeAmountOptions(
+  _rule: unknown,
+  value: DialConfigForm["dryerCardRechargeAmountOptions"],
+  callback: (error?: Error) => void
+) {
+  if (ruleForm.dryerCardRechargeEnabled !== YES_NO_FLAG.YES) {
+    callback();
+    return;
+  }
+  const amountText = normalizeDryerCardRechargeAmountOptions(value);
+  if (!amountText) {
+    callback(new Error("请输入圈存金额"));
+    return;
+  }
+  callback();
 }
 
 /** 兼容旧字段 phoneType，转换为新字段 phoneTypes */
@@ -194,7 +227,11 @@ async function axiosGetDialConfigDetailApi(id: number) {
         callIncomingDisabled: parseExtraConfigFlag(result.data.extraConfig?.["call.incoming.disabled"]),
         faceEnabled: parseExtraConfigFlag(result.data.extraConfig?.["face.enabled"]),
         sosTitle: parseExtraConfigString(result.data.extraConfig?.["sos.title"]),
-        thirdPartyUrl: parseExtraConfigString(result.data.extraConfig?.["thirdParty.url"])
+        thirdPartyUrl: parseExtraConfigString(result.data.extraConfig?.["thirdParty.url"]),
+        dryerCardRechargeEnabled: parseExtraConfigFlag(result.data.extraConfig?.["dryer.card.recharge.enabled"]),
+        dryerCardRechargeAmountOptions: parseDryerCardRechargeAmountOptions(
+          result.data.extraConfig?.["dryer.card.recharge.amount.options"]
+        )
       });
       handleParseForbidCallTimes(result.data.forbidCallTimes);
     }
@@ -249,6 +286,7 @@ async function handleSubmitForm() {
   if (!ruleFormRef.value) return;
   const valid = await ruleFormRef.value.validate();
   if (!valid) return;
+  ruleForm.dryerCardRechargeAmountOptions = normalizeDryerCardRechargeAmountOptions(ruleForm.dryerCardRechargeAmountOptions);
 
   const res = isEdit.value
     ? await axiosPutDialConfigApi(ruleForm.id!, ruleForm)
@@ -460,6 +498,29 @@ defineExpose({ acceptParams });
           </el-form-item>
         </el-col>
       </el-row>
+      <el-divider content-position="left">吹风机圈存配置</el-divider>
+      <el-row :gutter="24">
+        <el-col :span="8">
+          <el-form-item label="圈存开关" prop="dryerCardRechargeEnabled">
+            <el-radio-group v-model="ruleForm.dryerCardRechargeEnabled">
+              <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="ruleForm.dryerCardRechargeEnabled === YES_NO_FLAG.YES" :span="16">
+          <el-form-item label="圈存金额（元）" prop="dryerCardRechargeAmountOptions">
+            <el-input
+              v-model="ruleForm.dryerCardRechargeAmountOptions"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入圈存金额，多个金额用英文逗号分隔"
+            />
+            <div class="form-tips">提示：金额用“,”分隔，例如：0.01,0.02</div>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row :gutter="24">
         <el-col :span="24">
           <el-form-item label="禁拨时间段">
@@ -505,3 +566,11 @@ defineExpose({ acceptParams });
     </template>
   </el-dialog>
 </template>
+
+<style scoped lang="scss">
+.form-tips {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #909399;
+}
+</style>

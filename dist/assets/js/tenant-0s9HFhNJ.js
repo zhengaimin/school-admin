@@ -1,0 +1,1 @@
+import{h as n}from"./index-DQgIvTt8.js";const s=t=>n.post("/admin/tenants",t),p=(t,e={})=>n.get("/admin/tenants",t,e),r=t=>n.delete(`/admin/tenants/${t}`),i=t=>n.get(`/admin/tenants/${t}`),o=(t,e)=>n.put(`/admin/tenants/${t}`,e);export{i as a,o as b,r as d,p as g,s as p};

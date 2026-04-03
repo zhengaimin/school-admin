@@ -1,0 +1,1 @@
+import{_ as o}from"./Upgrade.vue_vue_type_script_setup_true_lang-DhzU_uI3.js";import"./index-DQgIvTt8.js";import"./video-Bn8McmpZ.js";import"./tags-jH1HyKFB.js";import"./index-DkQSjDlX.js";import"./apk-6WzXNL-H.js";import"./useSchool-OOzi3oTp.js";import"./payload-BqSR8nl9.js";export{o as default};

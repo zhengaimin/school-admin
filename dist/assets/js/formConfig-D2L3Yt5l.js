@@ -1,1 +1,0 @@
-import{O as t,Q as e}from"./index-Bn3ffO3D.js";const r=e("form"),i=t(r,{state:()=>({configObj:{},logoForm:{}}),getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{i as f};

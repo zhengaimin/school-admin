@@ -85,6 +85,7 @@ export const ROUTE_HAIRDRYER = {
   /** 资金管理 */
   FUND: "/hairdryer/fund",
   FUND_RECHARGE: "/hairdryer/fund/recharge",
+  FUND_CARD_RECHARGE: "/hairdryer/fund/cardRecharge",
   FUND_PACKAGE_PURCHASE: "/hairdryer/fund/packagePurchase",
   FUND_REFUND: "/hairdryer/fund/refund",
   FUND_PACKAGE_REFUND: "/hairdryer/fund/packageRefund",

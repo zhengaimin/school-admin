@@ -32,6 +32,12 @@
       <el-descriptions-item label="第三方地址">
         {{ getExtraConfigString(detailForm.extraConfig?.["thirdParty.url"]) }}
       </el-descriptions-item>
+      <el-descriptions-item label="吹风机圈存开关">
+        {{ getExtraConfigYesNoText(detailForm.extraConfig?.["dryer.card.recharge.enabled"]) }}
+      </el-descriptions-item>
+      <el-descriptions-item label="圈存金额（元）" :span="2">
+        {{ getDryerCardRechargeAmountOptionsText(detailForm.extraConfig?.["dryer.card.recharge.amount.options"]) }}
+      </el-descriptions-item>
       <el-descriptions-item label="是否显示留言按钮">
         {{ getYesNoText(detailForm.messageFlag) }}
       </el-descriptions-item>
@@ -124,6 +130,27 @@ function getExtraConfigYesNoText(value: unknown) {
 function getExtraConfigString(value: unknown) {
   if (typeof value !== "string") return "--";
   return value || "--";
+}
+/** 获取吹风机圈存金额文案 */
+function getDryerCardRechargeAmountOptionsText(value: unknown) {
+  /** 圈存金额列表。 */
+  let amountOptions: string[] = [];
+  if (Array.isArray(value)) {
+    amountOptions = value.map(item => String(item).trim()).filter(Boolean);
+  } else if (typeof value === "string") {
+    const rawValue = value.trim();
+    if (!rawValue) return "--";
+    try {
+      if (rawValue.indexOf("[") !== 0 || rawValue.lastIndexOf("]") !== rawValue.length - 1) return rawValue;
+      const parsedValue = JSON.parse(rawValue);
+      if (Array.isArray(parsedValue)) amountOptions = parsedValue.map(item => String(item).trim()).filter(Boolean);
+    } catch {
+      return rawValue;
+    }
+  }
+
+  if (!amountOptions.length) return "--";
+  return amountOptions.join(",");
 }
 
 /** 获取公话配置详情 */

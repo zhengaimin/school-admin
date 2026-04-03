@@ -7,6 +7,7 @@ export * from "./student";
 export * from "./family-contact";
 export * from "./package";
 export * from "./payment";
+export * from "./dryer-card-recharge";
 export * from "./refund";
 export * from "./organization";
 export * from "./tenant";

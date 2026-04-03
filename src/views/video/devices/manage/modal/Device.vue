@@ -44,6 +44,8 @@ type TDeviceExtraConfigForm = {
   callIncomingDisabled: TYesNoFlagValue;
   /** 开启人脸 */
   faceEnabled: TYesNoFlagValue;
+  /** 是否显示圈存菜单按钮 */
+  dryerCardRechargeMenuButtonVisible: TYesNoFlagValue;
   /** SOS 标题 */
   sosTitle: string;
   /** 第三方地址 */
@@ -54,6 +56,7 @@ type TDeviceExtraConfigForm = {
 const deviceExtraConfigKey = {
   callIncomingDisabled: "call.incoming.disabled",
   faceEnabled: "face.enabled",
+  dryerCardRechargeMenuButtonVisible: "dryer.card.recharge.menu.button.visible",
   sosTitle: "sos.title",
   thirdPartyUrl: "thirdParty.url"
 } as const;
@@ -68,6 +71,7 @@ function getInitialExtraConfigFormData(): TDeviceExtraConfigForm {
   return {
     callIncomingDisabled: YES_NO_FLAG.NO,
     faceEnabled: YES_NO_FLAG.NO,
+    dryerCardRechargeMenuButtonVisible: YES_NO_FLAG.NO,
     sosTitle: "",
     thirdPartyUrl: ""
   };
@@ -314,18 +318,25 @@ function handleSyncExtraConfigForm() {
   extraConfigForm.value = {
     callIncomingDisabled: normalizeExtraConfigYesNoFlag(extraConfig[deviceExtraConfigKey.callIncomingDisabled]),
     faceEnabled: normalizeExtraConfigYesNoFlag(extraConfig[deviceExtraConfigKey.faceEnabled]),
+    dryerCardRechargeMenuButtonVisible: normalizeExtraConfigYesNoFlag(
+      extraConfig[deviceExtraConfigKey.dryerCardRechargeMenuButtonVisible]
+    ),
     sosTitle: normalizeExtraConfigString(extraConfig[deviceExtraConfigKey.sosTitle]),
     thirdPartyUrl: normalizeExtraConfigString(extraConfig[deviceExtraConfigKey.thirdPartyUrl])
   };
 }
 /** 从扩展配置表单同步到 extraConfig */
 function handleSyncExtraConfig() {
-  const { callIncomingDisabled, faceEnabled, sosTitle, thirdPartyUrl } = extraConfigForm.value;
+  const { callIncomingDisabled, faceEnabled, dryerCardRechargeMenuButtonVisible, sosTitle, thirdPartyUrl } =
+    extraConfigForm.value;
   const oldExtraConfig = ruleForm.value.extraConfig || {};
   const newExtraConfig = {
     ...oldExtraConfig,
     [deviceExtraConfigKey.callIncomingDisabled]: normalizeExtraConfigSubmitBoolean(callIncomingDisabled),
     [deviceExtraConfigKey.faceEnabled]: normalizeExtraConfigSubmitBoolean(faceEnabled),
+    [deviceExtraConfigKey.dryerCardRechargeMenuButtonVisible]: normalizeExtraConfigSubmitBoolean(
+      dryerCardRechargeMenuButtonVisible
+    ),
     [deviceExtraConfigKey.sosTitle]: sosTitle?.trim?.() || "",
     [deviceExtraConfigKey.thirdPartyUrl]: thirdPartyUrl?.trim?.() || ""
   };
@@ -692,6 +703,15 @@ defineExpose({
           <el-col :span="6">
             <el-form-item label="开启人脸" prop="extraConfig.face.enabled">
               <el-radio-group v-model="extraConfigForm.faceEnabled">
+                <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="是否显示圈存菜单按钮" prop="extraConfig.dryer.card.recharge.menu.button.visible">
+              <el-radio-group v-model="extraConfigForm.dryerCardRechargeMenuButtonVisible">
                 <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
                   {{ item.label }}
                 </el-radio>

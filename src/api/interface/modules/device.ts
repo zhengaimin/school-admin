@@ -765,6 +765,26 @@ export namespace DeviceEventLog {
 
 // 公话配置模块
 export namespace DeviceDialConfig {
+  /** 公话扩展配置。 */
+  export interface IDeviceDialExtraConfig {
+    /** 扩展配置原始键值（兼容存量字段）。 */
+    [key: string]: any;
+    /** 禁止呼入。 */
+    "call.incoming.disabled"?: boolean | number | string;
+    /** 开启人脸。 */
+    "face.enabled"?: boolean | number | string;
+    /** SOS 标题。 */
+    "sos.title"?: string;
+    /** 第三方地址。 */
+    "thirdParty.url"?: string;
+    /** 吹风机圈存开关：Y/N。 */
+    "dryer.card.recharge.enabled"?: TYesNoFlagValue | string;
+    /** 吹风机圈存金额（单位元，逗号分隔）。 */
+    "dryer.card.recharge.amount.options"?: number[] | string;
+    /** 是否显示圈存菜单按钮。 */
+    "dryer.card.recharge.menu.button.visible"?: boolean | number | string;
+  }
+
   /** 公话配置项 */
   export interface IDeviceDialConfigVo {
     /** 配置ID */
@@ -818,7 +838,7 @@ export namespace DeviceDialConfig {
     /** 设备密码 */
     password?: string;
     /** 扩展配置 */
-    extraConfig?: Record<string, any>;
+    extraConfig?: IDeviceDialExtraConfig;
     /** 创建时间 */
     createdAt?: string;
     /** 更新时间 */
@@ -891,7 +911,7 @@ export namespace DeviceDialConfig {
     /** 设备密码 */
     password?: string;
     /** 扩展配置 */
-    extraConfig?: Record<string, any>;
+    extraConfig?: IDeviceDialExtraConfig;
   }
 
   /** 添加公话配置 - 响应 data */
@@ -943,7 +963,7 @@ export namespace DeviceDialConfig {
     /** 设备密码 */
     password?: string;
     /** 扩展配置 */
-    extraConfig?: Record<string, any>;
+    extraConfig?: IDeviceDialExtraConfig;
   }
 }
 

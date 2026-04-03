@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ResPage, ResultData, System } from "@/api/interface";
+import type { ResultData, System } from "@/api/interface";
 
 import { computed, ref } from "vue";
 import { getAdminUserListApi, putBatchUpdateAdminUsersOrgDepartmentApi } from "@/api/modules";
@@ -57,9 +57,9 @@ function normalizeUserIds(userIds: number[]) {
 }
 
 /** 获取用户列表 */
-async function axiosGetAdminUserListApi(): Promise<ResultData<ResPage<System.AdminUser>>> {
+async function axiosGetAdminUserListApi(): Promise<ResultData<System.ResGetAdminUserListApi>> {
   if (loading.value) {
-    return { code: -1, msg: "用户列表加载中", data: { list: [], page: 1, pageSize: 2000, total: 0 } };
+    return { code: -1, msg: "用户列表加载中", data: { list: [], total: 0, page: 1, pageSize: 2000 } };
   }
   loading.value = true;
   try {
@@ -74,7 +74,7 @@ async function axiosGetAdminUserListApi(): Promise<ResultData<ResPage<System.Adm
     console.error("axiosGetAdminUserListApi:", error);
     allUsers.value = [];
     ElMessage.error("获取用户列表失败");
-    return { code: -1, msg: "获取用户列表失败", data: { list: [], page: 1, pageSize: 2000, total: 0 } };
+    return { code: -1, msg: "获取用户列表失败", data: { list: [], total: 0, page: 1, pageSize: 2000 } };
   } finally {
     loading.value = false;
   }

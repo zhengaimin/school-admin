@@ -182,6 +182,9 @@ defineExpose({ acceptParams });
           <el-descriptions-item label="SOS按钮显示">
             {{ getExtraConfigYesNoText(detail.extraConfig?.["sos.button.visible"]) }}
           </el-descriptions-item>
+          <el-descriptions-item label="圈存菜单按钮显示">
+            {{ getExtraConfigYesNoText(detail.extraConfig?.["dryer.card.recharge.menu.button.visible"]) }}
+          </el-descriptions-item>
           <el-descriptions-item label="SOS标题">
             {{ getExtraConfigString(detail.extraConfig?.["sos.title"]) }}
           </el-descriptions-item>

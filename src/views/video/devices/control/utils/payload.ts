@@ -11,13 +11,50 @@ function normalizeOptionalString(value?: string | null) {
 function normalizeNumberValue(value?: number | "") {
   return typeof value === "number" && !Number.isNaN(value) ? value : undefined;
 }
+
+/**
+ * 规范化吹风机圈存金额文本。
+ * @param value 圈存金额配置
+ * @returns 圈存金额文本（单位元，英文逗号分隔）
+ */
+export function normalizeDryerCardRechargeAmountOptions(value: unknown): string {
+  if (Array.isArray(value)) {
+    return value
+      .map(item => String(item).trim())
+      .filter(Boolean)
+      .join(",");
+  }
+  if (typeof value !== "string") return "";
+
+  const text = value.trim();
+  if (!text) return "";
+  if (text.indexOf("[") !== 0 || text.lastIndexOf("]") !== text.length - 1) return text;
+
+  try {
+    const amountList = JSON.parse(text);
+    if (!Array.isArray(amountList)) return text;
+    return amountList
+      .map(item => String(item).trim())
+      .filter(Boolean)
+      .join(",");
+  } catch (error) {
+    console.error("normalizeDryerCardRechargeAmountOptions:", error);
+    return text;
+  }
+}
+
 /** 规范化扩展配置 */
 function normalizeExtraConfig(form: DialConfigForm) {
+  /** 吹风机圈存金额文本（单位元）。 */
+  const amountOptions = normalizeDryerCardRechargeAmountOptions(form.dryerCardRechargeAmountOptions);
+
   return {
     "call.incoming.disabled": form.callIncomingDisabled === "Y",
     "face.enabled": form.faceEnabled === "Y",
     "sos.title": normalizeOptionalString(form.sosTitle) || "",
-    "thirdParty.url": normalizeOptionalString(form.thirdPartyUrl) || ""
+    "thirdParty.url": normalizeOptionalString(form.thirdPartyUrl) || "",
+    "dryer.card.recharge.enabled": form.dryerCardRechargeEnabled,
+    "dryer.card.recharge.amount.options": amountOptions
   };
 }
 

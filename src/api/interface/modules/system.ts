@@ -117,9 +117,12 @@ export namespace System {
     roleName?: string;
     roleLevel?: TRoleLevelValue;
     tenantId?: number;
+    tenantName?: string;
     orgDepartmentId?: number | null;
+    orgDepartmentName?: string;
     status: TEnableStatusValue;
     createdAt?: string;
+    updatedAt?: string;
   }
 
   /** 微信信息 */
@@ -214,7 +217,22 @@ export namespace System {
     pageSize?: number;
     username?: string;
     realName?: string;
+    email?: string;
+    phone?: string;
+    tenantId?: number;
+    roleId?: number;
+    /** 部门ID（-1 表示未分配部门） */
+    orgDepartmentId?: number;
+    status?: TEnableStatusValue;
     roleLevel?: TRoleLevelValue;
+  }
+
+  /** 用户列表响应 */
+  export interface ResGetAdminUserListApi {
+    list: AdminUser[];
+    total: number;
+    page?: number;
+    pageSize?: number;
   }
 
   /** 用户保存参数 */
