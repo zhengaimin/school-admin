@@ -1,1 +1,0 @@
-import{h as e}from"./index-DQgIvTt8.js";function a(t,c){return e.get(`/admin/face-sync/devices/${t}/states`,c)}function o(t){return e.post("/admin/face-sync/batch",t)}function i(t,c,n){return e.post(`/admin/face-sync/schools/${t}/students/${c}`,n)}export{o as a,a as g,i as p};

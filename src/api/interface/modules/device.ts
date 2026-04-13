@@ -765,23 +765,23 @@ export namespace DeviceEventLog {
 
 // 公话配置模块
 export namespace DeviceDialConfig {
-  /** 公话扩展配置。 */
+  /** 公话扩展配置 */
   export interface IDeviceDialExtraConfig {
-    /** 扩展配置原始键值（兼容存量字段）。 */
+    /** 扩展配置原始键值（兼容存量字段） */
     [key: string]: any;
-    /** 禁止呼入。 */
+    /** 禁止呼入 */
     "call.incoming.disabled"?: boolean | number | string;
-    /** 开启人脸。 */
+    /** 开启人脸 */
     "face.enabled"?: boolean | number | string;
-    /** SOS 标题。 */
+    /** SOS 标题 */
     "sos.title"?: string;
-    /** 第三方地址。 */
+    /** 第三方地址 */
     "thirdParty.url"?: string;
-    /** 吹风机圈存开关：Y/N。 */
-    "dryer.card.recharge.enabled"?: TYesNoFlagValue | string;
-    /** 吹风机圈存金额（单位元，逗号分隔）。 */
+    /** 圈存按钮显示开关：Y/N */
+    "recharge.button.visible"?: TYesNoFlagValue | string;
+    /** 吹风机圈存金额（单位元） */
     "dryer.card.recharge.amount.options"?: number[] | string;
-    /** 是否显示圈存菜单按钮。 */
+    /** 是否显示圈存菜单按钮 */
     "dryer.card.recharge.menu.button.visible"?: boolean | number | string;
   }
 

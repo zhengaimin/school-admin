@@ -21,7 +21,8 @@ import { useUserStore } from "@/stores/modules/user";
 import {
   buildPostDeviceDialConfigPayload,
   buildPutDeviceDialConfigPayload,
-  normalizeDryerCardRechargeAmountOptions
+  normalizeDryerCardRechargeAmountOptions,
+  parseDryerCardRechargeAmountOptionsToList
 } from "../utils/payload";
 
 const props = withDefaults(defineProps<ControlModalProps>(), {
@@ -160,6 +161,17 @@ function validateDryerCardRechargeAmountOptions(
     callback(new Error("请输入圈存金额"));
     return;
   }
+  const amountItems = amountText
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean);
+  const decimalPattern = /^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/;
+  const isAllAmountValid = amountItems.every(item => decimalPattern.test(item) && Number(item) >= 0.01);
+  const amountList = parseDryerCardRechargeAmountOptionsToList(amountText);
+  if (!isAllAmountValid || amountList.length !== amountItems.length) {
+    callback(new Error("金额格式错误，请输入大于等于 0.01 且最多2位小数的数字，多个金额用英文逗号分隔"));
+    return;
+  }
   callback();
 }
 
@@ -219,6 +231,7 @@ async function axiosGetDialConfigDetailApi(id: number) {
         dialMode,
         normalizePhoneTypes(result.data.phoneTypes, result.data.phoneType)
       );
+      const rechargeButtonVisible = result.data.extraConfig?.["recharge.button.visible"];
       Object.assign(ruleForm, {
         ...result.data,
         dialMode,
@@ -228,7 +241,7 @@ async function axiosGetDialConfigDetailApi(id: number) {
         faceEnabled: parseExtraConfigFlag(result.data.extraConfig?.["face.enabled"]),
         sosTitle: parseExtraConfigString(result.data.extraConfig?.["sos.title"]),
         thirdPartyUrl: parseExtraConfigString(result.data.extraConfig?.["thirdParty.url"]),
-        dryerCardRechargeEnabled: parseExtraConfigFlag(result.data.extraConfig?.["dryer.card.recharge.enabled"]),
+        dryerCardRechargeEnabled: parseExtraConfigFlag(rechargeButtonVisible),
         dryerCardRechargeAmountOptions: parseDryerCardRechargeAmountOptions(
           result.data.extraConfig?.["dryer.card.recharge.amount.options"]
         )

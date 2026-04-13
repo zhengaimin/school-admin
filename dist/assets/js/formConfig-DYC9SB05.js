@@ -1,0 +1,1 @@
+import{O as t,Q as e}from"./index-DI2U4UQQ.js";const r=e("form"),i=t(r,{state:()=>({configObj:{},logoForm:{}}),getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{i as f};

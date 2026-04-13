@@ -43,17 +43,34 @@ export function normalizeDryerCardRechargeAmountOptions(value: unknown): string 
   }
 }
 
+/**
+ * 解析吹风机圈存金额为数值数组。
+ * @param value 圈存金额配置
+ * @returns 金额数组（单位元）
+ */
+export function parseDryerCardRechargeAmountOptionsToList(value: unknown): number[] {
+  const amountText = normalizeDryerCardRechargeAmountOptions(value);
+  if (!amountText) return [];
+
+  return amountText
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean)
+    .map(item => Number(item))
+    .filter(item => Number.isFinite(item) && item >= 0.01);
+}
+
 /** 规范化扩展配置 */
 function normalizeExtraConfig(form: DialConfigForm) {
-  /** 吹风机圈存金额文本（单位元）。 */
-  const amountOptions = normalizeDryerCardRechargeAmountOptions(form.dryerCardRechargeAmountOptions);
+  /** 吹风机圈存金额数组（单位元）。 */
+  const amountOptions = parseDryerCardRechargeAmountOptionsToList(form.dryerCardRechargeAmountOptions);
 
   return {
     "call.incoming.disabled": form.callIncomingDisabled === "Y",
     "face.enabled": form.faceEnabled === "Y",
     "sos.title": normalizeOptionalString(form.sosTitle) || "",
     "thirdParty.url": normalizeOptionalString(form.thirdPartyUrl) || "",
-    "dryer.card.recharge.enabled": form.dryerCardRechargeEnabled,
+    "recharge.button.visible": form.dryerCardRechargeEnabled,
     "dryer.card.recharge.amount.options": amountOptions
   };
 }
@@ -79,7 +96,9 @@ export function buildPutDeviceDialConfigPayload(form: DialConfigForm): DeviceDia
     dialMode: form.dialMode,
     phoneTypes: form.phoneTypes,
     messageFlag: form.messageFlag,
+    downloadUserFlag: form.downloadUserFlag,
     messageSoundFlag: form.messageSoundFlag,
+    mhcFlag: form.mhcFlag,
     addPunchFace: form.addPunchFace,
     forbidCallTimes: buildForbidCallTimesValue(form),
     sipUserName: normalizeOptionalString(form.sipUserName),

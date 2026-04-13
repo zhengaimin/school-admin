@@ -362,6 +362,10 @@
 }
 .el-input-number {
   --el-input-number-controls-height: 0;
+  .el-input__wrapper {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
 }
 .el-input-number.is-without-controls .el-input__wrapper {
   padding-right: 15px;

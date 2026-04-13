@@ -56,7 +56,7 @@ type TDeviceExtraConfigForm = {
 const deviceExtraConfigKey = {
   callIncomingDisabled: "call.incoming.disabled",
   faceEnabled: "face.enabled",
-  dryerCardRechargeMenuButtonVisible: "dryer.card.recharge.menu.button.visible",
+  dryerCardRechargeMenuButtonVisible: "recharge.button.visible",
   sosTitle: "sos.title",
   thirdPartyUrl: "thirdParty.url"
 } as const;
@@ -334,9 +334,7 @@ function handleSyncExtraConfig() {
     ...oldExtraConfig,
     [deviceExtraConfigKey.callIncomingDisabled]: normalizeExtraConfigSubmitBoolean(callIncomingDisabled),
     [deviceExtraConfigKey.faceEnabled]: normalizeExtraConfigSubmitBoolean(faceEnabled),
-    [deviceExtraConfigKey.dryerCardRechargeMenuButtonVisible]: normalizeExtraConfigSubmitBoolean(
-      dryerCardRechargeMenuButtonVisible
-    ),
+    [deviceExtraConfigKey.dryerCardRechargeMenuButtonVisible]: dryerCardRechargeMenuButtonVisible,
     [deviceExtraConfigKey.sosTitle]: sosTitle?.trim?.() || "",
     [deviceExtraConfigKey.thirdPartyUrl]: thirdPartyUrl?.trim?.() || ""
   };
@@ -710,7 +708,7 @@ defineExpose({
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="是否显示圈存菜单按钮" prop="extraConfig.dryer.card.recharge.menu.button.visible">
+            <el-form-item label="是否显示圈存菜单按钮" prop="extraConfig.recharge.button.visible">
               <el-radio-group v-model="extraConfigForm.dryerCardRechargeMenuButtonVisible">
                 <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">
                   {{ item.label }}

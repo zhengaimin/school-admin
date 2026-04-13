@@ -33,7 +33,7 @@
         {{ getExtraConfigString(detailForm.extraConfig?.["thirdParty.url"]) }}
       </el-descriptions-item>
       <el-descriptions-item label="吹风机圈存开关">
-        {{ getExtraConfigYesNoText(detailForm.extraConfig?.["dryer.card.recharge.enabled"]) }}
+        {{ getExtraConfigYesNoText(detailForm.extraConfig?.["recharge.button.visible"]) }}
       </el-descriptions-item>
       <el-descriptions-item label="圈存金额（元）" :span="2">
         {{ getDryerCardRechargeAmountOptionsText(detailForm.extraConfig?.["dryer.card.recharge.amount.options"]) }}

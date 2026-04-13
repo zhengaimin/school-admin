@@ -1,0 +1,1 @@
+import{h as r}from"./index-DI2U4UQQ.js";const e=t=>r.post("/admin/form/add",t),m=t=>r.get(`/admin/form/list?${t}`),s=t=>r.get(`/form/get_form?key=${t.key}`),f=t=>r.post("/admin/form/delete",t);export{f as a,e as b,m as c,s as f};
