@@ -6,7 +6,7 @@ import { ref, watch } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import { getDeviceBaseTagsApi } from "@/api/modules";
+import { deleteDeviceBaseTagApi, getDeviceBaseTagsApi } from "@/api/modules";
 import { useManage, dateFormatter } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import TagModal from "./modal/Tag.vue";
@@ -15,8 +15,10 @@ import CommandModal from "./modal/Command.vue";
 
 const { schoolId, isAllSchools } = useSchool();
 
-const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: getDeviceBaseTagsApi }, null, list =>
-  dateFormatter(list, ["createdAt"])
+const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
+  { get: getDeviceBaseTagsApi, delete: deleteDeviceBaseTagApi },
+  null,
+  list => dateFormatter(list, ["createdAt"])
 );
 
 const modalRef = ref();
@@ -35,7 +37,7 @@ const columns: ColumnProps<TagRow>[] = [
   { prop: "description", label: "标签描述", minWidth: 180, showOverflowTooltip: true },
   { prop: "deviceCount", label: "关联设备数", width: 100 },
   { prop: "sort", label: "排序值", width: 80 },
-  { prop: "operation", label: "操作", width: 200, fixed: "right" }
+  { prop: "operation", label: "操作", width: 240, fixed: "right" }
 ];
 
 const onShowModal = (type: "Add" | "Edit", row?: TagRow) => {
@@ -70,6 +72,7 @@ watch(schoolId, () => refreshTableList());
         <el-button type="primary" link @click="onShowCommand(row)">控制</el-button>
         <el-button type="primary" link @click="onShowDeviceList(row)">查看</el-button>
         <el-button type="primary" link @click="onShowModal('Edit', row)">编辑</el-button>
+        <el-button type="danger" link @click="deleteRow(row.id, row.name)">删除</el-button>
       </template>
     </ProTable>
 

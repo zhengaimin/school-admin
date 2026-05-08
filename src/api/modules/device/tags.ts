@@ -16,6 +16,11 @@ export function putDeviceBaseTagApi(id: number, data: DeviceBaseTag.ReqPutDevice
   return http.put(`/admin/device-base-tags/${id}`, data);
 }
 
+/** 删除设备标签 */
+export function deleteDeviceBaseTagApi(id: number) {
+  return http.delete(`/admin/device-base-tags/${id}`);
+}
+
 /** 获取标签下拉选项 */
 export function getDeviceBaseTagOptionsApi(params?: DeviceBaseTag.ReqGetDeviceBaseTagOptionsApi) {
   return http.get<DeviceBaseTag.IDeviceBaseTagOptionVo[]>("/admin/device-base-tags/select-options", params);

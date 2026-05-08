@@ -114,4 +114,44 @@ export namespace DryerCardRecharge {
     /** 备注。 */
     remark?: string;
   }
+
+  /** 获取导出信息 - 请求参数。 */
+  export interface ReqGetDryerCardRechargeExportInfoApi {
+    /** 学校ID（-1 表示全部）。 */
+    schoolId?: number;
+    /** 学生关键词（姓名/学号/UUID）。 */
+    studentKeyword?: string;
+    /** 圈存单号。 */
+    rechargeNo?: string;
+    /** 卡号。 */
+    cardNumber?: string;
+    /** 圈存状态。 */
+    status?: TDryerCardRechargeStatusValue;
+    /** 终端SN。 */
+    terminalSn?: string;
+    /** 开始时间（支持 YYYY-MM-DD、YYYY-MM-DD HH:mm:ss 或 RFC3339）。 */
+    startTime?: string;
+    /** 结束时间（支持 YYYY-MM-DD、YYYY-MM-DD HH:mm:ss 或 RFC3339）。 */
+    endTime?: string;
+    /** 最小金额（单位：元）。 */
+    minAmount?: string;
+    /** 最大金额（单位：元）。 */
+    maxAmount?: string;
+  }
+
+  /** 获取导出信息 - 响应 data。 */
+  export interface ResGetDryerCardRechargeExportInfoApi {
+    /** 总记录数。 */
+    totalRecords: number;
+    /** 总页数。 */
+    totalPages: number;
+    /** 每页导出数量。 */
+    pageSize: number;
+  }
+
+  /** 导出吹风机圈存记录 - 请求参数。 */
+  export interface ReqGetDryerCardRechargeExportApi extends ReqGetDryerCardRechargeExportInfoApi {
+    /** 页码，默认 1。 */
+    page?: number;
+  }
 }

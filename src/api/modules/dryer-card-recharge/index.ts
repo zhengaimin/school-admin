@@ -11,7 +11,14 @@ export function getDryerCardRechargeDetailApi(id: number | string) {
   return http.get<DryerCardRecharge.IDryerCardRechargeDetail>(`/admin/dryer-card-recharges/${id}`);
 }
 
+/** 获取吹风机圈存记录导出信息。 */
+export function getDryerCardRechargesExportInfoApi(params: DryerCardRecharge.ReqGetDryerCardRechargeExportInfoApi) {
+  return http.get<DryerCardRecharge.ResGetDryerCardRechargeExportInfoApi>("/admin/dryer-card-recharges/export-info", params, {
+    loading: false
+  });
+}
+
 /** 导出吹风机圈存记录。 */
-export function getDryerCardRechargesExportApi(params: DryerCardRecharge.ReqGetDryerCardRechargesApi): Promise<Blob> {
+export function getDryerCardRechargesExportApi(params: DryerCardRecharge.ReqGetDryerCardRechargeExportApi): Promise<Blob> {
   return http.get("/admin/dryer-card-recharges/export", params, { responseType: "blob" });
 }

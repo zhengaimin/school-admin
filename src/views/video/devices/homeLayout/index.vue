@@ -426,9 +426,9 @@ watch(
         </div>
         <div class="workspace-header__actions">
           <el-button :disabled="!hasSchool" :loading="layoutLoading" @click="handleLoadLayoutConfig">刷新布局</el-button>
-          <el-button type="primary" :disabled="!hasSchool" :loading="layoutSaving" @click="handleSaveLayoutConfig"
-            >保存配置</el-button
-          >
+          <el-button type="primary" :disabled="!hasSchool" :loading="layoutSaving" @click="handleSaveLayoutConfig">
+            保存配置
+          </el-button>
           <el-button type="warning" plain :disabled="!hasSchool" :loading="layoutResetting" @click="handleResetRemoteLayout">
             重置服务端默认布局
           </el-button>

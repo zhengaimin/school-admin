@@ -3,9 +3,8 @@ import type { DryerCardRecharge, ResultData } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
-import { ElNotification } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import { getDryerCardRechargesApi, getDryerCardRechargesExportApi } from "@/api/modules";
+import { getDryerCardRechargesApi } from "@/api/modules";
 import { useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import {
@@ -14,12 +13,16 @@ import {
   getDryerCardRechargeStatusTagType
 } from "@/config/modules";
 import DetailModal from "./modal/Detail.vue";
+import ExportModal from "./modal/Export.vue";
+import { buildCardRechargeExportAcceptPayload } from "./utils/payload";
 
 const { schoolId, guardSchool } = useSchool();
 const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetDryerCardRechargesListApi });
 
 /** 详情弹窗引用。 */
 const detailModalRef = ref<InstanceType<typeof DetailModal>>();
+/** 导出弹窗引用。 */
+const exportModalRef = ref<InstanceType<typeof ExportModal>>();
 /** 表格列配置。 */
 const columns: ColumnProps<DryerCardRecharge.IDryerCardRechargeItem>[] = [
   { type: "index", label: "#", width: 60 },
@@ -147,33 +150,16 @@ function handleShowDetail(row: DryerCardRecharge.IDryerCardRechargeItem) {
   detailModalRef.value?.acceptParams({ title: "圈存记录详情", type: "View", showConfirm: false }, row);
 }
 
-/** 导出圈存记录。 */
-async function handleExport() {
+/** 打开导出弹窗。 */
+function handleExport() {
   if (!guardSchool()) return;
   const searchParam = proTable.value?.searchParam || {};
-  const requestParams = buildDryerCardRechargeQueryParams({
-    ...searchParam,
-    page: 1,
-    pageSize: 10000
+  exportModalRef.value?.acceptParams({
+    title: "批量导出",
+    type: "View",
+    showConfirm: true,
+    ...buildCardRechargeExportAcceptPayload(searchParam, Number(schoolId.value))
   });
-
-  ElNotification({ title: "提示", message: "数据导出中，请稍后", type: "info", duration: 0 });
-  try {
-    const response = await getDryerCardRechargesExportApi(requestParams);
-    const blob = new Blob([response as any], { type: "application/vnd.ms-excel;charset=utf-8" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "圈存记录_吹风机.xlsx");
-    link.click();
-    window.URL.revokeObjectURL(url);
-    ElNotification.closeAll();
-    ElNotification({ title: "成功", message: "导出成功", type: "success" });
-  } catch (error) {
-    console.error("handleExport:", error);
-    ElNotification.closeAll();
-    ElNotification({ title: "错误", message: "导出失败，请重试", type: "error" });
-  }
 }
 
 /** 监听学校变化。 */
@@ -206,6 +192,7 @@ watch(
     </ProTable>
 
     <DetailModal ref="detailModalRef" />
+    <ExportModal ref="exportModalRef" />
   </div>
 </template>
 
