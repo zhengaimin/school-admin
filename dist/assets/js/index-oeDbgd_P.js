@@ -1,0 +1,1 @@
+import{h as a}from"./index-BzysdyGp.js";function r(e){return a.get("/admin/balance-records",e)}function t(e){return a.get(`/admin/balance-records/${e}`)}function o(e){return a.get("/admin/balance-records/export-info",e,{loading:!1})}function c(e){return a.get("/admin/balance-records/export",e,{responseType:"blob"})}export{r as a,c as b,o as c,t as g};

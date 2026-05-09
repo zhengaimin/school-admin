@@ -1,1 +1,0 @@
-import{_ as o}from"./Role.vue_vue_type_script_setup_true_lang-DuNCOwbZ.js";import"./index-I1O8VyRa.js";import"./role-DDxzU8xk.js";import"./tenant-C2sKPIik.js";import"./RolePermissionTree.vue_vue_type_script_setup_true_lang-Don2UUZn.js";import"./type-Hhl4C_Z_.js";export{o as default};

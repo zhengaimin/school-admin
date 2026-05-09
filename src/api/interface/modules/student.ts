@@ -1,5 +1,6 @@
 import type {
   TFaceStatusValue,
+  TDeviceTypeValue,
   TStudentDeviceControlActionValue,
   TStudentSexValue,
   TStudentStatusValue,
@@ -63,29 +64,79 @@ export namespace Student {
     createdAt: string;
     /** 更新时间 */
     updatedAt: string;
+    /** 钱包汇总 */
+    walletSummary?: IStudentWalletSummaryVo;
+    /** 钱包明细（按设备类型分组） */
+    walletDetails?: IStudentWalletDetailVo[];
+    /** 可用余额 */
+    availableBalance?: string;
+    /** 当前总余额 */
+    totalBalance?: string;
+    /** 冻结余额（退款申请中） */
+    frozenBalance?: string;
+    /** 赠送通话剩余分钟数 */
+    giftMinutes?: number;
+    /** 赠送通话已使用分钟数 */
+    giftMinutesUsed?: number;
+    /** 套餐通话剩余分钟数 */
+    packageMinutes?: number;
+    /** 套餐通话已使用分钟数 */
+    packageMinutesUsed?: number;
+    /** 套餐留言剩余条数 */
+    packageMessageCount?: number;
+    /** 套餐留言已使用条数 */
+    packageMessageCountUsed?: number;
+    /** 冻结的赠送时长分钟数 */
+    frozenGiftMinutes?: number;
+    /** 冻结的套餐时长分钟数 */
+    frozenPackageMinutes?: number;
+    /** 冻结的套餐留言条数 */
+    frozenPackageMessageCount?: number;
+  }
+
+  /** 学生钱包汇总 */
+  export interface IStudentWalletSummaryVo {
+    /** 总余额（所有设备） */
+    totalBalance: string;
+    /** 可用余额（所有设备） */
+    availableBalance: string;
+    /** 冻结余额（所有设备） */
+    frozenBalance: string;
+    /** 赠送剩余分钟数（所有设备） */
+    giftMinutes: number;
+    /** 套餐剩余分钟数（所有设备） */
+    packageMinutes: number;
+  }
+
+  /** 学生单个设备钱包明细 */
+  export interface IStudentWalletDetailVo {
+    /** 设备类型 */
+    deviceType: TDeviceTypeValue;
+    /** 设备类型文本 */
+    deviceTypeText: string;
+    /** 总余额 */
+    totalBalance: string;
     /** 可用余额 */
     availableBalance: string;
-    /** 当前总余额 */
-    totalBalance: string;
-    /** 冻结余额（退款申请中） */
+    /** 冻结余额 */
     frozenBalance: string;
-    /** 赠送通话剩余分钟数 */
+    /** 赠送剩余分钟数 */
     giftMinutes: number;
-    /** 赠送通话已使用分钟数 */
+    /** 赠送已使用分钟数 */
     giftMinutesUsed: number;
-    /** 套餐通话剩余分钟数 */
+    /** 冻结赠送分钟数 */
+    frozenGiftMinutes: number;
+    /** 套餐剩余分钟数 */
     packageMinutes: number;
-    /** 套餐通话已使用分钟数 */
+    /** 套餐已使用分钟数 */
     packageMinutesUsed: number;
+    /** 冻结套餐分钟数 */
+    frozenPackageMinutes: number;
     /** 套餐留言剩余条数 */
     packageMessageCount: number;
     /** 套餐留言已使用条数 */
     packageMessageCountUsed: number;
-    /** 冻结的赠送时长分钟数 */
-    frozenGiftMinutes: number;
-    /** 冻结的套餐时长分钟数 */
-    frozenPackageMinutes: number;
-    /** 冻结的套餐留言条数 */
+    /** 冻结套餐留言条数 */
     frozenPackageMessageCount: number;
   }
 
@@ -99,22 +150,26 @@ export namespace Student {
     name?: string;
     /** 学号（模糊搜索） */
     studentCode?: string;
+    /** 卡号（精准查询） */
+    cardNumber?: string;
+    /** 身份证号（精确查询） */
+    idCard?: string;
     /** 班级ID */
     classId?: number;
     /** 年级ID */
     gradeId?: number;
     /** 学校ID */
     schoolId?: number;
+    /** 租户ID（平台管理员可用） */
+    tenantId?: number;
     /** 学生类型筛选 */
-    studentType?: number;
+    studentType?: TStudentTypeValue;
     /** 状态筛选：-1不筛选 */
     status?: TStudentStatusValue | -1;
     /** 级部ID */
     departmentId?: number;
     /** 唯一号 */
     uuid?: string;
-    /** 卡号（精准查询） */
-    cardNumber?: string;
     /** 排序字段 */
     order?: string;
   }
@@ -125,6 +180,10 @@ export namespace Student {
     list: IStudentItemVo[];
     /** 总数量 */
     total: number;
+    /** 页码 */
+    page: number;
+    /** 每页数量 */
+    pageSize: number;
   }
 
   /** 新增学生 - 请求参数 */

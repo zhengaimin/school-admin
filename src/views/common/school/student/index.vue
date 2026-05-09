@@ -8,6 +8,7 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import StudentModal from "./modal/Student.vue";
+import DetailModal from "./modal/Detail.vue";
 import FamilyContactModal from "./modal/FamilyContact.vue";
 import ImportModal from "./modal/Import.vue";
 import FaceSyncModal from "./modal/FaceSync.vue";
@@ -30,6 +31,7 @@ const { schoolId, guardSchool } = useSchool();
 const userStore = useUserStore();
 
 const studentModalRef = ref<InstanceType<typeof StudentModal>>();
+const detailModalRef = ref<InstanceType<typeof DetailModal>>();
 const familyContactModalRef = ref<InstanceType<typeof FamilyContactModal>>();
 const importModalRef = ref<InstanceType<typeof ImportModal>>();
 const faceSyncModalRef = ref<InstanceType<typeof FaceSyncModal>>();
@@ -83,9 +85,11 @@ const columns: ColumnProps<Student.IStudentItemVo>[] = [
     search: { el: "input", props: { placeholder: "请输入学号" } }
   },
   { prop: "idCard", label: "身份证", minWidth: 180 },
-  { prop: "giftMinutes", label: "赠送通话剩余分钟数", minWidth: 160, align: "center" },
-  { prop: "totalBalance", label: "总余额（元）", minWidth: 120, align: "center" },
-  { prop: "availableBalance", label: "可用余额（元）", minWidth: 120, align: "center" },
+  { prop: "walletSummary.totalBalance", label: "总余额（元）", minWidth: 140, align: "center" },
+  { prop: "walletSummary.availableBalance", label: "可用余额（元）", minWidth: 140, align: "center" },
+  { prop: "walletSummary.frozenBalance", label: "冻结余额（元）", minWidth: 140, align: "center" },
+  { prop: "walletSummary.giftMinutes", label: "赠送剩余分钟数", minWidth: 170, align: "center" },
+  { prop: "walletSummary.packageMinutes", label: "套餐剩余分钟数", minWidth: 170, align: "center" },
   { prop: "sex", label: "性别", width: 80 },
   {
     prop: "cardNumber",
@@ -134,7 +138,7 @@ const columns: ColumnProps<Student.IStudentItemVo>[] = [
     enum: ORDER_DIRECTION_OPTIONS,
     search: { el: "select", props: { placeholder: "升降排序" } }
   },
-  { prop: "operation", label: "操作", width: 240, fixed: "right" }
+  { prop: "operation", label: "操作", width: 280, fixed: "right" }
 ];
 
 /** 构建排序参数 */
@@ -171,7 +175,7 @@ async function axiosGetStudentsListApi(params: Record<string, any>): Promise<Res
     });
   } catch (error) {
     console.error("axiosGetStudentsListApi:", error);
-    return { code: -1, msg: "请求失败", data: { list: [], total: 0 } };
+    return { code: -1, msg: "请求失败", data: { list: [], total: 0, page: 1, pageSize: 10 } };
   }
 }
 /** 下载导入模板 */
@@ -209,6 +213,10 @@ function handleShowModal(type: "Add" | "Edit", row?: Student.IStudentItemVo) {
     Edit: "编辑学生"
   };
   studentModalRef.value?.acceptParams({ title: titleMap[type], type, showConfirm: true }, row);
+}
+/** 打开详情弹窗 */
+function handleShowDetailModal(row: Student.IStudentItemVo) {
+  detailModalRef.value?.acceptParams({ title: "学生详情", type: "View", showConfirm: false }, row);
 }
 /** 打开亲情号弹窗 */
 function handleShowParentDialog(row: Student.IStudentItemVo) {
@@ -317,6 +325,7 @@ watch(
       </template>
 
       <template #operation="{ row }">
+        <el-button type="primary" link @click="handleShowDetailModal(row)">详情</el-button>
         <el-button type="primary" link @click="handleShowParentDialog(row)">亲情号</el-button>
         <el-button type="primary" link @click="handleShowModal('Edit', row)">编辑</el-button>
         <el-button type="danger" link @click="deleteRow(row.id, row.name)">删除</el-button>
@@ -325,6 +334,7 @@ watch(
     </ProTable>
 
     <StudentModal ref="studentModalRef" @submit="refreshTableList" />
+    <DetailModal ref="detailModalRef" />
     <FamilyContactModal ref="familyContactModalRef" />
     <ImportModal ref="importModalRef" @submit="refreshTableList" />
     <FaceSyncModal ref="faceSyncModalRef" />
