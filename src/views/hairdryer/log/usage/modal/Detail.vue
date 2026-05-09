@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type { DeviceUsage } from "@/api/interface";
 
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { getDeviceUsageDetailApi } from "@/api/modules";
-import { DEVICE_USAGE_STATUS_I18N, getDeviceUsageStatusTagType, DEVICE_TYPE_I18N } from "@/config/modules";
+import {
+  DEVICE_USAGE_STATUS,
+  DEVICE_USAGE_STATUS_I18N,
+  getDeviceUsageStatusTagType,
+  DEVICE_TYPE_I18N,
+  DRYER_PORT_I18N
+} from "@/config/modules";
 
 const visible = ref(false);
 const loading = ref(false);
@@ -13,6 +19,11 @@ const parameter = ref<TModalParams>({
   type: "View",
   showConfirm: false
 });
+
+/** 是否显示端口号：存在使用分钟数，才显示该字段 */
+const showPortNumber = computed(() => Number(detail.value?.usageMinutes || 0) > 0);
+/** 是否显示宜得说明 */
+const showYideRemark = computed(() => detail.value?.status === DEVICE_USAGE_STATUS.TIMEOUT || Boolean(detail.value?.remark));
 
 /** 接收参数 */
 const acceptParams = async (params: TModalParams, row?: DeviceUsage.IDeviceUsageItem) => {
@@ -49,6 +60,13 @@ defineExpose({ acceptParams });
         <el-descriptions-item label="班级">{{ detail.className || "--" }}</el-descriptions-item>
       </el-descriptions>
 
+      <template v-if="showYideRemark">
+        <el-divider content-position="left">异常说明</el-divider>
+        <el-descriptions :column="1" border>
+          <el-descriptions-item label="说明">{{ detail.remark || "--" }}</el-descriptions-item>
+        </el-descriptions>
+      </template>
+
       <!-- 设备信息 -->
       <el-divider content-position="left">设备信息</el-divider>
       <el-descriptions :column="2" border>
@@ -58,6 +76,13 @@ defineExpose({ acceptParams });
         <el-descriptions-item label="设备序列号">{{ detail.deviceSn || "--" }}</el-descriptions-item>
         <el-descriptions-item label="设备名称">{{ detail.deviceName || "--" }}</el-descriptions-item>
         <el-descriptions-item label="厂商代码">{{ detail.vendorCode || "--" }}</el-descriptions-item>
+        <el-descriptions-item v-if="showPortNumber" label="端口号">
+          {{
+            detail.dryerInfo?.portNumber !== undefined
+              ? DRYER_PORT_I18N[detail.dryerInfo.portNumber] || detail.dryerInfo.portNumber
+              : "--"
+          }}
+        </el-descriptions-item>
       </el-descriptions>
 
       <!-- 计费信息 -->

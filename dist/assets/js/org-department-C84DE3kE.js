@@ -1,1 +1,0 @@
-import{h as e}from"./index-SsigVobM.js";const a=t=>e.post("/admin/org-departments",t),n=(t,r)=>e.put(`/admin/org-departments/${t}`,r),s=t=>e.delete(`/admin/org-departments/${t}`),m=(t,r={})=>e.get("/admin/org-departments",t,r);export{n as a,s as d,m as g,a as p};

@@ -7,6 +7,8 @@ export const ROUTE_COMMON = {
   SCHOOL: "/common/school/manage",
   /** 设备配置 */
   SCHOOL_DEVICE_CONFIG: "/common/school/deviceConfig",
+  /** 年级管理 */
+  SCHOOL_GRADE: "/common/school/grade",
   /** 亲情号管理 */
   SCHOOL_FAMILY_CONTACT: "/common/school/family-contact",
   /** APK 管理 */
@@ -18,7 +20,7 @@ export const ROUTE_COMMON = {
 /** 校园管理模块路由 */
 export const ROUTE_INTERNAL_PAGE = {
   /** 年级管理 */
-  GRADE: "/InternalPage/grade",
+  GRADE: "/common/school/grade",
   /** 级部管理 */
   DEPARTMENT: "/InternalPage/department",
   /** 班级管理 */
@@ -46,6 +48,8 @@ export const ROUTE_VIDEO = {
   PAYMENT_CONFIG: "/video/paymentConfig",
   /** 首页布局配置 */
   HOME_LAYOUT: "/video/devices/homeLayout",
+  /** 学生余额 */
+  FUND_BALANCE_RECORD: "/video/fund/balanceRecord",
   /** 通话记录 */
   LOG_CALL_RECORD: "/video/fund/phoneList"
 } as const;
@@ -87,6 +91,7 @@ export const ROUTE_HAIRDRYER = {
   FUND_RECHARGE: "/hairdryer/fund/recharge",
   FUND_CARD_RECHARGE: "/hairdryer/fund/cardRecharge",
   FUND_PACKAGE_PURCHASE: "/hairdryer/fund/packagePurchase",
+  FUND_BALANCE_RECORD: "/hairdryer/fund/balanceRecord",
   FUND_REFUND: "/hairdryer/fund/refund",
   FUND_PACKAGE_REFUND: "/hairdryer/fund/packageRefund",
 

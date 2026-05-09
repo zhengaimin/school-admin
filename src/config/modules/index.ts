@@ -9,6 +9,7 @@ export * from "./package";
 export * from "./payment";
 export * from "./dryer-card-recharge";
 export * from "./refund";
+export * from "./balance-record";
 export * from "./organization";
 export * from "./tenant";
 export * from "./permission";

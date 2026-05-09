@@ -29,6 +29,17 @@ const columns: ColumnProps<GiftRow>[] = [
   { type: "index", label: "#", width: 60 },
   { prop: "schoolName", label: "学校", minWidth: 120 },
   { prop: "studentName", label: "学生", minWidth: 90 },
+  { prop: "studentCode", label: "学号", minWidth: 120 },
+  {
+    prop: "sort",
+    label: "学号排序",
+    isShow: false,
+    enum: [
+      { label: "正序", value: "student_no-asc" },
+      { label: "倒序", value: "student_no-desc" }
+    ],
+    search: { el: "select", defaultValue: "student_no-asc", props: { placeholder: "请选择学号排序", clearable: true } }
+  },
   { prop: "totalMinutes", label: "总赠送分钟数", width: 90 },
   { prop: "usedMinutes", label: "已使用分钟数", width: 90 },
   { prop: "remainingMinutes", label: "剩余分钟数", width: 90 },
@@ -49,10 +60,12 @@ const columns: ColumnProps<GiftRow>[] = [
 const getGiftDurationListApi = async (params: Record<string, any>) => {
   // 规范化 schoolId（useManage 注入的是字符串，API 期望数字）
   const normalizedSchoolId = params?.schoolId ? Number(params.schoolId) : undefined;
+  const studentCodeSort = proTable.value?.searchParam?.sort;
 
   const result = await getGiftsApi({
     ...params,
     schoolId: normalizedSchoolId,
+    sort: studentCodeSort || params.sort,
     deviceType: DEVICE_TYPE.DRYER
   });
 

@@ -9,4 +9,5 @@ export * from "./event-log";
 export * from "./tag-control";
 export * from "./vendor";
 export * from "./usage-status";
+export * from "./dryer-port";
 export * from "./face-sync";

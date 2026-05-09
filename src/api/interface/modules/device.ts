@@ -8,6 +8,7 @@ import type {
   TDeviceCommandCreatedTypeValue,
   TDeviceEventTypeValue,
   TDeviceUsageStatusValue,
+  TDryerPortValue,
   TDeviceFaceSyncStatusValue,
   TDeviceFaceDesiredActionValue,
   TDeviceFaceErrorCodeValue,
@@ -1492,6 +1493,8 @@ export namespace DeviceUsage {
     tenantId: number;
     /** 学校ID */
     schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
     /** 订单号 */
     orderNo: string;
     /** 设备类型 */
@@ -1531,7 +1534,9 @@ export namespace DeviceUsage {
     /** 计费分钟数 */
     usageMinutes: number;
     /** 费率（元/分钟） */
-    unitPrice: string;
+    rate: string;
+    /** 费率（元/分钟，旧字段兼容） */
+    unitPrice?: string;
     /** 冻结金额（元） */
     frozenAmount: string;
     /** 冻结赠送时长（分钟） */
@@ -1620,6 +1625,16 @@ export namespace DeviceUsage {
     status: number;
   }
 
+  /** 吹风机使用信息 */
+  export interface IDryerUsageInfo {
+    /** 端口号：0-一路，1-二路 */
+    portNumber: TDryerPortValue;
+    /** 使用费用（分） */
+    usedFee: number;
+    /** 使用时间（秒） */
+    usedTime: number;
+  }
+
   /** 设备使用记录详情 */
   export interface IDeviceUsageDetail extends IDeviceUsageItem {
     /** 租户名称 */
@@ -1658,6 +1673,8 @@ export namespace DeviceUsage {
     updatedAt: string;
     /** 备注 */
     remark: string;
+    /** 吹风机使用信息 */
+    dryerInfo?: IDryerUsageInfo;
     /** 学生账户信息 */
     studentBalance: IStudentBalanceInfo;
   }

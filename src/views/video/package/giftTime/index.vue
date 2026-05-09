@@ -1,475 +1,191 @@
+<script setup lang="ts" name="videoGiftTime">
+import type { Gift } from "@/api/interface";
+import type { ColumnProps } from "@/components/ProTable/interface";
+import type { TGiftStatusValue } from "@/config/modules";
+import type { TGiftTimeMode } from "./types";
+
+import { ref, watch } from "vue";
+import { CirclePlus } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import ProTable from "@/components/ProTable/index.vue";
+import { deleteGiftApi, getGiftsApi, postGiftsBatchCancelApi } from "@/api/modules";
+import {
+  DEVICE_TYPE,
+  GIFT_SOURCE,
+  GIFT_STATUS,
+  GIFT_STATUS_I18N,
+  GIFT_STATUS_OPTIONS,
+  GIFT_STATUS_TAG_TYPE
+} from "@/config/modules";
+import { useManage } from "@/hooks/useManage";
+import { useSchool } from "@/hooks/useSchool";
+import GiftTimeModal from "./modal/GiftTime.vue";
+
+const { isAllSchools, schoolId } = useSchool();
+
+const { proTable, axiosGetTableList, refreshTableList } = useManage({
+  get: getGiftTimeListApi
+});
+
+const modalRef = ref<InstanceType<typeof GiftTimeModal> | null>(null);
+const selectedGiftRows = ref<Gift.IGiftItemVo[]>([]);
+
+const columns: ColumnProps<Gift.IGiftItemVo>[] = [
+  { type: "selection", width: 55, fixed: "left" },
+  { type: "index", label: "#", width: 60 },
+  { prop: "schoolName", label: "学校", minWidth: 120 },
+  { prop: "studentName", label: "学生", minWidth: 100 },
+  { prop: "studentCode", label: "学号", minWidth: 140 },
+  {
+    prop: "sort",
+    label: "学号排序",
+    isShow: false,
+    enum: [
+      { label: "正序", value: "student_no-asc" },
+      { label: "倒序", value: "student_no-desc" }
+    ],
+    search: { el: "select", defaultValue: "student_no-asc", props: { placeholder: "请选择学号排序", clearable: true } }
+  },
+  { prop: "totalMinutes", label: "总赠送分钟数", width: 120 },
+  { prop: "usedMinutes", label: "已使用分钟数", width: 120 },
+  { prop: "remainingMinutes", label: "剩余分钟数", width: 120 },
+  { prop: "startDate", label: "生效时间", width: 170 },
+  { prop: "expireDate", label: "过期时间", width: 170 },
+  {
+    prop: "status",
+    label: "状态",
+    width: 100,
+    enum: GIFT_STATUS_OPTIONS,
+    fixed: "right",
+    search: { el: "select", props: { placeholder: "请选择状态", clearable: true } }
+  },
+  { prop: "description", label: "描述", minWidth: 180 },
+  { prop: "operation", label: "操作", width: 100, fixed: "right" }
+];
+
+async function getGiftTimeListApi(params: Gift.ReqGetGiftsApi) {
+  const schoolIdValue = params.schoolId ? Number(params.schoolId) : undefined;
+  const studentCodeSort = proTable.value?.searchParam?.sort;
+  return await getGiftsApi({
+    ...params,
+    schoolId: schoolIdValue,
+    sort: studentCodeSort || params.sort,
+    source: GIFT_SOURCE.ADMIN_GIFT,
+    deviceType: DEVICE_TYPE.VIDEO
+  });
+}
+
+/** 取消赠费 */
+async function axiosDeleteGiftApi(params: Gift.ReqCancelGiftApi) {
+  try {
+    return await deleteGiftApi(params);
+  } catch (error) {
+    console.error("axiosDeleteGiftApi:", error);
+    return { code: -1, msg: "", data: null };
+  }
+}
+/** 批量取消赠费 */
+async function axiosPostGiftsBatchCancelApi(data: Gift.ReqPostGiftsBatchCancelApi) {
+  try {
+    return await postGiftsBatchCancelApi(data);
+  } catch (error) {
+    console.error("axiosPostGiftsBatchCancelApi:", error);
+    return { code: -1, msg: "", data: null };
+  }
+}
+
+/** 显示新增弹窗 */
+function handleShowModal(mode: TGiftTimeMode) {
+  if (isAllSchools.value) {
+    ElMessage.warning("请选择学校后再新增");
+    return;
+  }
+  modalRef.value?.acceptParams({
+    title: mode === 1 ? "批量添加赠费" : "选择学生赠费",
+    type: "Add",
+    showConfirm: true,
+    mode
+  });
+}
+/** 取消赠送 */
+async function handleDeleteRow(row: Gift.IGiftItemVo) {
+  const action = await ElMessageBox.confirm("确定取消赠送吗?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).catch(() => null);
+  if (!action) return;
+  const result = await axiosDeleteGiftApi({ id: row.id });
+  if (result.code === 0) {
+    ElMessage.success("操作成功");
+    refreshTableList();
+  }
+}
+/** 批量取消赠送 */
+async function handleBatchCancel() {
+  if (!selectedGiftRows.value.length) return;
+  const action = await ElMessageBox.confirm("确定取消赠送吗?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).catch(() => null);
+  if (!action) return;
+  const result = await axiosPostGiftsBatchCancelApi({
+    giftIds: selectedGiftRows.value.map(item => item.id)
+  });
+  if (result.code === 0) {
+    ElMessage.success("操作成功");
+    selectedGiftRows.value = [];
+    proTable.value?.clearSelection?.();
+    refreshTableList();
+  }
+}
+function handleSelectionChange(rows: Gift.IGiftItemVo[]) {
+  selectedGiftRows.value = rows;
+}
+function handleSubmitSuccess() {
+  refreshTableList();
+}
+
+watch(schoolId, () => {
+  selectedGiftRows.value = [];
+  refreshTableList();
+});
+</script>
+
 <template>
   <div class="table-box">
-    <div class="filter-box">
-      <label for="name">状态</label>
-      <el-select style="width: 250px" v-model="filterForm.status">
-        <el-option v-for="v in statusList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-      </el-select>
-      <el-button style="margin-left: 20px" @click="reset">重置</el-button>
-      <el-button type="primary" @click="fetchTenantList">查询</el-button>
-    </div>
-    <div class="btn-box">
-      <span>赠送时长信息</span>
-      <div>
-        <el-button type="primary" class="search-btn" @click="openAddDialog(1)"> 批量添加赠费 </el-button>
-        <el-button type="primary" class="search-btn" @click="openAddDialog(2)"> 选择学生赠费 </el-button>
-        <el-button :disabled="multipleSelection1.length == 0" type="primary" class="search-btn" @click="batchcancel">
-          批量取消赠费
-        </el-button>
-      </div>
-    </div>
-    <div class="table-list">
-      <el-table class="my-custom-table" height="100%" border :data="carbonCk_list" @selection-change="handleSelectionChange1">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="学校" prop="schoolName"> </el-table-column>
-        <el-table-column label="学生" prop="studentName"> </el-table-column>
-        <el-table-column label="总赠送分钟数" prop="totalMinutes"> </el-table-column>
-        <el-table-column label="已使用分钟数" prop="usedMinutes"> </el-table-column>
-        <el-table-column label="剩余分钟数" prop="remainingMinutes"> </el-table-column>
-        <el-table-column label="生效时间" prop="startDate" width="190"> </el-table-column>
-        <el-table-column label="过期时间" prop="expireDate"> </el-table-column>
-        <el-table-column label="状态" align="center">
-          <template #default="scope">
-            {{ ["", "有效", "已用完", "已过期", "已取消"][scope.row.status] }}
-          </template>
-        </el-table-column>
-        <el-table-column label="描述" prop="description"> </el-table-column>
-        <el-table-column label="操作" align="center" width="90" fixed="right">
-          <template #default="scope">
-            <div class="table-btn">
-              <div v-if="scope.row.status == 1" @click="deleteRow(scope.row)">取消赠送</div>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="demo-pagination-block">
-      <el-pagination
-        v-model:current-page="page"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
-    <!-- 新增弹窗 -->
-    <el-dialog v-model="dialogVisibleAdd" :close-on-click-modal="false" title="新增" :width="800">
-      <div style="padding-left: 20px">
-        <el-form ref="linkFormRef" :model="form" :rules="linkRules" class="demo-ruleForm" label-position="top">
-          <el-row>
-            <el-col :span="23">
-              <div style="padding: 10px; margin-bottom: 15px; background: #f4f6fa; border-radius: 15px">
-                学校名称：<span style="font-weight: bold; color: #409eff">{{ schoolName }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="赠送时长（分钟）" prop="minutes">
-                <el-input-number style="width: 100%" v-model.number="form.minutes" :min="1"> </el-input-number>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="过期时间" prop="expireDate">
-                <el-date-picker
-                  style="width: 100%"
-                  v-model="form.expireDate"
-                  :value-format="'YYYY-MM-DD'"
-                  :format="'YYYY-MM-DD'"
-                  type="date"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <div v-if="typeFlag == 1">
-            <el-row>
-              <el-col :span="7">
-                <el-form-item label="年级" prop="gradeId">
-                  <el-select
-                    placeholder="年级"
-                    @change="
-                      getdepartmentsList();
-                      getClassList();
-                    "
-                    style="width: 100%"
-                    v-model="form.gradeId"
-                  >
-                    <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7" :offset="1">
-                <el-form-item label="级部" prop="departmentId">
-                  <el-select placeholder="级部" @change="getClassList" style="width: 100%" v-model="form.departmentId">
-                    <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7" :offset="1">
-                <el-form-item label="班级" prop="classId">
-                  <el-select placeholder="班级" style="width: 100%" v-model="form.classId">
-                    <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item label="描述" prop="description">
-                <el-input type="textarea" :rows="3" v-model="form.description" :maxlength="255" show-word-limit></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row v-if="typeFlag == 2">
-            <el-col :span="23">
-              <el-form-item label="添加学生">
-                <div>
-                  <div><el-button type="primary" @click="addStudent">添加</el-button></div>
-                  <div>
-                    <el-tag
-                      v-for="tag in form.studentIds"
-                      @close="handleClose(tag)"
-                      :key="tag.name"
-                      closable
-                      type="primary"
-                      style="margin-right: 10px"
-                    >
-                      {{ tag.name }}
-                    </el-tag>
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <!-- 学生选择弹窗 -->
-      <el-dialog v-model="innerDialog" width="900" title="学生" append-to-body>
-        <div class="table-list" style="padding: 0 10px">
-          <div style="margin: 0 10px 10px 0">
-            <el-input placeholder="学生姓名" v-model="filterForm_s.name" style="width: 150px; margin-right: 10px"></el-input>
-            <el-select
-              placeholder="年级"
-              @change="
-                getdepartmentsList();
-                getClassList();
-              "
-              style="width: 150px"
-              v-model="filterForm_s.gradeId"
-            >
-              <el-option v-for="v in gradesList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-            </el-select>
-            <el-select
-              placeholder="级部"
-              @change="getClassList"
-              style="width: 150px; margin: 0 10px"
-              v-model="filterForm_s.departmentId"
-            >
-              <el-option v-for="v in departmentsList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-            </el-select>
-            <el-select placeholder="班级" style="width: 150px; margin-right: 10px" v-model="filterForm_s.classId">
-              <el-option v-for="v in classList" :key="v.id" :label="v.name" :value="Number(v.id)"></el-option>
-            </el-select>
-            <el-button type="primary" @click="resetInner">重置</el-button>
-            <el-button type="primary" @click="fetchstudentsList()">查询</el-button>
-          </div>
-          <el-table class="my-custom-table" :data="student_list" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" />
-            <el-table-column label="学生姓名" prop="name"> </el-table-column>
-            <el-table-column label="学校" prop="schoolName"> </el-table-column>
-            <el-table-column label="年级" prop="gradeName"> </el-table-column>
-            <el-table-column label="级部" prop="departmentName"> </el-table-column>
-            <el-table-column label="班级" prop="className"> </el-table-column>
-            <el-table-column label="学号" prop="studentCode"> </el-table-column>
-            <el-table-column label="性别" prop="sex"> </el-table-column>
-            <el-table-column label="身份证" prop="idCard"> </el-table-column>
-          </el-table>
-          <div class="demo-pagination-block" style="padding: 10px 0">
-            <el-pagination
-              v-model:current-page="s_page"
-              v-model:page-size="s_pageSize"
-              :page-sizes="[10, 20, 50, 100, 200]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="s_total"
-              @size-change="s_handleSizeChange"
-              @current-change="s_handleCurrentChange"
-            />
-          </div>
-        </div>
-        <div style="text-align: right">
-          <el-button @click="innerDialog = false"> 取消 </el-button>
-          <el-button type="primary" @click="confirmAdd_s">确认</el-button>
-        </div>
-      </el-dialog>
-      <template #footer>
-        <el-row :gutter="23">
-          <el-col :span="23">
-            <div style="margin-top: 20px; text-align: right">
-              <el-button @click="dialogVisibleAdd = false">取消</el-button>
-              <el-button type="primary" v-if="typeFlag == 1" @click="confirmAdd">确定</el-button>
-              <el-button type="primary" v-if="typeFlag == 2" @click="confirmAddOne">确定</el-button>
-            </div>
-          </el-col>
-        </el-row>
+    <ProTable
+      ref="proTable"
+      :columns="columns"
+      :request-api="axiosGetTableList"
+      row-key="id"
+      table-header="赠送时长信息"
+      @selection-change="handleSelectionChange"
+    >
+      <template #toolButton>
+        <el-button :disabled="selectedGiftRows.length === 0" type="primary" @click="handleBatchCancel">批量取消赠费</el-button>
+        <el-button type="primary" :icon="CirclePlus" @click="handleShowModal(1)">批量添加赠费</el-button>
+        <el-button type="primary" :icon="CirclePlus" @click="handleShowModal(2)">选择学生赠费</el-button>
       </template>
-    </el-dialog>
+
+      <template #status="{ row }">
+        <el-tag :type="GIFT_STATUS_TAG_TYPE[row.status as TGiftStatusValue]">
+          {{ row.statusText || GIFT_STATUS_I18N[row.status as TGiftStatusValue] || "--" }}
+        </el-tag>
+      </template>
+
+      <template #operation="{ row }">
+        <el-button :disabled="row.status !== GIFT_STATUS.VALID" type="danger" link @click="handleDeleteRow(row)">
+          取消赠送
+        </el-button>
+      </template>
+    </ProTable>
+
+    <GiftTimeModal ref="modalRef" @submit="handleSubmitSuccess" />
   </div>
 </template>
-<script>
-import {
-  giftsbatch,
-  giftsList,
-  studentsList,
-  giftsDelete,
-  gradesList,
-  departmentsList,
-  classesList,
-  batchcancel
-} from "@/api/modules/InternalPage.js";
-import { useUserStore } from "@/stores/modules/user";
-import { ElMessageBox } from "element-plus";
-export default {
-  data() {
-    return {
-      isloading: false,
-      statusList: [
-        { id: 1, name: "有效" },
-        { id: 2, name: "已用完" },
-        { id: 3, name: "已过期" },
-        { id: 4, name: "已取消" }
-      ],
-      filterForm: { status: "" },
-      dialogVisibleAdd: false,
-      typeFlag: "",
-      form: {
-        studentIds: [],
-        minutes: [],
-        expireDate: "",
-        description: "",
-        gradeId: "",
-        departmentId: "",
-        classId: ""
-      },
-      linkRules: {
-        minutes: [{ required: true, message: "必填项", trigger: "blur" }],
-        expireDate: [{ required: true, message: "必填项", trigger: "blur" }]
-      },
-      innerDialog: false,
-      filterForm_s: { name: "", gradeId: "", departmentId: "", classId: "" },
-      gradesList: [],
-      departmentsList: [],
-      classList: [],
-      student_list: [],
-      multipleSelection: [],
-      s_total: 0,
-      s_page: 1,
-      s_pageSize: 10,
-      carbonCk_list: [],
-      total: 0,
-      page: 1,
-      pageSize: 10,
-      multipleSelection1: []
-    };
-  },
-  computed: {
-    userInfo() {
-      return useUserStore().userInfo;
-    },
-    schoolId() {
-      return useUserStore().schoolMsg.schoolId ? Number(useUserStore().schoolMsg.schoolId) : "";
-    },
-    schoolName() {
-      return useUserStore().schoolMsg.schoolName;
-    }
-  },
-  watch: {
-    schoolId: {
-      handler(newVal) {
-        if (newVal) this.fetchTenantList();
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    reset() {
-      this.filterForm.status = "";
-      this.fetchTenantList();
-    },
-    fetchTenantList() {
-      if (this.isloading) return;
-      this.isloading = true;
-      let status = this.filterForm.status || -1;
-      giftsList(
-        `schoolId=${this.schoolId}&page=${this.page}&pageSize=${this.pageSize}&source=ADMIN_GIFT&status=${status}&deviceType=VIDEO`
-      ).then(res => {
-        if (res.code == 0 && res.data?.list) {
-          this.carbonCk_list = res.data.list;
-          this.total = res.data.total;
-        } else {
-          this.carbonCk_list = [];
-          this.total = 0;
-        }
-        this.isloading = false;
-      });
-    },
-    handleSizeChange(val) {
-      this.page = 1;
-      this.pageSize = val;
-      this.fetchTenantList();
-    },
-    handleCurrentChange(val) {
-      this.page = val;
-      this.fetchTenantList();
-    },
-    openAddDialog(val) {
-      this.dialogVisibleAdd = true;
-      this.typeFlag = val;
-      this.getGradesList();
-      this.$nextTick(() => {
-        this.$refs.linkFormRef.resetFields();
-        this.multipleSelection = [];
-        this.form.studentIds = [];
-      });
-    },
-    confirmAdd() {
-      this.$refs.linkFormRef.validate(valid => {
-        if (valid) {
-          giftsbatch({
-            schoolId: this.schoolId,
-            minutes: this.form.minutes,
-            expireDate: this.form.expireDate,
-            description: this.form.description,
-            gradeId: this.form.gradeId || undefined,
-            departmentId: this.form.departmentId || undefined,
-            classId: this.form.classId || undefined
-          }).then(res => {
-            if (res.code == 0) {
-              this.dialogVisibleAdd = false;
-              this.$message.success("添加成功");
-              this.fetchTenantList();
-            }
-          });
-        }
-      });
-    },
-    getGradesList() {
-      this.filterForm_s.gradeId = "";
-      this.filterForm_s.departmentId = "";
-      this.filterForm_s.classId = "";
-      gradesList(`schoolId=${this.schoolId}&page=1&pageSize=200&enrollYear=-1`).then(res => {
-        this.gradesList = res.code == 0 && res.data?.list ? res.data.list : [];
-      });
-    },
-    getdepartmentsList() {
-      this.filterForm_s.departmentId = "";
-      this.filterForm_s.classId = "";
-      departmentsList(`schoolId=${this.schoolId}&page=1&pageSize=100&gradeId=${this.filterForm_s.gradeId}`).then(res => {
-        this.departmentsList = res.code == 0 && res.data?.list ? res.data.list : [];
-      });
-    },
-    getClassList() {
-      this.filterForm_s.classId = "";
-      classesList(
-        `schoolId=${this.schoolId}&page=1&pageSize=200&gradeId=${this.filterForm_s.gradeId}&departmentId=${this.filterForm_s.departmentId}`
-      ).then(res => {
-        this.classList = res.code == 0 && res.data?.list ? res.data.list : [];
-      });
-    },
-    resetInner() {
-      this.filterForm_s = { name: "", gradeId: "", departmentId: "", classId: "" };
-      this.fetchstudentsList();
-    },
-    fetchstudentsList() {
-      let gradeId = this.filterForm_s.gradeId || -1;
-      let departmentId = this.filterForm_s.departmentId || -1;
-      let classId = this.filterForm_s.classId || -1;
-      studentsList(
-        `schoolId=${this.schoolId}&page=${this.s_page}&pageSize=${this.s_pageSize}&name=${this.filterForm_s.name}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`
-      ).then(res => {
-        if (res.code == 0 && res.data?.list) {
-          this.student_list = res.data.list;
-          this.s_total = res.data.total;
-        } else {
-          this.student_list = [];
-          this.s_total = 0;
-        }
-      });
-    },
-    s_handleSizeChange(val) {
-      this.s_page = 1;
-      this.s_pageSize = val;
-      this.fetchstudentsList();
-    },
-    s_handleCurrentChange(val) {
-      this.s_page = val;
-      this.fetchstudentsList();
-    },
-    addStudent() {
-      this.innerDialog = true;
-      this.getGradesList();
-      this.fetchstudentsList();
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    confirmAdd_s() {
-      this.multipleSelection.map(v => this.form.studentIds.push(v));
-      this.innerDialog = false;
-    },
-    handleClose(tag) {
-      this.form.studentIds.splice(this.form.studentIds.indexOf(tag), 1);
-    },
-    confirmAddOne() {
-      this.$refs.linkFormRef.validate(valid => {
-        if (valid) {
-          giftsbatch({
-            studentIds: this.form.studentIds.map(v => v.id),
-            minutes: this.form.minutes,
-            expireDate: this.form.expireDate,
-            description: this.form.description
-          }).then(res => {
-            if (res.code == 0) {
-              this.dialogVisibleAdd = false;
-              this.$message.success("添加成功");
-              this.fetchTenantList();
-            }
-          });
-        }
-      });
-    },
-    deleteRow(row) {
-      ElMessageBox.confirm("确定取消赠送吗?", "提示", { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" })
-        .then(() => {
-          giftsDelete({ id: row.id }).then(res => {
-            if (res?.code == 0) {
-              this.$message.success("操作成功");
-              this.fetchTenantList();
-            }
-          });
-        })
-        .catch(() => void 0);
-    },
-    handleSelectionChange1(val) {
-      this.multipleSelection1 = val;
-    },
-    batchcancel() {
-      ElMessageBox.confirm("确定取消赠送吗?", "提示", { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" })
-        .then(() => {
-          batchcancel({ giftIds: this.multipleSelection1.map(v => v.id) }).then(res => {
-            if (res?.code == 0) {
-              this.$message.success("操作成功");
-              this.fetchTenantList();
-            }
-          });
-        })
-        .catch(() => void 0);
-    }
-  }
-};
-</script>
+
 <style lang="scss" scoped>
 @import "./index";
 </style>

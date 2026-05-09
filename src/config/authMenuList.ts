@@ -22,7 +22,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: ROUTE_COMMON.SCHOOL_FAMILY_CONTACT, permission: permissionOf(PERMISSION_CODE.FAMILY_CONTACT_LIST) },
   { prefix: "/common/school/parent", permission: permissionOf(PERMISSION_CODE.FAMILY_BIND_STATUS_LIST) },
   { prefix: "/systemAuthority/teacherAdmin", permission: permissionOf(PERMISSION_CODE.TEACHER_STUDENT_READ) },
-  { prefix: ROUTE_INTERNAL_PAGE.GRADE, permission: permissionOf(PERMISSION_CODE.GRADE_LIST) },
+  { prefix: ROUTE_COMMON.SCHOOL_GRADE, permission: permissionOf(PERMISSION_CODE.GRADE_LIST) },
   { prefix: ROUTE_INTERNAL_PAGE.DEPARTMENT, permission: permissionOf(PERMISSION_CODE.DEPARTMENT_LIST) },
   { prefix: ROUTE_INTERNAL_PAGE.CLASS, permission: permissionOf(PERMISSION_CODE.CLASS_LIST) },
   { prefix: "/moduleControl", permission: permissionOf(PERMISSION_CODE.MINIAPP_LIST) },
@@ -42,6 +42,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: "/fund/refund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
   { prefix: "/fund/packagerefund", permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
   { prefix: "/fund/packagePurchase", permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
+  { prefix: ROUTE_VIDEO.FUND_BALANCE_RECORD, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/fund/consumption", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/fund/recordAll", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: "/fund/record", permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
@@ -67,6 +68,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: ROUTE_HAIRDRYER.FUND_PACKAGE_PURCHASE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND_RECHARGE, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND_CARD_RECHARGE, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
+  { prefix: ROUTE_HAIRDRYER.FUND_BALANCE_RECORD, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.FUND, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.PACKAGE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
   { prefix: ROUTE_HAIRDRYER.RATE, permission: permissionOf(PERMISSION_CODE.CONFIG_LIST) },
@@ -198,9 +200,9 @@ const authMenuList = {
             }
           },
           {
-            path: ROUTE_INTERNAL_PAGE.GRADE,
+            path: ROUTE_COMMON.SCHOOL_GRADE,
             name: "grade",
-            component: "/InternalPage/grade/index",
+            component: "/common/school/grade/index",
             meta: {
               icon: "",
               title: "年级管理",
@@ -639,6 +641,20 @@ const authMenuList = {
             }
           },
           {
+            path: ROUTE_VIDEO.FUND_BALANCE_RECORD,
+            name: "videoFundBalanceRecord",
+            component: "/video/fund/balanceRecord/index",
+            meta: {
+              icon: "",
+              title: "学生余额",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
             path: "/fund/consumption",
             name: "consumption",
             component: "/fund/consumption/index",
@@ -1021,6 +1037,20 @@ const authMenuList = {
             meta: {
               icon: "",
               title: "套餐购买",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_HAIRDRYER.FUND_BALANCE_RECORD,
+            name: "hairdryerFundBalanceRecord",
+            component: "/hairdryer/fund/balanceRecord/index",
+            meta: {
+              icon: "",
+              title: "学生余额",
               isLink: "",
               isHide: false,
               isFull: false,

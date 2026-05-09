@@ -1,4 +1,5 @@
 import type { TGradeConfigTypeValue, TGradePackageTypeValue, TGradeServiceTypeValue } from "@/config/modules/grade";
+import type { TGradeGraduationStatusValue } from "@/config/modules/grade";
 import type { TDeviceTypeValue } from "@/config/modules/device/type";
 
 // 年级模块
@@ -27,8 +28,8 @@ export namespace Grade {
     classCount: number;
     /** 状态：0-禁用，1-启用 */
     status: number;
-    /** 是否毕业：0-未毕业，1-已毕业 */
-    isGraduated: number;
+    /** 是否毕业 */
+    isGraduated: TGradeGraduationStatusValue;
     /** 创建时间 */
     createdAt: string;
     /** 更新时间 */
@@ -49,6 +50,8 @@ export namespace Grade {
     enrollYear?: number;
     /** 状态：0-禁用，1-启用，-1表示全部 */
     status?: number;
+    /** 是否毕业 */
+    isGraduated?: TGradeGraduationStatusValue;
   }
 
   /** 获取年级列表 - 响应 data */
@@ -57,6 +60,47 @@ export namespace Grade {
     list: IGradeItemVo[];
     /** 总数量 */
     total: number;
+  }
+
+  /** 获取年级详情 - 响应 data */
+  export type ResGetGradeDetailApi = IGradeItemVo;
+
+  /** 新增年级 - 请求参数 */
+  export interface ReqPostGradeApi {
+    /** 年级名称 */
+    name: string;
+    /** 入学年份 */
+    enrollYear: number;
+    /** 所属学校ID */
+    schoolId: number;
+    /** 年级描述 */
+    description?: string;
+    /** 是否毕业 */
+    isGraduated: TGradeGraduationStatusValue;
+  }
+
+  /** 更新年级 - 请求参数 */
+  export interface ReqPutUpdateGradeApi {
+    /** 年级名称 */
+    name: string;
+    /** 入学年份 */
+    enrollYear: number;
+    /** 所属学校ID */
+    schoolId?: number;
+    /** 年级描述 */
+    description?: string;
+    /** 是否毕业 */
+    isGraduated: TGradeGraduationStatusValue;
+  }
+
+  /** 导出年级 - 请求参数 */
+  export interface ReqPostGradeExportApi {
+    /** 学校ID */
+    schoolId: number;
+    /** 年级名称（模糊搜索） */
+    name?: string;
+    /** 入学年份，-1表示全部 */
+    enrollYear?: number;
   }
 
   /** 年级简要信息 */

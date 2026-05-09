@@ -2,6 +2,8 @@
 export enum DEVICE_TYPE {
   /** 吹风机 */
   DRYER = "DRYER",
+  /** 语音话机 */
+  VOICE = "VOICE",
   /** 视频话机 */
   VIDEO = "VIDEO"
 }
@@ -10,10 +12,12 @@ export type TDeviceTypeValue = (typeof DEVICE_TYPE)[keyof typeof DEVICE_TYPE];
 
 export const DEVICE_TYPE_I18N: Record<TDeviceTypeValue, string> = {
   [DEVICE_TYPE.DRYER]: "吹风机",
+  [DEVICE_TYPE.VOICE]: "语音话机",
   [DEVICE_TYPE.VIDEO]: "视频话机"
 };
 
 export const DEVICE_TYPE_OPTIONS: Array<{ label: string; value: TDeviceTypeValue }> = [
   { label: DEVICE_TYPE_I18N[DEVICE_TYPE.DRYER], value: DEVICE_TYPE.DRYER },
+  { label: DEVICE_TYPE_I18N[DEVICE_TYPE.VOICE], value: DEVICE_TYPE.VOICE },
   { label: DEVICE_TYPE_I18N[DEVICE_TYPE.VIDEO], value: DEVICE_TYPE.VIDEO }
 ];

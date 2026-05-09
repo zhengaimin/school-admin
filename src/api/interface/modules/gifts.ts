@@ -67,12 +67,14 @@ export namespace Gift {
     gradeId?: number;
     /** 班级ID筛选 */
     classId?: number;
+    /** 排序字段，格式：字段-asc/desc */
+    sort?: string;
   }
 
   /** 获取赠费列表 - 响应 data */
   export interface ResGetGiftsApi {
     /** 赠费列表 */
-    items: IGiftItemVo[];
+    list: IGiftItemVo[];
     /** 总数量 */
     total: number;
     /** 当前页码 */

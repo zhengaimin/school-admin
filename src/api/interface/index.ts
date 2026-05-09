@@ -603,6 +603,8 @@ export type { GradePackage, GradeGeneralPackage, PackageRecord } from "./modules
 export type { Payment } from "./modules/payment";
 // 吹风机圈存记录模块
 export type { DryerCardRecharge } from "./modules/dryer-card-recharge";
+// 学生余额账户管理模块
+export type { BalanceRecord } from "./modules/balance-record";
 // 通话记录模块
 export type { CallRecord } from "./modules/call-record";
 // 退款模块

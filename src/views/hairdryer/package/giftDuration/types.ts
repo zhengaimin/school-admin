@@ -42,6 +42,8 @@ export interface GiftRow {
   schoolName: string;
   /** 学生姓名 */
   studentName: string;
+  /** 学号 */
+  studentCode?: string;
   /** 赠送总分钟数 */
   totalMinutes: number;
   /** 已使用分钟数 */
