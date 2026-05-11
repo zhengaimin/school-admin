@@ -22,3 +22,25 @@ export function getDryerCardRechargesExportInfoApi(params: DryerCardRecharge.Req
 export function getDryerCardRechargesExportApi(params: DryerCardRecharge.ReqGetDryerCardRechargeExportApi): Promise<Blob> {
   return http.get("/admin/dryer-card-recharges/export", params, { responseType: "blob" });
 }
+
+/** 人工确认圈存成功。 */
+export function postConfirmDryerCardRechargeSuccessApi(
+  id: number | string,
+  data: DryerCardRecharge.ReqPostConfirmDryerCardRechargeApi
+) {
+  return http.post<DryerCardRecharge.ResPostConfirmDryerCardRechargeApi>(
+    `/admin/dryer-card-recharges/${id}/confirm-success`,
+    data
+  );
+}
+
+/** 人工确认圈存失败。 */
+export function postConfirmDryerCardRechargeFailedApi(
+  id: number | string,
+  data: DryerCardRecharge.ReqPostConfirmDryerCardRechargeApi
+) {
+  return http.post<DryerCardRecharge.ResPostConfirmDryerCardRechargeApi>(
+    `/admin/dryer-card-recharges/${id}/confirm-failed`,
+    data
+  );
+}

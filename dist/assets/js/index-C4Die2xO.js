@@ -1,1 +1,0 @@
-import{h as e}from"./index-BzysdyGp.js";function t(r){return e.get("/admin/dryer-card-recharges",r)}function n(r){return e.get(`/admin/dryer-card-recharges/${r}`)}function g(r){return e.get("/admin/dryer-card-recharges/export-info",r,{loading:!1})}function c(r){return e.get("/admin/dryer-card-recharges/export",r,{responseType:"blob"})}export{n as a,c as b,g as c,t as g};

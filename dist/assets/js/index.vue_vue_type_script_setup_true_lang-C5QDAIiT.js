@@ -1,1 +1,0 @@
-import{i as s,c as o,o as a,v as n,p as r,y as d}from"./index-BzysdyGp.js";const c={class:"p-3 mb-4 bg-gray-100 rounded-md"},p={class:"font-bold text-blue-500"},l=s({__name:"index",props:{name:{default:""}},setup(t){return(i,e)=>(a(),o("div",c,[e[0]||(e[0]=n(" 学校名称：",-1)),r("span",p,d(t.name),1)]))}});export{l as _};

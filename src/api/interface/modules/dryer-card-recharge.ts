@@ -154,4 +154,22 @@ export namespace DryerCardRecharge {
     /** 页码，默认 1。 */
     page?: number;
   }
+
+  /** 人工确认圈存 - 请求参数。 */
+  export interface ReqPostConfirmDryerCardRechargeApi {
+    /** 卡侧交易号。 */
+    cardTxnNo?: string;
+    /** 失败码。 */
+    failCode?: string;
+    /** 失败原因。 */
+    failMsg?: string;
+    /** 人工处理原因。 */
+    reason: string;
+  }
+
+  /** 人工确认圈存 - 响应 data。 */
+  export interface ResPostConfirmDryerCardRechargeApi {
+    /** 确认结果消息。 */
+    message: string;
+  }
 }

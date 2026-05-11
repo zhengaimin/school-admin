@@ -62,7 +62,7 @@ defineExpose({ acceptParams });
 <template>
   <el-dialog v-model="visible" :title="parameter.title" width="760px" destroy-on-close draggable align-center>
     <div v-loading="loading">
-      <el-descriptions v-if="detail" :column="2" border>
+      <el-descriptions v-if="detail" class="detail-descriptions" :column="2" border>
         <el-descriptions-item label="圈存单号" :span="2">{{ detail.rechargeNo }}</el-descriptions-item>
         <el-descriptions-item label="学校名称">{{ detail.schoolName || "--" }}</el-descriptions-item>
         <el-descriptions-item label="学生姓名">{{ detail.studentName || "--" }}</el-descriptions-item>
@@ -99,5 +99,10 @@ defineExpose({ acceptParams });
 .amount {
   font-weight: 500;
   color: var(--el-color-danger);
+}
+:deep(.detail-descriptions .el-descriptions__label) {
+  width: 120px;
+  min-width: 120px;
+  white-space: nowrap;
 }
 </style>

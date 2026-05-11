@@ -1,1 +1,0 @@
-import{h as t}from"./index-BzysdyGp.js";function s(e){return t.get("/admin/device-usages",e)}function a(e){return t.get(`/admin/device-usages/${e}`)}function n(e){return t.get("/admin/device-usages/export-info",e)}function g(e){return t.get("/admin/device-usages/export",e,{responseType:"blob"})}export{a,g as b,n as c,s as g};
