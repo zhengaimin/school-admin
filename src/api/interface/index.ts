@@ -290,6 +290,10 @@ export namespace DeviceBase {
     schoolId?: number;
     /** 设备状态：0-离线，1-在线 */
     status?: 0 | 1;
+    /** 页码 */
+    page: number;
+    /** 每页导出数量 */
+    pageSize: number;
   }
 
   /** 获取导出信息 - 响应 data */

@@ -16,9 +16,10 @@ const parameter = ref<TModalParams>({
   showConfirm: true
 });
 
-const total = ref(0);
+const totalRecords = ref(0);
+const totalPages = ref(0);
 const selectedPage = ref(1);
-const pageSize = ref(10000);
+const pageSize = ref(1000);
 
 const formData = reactive<FormData>({
   schoolId: undefined,
@@ -26,13 +27,12 @@ const formData = reactive<FormData>({
   status: null
 });
 
-const totalPages = computed(() => (total.value ? Math.ceil(total.value / pageSize.value) : 0));
 const pageOptions = computed(() => {
-  if (!total.value || !totalPages.value) return [];
+  if (!totalRecords.value || !totalPages.value) return [];
   return Array.from({ length: totalPages.value }, (_, index) => {
     const page = index + 1;
     const start = (page - 1) * pageSize.value + 1;
-    const end = Math.min(page * pageSize.value, total.value);
+    const end = Math.min(page * pageSize.value, totalRecords.value);
     return {
       value: page,
       label: `第 ${page} 批（${start} - ${end} 条）`
@@ -47,7 +47,9 @@ function buildBaseParams(): DeviceBase.ReqGetDeviceBaseExportInfoApi {
     deviceType: DEVICE_TYPE.DRYER,
     deviceSn: formData.deviceSn || undefined,
     schoolId: formData.schoolId || undefined,
-    status: formData.status ?? undefined
+    status: formData.status ?? undefined,
+    page: selectedPage.value,
+    pageSize: pageSize.value
   };
 }
 
@@ -66,7 +68,8 @@ async function axiosGetDeviceBaseExportInfoApi(): Promise<ResultData<DeviceBase.
   try {
     const result = await getDeviceBaseExportInfoApi(buildBaseParams());
     if (result.code === 0) {
-      total.value = result.data.total || 0;
+      totalRecords.value = result.data.total || 0;
+      totalPages.value = totalRecords.value ? Math.ceil(totalRecords.value / pageSize.value) : 0;
       selectedPage.value = 1;
     }
     return result;
@@ -106,7 +109,7 @@ function handleSearch() {
 }
 /** 导出 */
 async function handleExport() {
-  if (total.value === 0) return;
+  if (totalRecords.value === 0) return;
 
   exporting.value = true;
   ElNotification({ title: "提示", message: "数据导出中，请稍后", type: "info", duration: 0 });
@@ -169,7 +172,7 @@ defineExpose({ acceptParams });
       <div class="export-settings">
         <div class="settings-info">
           <span class="text-muted">
-            符合条件共 <span class="text-primary">{{ total }}</span> 条数据
+            符合条件共 <span class="text-primary">{{ totalRecords }}</span> 条数据
           </span>
         </div>
         <div class="settings-control">
@@ -188,7 +191,7 @@ defineExpose({ acceptParams });
         v-if="parameter.showConfirm"
         type="primary"
         :loading="exporting"
-        :disabled="loading || total === 0"
+        :disabled="loading || totalRecords === 0"
         @click="handleExport"
       >
         导出
