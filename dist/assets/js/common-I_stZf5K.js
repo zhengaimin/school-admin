@@ -1,1 +1,0 @@
-import{h as o}from"./index-Dw5z9Lvd.js";const n=t=>o.get(`/common/locations?${t}`),i=t=>o.post("/common/file/img_upload",t),a=t=>o.get(`/common/industry_list?${t}`),e=()=>o.get("/admin/public_key",{},{loading:!1});export{i as a,e as g,a as i,n as l};
