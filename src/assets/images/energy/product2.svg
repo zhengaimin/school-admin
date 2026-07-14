@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="44px" height="44px" viewBox="0 0 44 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 4</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EFFDF5" offset="0%"></stop>
+            <stop stop-color="#DBFBE7" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="94.5713189%" y1="92.1185084%" x2="3.91229197%" y2="5.40117837%" id="linearGradient-2">
+            <stop stop-color="#2FEEAA" stop-opacity="0.0784254808" offset="0%"></stop>
+            <stop stop-color="#15D971" stop-opacity="0.120875219" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#1EE891" offset="0%"></stop>
+            <stop stop-color="#0DCD58" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02-4-2企业设置-产品品种2备份" transform="translate(-288.000000, -380.000000)">
+            <g id="编组-4" transform="translate(288.000000, 380.000000)">
+                <rect id="矩形备份-2" stroke="url(#linearGradient-2)" fill="url(#linearGradient-1)" x="0.5" y="0.5" width="43" height="43" rx="8"></rect>
+                <g id="icon/regular/close-circle-2" transform="translate(8.000000, 8.000000)">
+                    <rect id="Rectangle-7" x="0" y="0" width="28" height="28"></rect>
+                    <path d="M12.0405958,2.54385886 C12.2861105,2.53278343 12.5249622,2.62547209 12.6987439,2.79925379 L25.2276379,15.3281477 C25.5693466,15.6698565 25.5693489,16.2238735 25.2276402,16.5655822 L16.5655821,25.2276403 C16.2238734,25.5693491 15.6698517,25.5693514 15.3281429,25.2276426 L2.79924914,12.6987489 C2.62546737,12.5249671 2.53278335,12.2861106 2.54385888,12.0405957 L2.91775007,3.75242561 C2.93815217,3.30016547 3.30016886,2.9381489 3.75242901,2.91774696 L12.0405958,2.54385886 Z M6.62108981,6.46597584 C5.9376723,7.14939335 5.9376723,8.25743206 6.62108981,8.94084957 C7.30450732,9.62426708 8.41254603,9.62426708 9.09596354,8.94084957 C9.77938105,8.25743206 9.77938105,7.14939335 9.09596354,6.46597584 C8.41254603,5.78255832 7.30450732,5.78255832 6.62108981,6.46597584 Z" id="形状结合备份" fill="url(#linearGradient-3)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

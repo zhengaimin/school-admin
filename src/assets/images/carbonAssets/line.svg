@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="20px" viewBox="0 0 22 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>折线</title>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="碳资产与交易-配额管理" transform="translate(-1163.000000, -908.000000)">
+            <g id="编组-18" transform="translate(660.000000, 891.000000)">
+                <g id="折线" transform="translate(504.000000, 17.000000)">
+                    <rect id="矩形备份-38" x="0" y="0" width="20" height="20"></rect>
+                    <path d="M0.714285714,14.2857143 L4.44869425,8.01817548 C5.01408073,7.06927511 6.24165276,6.75837566 7.19055313,7.32376213 C7.35649337,7.42263486 7.50723489,7.54502561 7.63808134,7.6871213 L11.9697234,12.391167 C12.7179461,13.2037165 13.9832018,13.2558637 14.7957513,12.507641 C14.918621,12.3944985 15.0268336,12.2664099 15.1178616,12.1263667 L19.2857143,5.71428571 L19.2857143,5.71428571" id="路径-2" stroke="#16C89D" stroke-width="1.5" stroke-linecap="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

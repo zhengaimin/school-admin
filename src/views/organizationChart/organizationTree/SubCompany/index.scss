@@ -1,0 +1,88 @@
+.company-com {
+  //   border: 1px solid red;
+  height: 100%;
+  background-color: var(--el-bg-color-page);
+  .company-msg {
+    height: 120px;
+    padding: 20px;
+    margin-bottom: 10px;
+
+    // border: 1px solid red;
+    background: #ffffff;
+    border-radius: 10px;
+    > h1 {
+      margin: 0;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #1f304c;
+    }
+    > span {
+      padding: 0 5px;
+      margin: 0;
+      font-size: 12px;
+      font-weight: normal;
+      color: #4a5975;
+      background: #f9fafb;
+      border: 1px solid #dee2eb;
+      border-radius: 4px;
+    }
+    > div {
+      display: flex;
+      justify-content: flex-start;
+      margin-top: 15px;
+      > div {
+        width: 250px;
+        margin-right: 30px;
+        font-size: 14px;
+        color: #4a5975;
+        > span {
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          margin-right: 5px;
+          background: #b6bfd2;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  .company-table {
+    height: calc(100% - 170px);
+
+    // border: 1px solid red;
+    background: #ffffff;
+    border-radius: 10px;
+    .nav-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 45px;
+      padding: 0 20px;
+      border-bottom: 1px solid #dee2eb;
+      > div {
+        > span {
+          display: inline-block;
+          height: 45px;
+          margin-right: 20px;
+          line-height: 45px;
+          cursor: pointer;
+        }
+        .active {
+          color: #0ec69a;
+          border-bottom: 2px solid #0ec69a;
+        }
+      }
+    }
+    .sub-filter-form {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      > label {
+        display: inline-block;
+        margin-right: 10px;
+        font-size: 14px;
+        color: #4a5975;
+      }
+    }
+  }
+}

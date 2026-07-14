@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/regular/catalogue-circle-o-3</title>
+    <g id="icon/regular/catalogue-circle-o-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="矩形" x="0" y="0" width="1024" height="1024"></rect>
+        <path d="M128,576 C163.346224,576 192,547.346224 192,512 C192,476.653776 163.346224,448 128,448 C92.653776,448 64,476.653776 64,512 C64,547.346224 92.653776,576 128,576 Z M512,576 C547.346224,576 576,547.346224 576,512 C576,476.653776 547.346224,448 512,448 C476.653776,448 448,476.653776 448,512 C448,547.346224 476.653776,576 512,576 Z M896,576 C931.346224,576 960,547.346224 960,512 C960,476.653776 931.346224,448 896,448 C860.653776,448 832,476.653776 832,512 C832,547.346224 860.653776,576 896,576 Z" id="形状结合" fill="#4A5975" transform="translate(512.000000, 512.000000) rotate(-270.000000) translate(-512.000000, -512.000000) "></path>
+    </g>
+</svg>

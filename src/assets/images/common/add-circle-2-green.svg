@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/regular/add-circle-2</title>
+    <g id="icon/regular/add-circle-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="矩形" x="0" y="0" width="1024" height="1024"></rect>
+        <path d="M512,192 C529.673112,192 544,206.326888 544,224 L544,480 L800,480 C817.673112,480 832,494.326888 832,512 C832,529.673112 817.673112,544 800,544 L544,544 L544,800 C544,817.673112 529.673112,832 512,832 C494.326888,832 480,817.673112 480,800 L480,543.999 L224,544 C206.326888,544 192,529.673112 192,512 C192,494.326888 206.326888,480 224,480 L480,479.999 L480,224 C480,206.326888 494.326888,192 512,192 Z" id="形状结合" fill="#0EC69A"></path>
+    </g>
+</svg>

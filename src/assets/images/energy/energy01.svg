@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>煤</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FA7087" offset="0%"></stop>
+            <stop stop-color="#F23D4F" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="48" height="48" rx="8"></rect>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02-3-1企业设置-能源品种" transform="translate(-1072.000000, -221.000000)">
+            <g id="编组-12备份-7" transform="translate(1048.000000, 197.000000)">
+                <g id="煤" transform="translate(24.000000, 24.000000)">
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <use id="蒙版" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                    <g id="编组" mask="url(#mask-3)" fill="#FFFFFF" fill-rule="nonzero">
+                        <g transform="translate(12.000000, 10.000000)" id="路径">
+                            <path d="M16.0359418,27.0115861 C30.2287468,19.7824235 19.6852752,6.43080086 17.766255,5.04131387 C18.4052406,6.43083288 18.5276599,8.7827799 17.234213,9.92567113 C15.0467215,1.68831623 9.63996016,0 9.63996016,0 C10.2791069,4.24778796 7.32156998,8.89406821 4.46952578,12.3652717 C4.36925609,10.6718314 4.26215129,9.50187872 3.36643014,7.88100803 C3.1658585,10.9588433 0.798203976,13.4677468 0.155671888,16.5506421 C-0.712837789,20.7258924 2.13827142,24.8683808 6.57547963,27.0131233 L6.57718839,27.0097286 C6.57715613,27.0097607 11.6676972,29.2365843 16.0359418,27.0115861 Z"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

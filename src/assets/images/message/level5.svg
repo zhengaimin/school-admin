@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>紧急通知</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FA7087" offset="0%"></stop>
+            <stop stop-color="#F23D4F" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="24" cy="24" r="24"></circle>
+        <filter x="-14.6%" y="-10.4%" width="129.2%" height="129.2%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.956862745   0 0 0 0 0.278431373   0 0 0 0 0.352941176  0 0 0 0.45 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" stop-opacity="0.65" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="通知管理-普通用户" transform="translate(-284.000000, -573.000000)">
+            <g id="编组-83备份-4" transform="translate(276.000000, 559.000000)">
+                <g id="紧急通知" transform="translate(12.000000, 16.000000)">
+                    <g id="椭圆形">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    </g>
+                    <g id="icon" transform="translate(10.000000, 10.000000)">
+                        <rect id="矩形" transform="translate(14.000000, 14.000000) scale(-1, 1) translate(-14.000000, -14.000000) " x="0" y="0" width="28" height="28"></rect>
+                        <path d="M13.9999079,1.75 C17.2702973,4.75908114 19.6945219,7.48304327 21.2725817,9.92188641 C21.7541541,10.6661418 22.1617882,11.3913553 22.4954838,12.0975269 C23.1443179,13.3121771 23.5401245,14.6823777 23.612694,16.1376977 L23.6147941,16.1818243 C23.6221872,16.3306615 23.6256194,16.4783642 23.625,16.625 C23.625,21.9407407 19.3155977,26.25 13.9999079,26.25 C8.68421803,26.25 4.375,21.9407407 4.375,16.625 C4.375,15.0434661 4.75644148,13.5510234 5.43234444,12.2346529 C5.77179008,11.4680202 6.1922194,10.6970636 6.69379984,9.92188641 C8.16298613,7.65130403 10.5983555,4.9273419 13.9999079,1.75 Z M14.9708402,9.0180194 C14.5752079,8.74052192 14.0295284,8.83628909 13.7520309,9.23192137 L10.356821,14.0725225 C9.9405748,14.6659709 10.0842256,15.4844902 10.677674,15.9007364 L10.6914467,15.9102663 C10.9587299,16.0927005 11.2842028,16.1700706 11.6053455,16.1271193 L15.4646133,15.6109297 L12.2234122,19.6900264 C11.9227767,20.0683756 11.9857762,20.6188013 12.3641253,20.9194367 C12.7424745,21.2200722 13.2929002,21.1570728 13.5935357,20.7787236 L17.5099077,15.8499764 C17.731843,15.5706712 17.8305231,15.2130584 17.7832314,14.8594624 L17.7801799,14.8379727 C17.6739262,14.1309554 17.0196155,13.6374054 16.308324,13.7325371 L12.3627109,14.2602305 L15.1847421,10.2368286 C15.4622396,9.84119636 15.3664724,9.29551688 14.9708402,9.0180194 Z" id="形状结合" fill="url(#linearGradient-4)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

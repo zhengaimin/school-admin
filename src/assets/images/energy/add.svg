@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>水</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F1F3F7" offset="0%"></stop>
+            <stop stop-color="#EFF3FD" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="V1.0" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02-3-1企业设置-能源品种" transform="translate(-686.000000, -411.000000)">
+            <g id="编组-12备份-22" transform="translate(662.000000, 390.000000)">
+                <g id="水" transform="translate(24.000000, 21.000000)">
+                    <circle id="椭圆形" fill="url(#linearGradient-1)" cx="24" cy="24" r="24"></circle>
+                    <g id="icon/regular/add-circle-2" transform="translate(8.000000, 8.000000)">
+                        <rect id="矩形" x="0" y="0" width="32" height="32"></rect>
+                        <path d="M16,6 C16.5522847,6 17,6.44771525 17,7 L16.999,14.999 L25,15 C25.5522847,15 26,15.4477153 26,16 C26,16.5522847 25.5522847,17 25,17 L16.999,16.999 L17,25 C17,25.5522847 16.5522847,26 16,26 C15.4477153,26 15,25.5522847 15,25 L14.999,16.999 L7,17 C6.44771525,17 6,16.5522847 6,16 C6,15.4477153 6.44771525,15 7,15 L14.999,14.999 L15,7 C15,6.44771525 15.4477153,6 16,6 Z" id="形状结合" fill="#8894B3"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
