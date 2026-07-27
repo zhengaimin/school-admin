@@ -1,0 +1,64 @@
+{
+  "version": "0.1.0",
+  "description": "常量索引",
+  "itemFields": ["name", "description", "typeName", "filePath", "values", "lastUpdated"],
+  "constants": [
+    {
+      "name": "DEVICE_TYPE",
+      "description": "设备类型",
+      "typeName": "TDeviceTypeValue",
+      "filePath": "src/config/modules/device/type.ts",
+      "values": ["DRYER-吹风机", "VOICE-语音话机", "VIDEO-视频话机"],
+      "lastUpdated": "2026-05-08"
+    },
+    {
+      "name": "DEVICE_USAGE_STATUS",
+      "description": "设备使用记录状态",
+      "typeName": "TDeviceUsageStatusValue",
+      "filePath": "src/config/modules/device/usage-status.ts",
+      "values": ["PENDING-待使用", "IN_USE-使用中", "SETTLING-正在结算", "COMPLETED-已完成", "TIMEOUT-已超时"],
+      "lastUpdated": "2026-05-09"
+    },
+    {
+      "name": "DRYER_PORT",
+      "description": "吹风机端口",
+      "typeName": "TDryerPortValue",
+      "filePath": "src/config/modules/device/dryer-port.ts",
+      "values": ["0-一路", "1-二路"],
+      "lastUpdated": "2026-05-09"
+    },
+    {
+      "name": "BALANCE_ACCOUNT_STATUS",
+      "description": "余额账户状态",
+      "typeName": "TBalanceAccountStatusValue",
+      "filePath": "src/config/modules/balance-record/status.ts",
+      "values": ["0-冻结", "1-正常"],
+      "lastUpdated": "2026-05-08"
+    },
+    {
+      "name": "GRADE_GRADUATION_STATUS",
+      "description": "年级毕业状态",
+      "typeName": "TGradeGraduationStatusValue",
+      "filePath": "src/config/modules/grade/graduation-status.ts",
+      "values": ["0-未毕业", "1-已毕业"],
+      "lastUpdated": "2026-05-08"
+    },
+    {
+      "name": "STUDENT_TYPE",
+      "description": "学生类型",
+      "typeName": "TStudentTypeValue",
+      "filePath": "src/config/modules/student/type.ts",
+      "values": ["BOARDING-寄宿生", "DAY-走读生"],
+      "lastUpdated": "2026-05-09"
+    },
+    {
+      "name": "STUDENT_STATUS",
+      "description": "学生状态",
+      "typeName": "TStudentStatusValue",
+      "filePath": "src/config/modules/student/status.ts",
+      "values": ["0-停用", "1-在读", "2-毕业", "3-转学"],
+      "lastUpdated": "2026-05-09"
+    }
+  ],
+  "lastUpdated": "2026-05-09"
+}

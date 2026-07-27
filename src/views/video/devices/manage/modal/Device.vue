@@ -161,6 +161,7 @@ function getInitialFormData(): TDeviceFormState {
     messageSoundFlag: YES_NO_FLAG.NO,
     mhcFlag: YES_NO_FLAG.NO,
     addPunchFace: YES_NO_FLAG.NO,
+    volume: 60,
     forbidCallTimes: "",
     forbidCallTimesAry: [createEmptyForbidCallTimeItem()],
     extraConfig: {}
@@ -388,9 +389,9 @@ async function axiosPostDeviceApi(form: DeviceVideoForm, targetSchoolId: number)
   }
 }
 /** 更新设备 */
-async function axiosPutDeviceApi(id: number, form: DeviceVideoForm, targetSchoolId: number) {
+async function axiosPutDeviceApi(id: number, form: DeviceVideoForm) {
   try {
-    const payload = buildPutDevicePayload(form, targetSchoolId, defaultDeviceGroupId);
+    const payload = buildPutDevicePayload(form);
     const result = await putDeviceApi(id, payload);
     if (result.code === 0) {
       ElMessage.success("编辑成功");
@@ -407,8 +408,8 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
   if (!formEl || loading.value) return;
   const valid = await formEl.validate().catch(() => false);
   if (!valid) return;
-  const targetSchoolId = getSubmitSchoolId();
-  if (targetSchoolId == null) return;
+  const targetSchoolId = isAdd.value ? getSubmitSchoolId() : undefined;
+  if (isAdd.value && targetSchoolId == null) return;
   loading.value = true;
   try {
     ruleForm.value.terminalKey = normalizeTerminalKeyBySn(ruleForm.value.terminalSn);
@@ -418,11 +419,11 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
     const submitForm: DeviceVideoForm = {
       ...form
     };
-    if (isAdd.value) {
+    if (isAdd.value && targetSchoolId != null) {
       const result = await axiosPostDeviceApi(submitForm, targetSchoolId);
       if (result.code !== 0) return;
     } else if (isEdit.value && submitForm.id) {
-      const result = await axiosPutDeviceApi(submitForm.id, submitForm, targetSchoolId);
+      const result = await axiosPutDeviceApi(submitForm.id, submitForm);
       if (result.code !== 0) return;
     }
     visible.value = false;
@@ -567,7 +568,20 @@ defineExpose({
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8" />
+          <el-col :span="8">
+            <el-form-item label="视频话机音量（0-100）" prop="volume">
+              <el-input-number
+                v-model="ruleForm.volume"
+                class="w-full"
+                :min="0"
+                :max="100"
+                :step="1"
+                :step-strictly="true"
+                :controls="false"
+                placeholder="请输入视频话机音量"
+              />
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-row :gutter="24">
@@ -680,7 +694,7 @@ defineExpose({
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col v-if="isAdd" :span="6">
             <el-form-item label="是否启用语音留言" prop="messageSoundFlag">
               <el-radio-group v-model="ruleForm.messageSoundFlag">
                 <el-radio v-for="item in YES_NO_FLAG_OPTIONS" :key="item.value" :value="item.value">

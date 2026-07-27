@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { DeviceImportResult } from "../types";
+
 import { computed, toRefs } from "vue";
+import { Upload } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+
 import http from "@/api";
 import { useAssetsPath } from "@/hooks/useAssetsPath";
-import type { DeviceImportResult } from "../types";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -12,16 +15,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (event: "update:modelValue", value: boolean): void;
+  (event: "retry"): void;
 }>();
 
-const { result } = toRefs(props);
 const { getUploadPath } = useAssetsPath();
+/** 导入结果 */
+const { result } = toRefs(props);
 
+/** 弹窗可见 */
 const visible = computed({
   get: () => props.modelValue,
   set: value => emit("update:modelValue", value)
 });
-
+/** 是否可下载失败明细 */
 const canDownloadFailureExcel = computed(() => result.value.failCount > 0);
 
 function getDefaultFailureFileName() {
@@ -58,7 +64,8 @@ function downloadBlob(blob: Blob, filename: string) {
   window.URL.revokeObjectURL(blobUrl);
 }
 
-async function downloadFailureExcel() {
+/** 下载导入失败明细 */
+async function handleDownloadFailureExcel() {
   if (result.value.failureFileUrl) {
     try {
       const downloadUrl = getUploadPath(result.value.failureFileUrl);
@@ -90,10 +97,15 @@ async function downloadFailureExcel() {
   const content = [headers, ...rows].map(row => row.join("\t")).join("\n");
   downloadByBlob(content, result.value.failureFileName || getDefaultFailureFileName());
 }
+
+/** 重新上传设备导入文件 */
+function handleRetryImport() {
+  emit("retry");
+}
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="导入结果" width="760px">
+  <el-dialog v-model="visible" title="导入结果" width="760px" destroy-on-close draggable align-center>
     <el-alert
       :title="`成功：${result.successCount} 条，失败：${result.failCount} 条`"
       :type="result.failCount > 0 ? 'warning' : 'success'"
@@ -108,7 +120,8 @@ async function downloadFailureExcel() {
       <el-table-column prop="reason" label="失败原因" min-width="200" show-overflow-tooltip />
     </el-table>
     <template #footer>
-      <el-button v-if="canDownloadFailureExcel" type="warning" @click="downloadFailureExcel">下载错误Excel</el-button>
+      <el-button v-if="canDownloadFailureExcel" type="warning" @click="handleDownloadFailureExcel">下载错误Excel</el-button>
+      <el-button v-if="result.failCount > 0" type="primary" :icon="Upload" @click="handleRetryImport">重新上传</el-button>
       <el-button type="primary" @click="visible = false">关闭</el-button>
     </template>
   </el-dialog>

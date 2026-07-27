@@ -1,1 +1,0 @@
-var e=(a=>(a.GENERAL="GENERAL",a.FIXED="FIXED",a))(e||{}),r=(a=>(a[a.DISABLED=0]="DISABLED",a[a.ENABLED=1]="ENABLED",a))(r||{});const E={0:"禁用",1:"启用"},D=[{label:E[1],value:1},{label:E[0],value:0}];export{e as G,r as P,D as a};

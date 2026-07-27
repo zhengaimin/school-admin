@@ -1,11 +1,3 @@
-# ai
-.agent
-.aimin-skill
-.am-wf
-.pnpm
-CLAUDE.md
-AGENTS.md
-
 # Logs
 logs
 *.log
@@ -16,7 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+dist/
 dist-ssr
+.vite/
 stats.html
 *.local
 *copy.vue

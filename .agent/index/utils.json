@@ -1,0 +1,7 @@
+{
+  "version": "0.1.0",
+  "description": "公共方法索引",
+  "itemFields": ["name", "description", "filePath", "keywords", "lastUpdated"],
+  "utils": [],
+  "lastUpdated": ""
+}

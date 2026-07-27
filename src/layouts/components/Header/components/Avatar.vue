@@ -5,6 +5,9 @@
     </div>
     <template #dropdown>
       <el-dropdown-menu>
+        <el-dropdown-item v-if="roleType" disabled>
+          <el-icon><UserFilled /></el-icon>{{ roleType }}
+        </el-dropdown-item>
         <el-dropdown-item @click="goToProfile">
           <el-icon><User /></el-icon>个人信息
         </el-dropdown-item>
@@ -35,6 +38,7 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import { computed } from "vue";
 import defaultAvatar from "@/assets/images/avatar1.jpeg";
 import { useAssetsPath } from "@/hooks/useAssetsPath";
+import { ROLE_LEVEL_I18N } from "@/config/modules";
 
 const version = __APP_INFO__.pkg.version;
 
@@ -42,6 +46,12 @@ const router = useRouter();
 const userStore = useUserStore();
 const userInfo = userStore.userInfo;
 const { getUploadPath } = useAssetsPath();
+/** 当前用户角色类型 */
+const roleType = computed(() => {
+  const roleLevel = userStore.userInfo?.roleLevel;
+  return roleLevel ? ROLE_LEVEL_I18N[roleLevel] : "";
+});
+/** 用户头像地址 */
 const avatarSrc = computed(() => {
   const avatar = userStore.userInfo?.avatar;
   if (!avatar) return defaultAvatar;

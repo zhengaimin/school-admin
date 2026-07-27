@@ -1,1 +1,0 @@
-import{h as r}from"./index-CAmXRFs7.js";function t(e){return r.get("/admin/package-records",e)}function o(e){return r.get(`/admin/package-records/${e}`)}function c(e){return r.get("/admin/package-records/export-info",e)}function n(e){return r.get("/admin/package-records/export",e,{responseType:"blob"})}export{o as a,n as b,c,t as g};

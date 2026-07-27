@@ -1,1 +1,0 @@
-import{h as i}from"./index-CAmXRFs7.js";function s(t,n){return i.get("/admin/gifts",t,n)}function e(t){return i.post("/admin/gifts/batch",t)}function f(t){return i.delete(`/admin/gifts/${t.id}`)}function p(t){return i.post("/admin/gifts/batch/cancel",t)}export{p as a,f as d,s as g,e as p};

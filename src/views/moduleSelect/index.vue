@@ -6,7 +6,7 @@ import { useAuthStore, hasModuleAccess, normalizePermissionModules } from "@/sto
 import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
 import { getPermissionModulesApi } from "@/api/modules";
-import { isSuperRoleLevel } from "@/config/modules";
+import { isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
 
@@ -48,6 +48,11 @@ const axiosGetPermissionModulesApi = async (): Promise<void> => {
 const userName = computed(
   () => userStore.userInfo?.realName || userStore.userInfo?.name || userStore.userInfo?.username || "管理员"
 );
+/** 当前用户角色类型 */
+const roleType = computed(() => {
+  const roleLevel = userStore.userInfo?.roleLevel;
+  return roleLevel ? ROLE_LEVEL_I18N[roleLevel] : "";
+});
 
 const moduleDescMap: Record<string, string> = {
   common: "校园管理、小程序配置、支付配置、通知配置等",
@@ -92,13 +97,14 @@ onMounted(() => {
   <div class="module-select-page">
     <!-- 顶部导航栏 -->
     <div class="navbar">
-      <div class="flex items-center justify-between w-full h-16 px-8 max-w-[1200px]">
+      <div class="flex items-center justify-between w-full h-16 px-8 max-w-[1200px] mx-auto">
         <div class="flex items-center gap-4">
           <img class="w-10 h-10 logo-shadow" src="@/assets/images/logo.png" alt="校园管理平台" />
           <span class="text-[22px] font-bold navbar-title-color">校园管理平台</span>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-[15px] font-medium user-info-color">{{ userName }}</span>
+          <span v-if="roleType" class="text-sm user-role-color">（{{ roleType }}）</span>
           <el-button class="navbar-button" type="primary" link @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             退出登录
@@ -152,6 +158,9 @@ onMounted(() => {
 }
 .user-info-color {
   color: var(--el-text-color-regular);
+}
+.user-role-color {
+  color: var(--el-text-color-secondary);
 }
 .navbar-button {
   padding: 8px 12px !important;

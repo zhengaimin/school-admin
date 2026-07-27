@@ -62,6 +62,7 @@ export function buildPostDevicePayload(
     messageSoundFlag: form.messageSoundFlag ?? undefined,
     addPunchFace: form.addPunchFace ?? undefined,
     warnCallTime: normalizeNumberValue(form.warnCallTime),
+    volume: normalizeNumberValue(form.volume),
     billMode: DEVICE_BILL_MODE.MERGED,
     sipUserName: normalizeOptionalString(form.sipUserName),
     sipPassword: normalizeOptionalString(form.sipPassword),
@@ -73,18 +74,11 @@ export function buildPostDevicePayload(
 }
 
 /** 生成更新设备请求参数 */
-export function buildPutDevicePayload(
-  form: DeviceVideoForm,
-  schoolId?: number,
-  defaultDeviceGroupId = -1
-): DeviceVideo.ReqPutDeviceApi {
+export function buildPutDevicePayload(form: DeviceVideoForm): DeviceVideo.ReqPutDeviceApi {
   return {
-    schoolId: typeof schoolId === "number" && !Number.isNaN(schoolId) ? schoolId : undefined,
     name: normalizeOptionalString(form.name),
-    terminalKey: normalizeOptionalString(form.terminalKey),
     terminalMac: normalizeOptionalString(form.terminalMac),
     location: normalizeOptionalString(form.location),
-    deviceGroupId: normalizeSubmitDeviceGroupId(form.deviceGroupId, defaultDeviceGroupId),
     powerOnTime: normalizeOptionalString(form.powerOnTime),
     powerOffTime: normalizeOptionalString(form.powerOffTime),
     heartbeatFrequency: normalizeNumberValue(form.heartbeatFrequency),
@@ -95,9 +89,11 @@ export function buildPutDevicePayload(
     phoneTypes: form.phoneTypes,
     forbidCallTimes: normalizeOptionalString(form.forbidCallTimes),
     messageFlag: form.messageFlag ?? undefined,
-    messageSoundFlag: form.messageSoundFlag ?? undefined,
+    downloadUserFlag: form.downloadUserFlag ?? undefined,
+    mhcFlag: form.mhcFlag ?? undefined,
     addPunchFace: form.addPunchFace ?? undefined,
     warnCallTime: normalizeNumberValue(form.warnCallTime),
+    volume: form.volume === null ? null : normalizeNumberValue(form.volume),
     billMode: DEVICE_BILL_MODE.MERGED,
     sipUserName: normalizeOptionalString(form.sipUserName),
     sipPassword: normalizeOptionalString(form.sipPassword),

@@ -29,7 +29,7 @@ import {
   postDeviceImportApi
 } from "@/api/modules";
 import { ArrowDown, Download, Upload } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import {
   APK_PACKAGE_STATUS,
@@ -43,6 +43,7 @@ import { useDownload } from "@/hooks/useDownload";
 import { dateFormatter, useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import { useSelection } from "@/hooks/useSelection";
+import BatchGroupModal from "./modal/BatchGroup.vue";
 import BatchTagModal from "./modal/BatchTag.vue";
 import BatchUpdateResultModal from "./modal/BatchUpdateResult.vue";
 import ChangeSchoolModal from "./modal/ChangeSchool.vue";
@@ -61,10 +62,9 @@ const { schoolId, isAllSchools } = useSchool();
 /** 选中行信息 */
 const { isSelected, selectedList, selectionChange } = useSelection();
 /** 表格管理 */
-const { proTable, axiosGetTableList, refreshTableList, deleteRow } = useManage(
+const { proTable, axiosGetTableList, refreshTableList } = useManage(
   {
-    get: getDeviceListApi,
-    delete: deleteDeviceApi
+    get: getDeviceListApi
   },
   null,
   list => dateFormatter(list, ["createdAt", "updatedAt"])
@@ -80,6 +80,8 @@ const faceStatesModalRef = ref<InstanceType<typeof FaceStatesModal> | null>(null
 const changeSchoolModalRef = ref<InstanceType<typeof ChangeSchoolModal> | null>(null);
 /** 批量标签弹窗引用 */
 const batchTagModalRef = ref<InstanceType<typeof BatchTagModal> | null>(null);
+/** 批量绑组弹窗引用 */
+const batchGroupModalRef = ref<InstanceType<typeof BatchGroupModal> | null>(null);
 /** 导出弹窗引用 */
 const exportModalRef = ref<InstanceType<typeof ExportModal> | null>(null);
 /** 下载模板加载 */
@@ -175,7 +177,7 @@ const toolMoreButtonWidth = ref(0);
 /** 表头尺寸监听器 */
 let headerResizeObserver: ResizeObserver | null = null;
 /** 右侧工具栏按钮 key */
-type ToolActionKey = "add" | "downloadTemplate" | "importDevice" | "export" | "batchTag" | "batchUpdate";
+type ToolActionKey = "add" | "downloadTemplate" | "importDevice" | "export" | "batchGroup" | "batchTag" | "batchUpdate";
 /** 右侧工具栏按钮配置 */
 type ToolAction = {
   key: ToolActionKey;
@@ -244,6 +246,7 @@ const toolActions: ToolAction[] = [
   { key: "downloadTemplate", label: "下载导入模板", type: "primary", color: "#1d4ed8" },
   { key: "importDevice", label: "导入设备", type: "primary", color: "#0284c7" },
   { key: "export", label: "导出", type: "primary", color: "#0369a1" },
+  { key: "batchGroup", label: "批量绑定设备组", type: "warning", color: "#b45309", needSelection: true },
   { key: "batchTag", label: "批量添加标签", type: "warning", color: "#d97706", needSelection: true },
   { key: "batchUpdate", label: "批量更新", type: "success", color: "#059669" }
 ];
@@ -513,6 +516,16 @@ async function axiosGetDeviceGroupListApi(targetSchoolId?: number, name?: string
     loadingRef.value = false;
   }
 }
+/** 删除设备 */
+async function axiosDeleteDeviceApi(id: number): Promise<boolean> {
+  try {
+    const result = await deleteDeviceApi(id);
+    return result.code === 0;
+  } catch (error) {
+    console.error("axiosDeleteDeviceApi:", error);
+    return false;
+  }
+}
 
 /** 获取设备组搜索选项 */
 function handleFetchDeviceGroupSearchOptions() {
@@ -649,6 +662,16 @@ function handleBeforeImport() {
 /** 导入设备 */
 async function handleImport(options: UploadRequestOptions) {
   if (!schoolId.value) return;
+  try {
+    await ElMessageBox.confirm("导入 VOIP 设备会逐条同步微信设备组，单批最多包含 20 条 VOIP 设备。确定继续吗？", "同步确认", {
+      type: "warning",
+      confirmButtonText: "继续导入",
+      cancelButtonText: "取消"
+    });
+  } catch {
+    deviceImportUploadRef.value?.clearFiles();
+    return;
+  }
   importLoading.value = true;
   try {
     const result = await postDeviceImportApi({ schoolId: String(schoolId.value), file: options.file as File });
@@ -672,8 +695,8 @@ async function handleImport(options: UploadRequestOptions) {
       ElMessage.success("导入成功");
       refreshTableList();
     }
-  } catch (error: any) {
-    ElMessage.error(error?.message || "导入失败，请重试");
+  } catch (error) {
+    console.error("handleImport:", error);
   } finally {
     importLoading.value = false;
   }
@@ -718,6 +741,17 @@ function handleShowBatchTagModal() {
     selectedList.value as DeviceRow[]
   );
 }
+/** 显示批量绑定设备组弹窗 */
+function handleShowBatchGroupModal() {
+  if (!isSelected.value) {
+    ElMessage.warning("请先选择设备");
+    return;
+  }
+  batchGroupModalRef.value?.acceptParams(
+    { title: "批量绑定设备组", type: "Edit", showConfirm: true },
+    selectedList.value as DeviceRow[]
+  );
+}
 /** 从右侧工具按钮打开批量更新弹窗 */
 function handleShowBatchUpdateFromTool() {
   handleShowBatchUpdateDialog();
@@ -737,14 +771,35 @@ function handleShowExportModal() {
   );
 }
 /** 删除设备 */
-function handleDelete(row: DeviceRow) {
+async function handleDelete(row: DeviceRow) {
   if (!row?.id) return;
-  deleteRow(row.id, row.name || row.terminalSn);
+  const message = row.deviceGroupId
+    ? "删除已分组设备时，后端会先将设备移出微信 VOIP 设备组；同步失败将不会删除。确定继续吗？"
+    : `确定删除【${row.name || row.terminalSn}】吗？`;
+  try {
+    await ElMessageBox.confirm(message, "删除确认", {
+      type: "warning",
+      confirmButtonText: "继续删除",
+      cancelButtonText: "取消"
+    });
+  } catch {
+    return;
+  }
+  const success = await axiosDeleteDeviceApi(row.id);
+  if (!success) return;
+  ElMessage.success("删除成功");
+  refreshTableList();
 }
 /** 打开设备导入文件选择框 */
 function handleDeviceImportUpload() {
   const fileInput = deviceImportUploadRef.value?.$el?.querySelector("input[type='file']") as HTMLInputElement | null;
   fileInput?.click();
+}
+/** 重新上传设备导入文件 */
+function handleRetryDeviceImport() {
+  importResultDialogVisible.value = false;
+  deviceImportUploadRef.value?.clearFiles();
+  handleDeviceImportUpload();
 }
 /** 处理右侧工具按钮下拉命令 */
 function onToolDropdownCommand(action: ToolAction) {
@@ -760,6 +815,7 @@ function handleToolAction(action: ToolAction) {
     },
     importDevice: handleDeviceImportUpload,
     export: handleShowExportModal,
+    batchGroup: handleShowBatchGroupModal,
     batchTag: handleShowBatchTagModal,
     batchUpdate: handleShowBatchUpdateFromTool
   };
@@ -1101,9 +1157,10 @@ watch(schoolId, () => {
       @submit="refreshTableList"
     />
     <BatchTagModal ref="batchTagModalRef" @submit="refreshTableList" />
+    <BatchGroupModal ref="batchGroupModalRef" @submit="refreshTableList" />
     <ExportModal ref="exportModalRef" />
     <BatchUpdateResultModal v-model="batchUpdateResultDialogVisible" :result="batchUpdateResult" />
-    <ImportResultModal v-model="importResultDialogVisible" :result="importResult" />
+    <ImportResultModal v-model="importResultDialogVisible" :result="importResult" @retry="handleRetryDeviceImport" />
   </div>
 </template>
 

@@ -3,7 +3,7 @@ import type { Device as DeviceVideo, DeviceGroup, School } from "@/api/interface
 import type { FormInstance, FormRules } from "element-plus";
 
 import { nextTick, reactive, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { getDeviceGroupListApi, getSchoolsListApi, postDeviceChangeSchoolApi } from "@/api/modules";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 
@@ -172,6 +172,19 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
   const valid = await formEl.validate().catch(() => false);
   if (!valid) return;
 
+  const targetGroup = deviceGroupOptions.value.find(item => item.id === ruleForm.deviceGroupId);
+  if (targetGroup?.isVoipGroup) {
+    try {
+      await ElMessageBox.confirm(
+        "更换到 VOIP 设备组会同步调整微信设备组成员，操作失败时设备不会完成换组。确定继续吗？",
+        "同步确认",
+        { type: "warning", confirmButtonText: "确认更换", cancelButtonText: "取消" }
+      );
+    } catch {
+      return;
+    }
+  }
+
   submitLoading.value = true;
   try {
     const payload: DeviceVideo.ReqPostDeviceChangeSchoolApi =
@@ -243,7 +256,7 @@ defineExpose({
   <el-dialog
     v-model="visible"
     :title="parameter.title"
-    width="720px"
+    width="760px"
     :close-on-click-modal="false"
     destroy-on-close
     draggable
