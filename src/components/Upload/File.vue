@@ -56,6 +56,7 @@ import type { Upload } from "@/api/interface";
 
 interface Props {
   api?: (file: File, businessType?: Upload.BusinessType) => Promise<any>;
+  beforeUpload?: UploadProps["beforeUpload"];
   businessType?: Upload.BusinessType;
   drag?: boolean;
   disabled?: boolean;
@@ -90,6 +91,9 @@ const props = withDefaults(defineProps<Props>(), {
   isFullPath: false
 });
 
+const emit = defineEmits<{
+  success: [response: any];
+}>();
 const fileUrl = defineModel<string>({ default: "" });
 const { getUploadPath } = useAssetsPath();
 
@@ -118,8 +122,10 @@ const resolveEmitFileUrl = (url?: string) => {
 const handleHttpUpload = async (options: UploadRequestOptions) => {
   try {
     const api = props.api ?? uploadFileApi;
-    const { data } = await api(options.file, props.businessType);
+    const response = await api(options.file, props.businessType);
+    const { data } = response;
     options.onSuccess(data);
+    emit("success", response);
   } catch (error) {
     options.onError(error as any);
   }
@@ -137,7 +143,7 @@ const handleEdit = () => {
 };
 
 /** 处理上传前校验 */
-const handleBeforeUpload: UploadProps["beforeUpload"] = rawFile => {
+const handleBeforeUpload: UploadProps["beforeUpload"] = async rawFile => {
   const isValidSize = rawFile.size / 1024 / 1024 < props.fileSize;
 
   // 检查文件扩展名
@@ -181,12 +187,13 @@ const handleBeforeUpload: UploadProps["beforeUpload"] = rawFile => {
     }, 0);
   }
 
-  return isValidType && isValidSize;
+  if (!isValidType || !isValidSize) return false;
+  return (await props.beforeUpload?.(rawFile)) ?? true;
 };
 
 /** 处理上传成功 */
 const handleUploadSuccess = (response: Upload.ResFileUpload | undefined) => {
-  if (!response) return;
+  if (!response?.fileUrl) return;
   fileUrl.value = resolveEmitFileUrl(response.fileUrl);
   if (formItemContext?.prop) {
     formContext?.validateField([formItemContext.prop as string]);

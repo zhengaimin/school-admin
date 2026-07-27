@@ -16,19 +16,8 @@ import {
 
 /** 弹窗可见 */
 const visible = ref(false);
-/** 设备详情类型 */
-type DeviceDetail = DeviceVideo.IDeviceItemVo & {
-  /** Sip用户名 */
-  sipUserName?: string | null;
-  /** Sip密码 */
-  sipPassword?: string | null;
-  /** Sip服务地址 */
-  sipDomain?: string | null;
-  /** Sip协议类型 */
-  sipTransportType?: DeviceVideo.ReqPostDeviceApi["sipTransportType"] | null;
-};
 /** 详情数据 */
-const detail = ref<DeviceDetail | null>(null);
+const detail = ref<DeviceVideo.ResGetDeviceDetailApi | null>(null);
 /** 弹窗参数 */
 const parameter = ref<TModalParams>({
   title: "",
@@ -57,7 +46,7 @@ function getPhoneTypeText(value?: DeviceVideo.IDeviceItemVo["phoneType"]) {
   return PHONE_TYPE_I18N[value] || "--";
 }
 /** 获取SIP协议文案 */
-function getSipTypeText(value?: DeviceDetail["sipTransportType"]) {
+function getSipTypeText(value?: DeviceVideo.ResGetDeviceDetailApi["sipTransportType"]) {
   if (!value) return "--";
   return SIP_TYPE_I18N[value] || value;
 }
@@ -133,6 +122,7 @@ defineExpose({ acceptParams });
         <el-descriptions :column="2" border>
           <el-descriptions-item label="心跳频率(ms)">{{ detail.heartbeatFrequency ?? "--" }}</el-descriptions-item>
           <el-descriptions-item label="单次通话时长(分钟)">{{ detail.callTime ?? "--" }}</el-descriptions-item>
+          <el-descriptions-item label="视频话机音量">{{ detail.volume ?? "--" }}</el-descriptions-item>
           <el-descriptions-item label="拨号类型">{{ getPhoneTypeText(detail.phoneType) }}</el-descriptions-item>
           <el-descriptions-item label="拨号模式">{{ getDialModeText(detail.dialMode) }}</el-descriptions-item>
           <el-descriptions-item label="拨号入口">{{ getPhoneTypesText(detail.phoneTypes) }}</el-descriptions-item>

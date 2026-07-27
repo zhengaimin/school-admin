@@ -26,6 +26,11 @@ export function postDeviceChangeSchoolApi(id: number, data: DeviceVideo.ReqPostD
   return http.post<DeviceVideo.ResPostDeviceChangeSchoolApi>(`/admin/devices/${id}/change-school`, data);
 }
 
+/** 批量绑定设备组 */
+export function postDeviceBatchAssignGroupApi(data: DeviceVideo.ReqPostDeviceBatchAssignGroupApi) {
+  return http.post<DeviceVideo.ResPostDeviceBatchAssignGroupApi>("/admin/devices/batch-assign-group", data);
+}
+
 /** 删除设备 */
 export function deleteDeviceApi(id: number) {
   return http.delete(`/admin/devices/${id}`);

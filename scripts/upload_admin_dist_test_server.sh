@@ -14,6 +14,12 @@ SSH_PASSWORD="${SSH_PASSWORD:-${SSH_PASSWORD_DEFAULT}}"
 REMOTE_DIR="${REMOTE_DIR:-/opt/school-app}"
 REMOTE_DIST_DIR="${REMOTE_DIST_DIR:-${REMOTE_DIR}/shared/dist}"
 SCHOOL_HTTP_PORT="${SCHOOL_HTTP_PORT:-8085}"
+SSH_OPTIONS=(
+  -o ConnectTimeout=10
+  -o ConnectionAttempts=1
+  -o NumberOfPasswordPrompts=1
+  -o StrictHostKeyChecking=accept-new
+)
 
 if [ -n "${SSH_PASSWORD}" ]; then
   export SSH_PASSWORD
@@ -49,14 +55,14 @@ echo "Packaging admin dist from ${LOCAL_DIST}"
 COPYFILE_DISABLE=1 tar -C "${LOCAL_DIST}" -czf "${ARCHIVE}" .
 
 echo "Preparing remote dist directory on ${SSH_HOST}"
-ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+ssh "${SSH_OPTIONS[@]}" -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
   "mkdir -p '${REMOTE_TMP_DIR}' '${REMOTE_DIST_DIR}' '${REMOTE_BACKUP_DIR}'"
 
 echo "Uploading admin dist archive"
-scp -P "${SSH_PORT}" "${ARCHIVE}" "${SSH_USER}@${SSH_HOST}:${REMOTE_TMP_DIR}/admin-dist.tar.gz"
+scp "${SSH_OPTIONS[@]}" -P "${SSH_PORT}" "${ARCHIVE}" "${SSH_USER}@${SSH_HOST}:${REMOTE_TMP_DIR}/admin-dist.tar.gz"
 
 echo "Publishing admin dist to ${REMOTE_DIST_DIR}"
-ssh -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
+ssh "${SSH_OPTIONS[@]}" -p "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" \
   "set -euo pipefail
    if [ -d '${REMOTE_DIST_DIR}' ] && find '${REMOTE_DIST_DIR}' -mindepth 1 -maxdepth 1 | grep -q .; then
      tar -C '${REMOTE_DIST_DIR}' -czf '${REMOTE_BACKUP_DIR}/admin-dist-${TS}.tar.gz' .

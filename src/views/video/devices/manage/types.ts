@@ -152,6 +152,8 @@ export type DeviceVideoForm = Partial<Omit<DeviceVideo.IDeviceItemVo, "deviceGro
   dialMode?: TDialModeValue;
   /** 拨号入口集合 */
   phoneTypes?: TPhoneEntryValue[];
+  /** 视频话机音量（0-100），设备级为空时继承学校级配置 */
+  volume?: number | null;
   /** SIP 用户名 */
   sipUserName?: string | null;
   /** SIP 密码 */

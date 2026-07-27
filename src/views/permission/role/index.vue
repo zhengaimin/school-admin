@@ -2,7 +2,7 @@
 import type { System } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
-import { computed, ref, unref } from "vue";
+import { ref, unref } from "vue";
 import { getRoleListApi, deleteRoleApi } from "@/api/modules";
 import { CirclePlus } from "@element-plus/icons-vue";
 import ProTable from "@/components/ProTable/index.vue";
@@ -22,15 +22,14 @@ import { storeToRefs } from "pinia";
 const userStore = useUserStore();
 const { userInfo } = storeToRefs(userStore);
 
-/** 是否超级管理员 */
-const isSuperRole = computed(() => unref(userInfo)?.roleLevel === ROLE_LEVEL.SUPER);
-
 /** 角色列表请求适配 */
-function getRoleList(params: System.ReqRoleList) {
-  const query = { ...params };
-  const { tenantId } = unref(userInfo);
+function getRoleList(params: System.ReqRoleList & { schoolId?: string }) {
+  const { schoolId: _schoolId, ...query } = params;
+  const { roleLevel, tenantId } = unref(userInfo);
 
-  if (!unref(isSuperRole) && tenantId) {
+  // 平台账号的可见租户由后端数据权限控制，不能固定为平台根租户。
+  const isTenantBoundRole = roleLevel !== ROLE_LEVEL.SUPER && roleLevel !== ROLE_LEVEL.PLATFORM;
+  if (isTenantBoundRole && tenantId) {
     query.tenantId = tenantId;
   }
   return getRoleListApi(query);

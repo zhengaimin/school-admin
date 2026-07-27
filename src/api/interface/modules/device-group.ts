@@ -72,4 +72,48 @@ export namespace DeviceGroup {
     /** 总数 */
     total: number;
   }
+
+  /** 新增设备组 - 请求参数 */
+  export interface ReqPostDeviceGroupApi {
+    /** 设备组名称 */
+    name: string;
+    /** 设备组编码 */
+    code: string;
+    /** 是否VOIP组 */
+    isVoipGroup: boolean;
+    /** 学校ID */
+    schoolId: number;
+    /** 描述 */
+    description?: string;
+  }
+
+  /** 更新设备组 - 请求参数 */
+  export interface ReqPutDeviceGroupApi {
+    /** 学校ID */
+    schoolId?: number;
+    /** 状态 */
+    status?: TEnableStatusValue;
+    /** 描述 */
+    description?: string;
+  }
+
+  /** 设备组导入失败条目 */
+  export interface IDeviceGroupImportErrorVo {
+    /** Excel行号 */
+    row: number;
+    /** 设备组名称 */
+    name: string;
+    /** 状态 */
+    status: string;
+    /** 失败原因 */
+    message: string;
+  }
+
+  /** 导入设备组 - 响应 data */
+  export interface ResPostDeviceGroupImportApi {
+    /** 失败数量 */
+    errorCount: number;
+    /** 导入结果 */
+    results: IDeviceGroupImportErrorVo[];
+  }
 }

@@ -1161,7 +1161,10 @@ export namespace Device {
   }
 
   /** 获取设备详情 - 响应 data */
-  export type ResGetDeviceDetailApi = IDeviceItemVo;
+  export interface ResGetDeviceDetailApi extends IDeviceItemVo {
+    /** 视频话机音量（0-100），设备级为空时继承学校级配置，默认60 */
+    volume: number | null;
+  }
 
   /** 新增设备 - 请求参数 */
   export interface ReqPostDeviceApi {
@@ -1207,6 +1210,8 @@ export namespace Device {
     addPunchFace?: TYesNoFlagValue;
     /** 预警通话时长 */
     warnCallTime?: number;
+    /** 视频话机音量（0-100），默认60 */
+    volume?: number;
     /** 计费模式 */
     billMode?: TDeviceBillModeValue;
     /** 学校ID */
@@ -1251,18 +1256,12 @@ export namespace Device {
 
   /** 更新设备 - 请求参数 */
   export interface ReqPutDeviceApi {
-    /** 学校ID */
-    schoolId?: number;
     /** 设备名称 */
     name?: string;
-    /** 终端KEY */
-    terminalKey?: string;
     /** 设备Mac地址 */
     terminalMac?: string;
     /** 设备位置 */
     location?: string;
-    /** 设备组ID */
-    deviceGroupId?: number | -1;
     /** 定时开机时间 */
     powerOnTime?: string;
     /** 定时关机时间 */
@@ -1285,14 +1284,14 @@ export namespace Device {
     messageFlag?: TYesNoFlagValue;
     /** 是否全量同步人脸：Y/N */
     downloadUserFlag?: TYesNoFlagValue;
-    /** 是否开启语音留言：Y/N */
-    messageSoundFlag?: TYesNoFlagValue;
     /** 心理咨询是否开启身份认证：Y/N */
     mhcFlag?: TYesNoFlagValue;
     /** 刷脸时是否记录人员信息：Y/N */
     addPunchFace?: TYesNoFlagValue;
     /** 预警通话时长 */
     warnCallTime?: number;
+    /** 视频话机音量（0-100），设备级为空时继承学校级配置，默认60 */
+    volume?: number | null;
     /** 计费模式 */
     billMode?: TDeviceBillModeValue;
     /** Sip用户名 */
@@ -1303,10 +1302,10 @@ export namespace Device {
     sipDomain?: string;
     /** Sip协议类型 */
     sipTransportType?: TSipTypeValue;
-    /** 设备密码 */
-    password?: string;
     /** 扩展配置 */
     extraConfig?: Record<string, any>;
+    /** 设备密码 */
+    password?: string;
   }
 
   /** 更新设备 - 响应 data */
@@ -1326,6 +1325,44 @@ export namespace Device {
   /** 更换设备学校 - 响应 data */
   export interface ResPostDeviceChangeSchoolApi {
     /** 响应消息 */
+    message: string;
+  }
+
+  /** 批量绑定设备组 - 请求参数 */
+  export interface ReqPostDeviceBatchAssignGroupApi {
+    /** 设备ID列表 */
+    deviceIds: number[];
+    /** 目标设备组ID */
+    deviceGroupId: number;
+  }
+
+  /** 批量绑定设备组结果项 */
+  export interface IDeviceBatchAssignGroupItemVo {
+    /** 设备ID */
+    deviceId: number;
+    /** 设备名称 */
+    deviceName: string;
+    /** 设备组ID */
+    deviceGroupId: number;
+    /** 设备组名称 */
+    deviceGroupName: string;
+    /** 学校ID */
+    schoolId: number;
+    /** 学校名称 */
+    schoolName: string;
+  }
+
+  /** 批量绑定设备组 - 响应 data */
+  export interface ResPostDeviceBatchAssignGroupApi {
+    /** 成功数量 */
+    successCount: number;
+    /** 失败数量 */
+    failedCount: number;
+    /** 成功项 */
+    successItems: IDeviceBatchAssignGroupItemVo[] | null;
+    /** 失败项 */
+    failedItems: Record<string, unknown>[] | null;
+    /** 结果消息 */
     message: string;
   }
 
