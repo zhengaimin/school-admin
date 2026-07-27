@@ -1,0 +1,1 @@
+import{_ as o}from"./Detail.vue_vue_type_script_setup_true_lang-DdcoHI6b.js";import"./index-DISLlrzg.js";import"./index-BNuHxvUr.js";import"./index.vue_vue_type_script_setup_true_lang-BUE0IuVW.js";import"./useAssetsPath-BpU823jB.js";export{o as default};

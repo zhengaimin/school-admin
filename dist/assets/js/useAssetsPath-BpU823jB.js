@@ -1,0 +1,1 @@
+const r={},i=()=>{const e=/^(https?:\/\/)/i;return{getUploadPath:t=>{if(!t)return"";if(e.test(t))return t;const{VITE_IMAGE_SERVER:n}=r;return n?t:`${window.location.origin}${t}`},getPublicPath:t=>`/${t}`}};export{i as u};

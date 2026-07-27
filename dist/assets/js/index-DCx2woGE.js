@@ -1,0 +1,1 @@
+import{h as s}from"./index-DISLlrzg.js";function i(o,t){return s.get("/admin/schools",o,t)}function p(o){return s.post("/admin/schools",o)}function c(o,t){return s.put(`/admin/schools/${o}`,t)}export{c as a,i as g,p};
