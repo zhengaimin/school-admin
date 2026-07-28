@@ -1,0 +1,1 @@
+import{W as t,X as e}from"./index-B7WD6fUL.js";const r=e("form"),i=t(r,{state:()=>({configObj:{},logoForm:{}}),getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{i as f};

@@ -1,1 +1,0 @@
-import{h as e}from"./index-DISLlrzg.js";function s(t,a){return e.get(`/admin/school-rates/${t}/call-rate`,{},a)}function r(t,a){return e.put(`/admin/school-rates/${t}/call-rate`,a)}function l(t,a){return e.get(`/admin/school-rates/${t}/message-rate`,{},a)}function n(t,a){return e.put(`/admin/school-rates/${t}/message-rate`,a)}export{n as a,l as b,s as g,r as p};

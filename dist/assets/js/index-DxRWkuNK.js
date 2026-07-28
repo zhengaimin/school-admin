@@ -1,1 +1,0 @@
-import{h as r}from"./index-DISLlrzg.js";function o(e){return r.get("/admin/call-records",e)}function a(e){return r.get(`/admin/call-records/${e}`)}function l(e){return r.get("/admin/call-records/export-info",e,{loading:!1})}function n(e){return r.get("/admin/call-records/export",e,{responseType:"blob"})}export{o as a,n as b,l as c,a as g};
