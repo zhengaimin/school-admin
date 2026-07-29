@@ -8,9 +8,13 @@ import { getPermissionModulesApi, getRoleDetailApi, getTenantListApi, postCreate
 import RolePermissionTree from "../components/RolePermissionTree.vue";
 import { ENABLE_STATUS, ENABLE_STATUS_OPTIONS, ROLE_LEVEL, ROLE_LEVEL_OPTIONS, ROLE_TYPE, TENANT_TYPE } from "@/config/modules";
 import { normalizePermissionModules } from "@/stores/modules/auth";
+import { useUserStore } from "@/stores/modules/user";
 import { ElMessage } from "element-plus";
+import { CREATABLE_ROLE_LEVELS } from "../constants";
 
 const emit = defineEmits<{ submit: [] }>();
+
+const userStore = useUserStore();
 
 /** 弹窗显隐 */
 const visible = ref(false);
@@ -50,10 +54,11 @@ const isEdit = computed(() => parameter.value.type === "Edit");
 const isView = computed(() => parameter.value.type === "View");
 /** 账号类型选项 */
 const accountTypeOptions = computed(() => {
-  if (isEdit.value && ruleForm.roleLevel === ROLE_LEVEL.SUPER) {
-    return ROLE_LEVEL_OPTIONS;
-  }
-  return ROLE_LEVEL_OPTIONS.filter(option => option.value !== ROLE_LEVEL.SUPER);
+  if (!isAdd.value) return ROLE_LEVEL_OPTIONS;
+
+  const currentRoleLevel = userStore.userInfo.roleLevel;
+  const creatableRoleLevels = currentRoleLevel ? (CREATABLE_ROLE_LEVELS[currentRoleLevel] ?? []) : [];
+  return ROLE_LEVEL_OPTIONS.filter(option => creatableRoleLevels.includes(option.value));
 });
 /** 是否需要显示租户 */
 const shouldShowTenant = computed(() => ruleForm.roleLevel === ROLE_LEVEL.AGENT || ruleForm.roleLevel === ROLE_LEVEL.CUSTOM);
@@ -106,12 +111,15 @@ const axiosGetTenantListApi = async () => {
   }
 };
 /** 获取权限模块列表 */
-const axiosGetPermissionModulesApi = async () => {
+const axiosGetPermissionModulesApi = async (roleLevel: NonNullable<System.ReqPermissionModules["roleLevel"]>) => {
   permissionModulesLoading.value = true;
   try {
-    const modulesRes = await getPermissionModulesApi(ruleForm.roleLevel ? { roleLevel: ruleForm.roleLevel } : undefined, {
-      loading: false
-    });
+    const modulesRes = await getPermissionModulesApi(
+      { roleLevel },
+      {
+        loading: false
+      }
+    );
     const modules = normalizePermissionModules(modulesRes);
     permissionModules.value = modules;
   } catch (error) {
@@ -142,12 +150,9 @@ const axiosGetRoleDetailApi = async (id: number) => {
 
 /** 处理账号类型变化 */
 const handleRoleLevelChange = async (value: System.ReqRoleCreate["roleLevel"]) => {
-  if (isAdd.value) {
-    // 新增时切换账号类型需要刷新权限模块
-    await axiosGetPermissionModulesApi();
-  }
+  if (!isAdd.value || !value) return;
 
-  if (!isAdd.value) return;
+  await axiosGetPermissionModulesApi(value);
   if (value === ROLE_LEVEL.AGENT || value === ROLE_LEVEL.CUSTOM) {
     await ensureTenantList();
     ruleForm.tenantId = undefined;
@@ -167,16 +172,17 @@ const handleSubmitForm = async () => {
   await ruleFormRef.value.validate(async valid => {
     if (!valid) return;
 
+    if (isAdd.value && !accountTypeOptions.value.some(option => option.value === ruleForm.roleLevel)) {
+      ElMessage.warning("不能创建同级或上级角色");
+      return;
+    }
+
     // 收集勾选的权限
     const permissionIds = permissionTreeRef.value?.getCheckedPermissionIds() ?? [];
 
     loading.value = true;
     try {
       if (isAdd.value) {
-        if (ruleForm.roleLevel === ROLE_LEVEL.SUPER) {
-          ElMessage.warning("超级管理员不能添加角色");
-          return;
-        }
         const payload: System.ReqRoleCreate = {
           name: ruleForm.name,
           description: ruleForm.description,
@@ -230,8 +236,7 @@ const acceptParams = async (params: RoleModalParams, row?: System.Role) => {
 
   if (isAdd.value) {
     Object.assign(ruleForm, getInitialFormData());
-    // 首次加载权限模块（可能无 roleLevel 或默认值）
-    await axiosGetPermissionModulesApi();
+    permissionModules.value = [];
   } else if ((isEdit.value || isView.value) && row?.id) {
     // 编辑时加载角色详情与权限
     await axiosGetRoleDetailApi(row.id);
@@ -239,8 +244,9 @@ const acceptParams = async (params: RoleModalParams, row?: System.Role) => {
       await ensureTenantList();
     }
 
-    // 根据角色等级加载权限模块
-    await axiosGetPermissionModulesApi();
+    if (ruleForm.roleLevel) {
+      await axiosGetPermissionModulesApi(ruleForm.roleLevel);
+    }
 
     checkedIds = Array.isArray(ruleForm.permissionIds)
       ? ruleForm.permissionIds.filter((item): item is number => typeof item === "number")

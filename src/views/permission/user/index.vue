@@ -1,3 +1,4 @@
+<!-- 平台、代理商和业务员用户列表 -->
 <script setup lang="ts" name="systemUser">
 import type { System } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
@@ -20,9 +21,11 @@ import {
   ROLE_LEVEL_OPTIONS
 } from "@/config/modules";
 import { useManage } from "@/hooks/useManage";
+import { useUserStore } from "@/stores/modules/user";
 
 const props = defineProps<{ roleLevel?: TRoleLevelValue }>();
 
+const userStore = useUserStore();
 /** 表格列配置 */
 const columns: ColumnProps<System.AdminUser>[] = [
   { type: "index", label: "#", width: 60 },
@@ -38,7 +41,9 @@ const columns: ColumnProps<System.AdminUser>[] = [
     minWidth: 120,
     search: { el: "input", props: { placeholder: "请输入姓名" } }
   },
-  { prop: "phone", label: "手机号", minWidth: 120 },
+  ...((props.roleLevel ?? ROLE_LEVEL.PLATFORM) === ROLE_LEVEL.PLATFORM
+    ? []
+    : [{ prop: "phone", label: "手机号", minWidth: 120 }]),
   {
     prop: "roleLevel",
     label: "账号类型",
@@ -71,6 +76,14 @@ const dataScopeModalRef = ref();
 
 /** 当前账号类型 */
 const pageRoleLevel = computed<TRoleLevelValue>(() => props.roleLevel ?? ROLE_LEVEL.PLATFORM);
+/** 当前角色是否可新增该类型用户 */
+const canCreateUser = computed(() => {
+  const roleLevel = userStore.userInfo.roleLevel;
+  if (!roleLevel || roleLevel === ROLE_LEVEL.SUPER) return true;
+  if (roleLevel === ROLE_LEVEL.PLATFORM) return pageRoleLevel.value !== ROLE_LEVEL.PLATFORM;
+  if (roleLevel === ROLE_LEVEL.AGENT) return pageRoleLevel.value === ROLE_LEVEL.CUSTOM;
+  return false;
+});
 /** 表格标题 */
 const tableHeader = computed(() => getRoleTitle(pageRoleLevel.value));
 
@@ -78,8 +91,8 @@ const tableHeader = computed(() => getRoleTitle(pageRoleLevel.value));
 function getRoleTitle(roleLevel: TRoleLevelValue) {
   return `【${ROLE_LEVEL_I18N[roleLevel]}】用户`;
 }
-/** 判断是否供应商账号 */
-function isSupplierRole(roleLevel?: TRoleLevelValue) {
+/** 判断是否代理商账号 */
+function isAgentRole(roleLevel?: TRoleLevelValue) {
   return roleLevel === ROLE_LEVEL.AGENT;
 }
 
@@ -102,6 +115,10 @@ async function axiosPostResetUserPasswordApi(id: number): Promise<System.ResPost
 
 /** 打开用户弹窗 */
 function handleShowUserModal(type: "Add" | "Edit", row?: System.AdminUser) {
+  if (type === "Add" && !canCreateUser.value) {
+    ElMessage.warning("不能添加同级或上级用户");
+    return;
+  }
   const titleMap = {
     Add: `新增${getRoleTitle(pageRoleLevel.value)}`,
     Edit: `编辑${getRoleTitle(pageRoleLevel.value)}`
@@ -164,6 +181,7 @@ function handleDelete(row: System.AdminUser) {
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" :table-header="tableHeader">
       <template #toolButton>
         <el-button
+          v-if="canCreateUser"
           v-permission="PERMISSION_CODE.USER_CREATE"
           type="primary"
           :icon="CirclePlus"
@@ -185,7 +203,7 @@ function handleDelete(row: System.AdminUser) {
         </el-button>
         <el-button
           v-permission="PERMISSION_CODE.USER_UPDATE"
-          v-if="!isSupplierRole(row.roleLevel ?? pageRoleLevel)"
+          v-if="!isAgentRole(row.roleLevel ?? pageRoleLevel)"
           type="primary"
           link
           @click="handleShowDataScopeModal(row)"

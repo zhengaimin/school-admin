@@ -1,0 +1,1 @@
+import{ab as t,ac as e}from"./index-C1aubrxq.js";const r=e("form"),i=t(r,{state:()=>({configObj:{},logoForm:{}}),getters:{},actions:{setConfigObj(o){this.configObj=o},setLogoObj(o){this.logoForm=o}}});export{i as f};

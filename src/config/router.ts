@@ -68,7 +68,7 @@ export const ROUTE_SYSTEM = {
   USER: "/permission/user",
   /** 平台用户 */
   USER_PLATFORM: "/permission/user/platform",
-  /** 供应商用户 */
+  /** 代理商用户 */
   USER_SUPPLIER: "/permission/user/supplier",
   /** 业务员用户 */
   USER_SALESMAN: "/permission/user/salesman",
