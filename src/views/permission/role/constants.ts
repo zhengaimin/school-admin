@@ -12,11 +12,15 @@ export const CREATABLE_ROLE_LEVELS: Record<TRoleLevelValue, TRoleLevelValue[]> =
 
 /** 权限模块中文名称 */
 export const PERMISSION_MODULE_I18N: Record<string, string> = {
+  system: "系统管理",
   user: "用户管理",
   role: "角色管理",
   permission: "权限管理",
   org: "组织架构",
   tenant: "租户管理",
+  parent: "家长端",
+  teacher: "教师端",
+  communication: "通信模块",
   school: "学校管理",
   device: "设备管理",
   deviceGroup: "设备组管理",

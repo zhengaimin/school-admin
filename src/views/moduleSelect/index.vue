@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { SwitchButton } from "@element-plus/icons-vue";
 import { useAuthStore } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
-import { isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
+import { isAgentRoleLevel, isCustomRoleLevel, isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
 
@@ -15,9 +15,14 @@ const version = __APP_INFO__.pkg.version;
 const PERMISSION_MODULE_KEY = "system";
 
 const moduleList = computed(() => {
+  const roleLevel = userStore.userInfo?.roleLevel;
   // 超级级别账号仅显示权限模块
-  if (isSuperRoleLevel(userStore.userInfo?.roleLevel)) {
+  if (isSuperRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
+  }
+  // 代理商和业务员不显示权限模块
+  if (isAgentRoleLevel(roleLevel) || isCustomRoleLevel(roleLevel)) {
+    return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
   }
   return authStore.moduleListGet;
 });

@@ -130,8 +130,7 @@ export const hasModuleAccess = (moduleKey: string, userModuleKeys: string[]): bo
  */
 const refreshPermissionContext = async (permissionStore: ReturnType<typeof usePermissionStore>) => {
   try {
-    const roleLevel = useUserStore().userInfo?.roleLevel;
-    const result = await getPermissionModulesApi({ roleLevel }, { loading: false, errorTip: false });
+    const result = await getPermissionModulesApi(undefined, { loading: false, errorTip: false });
     if (result?.code === 0) {
       permissionStore.setModulePermissionsByModules(result);
     } else {
