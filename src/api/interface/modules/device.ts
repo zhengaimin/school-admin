@@ -1,6 +1,7 @@
 import type {
   TDeviceTypeValue,
   TDeviceStatusValue,
+  TDeviceWmpfActivationStatusValue,
   TDeviceBillModeValue,
   TDeviceCommandCodeValue,
   TDeviceCommandStatusValue,
@@ -1080,6 +1081,10 @@ export namespace Device {
     deviceGroupName: string;
     /** 设备状态：0-离线，1-在线 */
     status: TDeviceStatusValue;
+    /** WMPF 激活状态：0-未激活，1-已激活 */
+    wmpfActivationStatus: TDeviceWmpfActivationStatusValue;
+    /** WMPF 首次激活时间 */
+    wmpfActivatedAt: string | null;
     /** 定时开机时间 */
     powerOnTime: string | null;
     /** 定时关机时间 */

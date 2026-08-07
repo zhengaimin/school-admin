@@ -1,1 +1,0 @@
-import{a6 as t}from"./index-D9g2wPc6.js";const s=(e,o={})=>t.get("/admin/roles",e,o),a=e=>t.get(`/admin/roles/${e}`),n=e=>t.post("/admin/roles",e),p=(e,o)=>t.put(`/admin/roles/${e}`,o),i=e=>t.delete(`/admin/roles/${e}`);export{p as a,a as b,i as d,s as g,n as p};

@@ -37,6 +37,9 @@ import {
   DEVICE_STATUS,
   DEVICE_STATUS_I18N,
   DEVICE_STATUS_OPTIONS,
+  DEVICE_WMPF_ACTIVATION_STATUS,
+  DEVICE_WMPF_ACTIVATION_STATUS_I18N,
+  DEVICE_WMPF_ACTIVATION_STATUS_OPTIONS,
   DEVICE_TAG_CONTROL_ACTION
 } from "@/config/modules";
 import { useDownload } from "@/hooks/useDownload";
@@ -67,7 +70,7 @@ const { proTable, axiosGetTableList, refreshTableList } = useManage(
     get: getDeviceListApi
   },
   null,
-  list => dateFormatter(list, ["createdAt", "updatedAt"])
+  list => dateFormatter(list, ["createdAt", "updatedAt", "wmpfActivatedAt"])
 );
 
 /** 新增/编辑弹窗引用 */
@@ -226,6 +229,13 @@ const columns: ColumnProps<DeviceRow>[] = [
     fixed: "right",
     search: { el: "select", props: { placeholder: "请选择状态" } }
   },
+  {
+    prop: "wmpfActivationStatus",
+    label: "激活状态",
+    width: 100,
+    enum: DEVICE_WMPF_ACTIVATION_STATUS_OPTIONS
+  },
+  { prop: "wmpfActivatedAt", label: "激活时间", width: 170 },
   { prop: "createdAt", label: "创建时间", width: 170 },
   { prop: "updatedAt", label: "更新时间", width: 170 },
   { prop: "operation", label: "操作", width: 320, fixed: "right" }
@@ -1012,6 +1022,14 @@ watch(schoolId, () => {
         <el-tag :type="row.status === DEVICE_STATUS.ONLINE ? 'success' : 'info'">
           {{ DEVICE_STATUS_I18N[row.status] || "--" }}
         </el-tag>
+      </template>
+      <template #wmpfActivationStatus="{ row }">
+        <el-tag :type="row.wmpfActivationStatus === DEVICE_WMPF_ACTIVATION_STATUS.ACTIVATED ? 'success' : 'info'">
+          {{ DEVICE_WMPF_ACTIVATION_STATUS_I18N[row.wmpfActivationStatus] || "--" }}
+        </el-tag>
+      </template>
+      <template #wmpfActivatedAt="{ row }">
+        {{ row.wmpfActivatedAt || "--" }}
       </template>
       <template #tags="{ row }">
         <div v-if="row.tags?.length" class="flex w-full flex-wrap items-center justify-center gap-2">

@@ -20,6 +20,14 @@
       "lastUpdated": "2026-05-09"
     },
     {
+      "name": "DEVICE_WMPF_ACTIVATION_STATUS",
+      "description": "设备 WMPF 激活状态",
+      "typeName": "TDeviceWmpfActivationStatusValue",
+      "filePath": "src/config/modules/device/activation-status.ts",
+      "values": ["1-已激活", "0-未激活"],
+      "lastUpdated": "2026-08-07"
+    },
+    {
       "name": "DRYER_PORT",
       "description": "吹风机端口",
       "typeName": "TDryerPortValue",
@@ -60,5 +68,5 @@
       "lastUpdated": "2026-05-09"
     }
   ],
-  "lastUpdated": "2026-05-09"
+  "lastUpdated": "2026-08-07"
 }

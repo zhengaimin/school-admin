@@ -1,0 +1,1 @@
+import{a6 as e}from"./index-Bj5EdTS5.js";const n=s=>e.get("/admin/users",s),a=s=>e.get(`/admin/users/${s}`),p=s=>e.post("/admin/users",s),i=(s,t)=>e.put(`/admin/users/${s}`,t),d=s=>e.put("/admin/users/batch-org-department",s),u=s=>e.delete(`/admin/users/${s}`),m=(s,t={})=>e.post(`/admin/users/${s}/reset-password`,t);export{m as a,p as b,i as c,u as d,a as e,n as g,d as p};

@@ -1,1 +1,0 @@
-import{a6 as s}from"./index-D9g2wPc6.js";function i(o,t){return s.get("/admin/schools",o,t)}function p(o){return s.post("/admin/schools",o)}function a(o,t){return s.put(`/admin/schools/${o}`,t)}export{a,i as g,p};

@@ -1,0 +1,28 @@
+/** WMPF 激活状态：1-已激活，0-未激活 */
+export enum DEVICE_WMPF_ACTIVATION_STATUS {
+  /** 已激活 */
+  ACTIVATED = 1,
+  /** 未激活 */
+  NOT_ACTIVATED = 0
+}
+
+export type TDeviceWmpfActivationStatusValue = (typeof DEVICE_WMPF_ACTIVATION_STATUS)[keyof typeof DEVICE_WMPF_ACTIVATION_STATUS];
+
+export const DEVICE_WMPF_ACTIVATION_STATUS_I18N: Record<TDeviceWmpfActivationStatusValue, string> = {
+  [DEVICE_WMPF_ACTIVATION_STATUS.ACTIVATED]: "已激活",
+  [DEVICE_WMPF_ACTIVATION_STATUS.NOT_ACTIVATED]: "未激活"
+};
+
+export const DEVICE_WMPF_ACTIVATION_STATUS_OPTIONS: Array<{
+  label: string;
+  value: TDeviceWmpfActivationStatusValue;
+}> = [
+  {
+    label: DEVICE_WMPF_ACTIVATION_STATUS_I18N[DEVICE_WMPF_ACTIVATION_STATUS.ACTIVATED],
+    value: DEVICE_WMPF_ACTIVATION_STATUS.ACTIVATED
+  },
+  {
+    label: DEVICE_WMPF_ACTIVATION_STATUS_I18N[DEVICE_WMPF_ACTIVATION_STATUS.NOT_ACTIVATED],
+    value: DEVICE_WMPF_ACTIVATION_STATUS.NOT_ACTIVATED
+  }
+];
