@@ -609,6 +609,8 @@ export type { Payment } from "./modules/payment";
 export type { DryerCardRecharge } from "./modules/dryer-card-recharge";
 // 学生余额账户管理模块
 export type { BalanceRecord } from "./modules/balance-record";
+// 赠费余额管理模块
+export type { GiftBalance } from "./modules/gift-balance";
 // 通话记录模块
 export type { CallRecord } from "./modules/call-record";
 // 退款模块

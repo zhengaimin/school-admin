@@ -1,4 +1,4 @@
-import type { BalanceRecord } from "@/api/interface";
+import type { BalanceRecord, GiftBalance } from "@/api/interface";
 
 /** 级联选项 */
 export interface BalanceRecordOptionItem {
@@ -72,4 +72,10 @@ export interface BalanceRecordExportAcceptParams extends TModalParams {
   departmentOptions?: BalanceRecordOptionItem[];
   /** 班级选项 */
   classOptions?: BalanceRecordOptionItem[];
+}
+
+/** 赠费余额导入弹窗接收参数。 */
+export interface GiftBalanceImportAcceptParams extends TModalParams {
+  /** 默认设备类型。 */
+  deviceType: GiftBalance.TGiftBalanceDeviceTypeValue;
 }

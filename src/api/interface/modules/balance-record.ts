@@ -36,6 +36,8 @@ export namespace BalanceRecord {
     totalBalance: string;
     /** 可用余额 */
     availableBalance: string;
+    /** 赠费余额 */
+    giftBalance: string;
     /** 冻结余额 */
     frozenBalance: string;
     /** 累计充值总额 */

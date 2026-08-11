@@ -1,3 +1,4 @@
+<!-- 吹风机使用记录详情弹窗，展示使用明细与学生账户余额。 -->
 <script setup lang="ts">
 import type { DeviceUsage } from "@/api/interface";
 
@@ -64,6 +65,17 @@ defineExpose({ acceptParams });
         <el-divider content-position="left">异常说明</el-divider>
         <el-descriptions :column="1" border>
           <el-descriptions-item label="说明">{{ detail.remark || "--" }}</el-descriptions-item>
+        </el-descriptions>
+      </template>
+
+      <!-- 学生账户 -->
+      <template v-if="detail.studentBalance">
+        <el-divider content-position="left">学生账户</el-divider>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="总余额（元）">{{ detail.studentBalance.totalBalance || "--" }}</el-descriptions-item>
+          <el-descriptions-item label="可用余额（元）">{{ detail.studentBalance.availableBalance || "--" }}</el-descriptions-item>
+          <el-descriptions-item label="赠费余额（元）">{{ detail.studentBalance.giftBalance || "--" }}</el-descriptions-item>
+          <el-descriptions-item label="冻结余额（元）">{{ detail.studentBalance.frozenBalance || "--" }}</el-descriptions-item>
         </el-descriptions>
       </template>
 

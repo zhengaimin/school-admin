@@ -1,3 +1,4 @@
+<!-- 学生管理页面，展示学生基础信息与钱包汇总。 -->
 <script setup lang="ts" name="studentAdmin">
 import type { ColumnProps } from "@/components/ProTable/interface";
 import type { ResultData, Student } from "@/api/interface";
@@ -87,6 +88,7 @@ const columns: ColumnProps<Student.IStudentItemVo>[] = [
   { prop: "idCard", label: "身份证", minWidth: 180 },
   { prop: "walletSummary.totalBalance", label: "总余额（元）", minWidth: 140, align: "center" },
   { prop: "walletSummary.availableBalance", label: "可用余额（元）", minWidth: 140, align: "center" },
+  { prop: "walletSummary.giftBalance", label: "赠费余额（元）", minWidth: 140, align: "center" },
   { prop: "walletSummary.frozenBalance", label: "冻结余额（元）", minWidth: 140, align: "center" },
   { prop: "walletSummary.giftMinutes", label: "赠送剩余分钟数", minWidth: 170, align: "center" },
   { prop: "walletSummary.packageMinutes", label: "套餐剩余分钟数", minWidth: 170, align: "center" },

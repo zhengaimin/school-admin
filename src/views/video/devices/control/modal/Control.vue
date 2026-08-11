@@ -63,8 +63,9 @@ const currentSchoolId = computed<number | "">(() => (userStore.schoolMsg.schoolI
 function getInitialForm(): DialConfigForm {
   return {
     schoolId: "",
+    customerServicePhone: "",
     heartbeatFrequency: "",
-    callTime: "",
+    callTime: null,
     powerOnTime: "06:00",
     powerOffTime: "",
     forbidPhone: "",
@@ -234,6 +235,7 @@ async function axiosGetDialConfigDetailApi(id: number) {
       const rechargeButtonVisible = result.data.extraConfig?.["recharge.button.visible"];
       Object.assign(ruleForm, {
         ...result.data,
+        customerServicePhone: result.data.customerServicePhone || "",
         dialMode,
         phoneTypes: normalizedPhoneTypes,
         downloadUserFlag: result.data.downloadUserFlag || YES_NO_FLAG.NO,
@@ -372,7 +374,11 @@ defineExpose({ acceptParams });
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8" />
+        <el-col :span="8">
+          <el-form-item label="客服电话" prop="customerServicePhone">
+            <el-input v-model="ruleForm.customerServicePhone" placeholder="请输入客服电话" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="24">
         <el-col :span="8">

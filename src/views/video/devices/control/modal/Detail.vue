@@ -10,6 +10,7 @@
   >
     <el-descriptions :column="2" border>
       <el-descriptions-item label="学校">{{ detailForm.schoolName || "--" }}</el-descriptions-item>
+      <el-descriptions-item label="客服电话">{{ detailForm.customerServicePhone || "--" }}</el-descriptions-item>
       <el-descriptions-item label="心跳时间（ms）">{{ detailForm.heartbeatFrequency ?? "--" }}</el-descriptions-item>
       <el-descriptions-item label="单次通话限定时长（分钟）">{{ detailForm.callTime ?? "--" }}</el-descriptions-item>
       <el-descriptions-item label="拨号模式">{{ getDialModeText(detailForm.dialMode) }}</el-descriptions-item>

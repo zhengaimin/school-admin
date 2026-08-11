@@ -1,0 +1,1 @@
+import{a6 as e}from"./index-Xi7TT8Pg.js";const t=s=>e.post("/admin/user/add",s),a=s=>e.get(`/admin/user/list?${s}`),u=s=>e.post("/admin/user/update",s),d=s=>e.post("/admin/user/delete",s),n=s=>e.post("/admin/user/reset_password",s);export{d as a,t as b,u as c,a as d,n as u};

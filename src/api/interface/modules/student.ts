@@ -100,6 +100,8 @@ export namespace Student {
     totalBalance: string;
     /** 可用余额（所有设备） */
     availableBalance: string;
+    /** 赠费余额（所有设备） */
+    giftBalance: string;
     /** 冻结余额（所有设备） */
     frozenBalance: string;
     /** 赠送剩余分钟数（所有设备） */
@@ -118,6 +120,8 @@ export namespace Student {
     totalBalance: string;
     /** 可用余额 */
     availableBalance: string;
+    /** 赠费余额 */
+    giftBalance: string;
     /** 冻结余额 */
     frozenBalance: string;
     /** 赠送剩余分钟数 */
