@@ -1,3 +1,4 @@
+<!-- 通话记录页面，展示通话扣费与学生账户余额信息。 -->
 <script setup lang="ts" name="videoCallRecord">
 import type { CallRecord, ResultData } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
@@ -55,6 +56,7 @@ const columns: ColumnProps<CallRecord.ICallRecordItem>[] = [
   },
   { prop: "usageTypeText", label: "扣费类型", width: 120 },
   { prop: "giftMinutes", label: "赠送通话剩余分钟数", width: 170 },
+  { prop: "giftBalance", label: "赠费余额（元）", width: 130 },
   { prop: "packageMinutes", label: "套餐通话剩余分钟数", width: 170 },
   {
     prop: "totalBalanceAfter",
@@ -326,6 +328,10 @@ watch(
 
       <template #giftMinutes="{ row }">
         {{ getBalanceText(row, "giftMinutes") }}
+      </template>
+
+      <template #giftBalance="{ row }">
+        {{ getBalanceText(row, "giftBalance") }}
       </template>
 
       <template #packageMinutes="{ row }">

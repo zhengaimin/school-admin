@@ -1,3 +1,4 @@
+<!-- 通话记录详情弹窗，展示通话记录与当时学生账户余额。 -->
 <script setup lang="ts">
 import type { CallRecord } from "@/api/interface";
 
@@ -88,12 +89,21 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" v-loading="loading" :title="parameter.title" width="1120px" destroy-on-close draggable align-center>
+  <el-dialog
+    v-model="visible"
+    v-loading="loading"
+    :title="parameter.title"
+    width="1120px"
+    destroy-on-close
+    draggable
+    align-center
+  >
     <div v-if="detail">
       <div v-if="detail.studentBalance" class="mb-4">
         <el-descriptions border title="学生账户">
           <el-descriptions-item label="总余额（元）">{{ detail.studentBalance.totalBalance }}</el-descriptions-item>
           <el-descriptions-item label="可用余额（元）">{{ detail.studentBalance.availableBalance }}</el-descriptions-item>
+          <el-descriptions-item label="赠费余额（元）">{{ detail.studentBalance.giftBalance }}</el-descriptions-item>
           <el-descriptions-item label="冻结余额（元）">{{ detail.studentBalance.frozenBalance }}</el-descriptions-item>
           <el-descriptions-item label="赠送通话剩余分钟数">{{ detail.studentBalance.giftMinutes }}</el-descriptions-item>
           <el-descriptions-item label="套餐通话剩余分钟数">{{ detail.studentBalance.packageMinutes }}</el-descriptions-item>

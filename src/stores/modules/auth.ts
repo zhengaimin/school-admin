@@ -1,7 +1,10 @@
+import type { System } from "@/api/interface";
+import type { TRoleLevelValue } from "@/config/modules";
+
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
 import { getAuthMenuListApi } from "@/api/modules/login";
-import { isSuperRoleLevel } from "@/config/modules";
+import { isSuperRoleLevel, ROLE_LEVEL } from "@/config/modules";
 import { ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "@/config/router";
 import { getPermissionModulesApi } from "@/api/modules/system";
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
@@ -9,7 +12,6 @@ import { useUserStore } from "@/stores/modules/user";
 import { usePermissionStore } from "@/stores/modules/permission";
 import piniaPersistConfig from "@/stores/helper/persist";
 import { generatePrefix } from "@/stores/helper/prefix";
-import type { System } from "@/api/interface";
 
 const id = generatePrefix("auth");
 
@@ -158,35 +160,55 @@ export const getModuleByPath = (path: string): string => {
 };
 
 /**
- * 根据权限过滤菜单
+ * 判断用户管理子菜单是否对当前角色可见
+ * @param path 菜单路径
+ * @param roleLevel 当前角色层级
+ * @returns 是否可见
+ */
+const isUserMenuVisible = (path: string, roleLevel?: TRoleLevelValue): boolean => {
+  if (path === ROUTE_SYSTEM.USER_PLATFORM) {
+    return roleLevel !== ROLE_LEVEL.AGENT && roleLevel !== ROLE_LEVEL.CUSTOM;
+  }
+  if (path === ROUTE_SYSTEM.USER_SUPPLIER) {
+    return roleLevel !== ROLE_LEVEL.CUSTOM;
+  }
+  return true;
+};
+
+/**
+ * 根据权限和角色层级过滤菜单
  * @param menus 菜单列表
  * @param permissions 用户权限码列表
  * @param isSuperAdmin 是否为超级管理员
+ * @param roleLevel 当前角色层级
+ * @returns 过滤后的菜单列表
  */
-const filterMenusByPermission = (menus: Menu.MenuOptions[], permissions: string[], isSuperAdmin: boolean): Menu.MenuOptions[] => {
+const filterMenusByPermission = (
+  menus: Menu.MenuOptions[],
+  permissions: string[],
+  isSuperAdmin: boolean,
+  roleLevel?: TRoleLevelValue
+): Menu.MenuOptions[] => {
   return menus
     .map(menu => ({ ...menu, children: menu.children ? [...menu.children] : undefined }))
     .filter(menu => {
-      // 超级管理员跳过权限检查
-      if (isSuperAdmin) {
-        if (menu.children?.length) {
-          menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
-        }
-        return true;
-      }
+      if (!isUserMenuVisible(menu.path, roleLevel)) return false;
 
       // 检查菜单权限：无 permission 字段则默认允许访问
       const menuPermissions = menu.meta?.permission;
-      if (menuPermissions?.length) {
+      if (!isSuperAdmin && menuPermissions?.length) {
         const hasPermission = menuPermissions.some(code => permissions.includes(code));
         if (!hasPermission) return false;
       }
 
       // 递归处理子菜单
       if (menu.children?.length) {
-        menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin);
+        menu.children = filterMenusByPermission(menu.children, permissions, isSuperAdmin, roleLevel);
         // 如果子菜单全部被过滤掉，父菜单也不显示（除非父菜单本身有组件）
         if (menu.children.length === 0 && !menu.component) return false;
+        if (menu.path === ROUTE_SYSTEM.USER) {
+          menu.redirect = menu.children[0]?.path;
+        }
       }
 
       return true;
@@ -252,7 +274,7 @@ export const useAuthStore = defineStore(id, {
       const { data, systemData, modules, isOperator } = await getAuthMenuListApi();
 
       // 保存全局路由（应用权限过滤）
-      this.globalMenus = filterMenusByPermission(data || [], permissions, isSuperAdmin);
+      this.globalMenus = filterMenusByPermission(data || [], permissions, isSuperAdmin, userInfo?.roleLevel);
 
       // 保存模块列表
       const allModules = modules || [];
@@ -270,7 +292,7 @@ export const useAuthStore = defineStore(id, {
       Object.entries(rawMenus).forEach(([moduleKey, menus]) => {
         // 检查用户是否有访问该模块的权限
         if (isSuperAdmin || hasModuleAccess(moduleKey, userModuleKeys)) {
-          this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin);
+          this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin, userInfo?.roleLevel);
         }
       });
 

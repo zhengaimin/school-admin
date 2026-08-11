@@ -1,3 +1,4 @@
+<!-- 租户管理列表 -->
 <script setup lang="ts" name="systemTenant">
 import type { System } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
@@ -10,6 +11,10 @@ import { deleteTenantApi, getTenantListApi } from "@/api/modules";
 import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS, PERMISSION_CODE } from "@/config/modules";
 import TenantModal from "./modal/Tenant.vue";
 
+/**
+ * 获取租户列表
+ * @param params 查询参数
+ */
 const requestTenantList = async (params: System.ReqTenantList) => {
   const result = await getTenantListApi(params);
   const list = (result.data?.list || []).filter(item => item.parentId !== 0);

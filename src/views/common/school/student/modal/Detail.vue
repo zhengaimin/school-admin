@@ -1,3 +1,4 @@
+<!-- 学生详情弹窗，展示学生钱包汇总及各设备钱包明细。 -->
 <script setup lang="ts">
 import type { ResultData, Student } from "@/api/interface";
 
@@ -120,6 +121,7 @@ defineExpose({ acceptParams });
       <el-descriptions :column="3" border title="钱包汇总" class="mb-4">
         <el-descriptions-item label="总余额（元）">{{ getText(detail.walletSummary?.totalBalance) }}</el-descriptions-item>
         <el-descriptions-item label="可用余额（元）">{{ getText(detail.walletSummary?.availableBalance) }}</el-descriptions-item>
+        <el-descriptions-item label="赠费余额（元）">{{ getText(detail.walletSummary?.giftBalance) }}</el-descriptions-item>
         <el-descriptions-item label="冻结余额（元）">{{ getText(detail.walletSummary?.frozenBalance) }}</el-descriptions-item>
         <el-descriptions-item label="赠送剩余分钟数">{{ getText(detail.walletSummary?.giftMinutes) }}</el-descriptions-item>
         <el-descriptions-item label="套餐剩余分钟数">{{ getText(detail.walletSummary?.packageMinutes) }}</el-descriptions-item>
@@ -136,6 +138,7 @@ defineExpose({ acceptParams });
         </el-table-column>
         <el-table-column prop="totalBalance" label="总余额（元）" min-width="140" align="center" />
         <el-table-column prop="availableBalance" label="可用余额（元）" min-width="140" align="center" />
+        <el-table-column prop="giftBalance" label="赠费余额（元）" min-width="140" align="center" />
         <el-table-column prop="frozenBalance" label="冻结余额（元）" min-width="140" align="center" />
         <el-table-column prop="giftMinutes" label="赠送剩余分钟数" min-width="140" align="center" />
         <el-table-column prop="giftMinutesUsed" label="赠送已使用分钟数" min-width="150" align="center" />

@@ -1,3 +1,4 @@
+/** 设备组接口 */
 import http from "@/api";
 import type { DeviceGroup } from "@/api/interface";
 
@@ -24,6 +25,11 @@ export function putUpdateDeviceGroupApi(id: number, params: DeviceGroup.ReqPutDe
 /** 删除设备组 */
 export function deleteDeviceGroupApi(id: number) {
   return http.delete<null>(`/admin/device-groups/${id}`);
+}
+
+/** 下载设备组导入模板 */
+export function getDeviceGroupTemplateApi(): Promise<Blob> {
+  return http.get("/admin/device-groups/template", undefined, { responseType: "blob" });
 }
 
 /** 导入设备组 */

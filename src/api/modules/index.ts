@@ -16,6 +16,7 @@ export * from "./package";
 export * from "./payment";
 export * from "./dryer-card-recharge";
 export * from "./balance-record";
+export * from "./gift-balance";
 export * from "./call-record";
 export * from "./refund";
 export * from "./merchant";

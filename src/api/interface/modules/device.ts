@@ -1,6 +1,7 @@
 import type {
   TDeviceTypeValue,
   TDeviceStatusValue,
+  TDeviceWmpfActivationStatusValue,
   TDeviceBillModeValue,
   TDeviceCommandCodeValue,
   TDeviceCommandStatusValue,
@@ -794,6 +795,8 @@ export namespace DeviceDialConfig {
     schoolId: number;
     /** 学校名称 */
     schoolName: string;
+    /** 客服电话 */
+    customerServicePhone?: string;
     /** 租户ID */
     tenantId?: number;
     /** 租户名称 */
@@ -873,6 +876,8 @@ export namespace DeviceDialConfig {
   export interface ReqPostDeviceDialConfigApi {
     /** 学校ID */
     schoolId: number;
+    /** 客服电话 */
+    customerServicePhone?: string;
     /** 心跳时间（ms） */
     heartbeatFrequency?: number;
     /** 单次通话限定时长（分钟） */
@@ -925,6 +930,8 @@ export namespace DeviceDialConfig {
 
   /** 修改公话配置 - 请求参数 */
   export interface ReqPutDeviceDialConfigApi {
+    /** 客服电话 */
+    customerServicePhone?: string;
     /** 心跳时间（ms） */
     heartbeatFrequency?: number;
     /** 单次通话限定时长（分钟） */
@@ -1080,6 +1087,10 @@ export namespace Device {
     deviceGroupName: string;
     /** 设备状态：0-离线，1-在线 */
     status: TDeviceStatusValue;
+    /** WMPF 激活状态：0-未激活，1-已激活 */
+    wmpfActivationStatus: TDeviceWmpfActivationStatusValue;
+    /** WMPF 首次激活时间 */
+    wmpfActivatedAt: string | null;
     /** 定时开机时间 */
     powerOnTime: string | null;
     /** 定时关机时间 */
@@ -1650,6 +1661,8 @@ export namespace DeviceUsage {
     totalBalance: string;
     /** 可用余额（元） */
     availableBalance: string;
+    /** 赠费余额（元） */
+    giftBalance: string;
     /** 冻结余额（元） */
     frozenBalance: string;
     /** 赠送时长（分钟） */

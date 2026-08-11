@@ -6,6 +6,7 @@ import type { TPermissionTreeNode } from "../types";
 import { ref, nextTick, watch } from "vue";
 import { ElTree } from "element-plus";
 import { getPermissionCodeLabel } from "@/config/modules";
+import { PERMISSION_MODULE_I18N } from "../constants";
 
 const props = withDefaults(defineProps<{ modules?: System.PermissionModule[] }>(), {
   modules: () => []
@@ -15,7 +16,7 @@ const treeRef = ref<InstanceType<typeof ElTree>>();
 const treeData = ref<TPermissionTreeNode[]>([]);
 const allSelectableKeys = ref<number[]>([]);
 const filterText = ref("");
-const isExpandAll = ref(true);
+const isExpandAll = ref(false);
 const isCheckAll = ref(false);
 
 const defaultProps = {
@@ -42,6 +43,7 @@ const collectSelectableKeys = (nodes: TPermissionTreeNode[]): number[] => {
 const buildPermissionTree = (modules: System.PermissionModule[]) => {
   const nodes = modules
     .map(module => {
+      const moduleName = PERMISSION_MODULE_I18N[module.moduleKey] || module.moduleName || module.moduleKey;
       const permissions = module.permissions || [];
       const children = permissions
         .filter(permission => typeof permission.id === "number")
@@ -57,13 +59,14 @@ const buildPermissionTree = (modules: System.PermissionModule[]) => {
             isPermission: true,
             permissionId: permission.id,
             permissionCode: permissionCode,
-            permissionAction: permission.action
+            permissionAction: permission.action,
+            moduleName
           };
         });
 
       return {
         id: `module:${module.moduleKey}`,
-        name: module.moduleName || module.moduleKey,
+        name: moduleName,
         children: children.length > 0 ? children : undefined
       };
     })
@@ -106,23 +109,28 @@ const getCheckedPermissionIds = () => {
   return Array.from(new Set(permissionIds));
 };
 
-/** 权限树过滤规则 */
-const handleFilterNode = (value: string, data: Record<string, any>) => {
-  if (!value) return true;
-  const name = typeof data.name === "string" ? data.name : "";
-  const permissionCode = typeof data.permissionCode === "string" ? data.permissionCode : "";
-  const permissionAction = typeof data.permissionAction === "string" ? data.permissionAction : "";
-  return name.includes(value) || permissionCode.includes(value) || permissionAction.includes(value);
-};
-
-/** 处理展开/折叠 */
-const handleToggleExpandAll = (value: CheckboxValueType) => {
-  const isExpanded = value === true;
+/** 设置权限树展开状态 */
+const setTreeExpanded = (isExpanded: boolean) => {
   const nodes = treeRef.value?.store.nodesMap;
   if (!nodes) return;
   for (let i in nodes) {
     nodes[i].expanded = isExpanded;
   }
+};
+
+/** 权限树过滤规则 */
+const handleFilterNode = (value: string, data: Record<string, any>) => {
+  if (!value) return true;
+  const name = typeof data.name === "string" ? data.name : "";
+  const moduleName = typeof data.moduleName === "string" ? data.moduleName : "";
+  const permissionCode = typeof data.permissionCode === "string" ? data.permissionCode : "";
+  const permissionAction = typeof data.permissionAction === "string" ? data.permissionAction : "";
+  return name.includes(value) || moduleName.includes(value) || permissionCode.includes(value) || permissionAction.includes(value);
+};
+
+/** 处理展开/折叠 */
+const handleToggleExpandAll = (value: CheckboxValueType) => {
+  setTreeExpanded(value === true);
 };
 
 /** 处理全选/全不选 */
@@ -137,14 +145,18 @@ const handleToggleCheckAll = (value: CheckboxValueType) => {
 };
 
 /** 处理权限过滤关键词变化 */
-const handleFilterTextChange = (val: string) => {
-  treeRef.value?.filter(val);
+const handleFilterTextChange = (value: string) => {
+  treeRef.value?.filter(value);
+  if (!value) return;
+  isExpandAll.value = false;
+  // Element Plus 会在过滤后自动展开命中节点，下一帧恢复为手动展开。
+  window.requestAnimationFrame(() => setTreeExpanded(false));
 };
 
 /** 重置权限树状态 */
 const resetTreeState = () => {
   filterText.value = "";
-  isExpandAll.value = true;
+  isExpandAll.value = false;
   isCheckAll.value = false;
   treeData.value = [];
   allSelectableKeys.value = [];

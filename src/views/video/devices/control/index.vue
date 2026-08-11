@@ -28,6 +28,7 @@ const detailModalRef = ref<InstanceType<typeof Detail> | null>(null);
 const columns: ColumnProps<TDeviceDialConfigItem>[] = [
   { type: "index", label: "#", width: 60 },
   { prop: "schoolName", label: "学校名称", minWidth: 160 },
+  { prop: "customerServicePhone", label: "客服电话", minWidth: 140 },
   { prop: "heartbeatFrequency", label: "心跳时间（ms）", minWidth: 140 },
   { prop: "callTime", label: "单次通话限定时长（分钟）", minWidth: 180 },
   { prop: "powerOnTime", label: "定时开机时间", minWidth: 130 },

@@ -17,4 +17,6 @@ export type TPermissionTreeNode = {
   permissionCode?: string;
   /** 权限动作 */
   permissionAction?: string;
+  /** 所属模块名称 */
+  moduleName?: string;
 };

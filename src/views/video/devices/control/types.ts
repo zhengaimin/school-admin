@@ -27,10 +27,12 @@ export type DialConfigForm = {
   id?: number;
   /** 学校ID */
   schoolId: number | "";
+  /** 客服电话 */
+  customerServicePhone: string;
   /** 心跳时间 */
   heartbeatFrequency: number | "";
   /** 单次通话时长 */
-  callTime: number | "";
+  callTime: number | null;
   /** 定时开机 */
   powerOnTime: string;
   /** 定时关机 */

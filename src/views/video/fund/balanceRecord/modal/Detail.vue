@@ -1,3 +1,4 @@
+<!-- 学生余额账户详情弹窗，展示包含赠费余额在内的账户信息。 -->
 <script setup lang="ts">
 import type { BalanceRecord } from "@/api/interface";
 
@@ -98,6 +99,7 @@ defineExpose({ acceptParams });
       <el-descriptions :column="3" border title="余额信息" class="mb-4">
         <el-descriptions-item label="总余额（元）">{{ getText(detail.totalBalance) }}</el-descriptions-item>
         <el-descriptions-item label="可用余额（元）">{{ getText(detail.availableBalance) }}</el-descriptions-item>
+        <el-descriptions-item label="赠费余额（元）">{{ getText(detail.giftBalance) }}</el-descriptions-item>
         <el-descriptions-item label="冻结余额（元）">{{ getText(detail.frozenBalance) }}</el-descriptions-item>
         <el-descriptions-item label="累计充值总额">{{ getText(detail.totalRecharge) }}</el-descriptions-item>
         <el-descriptions-item label="累计消费总额">{{ getText(detail.totalConsumption) }}</el-descriptions-item>

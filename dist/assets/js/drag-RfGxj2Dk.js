@@ -1,0 +1,1 @@
+const r=function(){let t=!1;const n=document.querySelector(".left"),i=document.querySelector(".right");window.addEventListener("mousemove",function(o){if(t){const c=document.querySelector(".container").clientWidth,s=splitter.clientWidth,e=o.clientX;n.style.width=`${e}px`,i.style.width=`${c-e-s}px`}}),window.addEventListener("mouseup",function(){t=!1})};export{r as d};

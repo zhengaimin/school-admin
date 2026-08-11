@@ -1,4 +1,5 @@
 export * from "./status";
+export * from "./activation-status";
 export * from "./type";
 export * from "./bill-mode";
 export * from "./phone";

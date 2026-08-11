@@ -118,21 +118,6 @@ const axiosLoginApi = async (params: Login.ReqLoginForm) => {
     return null;
   }
 };
-/** 获取权限模块 */
-const axiosGetPermissionModulesApi = async () => {
-  try {
-    const { getPermissionModulesApi } = await import("@/api/modules/system");
-    const result = await getPermissionModulesApi();
-    if (result?.code === 0) {
-      permissionStore.setModulePermissionsByModules(result);
-      return;
-    }
-  } catch (error) {
-    console.warn("axiosGetPermissionModulesApi:", error);
-  }
-  permissionStore.resetModulePermissions();
-};
-
 /** 处理验证码点击 */
 const handleCaptchaClick = () => {
   axiosGetCaptchaApi();
@@ -180,7 +165,6 @@ const handleLogin = () => {
       userStore.setToken(data.token);
       userStore.setUserInfo(data.userInfo);
 
-      await axiosGetPermissionModulesApi();
       await initDynamicRouter();
       tabsStore.setTabs([]);
       keepAliveStore.setKeepAliveName([]);

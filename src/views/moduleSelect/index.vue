@@ -1,50 +1,31 @@
 <script setup lang="ts" name="moduleSelect">
-import { computed, ref, onMounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { SwitchButton } from "@element-plus/icons-vue";
-import { useAuthStore, hasModuleAccess, normalizePermissionModules } from "@/stores/modules/auth";
+import { useAuthStore } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
-import { usePermissionStore } from "@/stores/modules/permission";
-import { getPermissionModulesApi } from "@/api/modules";
-import { isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
+import { isAgentRoleLevel, isCustomRoleLevel, isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const userStore = useUserStore();
-const permissionStore = usePermissionStore();
 const version = __APP_INFO__.pkg.version;
 const PERMISSION_MODULE_KEY = "system";
 
-const availableModules = ref<ModuleItem[]>([]);
-
 const moduleList = computed(() => {
+  const roleLevel = userStore.userInfo?.roleLevel;
   // 超级级别账号仅显示权限模块
-  if (isSuperRoleLevel(userStore.userInfo?.roleLevel)) {
+  if (isSuperRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
   }
-  return availableModules.value;
-});
-
-/** 获取用户有权限的模块 */
-const axiosGetPermissionModulesApi = async (): Promise<void> => {
-  try {
-    const result = await getPermissionModulesApi();
-
-    if (result.code === 0) {
-      const allModules = authStore.moduleListGet;
-      const modules = normalizePermissionModules(result);
-      const moduleKeys = modules.map(module => module.moduleKey).filter((key): key is string => Boolean(key));
-      permissionStore.setModulePermissionsByModules(result);
-      availableModules.value = allModules.filter(module => hasModuleAccess(module.key, moduleKeys));
-    }
-  } catch (error) {
-    console.error("axiosGetPermissionModulesApi:", error);
-    const fallbackKeys = permissionStore.moduleKeysGet ?? [];
-    availableModules.value = authStore.moduleListGet.filter(module => hasModuleAccess(module.key, fallbackKeys));
+  // 代理商和业务员不显示权限模块
+  if (isAgentRoleLevel(roleLevel) || isCustomRoleLevel(roleLevel)) {
+    return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
   }
-};
+  return authStore.moduleListGet;
+});
 const userName = computed(
   () => userStore.userInfo?.realName || userStore.userInfo?.name || userStore.userInfo?.username || "管理员"
 );
@@ -87,10 +68,6 @@ const handleLogout = () => {
   userStore.setToken("");
   router.replace(LOGIN_URL);
 };
-
-onMounted(() => {
-  axiosGetPermissionModulesApi();
-});
 </script>
 
 <template>

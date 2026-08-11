@@ -1,13 +1,15 @@
+<!-- 设备组管理页面 -->
 <script setup lang="ts" name="deviceGrouping">
 import type { DeviceGroup, ResultData } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref, watch } from "vue";
-import { CirclePlus, Upload } from "@element-plus/icons-vue";
+import { CirclePlus, Download, Upload } from "@element-plus/icons-vue";
 
-import { deleteDeviceGroupApi, getDeviceGroupListApi, putUpdateDeviceGroupApi } from "@/api/modules";
+import { deleteDeviceGroupApi, getDeviceGroupListApi, getDeviceGroupTemplateApi, putUpdateDeviceGroupApi } from "@/api/modules";
 import { ENABLE_STATUS_OPTIONS } from "@/config/modules";
 import ProTable from "@/components/ProTable/index.vue";
+import { useDownload } from "@/hooks/useDownload";
 import { useManage } from "@/hooks/useManage";
 import { useSchool } from "@/hooks/useSchool";
 import DeviceGroupModal from "./modal/DeviceGroup.vue";
@@ -68,6 +70,15 @@ async function axiosPutUpdateDeviceGroupStatusApi(row: DeviceGroup.IDeviceGroupI
     return { code: -1, msg: "请求失败", data: null };
   }
 }
+/** 下载设备组导入模板 */
+async function axiosGetDeviceGroupTemplateApi(): Promise<Blob> {
+  try {
+    return await getDeviceGroupTemplateApi();
+  } catch (error) {
+    console.error("axiosGetDeviceGroupTemplateApi:", error);
+    throw error;
+  }
+}
 
 /**
  * 显示新增编辑弹窗
@@ -96,6 +107,10 @@ function handleShowImport(): void {
 function handleShowDeviceList(row: DeviceGroup.IDeviceGroupItemVo): void {
   deviceListModalRef.value?.acceptParams({ title: `设备列表 - ${row.name}`, type: "View", showConfirm: false }, row);
 }
+/** 下载设备组导入模板 */
+async function handleDownloadTemplate(): Promise<void> {
+  await useDownload(axiosGetDeviceGroupTemplateApi, "设备组导入模板", {}, false);
+}
 /**
  * 修改状态
  * @param row 当前设备组
@@ -114,6 +129,7 @@ watch(schoolId, () => refreshTableList());
     <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="设备组管理">
       <template #toolButton>
         <el-button type="primary" :icon="CirclePlus" @click="handleShowModal('Add')">新增</el-button>
+        <el-button type="primary" :icon="Download" @click="handleDownloadTemplate">下载导入模板</el-button>
         <el-button type="primary" :icon="Upload" @click="handleShowImport">导入</el-button>
       </template>
 

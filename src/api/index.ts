@@ -114,7 +114,12 @@ class RequestHttp {
 
           if (statusStr.startsWith("4")) {
             if (shouldShowError) {
-              ElMessage.error(errorCode[data.code] || data.msg || checkStatus(response.status));
+              const errorMessage = errorCode[data.code] || data.msg;
+              if (errorMessage) {
+                ElMessage.error(errorMessage);
+              } else {
+                checkStatus(response.status);
+              }
             }
           } else {
             // 其他错误（5xx等），使用系统级别的错误

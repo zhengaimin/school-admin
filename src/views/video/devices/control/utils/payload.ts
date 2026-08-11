@@ -8,7 +8,7 @@ function normalizeOptionalString(value?: string | null) {
 }
 
 /** 规范化数值输入 */
-function normalizeNumberValue(value?: number | "") {
+function normalizeNumberValue(value?: number | "" | null) {
   return typeof value === "number" && !Number.isNaN(value) ? value : undefined;
 }
 
@@ -87,6 +87,7 @@ function buildForbidCallTimesValue(form: DialConfigForm) {
 /** 生成更新公话配置请求参数 */
 export function buildPutDeviceDialConfigPayload(form: DialConfigForm): DeviceDialConfig.ReqPutDeviceDialConfigApi {
   return {
+    customerServicePhone: normalizeOptionalString(form.customerServicePhone),
     heartbeatFrequency: normalizeNumberValue(form.heartbeatFrequency),
     callTime: normalizeNumberValue(form.callTime),
     powerOnTime: normalizeOptionalString(form.powerOnTime),

@@ -1375,7 +1375,7 @@ const authMenuList = {
             component: "/permission/user/supplier/index",
             meta: {
               icon: "",
-              title: "供应商用户",
+              title: "代理商用户",
               isLink: "",
               isHide: false,
               isFull: false,
