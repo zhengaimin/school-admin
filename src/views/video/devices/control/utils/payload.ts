@@ -87,7 +87,7 @@ function buildForbidCallTimesValue(form: DialConfigForm) {
 /** 生成更新公话配置请求参数 */
 export function buildPutDeviceDialConfigPayload(form: DialConfigForm): DeviceDialConfig.ReqPutDeviceDialConfigApi {
   return {
-    customerServicePhone: normalizeOptionalString(form.customerServicePhone),
+    customerServicePhone: form.customerServicePhone.trim(),
     heartbeatFrequency: normalizeNumberValue(form.heartbeatFrequency),
     callTime: normalizeNumberValue(form.callTime),
     powerOnTime: normalizeOptionalString(form.powerOnTime),
