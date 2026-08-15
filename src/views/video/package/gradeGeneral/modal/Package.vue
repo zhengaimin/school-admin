@@ -45,7 +45,10 @@ const mergedGradeOptions = computed(() => {
 const rules: FormRules = {
   deviceType: [{ required: true, message: "请选择设备类型", trigger: "change" }],
   gradeIds: [{ required: true, message: "请选择年级", trigger: "change" }],
-  basePrice: [{ required: true, message: "请输入基础价格", trigger: "blur" }],
+  basePrice: [
+    { required: true, message: "请输入基础价格", trigger: "blur" },
+    { type: "number", min: 0.01, message: "基础价格必须大于0", trigger: "blur" }
+  ],
   totalMonths: [{ required: true, message: "请输入套餐月数", trigger: "blur" }]
 };
 
@@ -53,7 +56,6 @@ const getInitialFormData = (): Partial<GradeGeneralPackage.ReqPostGradeGeneralPa
   schoolId: 0,
   gradeIds: [],
   deviceType: DEVICE_TYPE.VIDEO,
-  basePrice: 0,
   totalMonths: 1,
   packageContent: { messageCount: -1 },
   templateDescription: "",
@@ -192,7 +194,14 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="基础价格" prop="basePrice">
-            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" style="width: 100%" />
+            <el-input-number
+              v-model="ruleForm.basePrice"
+              :min="0"
+              :precision="2"
+              :controls="false"
+              placeholder="请输入基础价格"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -206,7 +215,13 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.VIDEO" :gutter="24">
         <el-col :span="12">
           <el-form-item label="视频通话时长(分钟)">
-            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" style="width: 100%" />
+            <el-input-number
+              v-model="ruleForm.packageContent!.videoCallMinutes"
+              :min="0"
+              :controls="false"
+              placeholder="请输入视频通话时长"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">

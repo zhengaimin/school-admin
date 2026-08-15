@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GradePackage } from "@/api/interface";
+import type { FormRules } from "element-plus";
 
 import { ref, unref, computed, watch } from "vue";
 import { ElMessage } from "element-plus";
@@ -40,17 +41,20 @@ const mergedGradeOptions = computed(() => {
 });
 
 const validateEndTime = (_rule: any, value: string, callback: any) => {
-  if (value && ruleForm.value.startTime && value <= ruleForm.value.startTime) {
-    callback(new Error("结束时间必须大于开始时间"));
+  if (value && ruleForm.value.startTime && value < ruleForm.value.startTime) {
+    callback(new Error("结束时间不能早于开始时间"));
   } else {
     callback();
   }
 };
 
-const rules = {
+const rules: FormRules = {
   deviceType: [{ required: true, message: "请选择设备类型", trigger: "change" }],
   gradeIds: [{ required: true, message: "请选择年级", trigger: "change" }],
-  basePrice: [{ required: true, message: "请输入基础价格", trigger: "blur" }],
+  basePrice: [
+    { required: true, message: "请输入基础价格", trigger: "blur" },
+    { type: "number", min: 0.01, message: "基础价格必须大于0", trigger: "blur" }
+  ],
   totalMonths: [{ required: true, message: "请输入套餐月数", trigger: "blur" }],
   endTime: [{ validator: validateEndTime, trigger: "change" }]
 };
@@ -59,7 +63,6 @@ const getInitialFormData = (): Partial<GradePackage.ReqPostGradeFixedPackageApi>
   schoolId: 0,
   gradeIds: [],
   deviceType: DEVICE_TYPE.VIDEO,
-  basePrice: 0,
   totalMonths: 0,
   startTime: "",
   endTime: "",
@@ -255,7 +258,14 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="基础价格（元/月）" prop="basePrice">
-            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" style="width: 100%" />
+            <el-input-number
+              v-model="ruleForm.basePrice"
+              :min="0"
+              :precision="2"
+              :controls="false"
+              placeholder="请输入基础价格"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -301,7 +311,13 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="语音通话时长（分钟/月）">
-            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" style="width: 100%" />
+            <el-input-number
+              v-model="ruleForm.packageContent!.videoCallMinutes"
+              :min="0"
+              :controls="false"
+              placeholder="请输入视频通话时长"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">

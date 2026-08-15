@@ -44,7 +44,10 @@ const mergedGradeOptions = computed(() => {
 const rules: FormRules = {
   deviceType: [{ required: true, message: "请选择设备类型", trigger: "change" }],
   gradeIds: [{ required: true, message: "请选择年级", trigger: "change" }],
-  basePrice: [{ required: true, message: "请输入基础价格", trigger: "blur" }],
+  basePrice: [
+    { required: true, message: "请输入基础价格", trigger: "blur" },
+    { type: "number", min: 0.01, message: "基础价格必须大于0", trigger: "blur" }
+  ],
   totalMonths: [{ required: true, message: "请输入套餐月数", trigger: "blur" }]
 };
 
@@ -53,7 +56,6 @@ function getInitialFormData(): Partial<GradeGeneralPackage.ReqPostGradeGeneralPa
     schoolId: 0,
     gradeIds: [],
     deviceType: DEVICE_TYPE.DRYER,
-    basePrice: 0,
     totalMonths: 1,
     packageContent: {},
     templateDescription: "",
@@ -99,7 +101,7 @@ async function axiosPostGradeGeneralPackageApi(form: Partial<GradeGeneralPackage
       schoolId: Number(form.schoolId ?? 0),
       gradeIds: form.gradeIds ?? [],
       deviceType: form.deviceType ?? DEVICE_TYPE.DRYER,
-      basePrice: form.basePrice ?? 0,
+      basePrice: form.basePrice!,
       totalMonths: form.totalMonths ?? 1,
       packageContent: form.packageContent,
       templateDescription: form.templateDescription,
@@ -120,7 +122,7 @@ async function axiosPostGradeGeneralPackageApi(form: Partial<GradeGeneralPackage
 async function axiosPutGradeGeneralPackageApi(id: number, form: Partial<GradeGeneralPackage.ReqPutGradeGeneralPackageApi>) {
   try {
     const payload: GradeGeneralPackage.ReqPutGradeGeneralPackageApi = {
-      basePrice: form.basePrice ?? 0,
+      basePrice: form.basePrice!,
       totalMonths: form.totalMonths ?? 1,
       status: form.status ?? PACKAGE_STATUS.ENABLED,
       gradeIds: form.gradeIds,
@@ -245,7 +247,14 @@ defineExpose({ acceptParams });
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="基础价格" prop="basePrice">
-            <el-input-number v-model="ruleForm.basePrice" :min="0" :precision="2" :controls="false" class="w-full" />
+            <el-input-number
+              v-model="ruleForm.basePrice"
+              :min="0"
+              :precision="2"
+              :controls="false"
+              placeholder="请输入基础价格"
+              class="w-full"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -259,7 +268,13 @@ defineExpose({ acceptParams });
       <el-row v-if="ruleForm.deviceType === DEVICE_TYPE.VIDEO" :gutter="24">
         <el-col :span="12">
           <el-form-item label="视频通话时长(分钟)">
-            <el-input-number v-model="ruleForm.packageContent!.videoCallMinutes" :min="0" :controls="false" class="w-full" />
+            <el-input-number
+              v-model="ruleForm.packageContent!.videoCallMinutes"
+              :min="0"
+              :controls="false"
+              placeholder="请输入视频通话时长"
+              class="w-full"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
