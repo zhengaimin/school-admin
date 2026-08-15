@@ -1,9 +1,9 @@
 {
   "name": "school-admin",
   "private": true,
-  "version": "1.1.56",
+  "version": "1.1.57",
   "packageManager": "pnpm@10.13.1",
-  "buildTime": "2026/8/15 23:25:40",
+  "buildTime": "2026/8/15 23:39:03",
   "type": "module",
   "description": "校园服务系统",
   "scripts": {

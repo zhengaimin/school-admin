@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import type { ResultData, System } from "@/api/interface";
+import type { TRoleLevelValue } from "@/config/modules";
+import type { TagProps, TransferDataItem } from "element-plus";
 
 import { computed, ref } from "vue";
 import { getAdminUserListApi, putBatchUpdateAdminUsersOrgDepartmentApi } from "@/api/modules";
-import type { TransferDataItem } from "element-plus";
 import type { TransferOption, UserAssignParams } from "../types";
 import { ElMessage } from "element-plus";
+import { ROLE_LEVEL } from "@/config/modules";
 
 const emit = defineEmits<{ submit: [{ departmentId: number; userIds: number[] }] }>();
+
+const ROLE_LEVEL_TAG_TYPE: Record<TRoleLevelValue, TagProps["type"]> = {
+  [ROLE_LEVEL.SUPER]: "danger",
+  [ROLE_LEVEL.PLATFORM]: "primary",
+  [ROLE_LEVEL.AGENT]: "warning",
+  [ROLE_LEVEL.CUSTOM]: "success"
+};
 
 const visible = ref(false);
 const loading = ref(false);
@@ -23,21 +32,23 @@ const allUsers = ref<System.AdminUser[]>([]);
 const originUserIds = ref<number[]>([]);
 const selectedUserIds = ref<number[]>([]);
 
-/** 弹窗标题 */
-const dialogTitle = computed(() => {
-  const name = departmentName.value ? ` - ${departmentName.value}` : "";
-  return `${parameter.value.title}${name}`;
-});
-
 const isView = computed(() => parameter.value.type === "View");
 
 /** 构建穿梭框数据 */
 const transferOptions = computed<TransferOption[]>(() => {
   return allUsers.value.map(user => ({
     key: user.id,
-    label: user.realName ? `${user.realName} (${user.username})` : user.username
+    label: user.realName ? `${user.realName}(${user.username})` : user.username,
+    roleName: user.roleName,
+    roleLevel: user.roleLevel,
+    disabled: user.orgDepartmentId != null && user.orgDepartmentId !== departmentId.value
   }));
 });
+
+/** 获取角色标签类型 */
+function getRoleTagType(roleLevel?: TRoleLevelValue): TagProps["type"] {
+  return roleLevel ? ROLE_LEVEL_TAG_TYPE[roleLevel] : "info";
+}
 
 /** 过滤用户 */
 const filterMethod = (query: string, option: TransferDataItem) => {
@@ -147,7 +158,7 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="dialogTitle" width="720px" destroy-on-close draggable align-center>
+  <el-dialog v-model="visible" :title="parameter.title" width="900px" destroy-on-close draggable align-center>
     <div class="text-sm text-gray-500 mb-3">当前部门：{{ departmentName || "-" }}</div>
     <div v-loading="loading || saving" class="flex w-full items-center min-h-[300px]">
       <el-transfer
@@ -159,7 +170,16 @@ defineExpose({ acceptParams });
         filter-placeholder="搜索用户"
         class="w-full"
         :disabled="isView"
-      />
+      >
+        <template #default="{ option }">
+          <div class="flex w-full min-w-0 items-center justify-between gap-2">
+            <span class="min-w-0 truncate">{{ option.label }}</span>
+            <el-tag size="small" :type="getRoleTagType(option.roleLevel)" class="flex-shrink-0">
+              {{ option.roleName || "-" }}
+            </el-tag>
+          </div>
+        </template>
+      </el-transfer>
     </div>
 
     <template #footer>

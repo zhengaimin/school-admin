@@ -1,3 +1,5 @@
+import type { TRoleLevelValue } from "@/config/modules";
+
 /** 用户分配弹窗参数 */
 export type UserAssignParams = TModalParams & {
   /** 部门ID */
@@ -16,4 +18,10 @@ export type TransferOption = {
   key: number;
   /** 文案 */
   label: string;
+  /** 角色名称 */
+  roleName?: string;
+  /** 角色层级 */
+  roleLevel?: TRoleLevelValue;
+  /** 是否禁用 */
+  disabled: boolean;
 };
