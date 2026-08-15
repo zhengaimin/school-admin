@@ -299,10 +299,16 @@ async function initRoleLevelState(value: TRoleLevelValue | undefined) {
 
 /** 获取角色列表 */
 async function axiosGetRoleListApi() {
+  const tenantId = Number(ruleForm.tenantId);
+  if (!Number.isFinite(tenantId) || tenantId <= 0) {
+    roles.value = [];
+    rolesLoaded.value = false;
+    return { code: -1, data: null };
+  }
   if (rolesLoading.value) return { code: -1, data: null };
   rolesLoading.value = true;
   try {
-    const result = await getRoleListApi({ page: 1, pageSize: 2000, roleLevel: props.roleLevel }, { loading: false });
+    const result = await getRoleListApi({ page: 1, pageSize: 2000, roleLevel: props.roleLevel, tenantId }, { loading: false });
     if (result.code === 0) {
       roles.value = result.data?.list || [];
       rolesLoaded.value = true;
