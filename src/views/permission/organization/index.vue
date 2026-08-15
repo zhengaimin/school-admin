@@ -93,12 +93,7 @@ function handleDelete(row: System.OrgDepartment) {
         <el-button v-permission="PERMISSION_CODE.ORG_UPDATE" type="primary" link @click="handleShowModal('Edit', row)">
           编辑
         </el-button>
-        <el-button
-          v-permission="[PERMISSION_CODE.USER_UPDATE, PERMISSION_CODE.ORG_UPDATE]"
-          type="primary"
-          link
-          @click="handleShowUserAssign(row)"
-        >
+        <el-button v-permission="PERMISSION_CODE.ORG_UPDATE" type="primary" link @click="handleShowUserAssign(row)">
           分配用户
         </el-button>
         <el-button v-permission="PERMISSION_CODE.ORG_DELETE" type="danger" link @click="handleDelete(row)">删除</el-button>

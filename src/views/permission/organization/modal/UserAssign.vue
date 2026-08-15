@@ -153,6 +153,7 @@ defineExpose({ acceptParams });
       <el-transfer
         v-model="selectedUserIds"
         :data="transferOptions"
+        :titles="['用户列表', '用户列表']"
         filterable
         :filter-method="filterMethod"
         filter-placeholder="搜索用户"
