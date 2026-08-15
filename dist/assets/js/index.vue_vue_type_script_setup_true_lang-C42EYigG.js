@@ -1,0 +1,1 @@
+import{k as s,c as a,o,f as n,a as r,t as d}from"./index-4NB6xcmQ.js";const c={class:"p-3 mb-4 bg-gray-100 rounded-md"},m={class:"font-bold text-blue-500"},l=s({__name:"index",props:{name:{default:""}},setup(t){return(p,e)=>(o(),a("div",c,[e[0]||(e[0]=n(" 学校名称：",-1)),r("span",m,d(t.name),1)]))}});export{l as _};
