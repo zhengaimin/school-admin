@@ -1,0 +1,1 @@
+import{a6 as e}from"./index-BrSA9F79.js";const p=t=>e.post("/admin/org-departments",t),n=(t,r)=>e.put(`/admin/org-departments/${t}`,r),s=t=>e.delete(`/admin/org-departments/${t}`),m=(t,r={})=>e.get("/admin/org-departments",t,r);export{n as a,s as d,m as g,p};

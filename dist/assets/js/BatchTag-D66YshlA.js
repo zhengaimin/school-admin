@@ -1,0 +1,1 @@
+import{_ as o}from"./BatchTag.vue_vue_type_script_setup_true_lang-BTH4bpAE.js";import"./index-BrSA9F79.js";import"./tags-DJ2lLO17.js";import"./useSchool-BHJdniTg.js";import"./vendor-CXiYYM0T.js";export{o as default};

@@ -166,11 +166,14 @@ export const getModuleByPath = (path: string): string => {
  * @returns 是否可见
  */
 const isUserMenuVisible = (path: string, roleLevel?: TRoleLevelValue): boolean => {
-  if (path === ROUTE_SYSTEM.USER_PLATFORM) {
-    return roleLevel !== ROLE_LEVEL.AGENT && roleLevel !== ROLE_LEVEL.CUSTOM;
+  if (roleLevel === ROLE_LEVEL.CUSTOM && (path === ROUTE_SYSTEM.USER || path.startsWith(`${ROUTE_SYSTEM.USER}/`))) {
+    return false;
   }
-  if (path === ROUTE_SYSTEM.USER_SUPPLIER) {
-    return roleLevel !== ROLE_LEVEL.CUSTOM;
+  if (roleLevel === ROLE_LEVEL.PLATFORM) {
+    return path !== ROUTE_SYSTEM.USER_PLATFORM;
+  }
+  if (roleLevel === ROLE_LEVEL.AGENT) {
+    return path !== ROUTE_SYSTEM.USER_PLATFORM;
   }
   return true;
 };

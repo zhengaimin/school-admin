@@ -298,17 +298,11 @@ async function initRoleLevelState(value: TRoleLevelValue | undefined) {
 }
 
 /** 获取角色列表 */
-async function axiosGetRoleListApi(tenantId?: number) {
+async function axiosGetRoleListApi() {
   if (rolesLoading.value) return { code: -1, data: null };
-  const resolvedTenantId = Number(tenantId ?? ruleForm.tenantId);
-  if (!Number.isFinite(resolvedTenantId) || resolvedTenantId <= 0) {
-    roles.value = [];
-    rolesLoaded.value = false;
-    return { code: -1, data: null };
-  }
   rolesLoading.value = true;
   try {
-    const result = await getRoleListApi({ page: 1, pageSize: 2000, tenantId: resolvedTenantId }, { loading: false });
+    const result = await getRoleListApi({ page: 1, pageSize: 2000, roleLevel: props.roleLevel }, { loading: false });
     if (result.code === 0) {
       roles.value = result.data?.list || [];
       rolesLoaded.value = true;

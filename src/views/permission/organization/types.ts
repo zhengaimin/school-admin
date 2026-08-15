@@ -4,6 +4,8 @@ export type UserAssignParams = TModalParams & {
   departmentId: number;
   /** 部门名称 */
   departmentName: string;
+  /** 租户ID */
+  tenantId: number;
   /** 已分配用户ID */
   userIds?: number[];
 };

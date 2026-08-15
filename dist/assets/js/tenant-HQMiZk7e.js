@@ -1,0 +1,1 @@
+import{a6 as n}from"./index-BrSA9F79.js";const s=t=>n.post("/admin/tenants",t),p=(t,e={})=>n.get("/admin/tenants",t,e),r=t=>n.delete(`/admin/tenants/${t}`),i=t=>n.get(`/admin/tenants/${t}`),o=(t,e)=>n.put(`/admin/tenants/${t}`,e);export{o as a,i as b,r as d,p as g,s as p};

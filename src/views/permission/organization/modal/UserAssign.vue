@@ -57,13 +57,13 @@ function normalizeUserIds(userIds: number[]) {
 }
 
 /** 获取用户列表 */
-async function axiosGetAdminUserListApi(): Promise<ResultData<System.ResGetAdminUserListApi>> {
+async function axiosGetAdminUserListApi(tenantId: number): Promise<ResultData<System.ResGetAdminUserListApi>> {
   if (loading.value) {
     return { code: -1, msg: "用户列表加载中", data: { list: [], total: 0, page: 1, pageSize: 2000 } };
   }
   loading.value = true;
   try {
-    const result = await getAdminUserListApi({ page: 1, pageSize: 2000 });
+    const result = await getAdminUserListApi({ page: 1, pageSize: 2000, tenantId });
     if (result.code === 0) {
       allUsers.value = result.data?.list || [];
     } else {
@@ -87,7 +87,7 @@ async function acceptParams(params: UserAssignParams) {
   departmentName.value = params.departmentName;
   selectedUserIds.value = [];
   originUserIds.value = [];
-  await axiosGetAdminUserListApi();
+  await axiosGetAdminUserListApi(params.tenantId);
   if (departmentId.value) {
     const resolvedOriginUserIds = getDepartmentUserIds(departmentId.value);
     originUserIds.value = normalizeUserIds(resolvedOriginUserIds);

@@ -57,7 +57,8 @@ function handleShowUserAssign(row: System.OrgDepartment) {
     type: "Edit",
     showConfirm: true,
     departmentId: row.id,
-    departmentName: row.name
+    departmentName: row.name,
+    tenantId: row.tenantId
   });
 }
 
