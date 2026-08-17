@@ -1,1 +1,0 @@
-import{a6 as i}from"./index-4NB6xcmQ.js";function a(t){return i.get("/admin/family-bindstatus",t)}function s(t){return i.get(`/admin/family-bindstatus/${t}/subscriptions`)}function e(t){return i.get("/admin/family-bindstatus/export-info",t)}function r(t){return i.get("/admin/family-bindstatus/export",t,{responseType:"blob"})}export{s as a,r as b,e as c,a as g};

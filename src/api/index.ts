@@ -104,10 +104,10 @@ class RequestHttp {
           const data = response.data as ResultData;
           const shouldShowError = (response.config as CustomAxiosRequestConfig)?.errorTip !== false;
 
-          // 403 权限不足：优先显示后端返回的错误信息
+          // 403 权限不足：统一显示权限提示
           if (response.status === 403) {
             if (shouldShowError) {
-              ElMessage.error(data.msg || "您没有权限执行此操作");
+              ElMessage.error(errorCode[100207]);
             }
             return Promise.reject(data);
           }

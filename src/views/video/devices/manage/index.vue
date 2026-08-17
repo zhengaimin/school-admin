@@ -40,10 +40,12 @@ import {
   DEVICE_WMPF_ACTIVATION_STATUS,
   DEVICE_WMPF_ACTIVATION_STATUS_I18N,
   DEVICE_WMPF_ACTIVATION_STATUS_OPTIONS,
-  DEVICE_TAG_CONTROL_ACTION
+  DEVICE_TAG_CONTROL_ACTION,
+  PERMISSION_CODE
 } from "@/config/modules";
 import { useDownload } from "@/hooks/useDownload";
 import { dateFormatter, useManage } from "@/hooks/useManage";
+import { usePermission } from "@/hooks/usePermission";
 import { useSchool } from "@/hooks/useSchool";
 import { useSelection } from "@/hooks/useSelection";
 import BatchGroupModal from "./modal/BatchGroup.vue";
@@ -64,6 +66,8 @@ const defaultDeviceGroupId = -1;
 const { schoolId, isAllSchools } = useSchool();
 /** 选中行信息 */
 const { isSelected, selectedList, selectionChange } = useSelection();
+/** 权限判断 */
+const { hasPermission } = usePermission();
 /** 表格管理 */
 const { proTable, axiosGetTableList, refreshTableList } = useManage(
   {
@@ -303,11 +307,15 @@ const batchUpdateCategoryGroups = computed<BatchUpdateCategoryGroup[]>(() => {
 
 /** 表头可用宽度 */
 const headerAvailableWidth = computed(() => Math.max(headerWidth.value - headerPaddingX.value, 0));
+/** 有权限的表头操作按钮 */
+const permittedHeaderActions = computed(() =>
+  headerActions.filter(action => !action.isUpdateApk || hasPermission(PERMISSION_CODE.APK_UPGRADE))
+);
 /** 表头可见按钮数量 */
 const headerActionVisibleCount = computed(() => {
   const availableWidth = headerAvailableWidth.value;
   const widths = actionWidths.value;
-  if (!availableWidth || !widths.length) return Math.min(3, headerActions.length);
+  if (!availableWidth || !widths.length) return Math.min(3, permittedHeaderActions.value.length);
   for (let count = widths.length; count >= 0; count -= 1) {
     const visibleWidths = widths.slice(0, count).reduce((total, item) => total + item, 0);
     const visibleGaps = count > 0 ? headerGap.value * (count - 1) : 0;
@@ -318,9 +326,9 @@ const headerActionVisibleCount = computed(() => {
   return 0;
 });
 /** 表头可见按钮列表 */
-const visibleHeaderActions = computed(() => headerActions.slice(0, headerActionVisibleCount.value));
+const visibleHeaderActions = computed(() => permittedHeaderActions.value.slice(0, headerActionVisibleCount.value));
 /** 表头溢出按钮列表 */
-const overflowHeaderActions = computed(() => headerActions.slice(headerActionVisibleCount.value));
+const overflowHeaderActions = computed(() => permittedHeaderActions.value.slice(headerActionVisibleCount.value));
 /** 表头按钮禁用状态 */
 function isHeaderActionDisabled(action: HeaderAction) {
   return action.needSelection !== false && !isSelected.value;
@@ -557,6 +565,10 @@ function handleShowBatchUpdateDialog() {
 }
 /** 打开更新 APK 版本弹窗 */
 async function handleShowApkUpgradeDialog() {
+  if (!hasPermission(PERMISSION_CODE.APK_UPGRADE)) {
+    ElMessage.warning("暂无 APK 升级权限");
+    return;
+  }
   if (!isSelected.value) {
     ElMessage.warning("请先选择设备");
     return;
@@ -575,6 +587,10 @@ async function handleShowApkUpgradeDialog() {
 }
 /** 提交批量更新 APK 版本 */
 async function handleSubmitApkUpgrade() {
+  if (!hasPermission(PERMISSION_CODE.APK_UPGRADE)) {
+    ElMessage.warning("暂无 APK 升级权限");
+    return;
+  }
   if (!selectedApkPackageId.value) {
     ElMessage.warning("请选择目标 APK 版本");
     return;
@@ -938,7 +954,7 @@ watch(schoolId, () => {
             class="absolute left-0 top-0 -z-10 flex items-center gap-2 px-4 opacity-0 pointer-events-none"
             aria-hidden="true"
           >
-            <el-button v-for="action in headerActions" :key="`measure-${action.key}`" :type="action.type" data-action>
+            <el-button v-for="action in permittedHeaderActions" :key="`measure-${action.key}`" :type="action.type" data-action>
               {{ action.label }}
             </el-button>
             <span class="inline-flex items-center text-[var(--el-color-primary)]" data-more>

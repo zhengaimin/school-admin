@@ -16,9 +16,13 @@ import {
   APK_UPGRADE_SCOPE,
   DEVICE_TAG_CONTROL_ACTION,
   DEVICE_TAG_CONTROL_ACTION_OPTIONS,
+  PERMISSION_CODE,
   type TDeviceTagControlActionValue
 } from "@/config/modules";
+import { usePermission } from "@/hooks/usePermission";
 
+/** 权限判断 */
+const { hasPermission } = usePermission();
 const visible = ref(false);
 const parameter = ref<TModalParams>({
   title: "",
@@ -52,6 +56,12 @@ const rules: FormRules = {
 const failList = ref<DeviceTagControlFailItem[]>([]);
 const showForm = computed(() => failList.value.length === 0);
 const isView = computed(() => parameter.value.type === "View");
+/** 有权限的设备控制操作 */
+const permittedControlActionOptions = computed(() =>
+  DEVICE_TAG_CONTROL_ACTION_OPTIONS.filter(
+    item => item.value !== DEVICE_TAG_CONTROL_ACTION.UPDATE_APK || hasPermission(PERMISSION_CODE.APK_UPGRADE)
+  )
+);
 /** 是否为更新 APK 操作 */
 const isUpdateApkAction = computed(() => ruleForm.value.action === DEVICE_TAG_CONTROL_ACTION.UPDATE_APK);
 /** APK 列表加载状态 */
@@ -157,6 +167,10 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
       const isUpdateApk = ruleForm.value.action === DEVICE_TAG_CONTROL_ACTION.UPDATE_APK;
       const isSyncUser = ruleForm.value.action === DEVICE_TAG_CONTROL_ACTION.SYNC_USER;
       if (isUpdateApk) {
+        if (!hasPermission(PERMISSION_CODE.APK_UPGRADE)) {
+          ElMessage.warning("暂无 APK 升级权限");
+          return;
+        }
         if (!ruleForm.value.apkPackageId) {
           ElMessage.warning("请选择目标 APK 版本");
           return;
@@ -239,7 +253,7 @@ defineExpose({ acceptParams });
             <el-form-item label="操作" prop="action">
               <el-select v-model="ruleForm.action" class="w-full" placeholder="请选择操作" @change="handleActionChange">
                 <el-option
-                  v-for="item in DEVICE_TAG_CONTROL_ACTION_OPTIONS"
+                  v-for="item in permittedControlActionOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
