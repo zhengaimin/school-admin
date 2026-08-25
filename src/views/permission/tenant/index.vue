@@ -4,12 +4,33 @@ import type { System } from "@/api/interface";
 import type { ColumnProps } from "@/components/ProTable/interface";
 
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
-import { deleteTenantApi, getTenantListApi } from "@/api/modules";
+import { deleteTenantApi, getTenantListApi, enterTenantApi } from "@/api/modules";
 import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS, PERMISSION_CODE } from "@/config/modules";
+import { useUserStore } from "@/stores/modules/user";
 import TenantModal from "./modal/Tenant.vue";
+
+const router = useRouter();
+const userStore = useUserStore();
+
+/** 进入租户：写入当前租户会话态 + 前端状态，跳转学校管理 */
+const handleEnterTenant = (row: System.Tenant) => {
+  ElMessageBox.confirm(`进入租户【${row.name}】进行管理?`, "提示", {
+    confirmButtonText: "进入",
+    cancelButtonText: "取消",
+    type: "info"
+  }).then(async () => {
+    const res = await enterTenantApi({ tenantId: row.id });
+    if (res.code === 0 && res.data) {
+      userStore.setCurrentTenant({ tenantId: res.data.tenantId, tenantName: res.data.tenantName });
+      ElMessage.success(`已进入租户【${res.data.tenantName}】`);
+      router.push("/common/school/manage");
+    }
+  });
+};
 
 /**
  * 获取租户列表
@@ -51,7 +72,7 @@ const columns: ColumnProps<System.Tenant>[] = [
   },
   { prop: "createdAt", label: "创建时间", width: 170 },
   { prop: "updatedAt", label: "更新时间", width: 170 },
-  { prop: "operation", label: "操作", width: 120, fixed: "right" }
+  { prop: "operation", label: "操作", width: 200, fixed: "right" }
 ];
 
 const proTable = ref();
@@ -93,6 +114,7 @@ const handleDelete = (row: System.Tenant) => {
         </el-tag>
       </template>
       <template #operation="{ row }">
+        <el-button type="success" link @click="handleEnterTenant(row)">进入租户</el-button>
         <el-button v-permission="PERMISSION_CODE.TENANT_UPDATE" type="primary" link @click="onShowModal('Edit', row)">
           编辑
         </el-button>

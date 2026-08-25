@@ -37,6 +37,8 @@ export interface UserState {
   token: string;
   userInfo: TUserInfo;
   schoolMsg: { schoolId: string; schoolName: string };
+  /** 平台管理员当前进入的租户（未进入为 null） */
+  currentTenant: { tenantId: number; tenantName: string } | null;
   count: number;
 }
 

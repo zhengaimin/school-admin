@@ -10,6 +10,7 @@ export const useUserStore = defineStore(id, {
     token: "",
     userInfo: { name: "" },
     schoolMsg: { schoolId: "", schoolName: "" },
+    currentTenant: null,
     count: 0
   }),
   getters: {},
@@ -24,6 +25,10 @@ export const useUserStore = defineStore(id, {
     },
     setSchoolMsg(schoolMsg: UserState["schoolMsg"]) {
       this.schoolMsg = schoolMsg;
+    },
+    // 设置当前进入的租户（平台管理员）
+    setCurrentTenant(currentTenant: UserState["currentTenant"]) {
+      this.currentTenant = currentTenant;
     },
     setCount(count: UserState["count"]) {
       this.count = count;
