@@ -71,6 +71,8 @@ const ruleForm = reactive<{
 
 /** 是否新增 */
 const isAdd = computed(() => parameter.value.type === "Add");
+/** 是否查看详情（只读） */
+const isView = computed(() => parameter.value.type === "View");
 
 /** 模块勾选校验 */
 function validateModules(_rule: any, _value: any, callback: (error?: Error) => void) {
@@ -81,11 +83,20 @@ function validateModules(_rule: any, _value: any, callback: (error?: Error) => v
   callback();
 }
 
+/** 有效期校验（dateRange 为游离 ref，不在 ruleForm model 中，需自定义 validator 读取） */
+function validateDateRange(_rule: any, _value: any, callback: (error?: Error) => void) {
+  if (!dateRange.value || !dateRange.value[0] || !dateRange.value[1]) {
+    callback(new Error("请选择有效期"));
+    return;
+  }
+  callback();
+}
+
 /** 表单校验规则 */
 const rules: FormRules = {
   name: [{ required: true, message: "请输入套餐名称", trigger: "blur" }],
   schoolIds: [{ required: true, type: "array", min: 1, message: "请选择适用学校", trigger: "change" }],
-  dateRange: [{ required: true, message: "请选择有效期", trigger: "change" }],
+  dateRange: [{ validator: validateDateRange, trigger: "change" }],
   pricingMode: [{ required: true, message: "请选择定价模式", trigger: "change" }],
   monthlyPrice: [{ required: true, message: "请输入月单价", trigger: "blur" }],
   modules: [{ validator: validateModules, trigger: "change" }]
@@ -256,7 +267,7 @@ defineExpose({ acceptParams });
 
 <template>
   <el-dialog v-model="visible" :close-on-click-modal="false" :title="parameter.title" width="760px" destroy-on-close draggable align-center>
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-position="top">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="套餐名称" prop="name">
@@ -290,6 +301,7 @@ defineExpose({ acceptParams });
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              @change="ruleFormRef?.validateField('dateRange')"
             />
           </el-form-item>
         </el-col>
@@ -331,7 +343,7 @@ defineExpose({ acceptParams });
 
         <el-col :span="24">
           <el-form-item label="套餐说明" prop="description">
-            <WangEditor v-model:value="ruleForm.description" height="300px" />
+            <WangEditor v-model:value="ruleForm.description" height="300px" :disabled="isView" />
           </el-form-item>
         </el-col>
       </el-row>

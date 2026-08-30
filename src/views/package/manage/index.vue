@@ -6,7 +6,7 @@ import { ref } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 
-import { getPlatformPackageListApi, updatePlatformPackageStatusApi, deletePlatformPackageApi } from "@/api/modules";
+import { getPlatformPackageListApi, updatePlatformPackageStatusApi } from "@/api/modules";
 
 import ProTable from "@/components/ProTable/index.vue";
 import PackageModal from "./modal/Package.vue";
@@ -32,7 +32,7 @@ const columns: ColumnProps<PlatformPackage.Item>[] = [
   { prop: "pricingMode", label: "定价模式", minWidth: 120 },
   { prop: "monthlyPrice", label: "价格（元/月）", minWidth: 130 },
   { prop: "statusText", label: "状态", minWidth: 100 },
-  { prop: "operation", label: "操作", width: 220, fixed: "right" }
+  { prop: "operation", label: "操作", width: 200, fixed: "right" }
 ];
 
 /** 获取套餐列表（不携带 schoolId，套餐为租户级） */
@@ -45,13 +45,14 @@ async function axiosGetPlatformPackageListApi(params: Record<string, any>): Prom
   }
 }
 
-/** 打开新增编辑弹窗 */
-function handleShowModal(type: "Add" | "Edit", row?: PlatformPackage.Item) {
+/** 打开新增/编辑/查看弹窗（查看为只读，不显示确定按钮） */
+function handleShowModal(type: "Add" | "Edit" | "View", row?: PlatformPackage.Item) {
   const titleMap = {
-    Add: "新增套餐",
-    Edit: "编辑套餐"
+    Add: "新建套餐",
+    Edit: "编辑套餐",
+    View: "套餐详情"
   };
-  packageModalRef.value?.acceptParams({ title: titleMap[type], type, showConfirm: true }, row);
+  packageModalRef.value?.acceptParams({ title: titleMap[type], type, showConfirm: type !== "View" }, row);
 }
 
 /** 停用/启用套餐 */
@@ -68,21 +69,6 @@ async function handleToggleStatus(row: PlatformPackage.Item) {
   } catch (error) {
     if (error !== "cancel") {
       console.error("handleToggleStatus:", error);
-    }
-  }
-}
-
-/** 删除套餐 */
-async function handleDelete(row: PlatformPackage.Item) {
-  try {
-    await ElMessageBox.confirm(`确定删除【${row.name}】吗？`, "提示", { type: "warning" });
-    const result = await deletePlatformPackageApi(row.id);
-    if (result.code !== 0) return;
-    ElMessage.success("删除成功");
-    refreshTableList();
-  } catch (error) {
-    if (error !== "cancel") {
-      console.error("handleDelete:", error);
     }
   }
 }
@@ -104,9 +90,10 @@ async function handleDelete(row: PlatformPackage.Item) {
 
       <!-- 操作列 -->
       <template #operation="{ row }">
+        <el-button type="primary" link @click="handleShowModal('View', row)">详情</el-button>
         <el-button type="primary" link @click="handleShowModal('Edit', row)">编辑</el-button>
-        <el-button type="warning" link @click="handleToggleStatus(row)">{{ row.status === 1 ? "停用" : "启用" }}</el-button>
-        <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+        <el-button v-if="row.status === 1" type="warning" link @click="handleToggleStatus(row)">停用</el-button>
+        <el-button v-else type="success" link @click="handleToggleStatus(row)">启用</el-button>
       </template>
     </ProTable>
 
