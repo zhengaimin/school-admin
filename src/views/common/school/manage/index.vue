@@ -13,6 +13,7 @@ import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS } from "@/conf
 import { useManage } from "@/hooks/useManage";
 import { useAssetsPath } from "@/hooks/useAssetsPath";
 import { useUserStore } from "@/stores/modules/user";
+import { isPlatformRoleLevel, isSuperRoleLevel } from "@/config/modules";
 const userStore = useUserStore();
 const { getUploadPath } = useAssetsPath();
 const { proTable, axiosGetTableList, refreshTableList } = useManage({ get: axiosGetSchoolListApi });
@@ -55,7 +56,13 @@ function getBadgeUrl(badge?: string) {
 /** 获取学校列表 */
 async function axiosGetSchoolListApi(params: School.ReqSchoolsListParams): Promise<ResultData<School.ResSchoolsListData>> {
   try {
-    return await getSchoolsListApi(params);
+    // 租户过滤优先级：显式搜索 > 进入的租户 > 自身租户。
+    // 平台运营方/超级管理员未进入租户时不回退自身 tenantId（其自身租户下无学校，应由后端数据权限 scope 返回其管理的全部学校）。
+    const roleLevel = userStore.userInfo?.roleLevel;
+    const isPlatformLike = isPlatformRoleLevel(roleLevel) || isSuperRoleLevel(roleLevel);
+    const fallbackTenantId = userStore.currentTenant?.tenantId || (isPlatformLike ? undefined : userStore.userInfo?.tenantId);
+    const tenantId = params.tenantId ?? fallbackTenantId ?? undefined;
+    return await getSchoolsListApi({ ...params, tenantId });
   } catch (error) {
     console.error("axiosGetSchoolListApi:", error);
     return { code: -1, msg: "请求失败", data: { list: [], total: 0 } };
