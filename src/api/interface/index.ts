@@ -629,5 +629,7 @@ export type { SchoolMien } from "./modules/school-mien";
 export type { FaceSync } from "./modules/face-sync";
 // APK 首页布局配置模块
 export type { ApkHomepageLayout } from "./modules/apk-homepage-layout";
+// 平台套餐管理模块
+export type { PlatformPackage } from "./modules/platform-package";
 // 平台管理员租户切换模块
 export type { TenantSwitch } from "./modules/tenant-switch";

@@ -6,3 +6,4 @@ export * from "./data-scope";
 export * from "./org-department";
 export * from "./tenant";
 export * from "./tenant-switch";
+export * from "./platform-package";
