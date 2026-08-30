@@ -1,10 +1,14 @@
 <script setup lang="ts" name="moduleSelect">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 import { SwitchButton } from "@element-plus/icons-vue";
 import { useAuthStore } from "@/stores/modules/auth";
 import { useUserStore } from "@/stores/modules/user";
-import { isAgentRoleLevel, isCustomRoleLevel, isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
+import { isAgentRoleLevel, isCustomRoleLevel, isPlatformRoleLevel, isSuperRoleLevel, ROLE_LEVEL_I18N } from "@/config/modules";
+import { exitTenantApi } from "@/api/modules";
+import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
+import { resetRouter } from "@/routers/index";
 import { LOGIN_URL } from "@/config";
 import type { ModuleItem } from "@/stores/interface";
 
@@ -13,23 +17,34 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const version = __APP_INFO__.pkg.version;
 const PERMISSION_MODULE_KEY = "system";
+/** 平台运营方未进入租户时固定追加的套餐管理入口 */
+const PACKAGE_MODULE: ModuleItem = { key: "package", label: "套餐管理", icon: "Goods" };
 
 const moduleList = computed(() => {
   const roleLevel = userStore.userInfo?.roleLevel;
-  // 超级级别账号仅显示权限模块
+  // 超级级别仅显示权限模块
   if (isSuperRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
+  }
+  // 平台运营方：未进入租户仅显示权限模块 + 套餐管理；进入某租户后以租户身份管理，展示业务模块（不含权限模块）
+  if (isPlatformRoleLevel(roleLevel)) {
+    if (!userStore.currentTenant) {
+      const base = authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
+      return [...base, PACKAGE_MODULE];
+    }
+    return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
   }
   // 代理商和业务员不显示权限模块
   if (isAgentRoleLevel(roleLevel) || isCustomRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
   }
-  return authStore.moduleListGet;
+  // 其他角色（租户管理员等）不显示权限模块
+  return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
 });
 const userName = computed(
   () => userStore.userInfo?.realName || userStore.userInfo?.name || userStore.userInfo?.username || "管理员"
 );
-/** 当前用户角色类型 */
+/** 当前用户角色类型（未进入租户时显示） */
 const roleType = computed(() => {
   const roleLevel = userStore.userInfo?.roleLevel;
   return roleLevel ? ROLE_LEVEL_I18N[roleLevel] : "";
@@ -39,7 +54,8 @@ const moduleDescMap: Record<string, string> = {
   common: "校园管理、小程序配置、支付配置、通知配置等",
   video: "公话设备管理、资金管理、套餐配置、日志管理等",
   hairdryer: "吹风机设备管理、资金管理、日志管理等",
-  system: "角色管理、用户管理、权限配置等"
+  system: "角色管理、用户管理、权限配置等",
+  package: "平台套餐配置、多功能打包、适用学校"
 };
 
 const getModuleDesc = (key: string) => {
@@ -48,6 +64,10 @@ const getModuleDesc = (key: string) => {
 
 /** 处理模块点击事件 */
 const handleModuleClick = (module: ModuleItem) => {
+  if (module.key === "package") {
+    router.push("/package/manage");
+    return;
+  }
   authStore.setCurrentModule(module.key);
   const menus = authStore.authMenuListGet;
   let targetPath = "/";
@@ -60,13 +80,27 @@ const handleModuleClick = (module: ModuleItem) => {
       targetPath = firstMenu.path;
     }
   }
-  window.open(router.resolve(targetPath).href, "_blank");
+  router.push(targetPath);
 };
 
-/** 处理退出登录 */
+/** 处理退出登录：同时退出当前租户，避免下次登录残留租户状态 */
 const handleLogout = () => {
   userStore.setToken("");
+  userStore.setCurrentTenant(null);
   router.replace(LOGIN_URL);
+};
+
+/** 退出当前租户：清会话态 + 重建菜单和动态路由，恢复平台运营方视图 */
+const handleExitTenant = async () => {
+  const res = await exitTenantApi();
+  if (res.code === 0) {
+    // 先替换本地 token：新 token 已清空租户ID，恢复平台运营方自身权限
+    if (res.data?.token) userStore.setToken(res.data.token);
+    userStore.setCurrentTenant(null);
+    resetRouter();
+    await initDynamicRouter();
+    ElMessage.success("已退出当前租户");
+  }
 };
 </script>
 
@@ -81,7 +115,13 @@ const handleLogout = () => {
         </div>
         <div class="flex items-center gap-3">
           <span class="text-[15px] font-medium user-info-color">{{ userName }}</span>
-          <span v-if="roleType" class="text-sm user-role-color">（{{ roleType }}）</span>
+          <el-tag v-if="userStore.currentTenant" type="success" size="small">
+            当前租户：{{ userStore.currentTenant.tenantName }}
+          </el-tag>
+          <span v-else-if="roleType" class="text-sm user-role-color">（{{ roleType }}）</span>
+          <el-button v-if="userStore.currentTenant" class="navbar-button" type="warning" link @click="handleExitTenant">
+            退出租户
+          </el-button>
           <el-button class="navbar-button" type="primary" link @click="handleLogout">
             <el-icon><SwitchButton /></el-icon>
             退出登录

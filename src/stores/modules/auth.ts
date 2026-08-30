@@ -4,7 +4,7 @@ import type { TRoleLevelValue } from "@/config/modules";
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
 import { getAuthMenuListApi } from "@/api/modules/login";
-import { isSuperRoleLevel, ROLE_LEVEL } from "@/config/modules";
+import { isPlatformRoleLevel, isSuperRoleLevel, ROLE_LEVEL } from "@/config/modules";
 import { ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "@/config/router";
 import { getPermissionModulesApi } from "@/api/modules/system";
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
@@ -15,12 +15,16 @@ import { generatePrefix } from "@/stores/helper/prefix";
 
 const id = generatePrefix("auth");
 
+// 权限模块 key（平台运营方仅可见此模块）
+const PERMISSION_MODULE_KEY = "system";
+
 // 模块路由前缀映射
 const MODULE_PATH_MAP: Record<string, string[]> = {
   common: ["/systemAuthority", "/InternalPage", "/moduleControl", "/notificationConfig", "/operationLog", "/dataScreening"],
   video: ["/device", "/fund", "/messagesall", "/merchant", "/video"],
   hairdryer: ["/hairdryer", "/hairdryerFund", "/hairdryerLog", "/hairdryerRate", "/hairdryerPackage", "/paymentConfig"],
-  system: ["/system", "/permission"]
+  system: ["/system", "/permission"],
+  package: ["/package"]
 };
 
 // moduleKey 到主模块的映射
@@ -42,7 +46,8 @@ const MODULE_KEY_MAP: Record<string, string[]> = {
     "fund",
     "video"
   ],
-  hairdryer: ["device", "payment", "refund", "packageRecord", "gift", "hairdryer"]
+  hairdryer: ["device", "payment", "refund", "packageRecord", "gift", "hairdryer"],
+  package: ["platformPackage"]
 };
 
 // 这些页面不切换当前模块，避免清空原有菜单
@@ -272,6 +277,10 @@ export const useAuthStore = defineStore(id, {
       const userInfo = userStore.userInfo;
       const { permissions, userModuleKeys } = await refreshPermissionContext(permissionStore);
       const isSuperAdmin = isSuperRoleLevel(userInfo?.roleLevel);
+      // 平台运营方「未进入租户」时仅可见权限模块
+      const isPlatformOperator = isPlatformRoleLevel(userInfo?.roleLevel) && !userStore.currentTenant;
+      // 平台运营方「已进入租户」：以租户身份管理，展示业务模块但不含权限模块
+      const isPlatformInTenant = isPlatformRoleLevel(userInfo?.roleLevel) && !!userStore.currentTenant;
 
       //获取前端固定的菜单
       const { data, systemData, modules, isOperator } = await getAuthMenuListApi();
@@ -281,7 +290,17 @@ export const useAuthStore = defineStore(id, {
 
       // 保存模块列表
       const allModules = modules || [];
-      this.moduleList = isSuperAdmin ? allModules : allModules.filter(module => hasModuleAccess(module.key, userModuleKeys));
+      if (isPlatformOperator) {
+        // 平台运营方未进入租户：仅保留权限模块，其余业务模块不展示
+        this.moduleList = allModules.filter(module => module.key === PERMISSION_MODULE_KEY);
+      } else if (isPlatformInTenant) {
+        // 平台运营方已进入租户：按权限过滤业务模块，且排除权限模块
+        this.moduleList = allModules.filter(
+          module => module.key !== PERMISSION_MODULE_KEY && hasModuleAccess(module.key, userModuleKeys)
+        );
+      } else {
+        this.moduleList = isSuperAdmin ? allModules : allModules.filter(module => hasModuleAccess(module.key, userModuleKeys));
+      }
 
       // 保存所有模块菜单（应用权限过滤）
       let rawMenus: Record<string, Menu.MenuOptions[]> = systemData || {};
@@ -293,8 +312,12 @@ export const useAuthStore = defineStore(id, {
       // 对每个模块的菜单应用权限过滤
       this.allModuleMenus = {};
       Object.entries(rawMenus).forEach(([moduleKey, menus]) => {
+        // 平台运营方未进入租户：仅保留权限模块菜单
+        if (isPlatformOperator && moduleKey !== PERMISSION_MODULE_KEY) return;
+        // 平台运营方已进入租户：以租户身份管理，排除权限模块菜单
+        if (isPlatformInTenant && moduleKey === PERMISSION_MODULE_KEY) return;
         // 检查用户是否有访问该模块的权限
-        if (isSuperAdmin || hasModuleAccess(moduleKey, userModuleKeys)) {
+        if (isSuperAdmin || isPlatformOperator || hasModuleAccess(moduleKey, userModuleKeys)) {
           this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin, userInfo?.roleLevel);
         }
       });

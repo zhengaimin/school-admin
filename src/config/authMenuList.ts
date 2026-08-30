@@ -131,6 +131,20 @@ const authMenuList = {
         isAffix: false,
         isKeepAlive: false
       }
+    },
+    {
+      path: "/package/manage",
+      name: "platformPackageManage",
+      component: "/package/manage/index",
+      meta: {
+        icon: "",
+        title: "套餐管理",
+        isLink: "",
+        isHide: true,
+        isFull: false,
+        isAffix: false,
+        isKeepAlive: false
+      }
     }
   ],
   modules: [
