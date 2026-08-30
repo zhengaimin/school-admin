@@ -1,14 +1,14 @@
 export namespace PlatformPackage {
   export interface ModuleItem {
-    serviceType: string;
-    moduleKind: string;
+    moduleKey: string;
+    kind: string;
     name: string;
-    monthlyQuota?: number;
+    monthlyGiftMinutes?: number;
   }
 
   export interface ModuleOption {
-    serviceType: string;
-    moduleKind: string;
+    moduleKey: string;
+    kind: string;
     name: string;
   }
 
@@ -38,7 +38,7 @@ export namespace PlatformPackage {
   export interface SaveParams {
     name: string;
     schoolIds: number[];
-    modules: { serviceType: string; monthlyQuota?: number }[];
+    modules: { moduleKey: string; monthlyGiftMinutes?: number }[];
     pricingMode: string;
     monthlyPrice: number;
     startDate: string;
