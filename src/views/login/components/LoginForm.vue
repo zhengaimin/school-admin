@@ -164,6 +164,8 @@ const handleLogin = () => {
       const { data } = result;
       userStore.setToken(data.token);
       userStore.setUserInfo(data.userInfo);
+      // 新登录清除上次残留的当前租户态，避免平台运营方登录后被误判为"已进入租户"（moduleSelect 不显套餐管理等平台入口）
+      userStore.setCurrentTenant(null);
 
       await initDynamicRouter();
       tabsStore.setTabs([]);
