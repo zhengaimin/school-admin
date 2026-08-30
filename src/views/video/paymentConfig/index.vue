@@ -16,8 +16,8 @@ const formRef = ref<FormInstance>();
 const loading = ref(false);
 /** 提交状态 */
 const submitting = ref(false);
-/** 租户ID */
-const tenantId = computed(() => Number(userStore.userInfo?.tenantId || 0));
+/** 租户ID：优先取平台管理员「进入的租户」，回退到用户自身租户 */
+const tenantId = computed(() => Number(userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || 0));
 
 /** 表单校验规则 */
 const rules: FormRules = {};
@@ -61,7 +61,7 @@ async function axiosGetPaymentConfigApi(): Promise<void> {
 
   loading.value = true;
   try {
-    const result = await getTenantPaymentConfigApi(tenantId.value);
+    const result = await getTenantPaymentConfigApi(tenantId.value, "VIDEO");
 
     if (result.code === 0 && result.data) {
       Object.assign(form, getInitialFormData(), {
@@ -96,7 +96,7 @@ async function handleSubmit(): Promise<void> {
 
   submitting.value = true;
   try {
-    const result = await putTenantPaymentConfigApi(tenantId.value, payload);
+    const result = await putTenantPaymentConfigApi(tenantId.value, payload, "VIDEO");
     if (result.code !== 0) return;
 
     ElMessage.success("提交成功");

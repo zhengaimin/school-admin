@@ -586,8 +586,10 @@ export const paymentconfigstenant = params => {
   return http.get(`/admin/payment-configs/tenant/${tenantId}`, { deviceType });
 };
 export const paymentconfigsadd = params => {
-  const { tenantId, ...payload } = params;
-  return http.put(`/admin/payment-configs/tenant/${tenantId}`, payload);
+  const { tenantId, deviceType, ...payload } = params;
+  // deviceType 走 query（后端从 query 读设备类型），其余字段走 body
+  const query = deviceType ? `?deviceType=${deviceType}` : "";
+  return http.put(`/admin/payment-configs/tenant/${tenantId}${query}`, payload);
 };
 // 通知配置
 export const notificationList = params => {

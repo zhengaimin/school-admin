@@ -21,12 +21,16 @@ export function getPaymentsExportApi(params: Payment.ReqGetPaymentsApi): Promise
   return http.get("/admin/payments/export", params, { responseType: "blob" });
 }
 
-/** 获取租户支付配置 */
-export function getTenantPaymentConfigApi(tenantId: number | string) {
-  return http.get<Payment.ResGetTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}`);
+/** 获取租户支付配置（deviceType 区分公话 VIDEO / 吹风机 DRYER，默认 VIDEO） */
+export function getTenantPaymentConfigApi(tenantId: number | string, deviceType: "VIDEO" | "DRYER" = "VIDEO") {
+  return http.get<Payment.ResGetTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}`, { deviceType });
 }
 
-/** 创建或更新租户支付配置 */
-export function putTenantPaymentConfigApi(tenantId: number | string, params: Payment.ReqPutTenantPaymentConfigApi) {
-  return http.put<Payment.ResPutTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}`, params);
+/** 创建或更新租户支付配置（deviceType 区分设备类型，默认 VIDEO） */
+export function putTenantPaymentConfigApi(
+  tenantId: number | string,
+  params: Payment.ReqPutTenantPaymentConfigApi,
+  deviceType: "VIDEO" | "DRYER" = "VIDEO"
+) {
+  return http.put<Payment.ResPutTenantPaymentConfigApi>(`/admin/payment-configs/tenant/${tenantId}?deviceType=${deviceType}`, params);
 }
