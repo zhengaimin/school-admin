@@ -126,6 +126,10 @@ export default {
     userStore() {
       return useUserStore();
     },
+    // 租户ID：优先取平台管理员「进入的租户」，回退到用户自身租户
+    tenantId() {
+      return useUserStore().currentTenant?.tenantId || this.userInfo.tenantId;
+    },
     activeUrl() {
       if (process.env.NODE_ENV == "development") {
         return `/api/common/files/upload`;
@@ -210,7 +214,7 @@ export default {
     confirmAdd() {
       this.$refs.linkFormRef.validate(valid => {
         if (valid) {
-          this.form.tenantId = this.userInfo.tenantId;
+          this.form.tenantId = this.tenantId;
           if (this.form.id) {
             schoolsUpdate(this.form).then(res => {
               if (res.code == 0) {

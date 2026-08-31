@@ -106,11 +106,13 @@ export function buildVideoDevicesListParams(keyword: string, schoolId?: number):
 }
 
 /** 构建学校查询参数 */
-export function buildSchoolsListParams(keyword: string): School.ReqSchoolsListParams {
+export function buildSchoolsListParams(keyword: string, tenantId?: number): School.ReqSchoolsListParams {
   return {
     page: 1,
     pageSize: 200,
-    name: normalizeText(keyword)
+    name: normalizeText(keyword),
+    // 按当前租户过滤
+    tenantId: tenantId || undefined
   };
 }
 

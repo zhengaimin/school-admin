@@ -83,6 +83,10 @@ export default {
     },
     token() {
       return useUserStore().token;
+    },
+    // 租户ID：优先取平台管理员「进入的租户」，回退到用户自身租户
+    tenantId() {
+      return useUserStore().currentTenant?.tenantId || this.userInfo.tenantId;
     }
   },
   mounted() {
@@ -92,7 +96,7 @@ export default {
     fetchTenantList() {
       if (this.isloading) return;
       this.isloading = true;
-      wechatConfig({ tenantId: this.userInfo.tenantId }).then(res => {
+      wechatConfig({ tenantId: this.tenantId }).then(res => {
         if (res.code == 0 && res.data) {
           this.form = res.data;
         }
@@ -117,7 +121,7 @@ export default {
       fb.append("merchantId", this.form.merchantId);
       fb.append("merchantSecret", this.form.merchantSecret);
       fb.append("remark", this.form.remark);
-      let url = this.wechatputConfig + "/" + this.userInfo.tenantId;
+      let url = this.wechatputConfig + "/" + this.tenantId;
       axios
         .put(url, fb, {
           headers: {

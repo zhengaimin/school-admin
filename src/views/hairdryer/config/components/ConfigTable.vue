@@ -5,8 +5,12 @@ import type { ColumnProps } from "@/components/ProTable/interface";
 import { ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import { getDeviceFeatureConfigListApi } from "@/api/modules";
+import { DEVICE_TYPE } from "@/config/modules";
 import { useManage } from "@/hooks/useManage";
 import ConfigModal from "../modal/Config.vue";
+
+// 吹风机配置页：固定按吹风机设备类型查询，避免默认返回全部设备类型（含话机）
+const initParam = { deviceType: DEVICE_TYPE.DRYER };
 
 // 使用 useManage hook
 const { proTable, axiosGetTableList, refreshTableList } = useManage({
@@ -31,7 +35,14 @@ const onEditConfig = (row: DeviceConfig.IDeviceFeatureConfigListItem) => {
 
 <template>
   <div class="table-box">
-    <ProTable ref="proTable" :columns="columns" :request-api="axiosGetTableList" row-key="id" table-header="学校配置列表">
+    <ProTable
+      ref="proTable"
+      :columns="columns"
+      :request-api="axiosGetTableList"
+      :init-param="initParam"
+      row-key="id"
+      table-header="学校配置列表"
+    >
       <!-- 操作 -->
       <template #operation="{ row }">
         <el-button type="primary" link @click="onEditConfig(row)">编辑</el-button>

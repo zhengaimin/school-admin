@@ -108,7 +108,7 @@ const handleSubmitForm = async () => {
       loading.value = true;
       try {
         if (isAdd.value) {
-          const payload = buildPostSchoolPayload(ruleForm, Number(userStore.userInfo.tenantId));
+          const payload = buildPostSchoolPayload(ruleForm, Number(userStore.currentTenant?.tenantId || userStore.userInfo.tenantId));
           await postSchoolApi(payload);
           ElMessage.success("添加成功");
         } else if (isEdit.value && ruleForm.id) {

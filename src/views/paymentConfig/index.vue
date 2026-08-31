@@ -67,6 +67,10 @@ export default {
   computed: {
     userInfo() {
       return useUserStore().userInfo;
+    },
+    // 租户ID：优先取平台管理员「进入的租户」，回退到用户自身租户
+    tenantId() {
+      return useUserStore().currentTenant?.tenantId || this.userInfo.tenantId;
     }
   },
   mounted() {
@@ -74,14 +78,14 @@ export default {
   },
   methods: {
     fetchTenantList() {
-      paymentconfigstenant({ tenantId: this.userInfo.tenantId }).then(res => {
+      paymentconfigstenant({ tenantId: this.tenantId }).then(res => {
         if (res.code == 0 && res.data) {
           this.form = res.data;
         }
       });
     },
     confirmAdd() {
-      this.form.tenantId = this.userInfo.tenantId;
+      this.form.tenantId = this.tenantId;
       paymentconfigsadd(this.form).then(res => {
         if (res.code == 0) {
           this.$message.success("提交成功");

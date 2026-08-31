@@ -6,6 +6,9 @@ import { nextTick, reactive, ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getDeviceGroupListApi, getSchoolsListApi, postDeviceChangeSchoolApi } from "@/api/modules";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
+import { useUserStore } from "@/stores/modules/user";
+
+const userStore = useUserStore();
 
 /** 设备组列表页大小 */
 const deviceGroupPageSize = 200;
@@ -82,7 +85,9 @@ async function fetchSchoolOptions(keyword = "") {
         page: 1,
         pageSize: schoolPageSize,
         name: keyword || undefined,
-        status: -1
+        status: -1,
+        // 按当前租户过滤：优先平台管理员「进入的租户」，回退到用户自身租户
+        tenantId: userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || undefined
       },
       { loading: false }
     );

@@ -15,7 +15,7 @@ export function enterTenantApi(data: TenantSwitch.ReqEnterTenantApi) {
 
 /** 退出当前租户 */
 export function exitTenantApi() {
-  return http.post("/admin/tenant/exit");
+  return http.post<{ token?: string }>("/admin/tenant/exit");
 }
 
 /** 获取当前租户（未进入返回 null） */

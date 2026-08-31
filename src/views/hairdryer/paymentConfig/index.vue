@@ -24,8 +24,8 @@ const formRef = ref<FormInstance>();
 const loading = ref(false);
 /** 提交状态 */
 const submitting = ref(false);
-/** 租户ID */
-const tenantId = computed(() => Number(userStore.userInfo?.tenantId || 0));
+/** 租户ID：优先取平台管理员「进入的租户」，回退到用户自身租户 */
+const tenantId = computed(() => Number(userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || 0));
 
 /** 表单校验规则 */
 const rules: FormRules = {};

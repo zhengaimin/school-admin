@@ -186,8 +186,10 @@ async function axiosGetStudentTemplateApi() {
     const params: Student.ReqGetStudentTemplateApi = {
       schoolId: Number(schoolId.value)
     };
-    if (!isNullOrUnDef(userInfo.value?.tenantId)) {
-      params.tenantId = userInfo.value.tenantId;
+    // 优先取平台管理员「进入的租户」，回退到用户自身租户
+    const tenantId = userStore.currentTenant?.tenantId || userInfo.value?.tenantId;
+    if (!isNullOrUnDef(tenantId)) {
+      params.tenantId = tenantId;
     }
     const blob = await getStudentTemplateApi(params);
     downloadBlob(blob, "学生导入模板.xlsx");

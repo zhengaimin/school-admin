@@ -19,7 +19,8 @@ const validating = ref(false);
 const validated = ref(false);
 const hasData = ref(false);
 
-const tenantId = computed(() => userStore.userInfo?.tenantId || 0);
+// 优先取平台管理员「进入的租户」，回退到用户自身租户
+const tenantId = computed(() => userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || 0);
 
 const canSubmit = computed(() => {
   return validated.value;

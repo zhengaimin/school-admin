@@ -31,8 +31,10 @@ async function axiosPostStudentImportApi(file: File): Promise<ResultData<Student
     const params: Student.ReqPostStudentImportApi = {
       schoolId: Number(schoolId.value)
     };
-    if (!isNullOrUnDef(userInfo.value?.tenantId)) {
-      params.tenantId = userInfo.value.tenantId;
+    // 优先取平台管理员「进入的租户」，回退到用户自身租户
+    const tenantId = userStore.currentTenant?.tenantId || userInfo.value?.tenantId;
+    if (!isNullOrUnDef(tenantId)) {
+      params.tenantId = tenantId;
     }
     return await postStudentImportApi(params, file);
   } catch (error) {

@@ -17,6 +17,8 @@ import { ElMessage } from "element-plus";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useUserStore } from "@/stores/modules/user";
 import { exitTenantApi } from "@/api/modules";
+import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
+import { resetRouter } from "@/routers/index";
 import CollapseIcon from "./components/CollapseIcon.vue";
 import Breadcrumb from "./components/Breadcrumb.vue";
 
@@ -28,7 +30,12 @@ const router = useRouter();
 const handleExitTenant = async () => {
   const res = await exitTenantApi();
   if (res.code === 0) {
+    // 先替换本地 token：新 token 已清空租户ID，恢复平台运营方自身权限
+    if (res.data?.token) userStore.setToken(res.data.token);
     userStore.setCurrentTenant(null);
+    // 退出租户后重建菜单并重新注册动态路由：收回业务模块，仅剩权限模块
+    resetRouter();
+    await initDynamicRouter();
     ElMessage.success("已退出当前租户");
     router.push("/permission/tenant");
   }

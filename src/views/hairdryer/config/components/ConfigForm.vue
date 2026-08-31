@@ -5,6 +5,7 @@ import type { ConfigFormProps } from "../types";
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { getDeviceFeatureConfigListApi, updateSchoolDeviceFeatureConfigApi } from "@/api/modules";
+import { DEVICE_TYPE } from "@/config/modules";
 import { useAssetsPath } from "@/hooks/useAssetsPath";
 import UploadImg from "@/components/Upload/Img.vue";
 
@@ -24,7 +25,7 @@ const axiosGetDeviceFeatureConfigListApi = async () => {
 
   loading.value = true;
   try {
-    const result = await getDeviceFeatureConfigListApi({ schoolId: Number(props.schoolId) });
+    const result = await getDeviceFeatureConfigListApi({ schoolId: Number(props.schoolId), deviceType: DEVICE_TYPE.DRYER });
     if (result.code === 0) {
       configData.value = result.data?.list?.[0];
     }

@@ -56,7 +56,9 @@ const axiosGetSchoolsListApi = async () => {
   try {
     const result = await getSchoolsListApi({
       page: 1,
-      pageSize: 100
+      pageSize: 100,
+      // 按当前租户过滤：优先平台管理员「进入的租户」，回退到用户自身租户
+      tenantId: userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || undefined
     });
 
     if (result.code === 0) {

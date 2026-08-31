@@ -8,6 +8,7 @@ import { ElMessage } from "element-plus";
 import { getDeviceBaseTagOptionsApi, getDeviceListApi, getSchoolsListApi, postApkPackagesBatchUpgradeApi } from "@/api/modules";
 import { APK_UPGRADE_SCOPE, APK_UPGRADE_SCOPE_OPTIONS, type TApkUpgradeScopeValue } from "@/config/modules";
 import { useSchool } from "@/hooks/useSchool";
+import { useUserStore } from "@/stores/modules/user";
 import {
   buildDeviceBaseTagsOptionsParams,
   buildPostApkPackagesBatchUpgradePayload,
@@ -19,6 +20,7 @@ const emits = defineEmits(["submit"]);
 
 /** 学校信息 */
 const { schoolId, isAllSchools } = useSchool();
+const userStore = useUserStore();
 
 /** 弹窗可见 */
 const visible = ref(false);
@@ -76,7 +78,8 @@ const rules: FormRules = {
 async function axiosGetSchoolOptionsApi(keyword: string) {
   schoolOptionsLoading.value = true;
   try {
-    const payload = buildSchoolsListParams(keyword);
+    const tenantId = userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || undefined;
+    const payload = buildSchoolsListParams(keyword, tenantId);
     const result = await getSchoolsListApi(payload, { loading: false });
     if (result.code !== 0) return;
     schoolOptions.value = (result.data?.list || []).map((item: School.ISchoolItem) => ({

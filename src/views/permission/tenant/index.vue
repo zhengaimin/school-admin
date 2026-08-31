@@ -11,6 +11,8 @@ import ProTable from "@/components/ProTable/index.vue";
 import { deleteTenantApi, getTenantListApi, enterTenantApi } from "@/api/modules";
 import { ENABLE_STATUS, ENABLE_STATUS_I18N, ENABLE_STATUS_OPTIONS, PERMISSION_CODE } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
+import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
+import { resetRouter } from "@/routers/index";
 import TenantModal from "./modal/Tenant.vue";
 
 const router = useRouter();
@@ -25,7 +27,13 @@ const handleEnterTenant = (row: System.Tenant) => {
   }).then(async () => {
     const res = await enterTenantApi({ tenantId: row.id });
     if (res.code === 0 && res.data) {
+      // 先替换本地 token：新 token 携带当前租户ID，后续请求由后端解析并覆盖数据范围
+      if (res.data.token) userStore.setToken(res.data.token);
       userStore.setCurrentTenant({ tenantId: res.data.tenantId, tenantName: res.data.tenantName });
+      // 进入租户后重建菜单并重新注册动态路由：清旧路由 + 拉新菜单 + addRoute，
+      // 否则业务模块路由（如 /common/school/manage）未注册，跳转会失败被踢回登录页
+      resetRouter();
+      await initDynamicRouter();
       ElMessage.success(`已进入租户【${res.data.tenantName}】`);
       router.push("/common/school/manage");
     }

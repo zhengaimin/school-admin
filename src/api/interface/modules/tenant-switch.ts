@@ -6,6 +6,8 @@ export namespace TenantSwitch {
     tenantId: number;
     /** 租户名称 */
     tenantName: string;
+    /** 进入/退出租户后重新签发的 JWT，前端需替换本地 token */
+    token?: string;
   }
 
   /** 进入租户请求 */

@@ -274,7 +274,8 @@ const fetchTenantList = async () => {
     const params = {
       page: page.value,
       pageSize: pageSize.value,
-      tenantId: userInfo.value.tenantId,
+      // 优先取平台管理员「进入的租户」，回退到用户自身租户
+      tenantId: userStore.currentTenant?.tenantId || userInfo.value.tenantId,
       searchKeyword: filterForm.searchKeyword,
       typeCode: filterForm.typeCode
     };

@@ -69,9 +69,10 @@ const logout = () => {
     // 1.执行退出登录接口
     // await logoutApi();
 
-    // 2.清除 Token
+    // 2.清除 Token + 退出当前租户（避免下次登录残留租户状态）
     userStore.setToken("");
     userStore.setUserInfo({ name: "" });
+    userStore.setCurrentTenant(null);
 
     // 3.重定向到登陆页
     router.replace(LOGIN_URL);
