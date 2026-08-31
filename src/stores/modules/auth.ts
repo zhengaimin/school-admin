@@ -17,6 +17,8 @@ const id = generatePrefix("auth");
 
 // 权限模块 key（平台运营方仅可见此模块）
 const PERMISSION_MODULE_KEY = "system";
+// 套餐模块 key（平台运营方进入租户后维护该租户套餐）
+const PACKAGE_MODULE_KEY = "package";
 
 // 模块路由前缀映射
 const MODULE_PATH_MAP: Record<string, string[]> = {
@@ -294,9 +296,11 @@ export const useAuthStore = defineStore(id, {
         // 平台运营方未进入租户：仅保留权限模块，其余业务模块不展示
         this.moduleList = allModules.filter(module => module.key === PERMISSION_MODULE_KEY);
       } else if (isPlatformInTenant) {
-        // 平台运营方已进入租户：按权限过滤业务模块，且排除权限模块
+        // 平台运营方已进入租户：按权限过滤业务模块，且排除权限模块；套餐模块固定可见
         this.moduleList = allModules.filter(
-          module => module.key !== PERMISSION_MODULE_KEY && hasModuleAccess(module.key, userModuleKeys)
+          module =>
+            module.key !== PERMISSION_MODULE_KEY &&
+            (module.key === PACKAGE_MODULE_KEY || hasModuleAccess(module.key, userModuleKeys))
         );
       } else {
         this.moduleList = isSuperAdmin ? allModules : allModules.filter(module => hasModuleAccess(module.key, userModuleKeys));
@@ -316,8 +320,13 @@ export const useAuthStore = defineStore(id, {
         if (isPlatformOperator && moduleKey !== PERMISSION_MODULE_KEY) return;
         // 平台运营方已进入租户：以租户身份管理，排除权限模块菜单
         if (isPlatformInTenant && moduleKey === PERMISSION_MODULE_KEY) return;
-        // 检查用户是否有访问该模块的权限
-        if (isSuperAdmin || isPlatformOperator || hasModuleAccess(moduleKey, userModuleKeys)) {
+        // 检查用户是否有访问该模块的权限（平台运营方进入租户后固定保留套餐模块菜单）
+        if (
+          isSuperAdmin ||
+          isPlatformOperator ||
+          (isPlatformInTenant && moduleKey === PACKAGE_MODULE_KEY) ||
+          hasModuleAccess(moduleKey, userModuleKeys)
+        ) {
           this.allModuleMenus[moduleKey] = filterMenusByPermission(menus, permissions, isSuperAdmin, userInfo?.roleLevel);
         }
       });

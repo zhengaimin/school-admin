@@ -17,8 +17,6 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const version = __APP_INFO__.pkg.version;
 const PERMISSION_MODULE_KEY = "system";
-/** 平台运营方未进入租户时固定追加的套餐管理入口 */
-const PACKAGE_MODULE: ModuleItem = { key: "package", label: "套餐管理", icon: "Goods" };
 
 const moduleList = computed(() => {
   const roleLevel = userStore.userInfo?.roleLevel;
@@ -26,11 +24,10 @@ const moduleList = computed(() => {
   if (isSuperRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
   }
-  // 平台运营方：未进入租户仅显示权限模块 + 套餐管理；进入某租户后以租户身份管理，展示业务模块（不含权限模块）
+  // 平台运营方：未进入租户仅显示权限模块；进入某租户后以租户身份管理，展示业务模块（不含权限模块）
   if (isPlatformRoleLevel(roleLevel)) {
     if (!userStore.currentTenant) {
-      const base = authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
-      return [...base, PACKAGE_MODULE];
+      return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
     }
     return authStore.moduleListGet.filter(module => module.key !== PERMISSION_MODULE_KEY);
   }
@@ -64,10 +61,6 @@ const getModuleDesc = (key: string) => {
 
 /** 处理模块点击事件 */
 const handleModuleClick = (module: ModuleItem) => {
-  if (module.key === "package") {
-    router.push("/package/manage");
-    return;
-  }
   authStore.setCurrentModule(module.key);
   const menus = authStore.authMenuListGet;
   let targetPath = "/";

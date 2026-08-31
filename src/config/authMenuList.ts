@@ -1,4 +1,12 @@
-import { ROUTE_MODULE_SELECT, ROUTE_COMMON, ROUTE_INTERNAL_PAGE, ROUTE_VIDEO, ROUTE_HAIRDRYER, ROUTE_SYSTEM } from "./router";
+import {
+  ROUTE_MODULE_SELECT,
+  ROUTE_COMMON,
+  ROUTE_INTERNAL_PAGE,
+  ROUTE_VIDEO,
+  ROUTE_HAIRDRYER,
+  ROUTE_PACKAGE,
+  ROUTE_SYSTEM
+} from "./router";
 import { PERMISSION_CODE } from "@/config/modules";
 
 const permissionOf = (...codes: PERMISSION_CODE[]) => codes;
@@ -132,13 +140,28 @@ const authMenuList = {
         isKeepAlive: false
       }
     },
+    // 个人信息/修改密码属于全员可用页面，放在全局路由，避免随模块开关（如平台运营方进入租户排除权限模块）被摘掉
     {
-      path: "/package/manage",
-      name: "platformPackageManage",
-      component: "/package/manage/index",
+      path: ROUTE_SYSTEM.PROFILE,
+      name: "systemProfile",
+      component: "/system/profile/index",
       meta: {
-        icon: "",
-        title: "套餐管理",
+        icon: "User",
+        title: "个人信息",
+        isLink: "",
+        isHide: true,
+        isFull: false,
+        isAffix: false,
+        isKeepAlive: false
+      }
+    },
+    {
+      path: ROUTE_SYSTEM.CHANGE_PASSWORD,
+      name: "systemChangePassword",
+      component: "/system/password/index",
+      meta: {
+        icon: "Lock",
+        title: "修改密码",
         isLink: "",
         isHide: true,
         isFull: false,
@@ -162,6 +185,11 @@ const authMenuList = {
       key: "hairdryer",
       label: "吹风机模块",
       icon: "Odometer"
+    },
+    {
+      key: "package",
+      label: "套餐模块",
+      icon: "Goods"
     },
     {
       key: "system",
@@ -1278,35 +1306,23 @@ const authMenuList = {
         }
       }
     ],
+    package: [
+      {
+        path: ROUTE_PACKAGE.MANAGE,
+        name: "platformPackageManage",
+        component: "/package/manage/index",
+        meta: {
+          icon: "Goods",
+          title: "套餐管理",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      }
+    ],
     system: [
-      {
-        path: ROUTE_SYSTEM.PROFILE,
-        name: "systemProfile",
-        component: "/system/profile/index",
-        meta: {
-          icon: "User",
-          title: "个人信息",
-          isLink: "",
-          isHide: true,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: false
-        }
-      },
-      {
-        path: ROUTE_SYSTEM.CHANGE_PASSWORD,
-        name: "systemChangePassword",
-        component: "/system/password/index",
-        meta: {
-          icon: "Lock",
-          title: "修改密码",
-          isLink: "",
-          isHide: true,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: false
-        }
-      },
       {
         path: ROUTE_SYSTEM.TENANT,
         name: "systemTenant",

@@ -78,6 +78,12 @@ export const ROUTE_SYSTEM = {
   TENANT: "/permission/tenant"
 } as const;
 
+/** 套餐模块路由 */
+export const ROUTE_PACKAGE = {
+  /** 套餐管理 */
+  MANAGE: "/package/manage"
+} as const;
+
 /** 吹风机模块路由 */
 export const ROUTE_HAIRDRYER = {
   /** 设备管理 */

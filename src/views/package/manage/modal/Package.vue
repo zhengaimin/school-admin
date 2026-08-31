@@ -12,7 +12,6 @@ import {
   getPlatformPackageModulesApi,
   getSchoolsListApi
 } from "@/api/modules";
-import WangEditor from "@/components/WangEditor/index.vue";
 import { useUserStore } from "@/stores/modules/user";
 
 /** 计费模块（带每月赠送时长） */
@@ -266,7 +265,15 @@ defineExpose({ acceptParams });
 </script>
 
 <template>
-  <el-dialog v-model="visible" :close-on-click-modal="false" :title="parameter.title" width="760px" destroy-on-close draggable align-center>
+  <el-dialog
+    v-model="visible"
+    :close-on-click-modal="false"
+    :title="parameter.title"
+    width="760px"
+    destroy-on-close
+    draggable
+    align-center
+  >
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :disabled="isView" label-position="top">
       <el-row :gutter="24">
         <el-col :span="12">
@@ -343,7 +350,14 @@ defineExpose({ acceptParams });
 
         <el-col :span="24">
           <el-form-item label="套餐说明" prop="description">
-            <WangEditor v-model:value="ruleForm.description" height="300px" :disabled="isView" />
+            <el-input
+              v-model="ruleForm.description"
+              type="textarea"
+              :rows="4"
+              maxlength="500"
+              show-word-limit
+              placeholder="请输入套餐说明"
+            />
           </el-form-item>
         </el-col>
       </el-row>
