@@ -25,7 +25,6 @@ const form = reactive({
 });
 /** 学校配置表单数据 */
 const schoolForm = reactive({
-  packageByGrade: false,
   showRemainingMinutes: true,
   refundEnabled: false
 });
@@ -73,7 +72,6 @@ async function axiosPutUpdateGlobalConfigApi(): Promise<boolean> {
 /** 重置学校配置表单 */
 function resetSchoolConfigForm(): void {
   Object.assign(schoolForm, {
-    packageByGrade: false,
     showRemainingMinutes: true,
     refundEnabled: false
   });
@@ -94,7 +92,6 @@ async function axiosGetSchoolConfigApi(): Promise<void> {
     const result = await getSchoolConfigApi(targetSchoolId);
     if (result.code === 0 && result.data) {
       Object.assign(schoolForm, {
-        packageByGrade: result.data.packageByGrade ?? false,
         showRemainingMinutes: result.data.showRemainingMinutes ?? true,
         refundEnabled: result.data.refundEnabled ?? false
       });
@@ -117,7 +114,6 @@ async function axiosPutUpdateSchoolConfigApi(): Promise<boolean> {
 
   try {
     const result = await putUpdateSchoolConfigApi(targetSchoolId, {
-      packageByGrade: schoolForm.packageByGrade,
       showRemainingMinutes: schoolForm.showRemainingMinutes,
       refundEnabled: schoolForm.refundEnabled
     });
@@ -220,17 +216,12 @@ watch(
             </el-col>
           </el-row>
           <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="套餐按年级区分">
-                <el-switch v-model="schoolForm.packageByGrade" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
+            <el-col :span="12">
               <el-form-item label="展示剩余分钟">
                 <el-switch v-model="schoolForm.showRemainingMinutes" />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="12">
               <el-form-item label="开启退款功能">
                 <el-switch v-model="schoolForm.refundEnabled" />
               </el-form-item>
