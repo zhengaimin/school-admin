@@ -17,6 +17,7 @@ import {
   REFUND_TYPE_I18N,
   REFUND_CATEGORY,
   REFUND_CATEGORY_I18N,
+  REFUND_PACKAGE_SOURCE,
   DEVICE_TYPE
 } from "@/config/modules";
 import DetailModal from "./modal/Detail.vue";
@@ -27,7 +28,11 @@ const { schoolId, guardSchool } = useSchool();
 
 const { proTable, axiosGetTableList, refreshTableList } = useManage(
   { get: getRefundsApi },
-  { refundCategory: REFUND_CATEGORY.PACKAGE, deviceType: DEVICE_TYPE.DRYER }
+  {
+    refundCategory: REFUND_CATEGORY.PACKAGE,
+    packageSource: REFUND_PACKAGE_SOURCE.NORMAL,
+    deviceType: DEVICE_TYPE.DRYER
+  }
 );
 
 const detailModalRef = ref();

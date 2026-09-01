@@ -77,6 +77,8 @@ export function buildPostDevicePayload(
 export function buildPutDevicePayload(form: DeviceVideoForm): DeviceVideo.ReqPutDeviceApi {
   return {
     name: normalizeOptionalString(form.name),
+    terminalSn: normalizeOptionalString(form.terminalSn),
+    terminalKey: normalizeOptionalString(form.terminalSn),
     terminalMac: normalizeOptionalString(form.terminalMac),
     location: normalizeOptionalString(form.location),
     powerOnTime: normalizeOptionalString(form.powerOnTime),

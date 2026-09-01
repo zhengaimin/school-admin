@@ -115,15 +115,16 @@ async function acceptParams(options: TModalParams, row?: Refund.IRefundItem) {
 
   visible.value = true;
 
-  if (!isNullOrUnDef(row.paymentID)) {
-    const res = await axiosGetPaymentDetailApi(row.paymentID);
+  const paymentId = row.paymentId ?? row.paymentID;
+  if (!isNullOrUnDef(paymentId)) {
+    const res = await axiosGetPaymentDetailApi(paymentId);
     if (res.code === 0 && !isNullOrUnDef(res.data?.amount)) {
       orderAmount.value = Number(res.data.amount);
     } else {
-      orderAmount.value = Number(row.applyAmount);
+      orderAmount.value = Number(row.originalPrice ?? row.applyAmount);
     }
   } else {
-    orderAmount.value = Number(row.applyAmount);
+    orderAmount.value = Number(row.originalPrice ?? row.applyAmount);
   }
 }
 

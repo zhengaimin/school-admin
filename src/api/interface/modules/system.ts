@@ -8,6 +8,52 @@ import type {
 } from "@/config/modules";
 
 export namespace System {
+  /** 全局配置 */
+  export interface GlobalConfig {
+    /** 退款当月扣除比例，百分比字符串，范围 0 到 100 */
+    refundCurrentMonthPercent: string;
+  }
+
+  /** 获取全局配置响应 */
+  export type ResGetGlobalConfigApi = GlobalConfig;
+
+  /** 更新全局配置请求参数 */
+  export interface ReqPutUpdateGlobalConfigApi {
+    /** 退款当月扣除比例，百分比字符串，范围 0 到 100 */
+    refundCurrentMonthPercent: string;
+  }
+
+  /** 更新全局配置响应 */
+  export type ResPutUpdateGlobalConfigApi = string;
+
+  /** 学校配置 */
+  export interface SchoolConfig {
+    /** 学校 ID */
+    schoolId: number;
+    /** 套餐是否按年级区分 */
+    packageByGrade: boolean;
+    /** 小程序是否展示剩余分钟 */
+    showRemainingMinutes: boolean;
+    /** 学校是否开启退款功能 */
+    refundEnabled: boolean;
+  }
+
+  /** 获取学校配置响应 */
+  export type ResGetSchoolConfigApi = SchoolConfig;
+
+  /** 更新学校配置请求参数 */
+  export interface ReqPutUpdateSchoolConfigApi {
+    /** 套餐是否按年级区分 */
+    packageByGrade?: boolean;
+    /** 小程序是否展示剩余分钟 */
+    showRemainingMinutes?: boolean;
+    /** 学校是否开启退款功能 */
+    refundEnabled?: boolean;
+  }
+
+  /** 更新学校配置响应 */
+  export type ResPutUpdateSchoolConfigApi = string;
+
   /** 角色信息 */
   export interface Role {
     id: number;

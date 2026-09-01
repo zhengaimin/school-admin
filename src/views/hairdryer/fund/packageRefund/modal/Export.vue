@@ -5,7 +5,7 @@ import type { AcceptParamsOptions, FormData } from "../types";
 import { reactive, ref, computed } from "vue";
 import { ElNotification } from "element-plus";
 import { getRefundExportInfoApi, getRefundsExportApi } from "@/api/modules";
-import { DEVICE_TYPE, REFUND_CATEGORY, REFUND_STATUS_OPTIONS } from "@/config/modules";
+import { DEVICE_TYPE, REFUND_CATEGORY, REFUND_PACKAGE_SOURCE, REFUND_STATUS_OPTIONS } from "@/config/modules";
 import { useGradeDepartmentClassOptions } from "@/hooks/useGradeDepartmentClassOptions";
 
 const visible = ref(false);
@@ -71,6 +71,7 @@ function buildRequestParams(): Refund.ReqGetRefundsApi {
     schoolId: formData.schoolId,
     deviceType: DEVICE_TYPE.DRYER,
     refundCategory: REFUND_CATEGORY.PACKAGE,
+    packageSource: REFUND_PACKAGE_SOURCE.NORMAL,
     studentKeyword: formData.studentKeyword || undefined,
     refundNo: formData.refundNo || undefined,
     status: formData.status ?? undefined,

@@ -86,6 +86,9 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
   { prefix: ROUTE_HAIRDRYER.MERCHANT, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
   { prefix: ROUTE_HAIRDRYER.PAYMENT_CONFIG, permission: permissionOf(PERMISSION_CODE.PAYMENT_LIST) },
 
+  // package
+  { prefix: ROUTE_PACKAGE.REFUND, permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+
   // system
   { prefix: ROUTE_SYSTEM.TENANT, permission: permissionOf(PERMISSION_CODE.TENANT_LIST) },
   { prefix: ROUTE_SYSTEM.ORGANIZATION, permission: permissionOf(PERMISSION_CODE.ORG_LIST) },
@@ -188,7 +191,7 @@ const authMenuList = {
     },
     {
       key: "package",
-      label: "套餐模块",
+      label: "平台套餐",
       icon: "Goods"
     },
     {
@@ -1313,7 +1316,35 @@ const authMenuList = {
         component: "/package/manage/index",
         meta: {
           icon: "Goods",
-          title: "套餐管理",
+          title: "平台套餐",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: ROUTE_PACKAGE.REFUND,
+        name: "platformPackageRefund",
+        component: "/package/refund/index",
+        meta: {
+          icon: "Tickets",
+          title: "平台套餐退款",
+          isLink: "",
+          isHide: false,
+          isFull: false,
+          isAffix: false,
+          isKeepAlive: false
+        }
+      },
+      {
+        path: ROUTE_PACKAGE.GLOBAL_CONFIG,
+        name: "platformGlobalConfig",
+        component: "/package/globalConfig/index",
+        meta: {
+          icon: "Setting",
+          title: "配置",
           isLink: "",
           isHide: false,
           isFull: false,

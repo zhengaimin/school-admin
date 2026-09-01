@@ -66,7 +66,23 @@
       "filePath": "src/config/modules/student/status.ts",
       "values": ["0-停用", "1-在读", "2-毕业", "3-转学"],
       "lastUpdated": "2026-05-09"
+    },
+    {
+      "name": "REFUND_PACKAGE_SOURCE",
+      "description": "套餐退款来源",
+      "typeName": "TRefundPackageSourceValue",
+      "filePath": "src/config/modules/refund/package-source.ts",
+      "values": ["NORMAL-普通学校设备套餐", "PLATFORM-平台套餐"],
+      "lastUpdated": "2026-09-01"
+    },
+    {
+      "name": "REFUND_PACKAGE_MODULE_KIND",
+      "description": "平台套餐模块类别",
+      "typeName": "TRefundPackageModuleKindValue",
+      "filePath": "src/config/modules/refund/package-module-kind.ts",
+      "values": ["BILLING-计费模块", "FEATURE-功能模块"],
+      "lastUpdated": "2026-09-01"
     }
   ],
-  "lastUpdated": "2026-08-07"
+  "lastUpdated": "2026-09-01"
 }

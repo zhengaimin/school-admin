@@ -1269,6 +1269,10 @@ export namespace Device {
   export interface ReqPutDeviceApi {
     /** 设备名称 */
     name?: string;
+    /** 终端KEY（与设备SN号保持一致） */
+    terminalKey?: string;
+    /** 设备SN号 */
+    terminalSn?: string;
     /** 设备Mac地址 */
     terminalMac?: string;
     /** 设备位置 */

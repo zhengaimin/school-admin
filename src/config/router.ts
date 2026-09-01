@@ -80,8 +80,12 @@ export const ROUTE_SYSTEM = {
 
 /** 套餐模块路由 */
 export const ROUTE_PACKAGE = {
-  /** 套餐管理 */
-  MANAGE: "/package/manage"
+  /** 平台套餐 */
+  MANAGE: "/package/manage",
+  /** 平台套餐退款 */
+  REFUND: "/package/refund",
+  /** 全局配置 */
+  GLOBAL_CONFIG: "/package/globalConfig"
 } as const;
 
 /** 吹风机模块路由 */

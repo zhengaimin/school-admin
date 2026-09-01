@@ -24,7 +24,7 @@ const moduleList = computed(() => {
   if (isSuperRoleLevel(roleLevel)) {
     return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);
   }
-  // 平台运营方：未进入租户仅显示权限模块；进入某租户后以租户身份管理，展示业务模块（不含权限模块）
+  // 平台运营方：未进入租户不显示平台套餐模块，选择租户后才显示
   if (isPlatformRoleLevel(roleLevel)) {
     if (!userStore.currentTenant) {
       return authStore.moduleListGet.filter(module => module.key === PERMISSION_MODULE_KEY);

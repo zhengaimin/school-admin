@@ -33,7 +33,7 @@ const handleExitTenant = async () => {
     // 先替换本地 token：新 token 已清空租户ID，恢复平台运营方自身权限
     if (res.data?.token) userStore.setToken(res.data.token);
     userStore.setCurrentTenant(null);
-    // 退出租户后重建菜单并重新注册动态路由：收回业务模块，仅剩权限模块
+    // 退出租户后重建菜单并重新注册动态路由：收回租户业务模块，恢复平台模块
     resetRouter();
     await initDynamicRouter();
     ElMessage.success("已退出当前租户");
@@ -49,11 +49,10 @@ const handleExitTenant = async () => {
   justify-content: center;
   overflow: hidden;
   white-space: nowrap;
-
   .current-tenant {
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
     margin-left: 16px;
   }
 }

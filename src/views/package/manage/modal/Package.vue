@@ -12,6 +12,7 @@ import {
   getPlatformPackageModulesApi,
   getSchoolsListApi
 } from "@/api/modules";
+import { isPlatformRoleLevel, isSuperRoleLevel } from "@/config/modules";
 import { useUserStore } from "@/stores/modules/user";
 
 /** 计费模块（带每月赠送时长） */
@@ -97,7 +98,10 @@ const rules: FormRules = {
   schoolIds: [{ required: true, type: "array", min: 1, message: "请选择适用学校", trigger: "change" }],
   dateRange: [{ validator: validateDateRange, trigger: "change" }],
   pricingMode: [{ required: true, message: "请选择定价模式", trigger: "change" }],
-  monthlyPrice: [{ required: true, message: "请输入月单价", trigger: "blur" }],
+  monthlyPrice: [
+    { required: true, message: "请输入月单价", trigger: "blur" },
+    { type: "number", min: 0.01, message: "月单价不能低于 0.01 元", trigger: "blur" }
+  ],
   modules: [{ validator: validateModules, trigger: "change" }]
 };
 
@@ -123,10 +127,11 @@ const totalMonths = computed(() => {
 const priceHint = computed(() => {
   const price = ruleForm.monthlyPrice;
   if (!price || !dateRange.value) return "";
+  const priceText = price.toFixed(2);
   if (ruleForm.pricingMode === "DECREASING") {
-    return `本月购买价 = ${price} × ${remainingMonths.value} = ${price * remainingMonths.value} 元`;
+    return `本月购买价 = ${priceText} × ${remainingMonths.value} = ${(price * remainingMonths.value).toFixed(2)} 元`;
   }
-  return `总价 = ${price} × ${totalMonths.value} = ${price * totalMonths.value} 元`;
+  return `总价 = ${priceText} × ${totalMonths.value} = ${(price * totalMonths.value).toFixed(2)} 元`;
 });
 
 /** 是否为计费模块 */
@@ -138,12 +143,14 @@ function isQuotaModule(moduleKey: string) {
 async function fetchSchoolOptions() {
   schoolOptionsLoading.value = true;
   try {
+    const roleLevel = userStore.userInfo?.roleLevel;
+    const isPlatformLike = isPlatformRoleLevel(roleLevel) || isSuperRoleLevel(roleLevel);
     const result = await getSchoolsListApi(
       {
         page: 1,
         pageSize: 100,
         status: -1,
-        tenantId: userStore.currentTenant?.tenantId || userStore.userInfo?.tenantId || undefined
+        tenantId: userStore.currentTenant?.tenantId || (isPlatformLike ? undefined : userStore.userInfo?.tenantId)
       },
       { loading: false }
     );
@@ -323,7 +330,14 @@ defineExpose({ acceptParams });
 
         <el-col :span="12">
           <el-form-item label="月单价（元）" prop="monthlyPrice">
-            <el-input-number v-model="ruleForm.monthlyPrice" class="w-full" :min="1" :precision="0" placeholder="请输入月单价" />
+            <el-input-number
+              v-model="ruleForm.monthlyPrice"
+              class="w-full"
+              :min="0.01"
+              :precision="2"
+              :step="0.01"
+              placeholder="请输入月单价"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">

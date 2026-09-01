@@ -2,9 +2,12 @@ import type {
   TRefundStatusValue,
   TRefundTypeValue,
   TRefundCategoryValue,
-  TRefundDetailStatusValue
+  TRefundDetailStatusValue,
+  TRefundPackageSourceValue,
+  TRefundPackageModuleKindValue
 } from "@/config/modules/refund";
 import type { TDeviceTypeValue } from "@/config/modules/device";
+import type { TPackageTypeValue } from "@/config/modules/package";
 
 /** 退款模块 */
 export namespace Refund {
@@ -30,6 +33,24 @@ export namespace Refund {
     refundType: TRefundTypeValue;
     /** 退款分类 */
     refundCategory: TRefundCategoryValue;
+    /** 套餐退款来源 */
+    packageSource?: TRefundPackageSourceValue;
+    /** 是否平台套餐退款 */
+    isPlatformPackage?: boolean;
+    /** 平台套餐ID；普通套餐为空 */
+    platformPackageId?: number | null;
+    /** 主套餐记录ID */
+    packageRecordId?: number;
+    /** 同支付单下的套餐记录ID列表 */
+    packageRecordIds?: number[];
+    /** 套餐名称 */
+    packageName?: string;
+    /** 套餐类型 */
+    packageType?: TPackageTypeValue;
+    /** 套餐原支付金额 */
+    originalPrice?: number;
+    /** 平台套餐模块列表 */
+    modules?: IRefundPackageModuleItem[];
     /** 申请退款金额 */
     applyAmount: number;
     /** 实际退款金额 */
@@ -42,8 +63,10 @@ export namespace Refund {
     applyReason: string;
     /** 申请时间 */
     applyTime: string;
-    /** 支付 ID */
-    paymentID: number;
+    /** 关联的支付记录ID */
+    paymentId?: number | null;
+    /** 兼容历史列表响应中的支付记录ID字段 */
+    paymentID?: number | null;
     /** 审核时间 */
     auditTime: string | null;
     /** 完成时间 */
@@ -66,6 +89,8 @@ export namespace Refund {
     refundType?: TRefundTypeValue;
     /** 退款分类 */
     refundCategory?: TRefundCategoryValue;
+    /** 套餐退款来源 */
+    packageSource?: TRefundPackageSourceValue;
     /** 学校ID */
     schoolId?: number;
     /** 级部ID，-1表示全部 */
@@ -160,6 +185,24 @@ export namespace Refund {
     studentInfo: IRefundStudentInfo;
   }
 
+  /** 平台套餐模块信息 */
+  export interface IRefundPackageModuleItem {
+    /** 模块标识 */
+    moduleKey: string;
+    /** 模块中文名称 */
+    name: string;
+    /** 模块类别 */
+    kind: TRefundPackageModuleKindValue;
+    /** 设备类型 */
+    deviceType: TDeviceTypeValue;
+    /** 服务类型 */
+    serviceType: string;
+    /** 月赠送额度 */
+    monthlyGiftMinutes: number;
+    /** 是否月清 */
+    monthlyClear: boolean;
+  }
+
   /** 审核退款申请 - 请求参数 */
   export interface ReqAuditRefundApi {
     /** 是否通过审核 */
@@ -192,6 +235,8 @@ export namespace Refund {
     refundType?: TRefundTypeValue;
     /** 退款分类 */
     refundCategory?: TRefundCategoryValue;
+    /** 套餐退款来源 */
+    packageSource?: TRefundPackageSourceValue;
     /** 学校ID，-1表示全部 */
     schoolId?: number;
     /** 级部ID，-1表示全部 */

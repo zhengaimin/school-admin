@@ -144,7 +144,7 @@ onMounted(() => {
               <el-form-item label="最小金额（元）" prop="minAmount">
                 <el-input-number
                   v-model.number="form.minAmount"
-                  :min="1"
+                  :min="0"
                   :step="1"
                   class="w-full"
                   controls-position="right"

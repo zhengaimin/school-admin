@@ -15,9 +15,9 @@ import { generatePrefix } from "@/stores/helper/prefix";
 
 const id = generatePrefix("auth");
 
-// 权限模块 key（平台运营方仅可见此模块）
+// 权限模块 key（平台运营方未进入租户时可见）
 const PERMISSION_MODULE_KEY = "system";
-// 套餐模块 key（平台运营方进入租户后维护该租户套餐）
+// 套餐模块 key（平台运营方选择租户后可见）
 const PACKAGE_MODULE_KEY = "package";
 
 // 模块路由前缀映射
@@ -279,9 +279,9 @@ export const useAuthStore = defineStore(id, {
       const userInfo = userStore.userInfo;
       const { permissions, userModuleKeys } = await refreshPermissionContext(permissionStore);
       const isSuperAdmin = isSuperRoleLevel(userInfo?.roleLevel);
-      // 平台运营方「未进入租户」时仅可见权限模块
+      // 平台运营方未进入租户时仅显示权限模块，选择租户后才显示平台套餐模块
       const isPlatformOperator = isPlatformRoleLevel(userInfo?.roleLevel) && !userStore.currentTenant;
-      // 平台运营方「已进入租户」：以租户身份管理，展示业务模块但不含权限模块
+      // 平台运营方已进入租户：以租户身份管理，展示业务模块和平台套餐模块
       const isPlatformInTenant = isPlatformRoleLevel(userInfo?.roleLevel) && !!userStore.currentTenant;
 
       //获取前端固定的菜单
@@ -293,10 +293,10 @@ export const useAuthStore = defineStore(id, {
       // 保存模块列表
       const allModules = modules || [];
       if (isPlatformOperator) {
-        // 平台运营方未进入租户：仅保留权限模块，其余业务模块不展示
+        // 平台运营方未进入租户：仅保留权限模块
         this.moduleList = allModules.filter(module => module.key === PERMISSION_MODULE_KEY);
       } else if (isPlatformInTenant) {
-        // 平台运营方已进入租户：按权限过滤业务模块，且排除权限模块；套餐模块固定可见
+        // 平台运营方已进入租户：按权限过滤业务模块，保留平台套餐模块
         this.moduleList = allModules.filter(
           module =>
             module.key !== PERMISSION_MODULE_KEY &&
@@ -320,10 +320,10 @@ export const useAuthStore = defineStore(id, {
         if (isPlatformOperator && moduleKey !== PERMISSION_MODULE_KEY) return;
         // 平台运营方已进入租户：以租户身份管理，排除权限模块菜单
         if (isPlatformInTenant && moduleKey === PERMISSION_MODULE_KEY) return;
-        // 检查用户是否有访问该模块的权限（平台运营方进入租户后固定保留套餐模块菜单）
+        // 检查用户是否有访问该模块的权限
         if (
           isSuperAdmin ||
-          isPlatformOperator ||
+          (isPlatformOperator && moduleKey === PERMISSION_MODULE_KEY) ||
           (isPlatformInTenant && moduleKey === PACKAGE_MODULE_KEY) ||
           hasModuleAccess(moduleKey, userModuleKeys)
         ) {

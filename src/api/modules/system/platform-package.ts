@@ -14,6 +14,7 @@ export const updatePlatformPackageApi = (id: number, data: PlatformPackage.SaveP
 
 export const updatePlatformPackageStatusApi = (id: number, status: number) => http.put(`${PREFIX}/${id}/status`, { status });
 
-export const deletePlatformPackageApi = (id: number) => http.delete(`${PREFIX}/${id}`);
+/** 删除平台套餐 */
+export const deletePlatformPackageApi = (id: number) => http.delete<null>(`${PREFIX}/${id}`);
 
 export const getPlatformPackageModulesApi = () => http.get<{ list: PlatformPackage.ModuleOption[] }>(`${PREFIX}/modules`);

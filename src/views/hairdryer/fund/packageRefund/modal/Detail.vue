@@ -8,6 +8,9 @@ import {
   getRefundStatusTagType,
   REFUND_TYPE_I18N,
   REFUND_CATEGORY_I18N,
+  REFUND_CATEGORY,
+  REFUND_PACKAGE_MODULE_KIND_I18N,
+  REFUND_PACKAGE_SOURCE_I18N,
   REFUND_DETAIL_STATUS_I18N,
   getRefundDetailStatusTagType
 } from "@/config/modules";
@@ -88,6 +91,44 @@ defineExpose({ acceptParams });
             {{ detail.applyReason || "--" }}
           </el-descriptions-item>
         </el-descriptions>
+
+        <!-- 套餐来源与聚合信息 -->
+        <template v-if="detail.refundCategory === REFUND_CATEGORY.PACKAGE || detail.packageSource || detail.isPlatformPackage">
+          <el-divider content-position="left">套餐信息</el-divider>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="套餐来源">
+              {{ detail.packageSource ? REFUND_PACKAGE_SOURCE_I18N[detail.packageSource] : "--" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="套餐名称">{{ detail.packageName || "--" }}</el-descriptions-item>
+            <el-descriptions-item label="平台套餐 ID">{{ detail.platformPackageId || "--" }}</el-descriptions-item>
+            <el-descriptions-item label="套餐类型">{{ detail.packageType || "--" }}</el-descriptions-item>
+            <el-descriptions-item label="原支付金额">
+              {{ detail.originalPrice !== undefined ? `¥${Number(detail.originalPrice).toFixed(2)}` : "--" }}
+            </el-descriptions-item>
+            <el-descriptions-item label="关联套餐记录">
+              {{ detail.packageRecordIds?.join(", ") || detail.packageRecordId || "--" }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </template>
+
+        <!-- 平台套餐模块 -->
+        <template v-if="detail.modules && detail.modules.length > 0">
+          <el-divider content-position="left">套餐模块</el-divider>
+          <el-table :data="detail.modules" border style="width: 100%">
+            <el-table-column prop="name" label="模块名称" min-width="140" />
+            <el-table-column prop="kind" label="模块类别" width="110">
+              <template #default="{ row }">
+                {{ REFUND_PACKAGE_MODULE_KIND_I18N[row.kind] || row.kind || "--" }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="deviceType" label="设备类型" width="110" />
+            <el-table-column prop="serviceType" label="服务类型" min-width="120" />
+            <el-table-column prop="monthlyGiftMinutes" label="月赠送分钟" width="110" />
+            <el-table-column prop="monthlyClear" label="月清" width="80">
+              <template #default="{ row }">{{ row.monthlyClear ? "是" : "否" }}</template>
+            </el-table-column>
+          </el-table>
+        </template>
 
         <!-- 时间信息 -->
         <el-divider content-position="left">时间信息</el-divider>
