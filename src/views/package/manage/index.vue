@@ -42,6 +42,7 @@ const columns: ColumnProps<PlatformPackage.Item>[] = [
   { prop: "dateRange", label: "有效期", minWidth: 200 },
   { prop: "pricingMode", label: "定价模式", minWidth: 120 },
   { prop: "monthlyPrice", label: "价格（元/月）", minWidth: 130 },
+  { prop: "firstMonthProration", label: "首月按天折算", width: 120 },
   { prop: "status", label: "状态", width: 100, fixed: "right" },
   { prop: "operation", label: "操作", width: 260, fixed: "right" }
 ];
@@ -102,8 +103,18 @@ async function handleToggleStatus(row: PlatformPackage.Item) {
 
       <template #pricingMode="{ row }">{{ PRICING_MODE_TEXT[row.pricingMode] || "--" }}</template>
 
+      <template #firstMonthProration="{ row }">
+        <el-tag :type="row.firstMonthProration ? 'success' : 'info'">
+          {{ row.firstMonthProration ? "支持" : "不支持" }}
+        </el-tag>
+      </template>
+
       <!-- 状态列 -->
-      <template #status="{ row }">{{ row.statusText || (row.status === 1 ? "启用" : "禁用") }}</template>
+      <template #status="{ row }">
+        <el-tag v-if="row.statusText === '生效中'" type="success">生效中</el-tag>
+        <el-tag v-else-if="row.statusText === '已停用'" type="info">已停用</el-tag>
+        <span v-else>{{ row.statusText || (row.status === 1 ? "启用" : "禁用") }}</span>
+      </template>
 
       <!-- 操作列 -->
       <template #operation="{ row }">

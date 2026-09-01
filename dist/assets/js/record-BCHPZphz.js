@@ -1,1 +1,0 @@
-import{a6 as a}from"./index-DWRexCmU.js";function t(e){return a.get("/admin/package-records",e)}function o(e){return a.get(`/admin/package-records/${e}`)}function c(e){return a.get("/admin/package-records/export-info",e)}function n(e){return a.get("/admin/package-records/export",e,{responseType:"blob"})}export{o as a,n as b,c,t as g};

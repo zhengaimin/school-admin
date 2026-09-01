@@ -82,6 +82,30 @@
       "filePath": "src/config/modules/refund/package-module-kind.ts",
       "values": ["BILLING-计费模块", "FEATURE-功能模块"],
       "lastUpdated": "2026-09-01"
+    },
+    {
+      "name": "PACKAGE_KIND",
+      "description": "套餐归属",
+      "typeName": "TPackageKindValue",
+      "filePath": "src/config/modules/package/kind.ts",
+      "values": ["DEVICE-独立设备套餐", "PLATFORM-平台套餐"],
+      "lastUpdated": "2026-09-01"
+    },
+    {
+      "name": "PACKAGE_RECORD_STATUS",
+      "description": "套餐购买记录状态",
+      "typeName": "TPackageRecordStatusValue",
+      "filePath": "src/config/modules/package/record-status.ts",
+      "values": ["0-待支付", "1-待激活", "2-已激活", "3-已过期", "4-已用完", "5-已退款", "6-已取消", "7-申请退款中"],
+      "lastUpdated": "2026-09-01"
+    },
+    {
+      "name": "PACKAGE_PRICING_MODE",
+      "description": "平台套餐定价模式",
+      "typeName": "TPackagePricingModeValue",
+      "filePath": "src/config/modules/package/pricing-mode.ts",
+      "values": ["DECREASING-按剩余有效月份计价", "FIXED_TOTAL-按完整有效月份固定总价计价"],
+      "lastUpdated": "2026-09-01"
     }
   ],
   "lastUpdated": "2026-09-01"

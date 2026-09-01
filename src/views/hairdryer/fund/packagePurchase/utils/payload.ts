@@ -49,7 +49,7 @@ export function buildPackagePurchaseExportAcceptPayload(
 /** 构建导出请求参数 */
 export function buildPackagePurchaseExportRequestParams(
   options: PackagePurchaseExportRequestParamsOptions
-): PackageRecord.ReqGetPackageRecordsApi {
+): PackageRecord.ReqGetPackageRecordsExportApi {
   const { formData } = options;
   return {
     schoolId: formData.schoolId,

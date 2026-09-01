@@ -1,5 +1,11 @@
 import type { TDeviceTypeValue } from "@/config/modules/device";
-import type { TPackageTypeValue, TPackageStatusValue, TPackageRecordStatusValue } from "@/config/modules/package";
+import type {
+  TPackageKindValue,
+  TPackageRecordStatusValue,
+  TPackageStatusValue,
+  TPackageTypeValue
+} from "@/config/modules/package";
+import type { TRefundPackageModuleKindValue, TRefundPackageSourceValue } from "@/config/modules/refund";
 
 /** 年级信息 */
 export interface IGradeInfo {
@@ -183,6 +189,9 @@ export namespace GradeGeneralPackage {
     total: number;
   }
 
+  /** 获取通用套餐模板详情 - 响应 data */
+  export type ResGetGradeGeneralPackageDetailApi = GradePackage.ResGetGradeFixedPackageDetailApi;
+
   /** 创建年级通用套餐配置 - 请求参数 */
   export interface ReqPostGradeGeneralPackageApi {
     /** 学校ID */
@@ -228,6 +237,24 @@ export namespace GradeGeneralPackage {
 
 /** 套餐购买记录模块 */
 export namespace PackageRecord {
+  /** 平台套餐模块信息 */
+  export interface IPackageRecordModuleItem {
+    /** 模块标识 */
+    moduleKey: string;
+    /** 模块中文名称 */
+    name: string;
+    /** 模块类别 */
+    kind: TRefundPackageModuleKindValue;
+    /** 设备类型 */
+    deviceType: TDeviceTypeValue | null;
+    /** 服务类型 */
+    serviceType: string | null;
+    /** 月赠送额度 */
+    monthlyGiftMinutes: number;
+    /** 是否月清 */
+    monthlyClear: boolean;
+  }
+
   /** 套餐购买记录列表项 */
   export interface IPackageRecordItem {
     /** 记录ID */
@@ -238,10 +265,30 @@ export namespace PackageRecord {
     studentName: string;
     /** 学号 */
     studentCode: string;
+    /** 学生UUID */
+    studentUuid: string;
     /** 购买人姓名 */
     purchaserName: string;
+    /** 主记录设备类型 */
+    deviceType: TDeviceTypeValue | null;
+    /** 套餐名称 */
+    packageName: string;
     /** 套餐类型 */
     packageType: TPackageTypeValue;
+    /** 套餐归属 */
+    packageKind: TPackageKindValue;
+    /** 套餐归属中文文本 */
+    packageKindText: string;
+    /** 套餐来源 */
+    packageSource: TRefundPackageSourceValue;
+    /** 套餐来源中文文本 */
+    packageSourceText: string;
+    /** 平台套餐ID；普通套餐为空 */
+    platformPackageId: number | null;
+    /** 同一购买订单下的套餐记录ID列表 */
+    packageRecordIds: number[];
+    /** 平台套餐模块列表；普通套餐为空 */
+    modules: IPackageRecordModuleItem[];
     /** 购买价格 */
     purchasePrice: number;
     /** 订单号 */
@@ -256,7 +303,7 @@ export namespace PackageRecord {
     createdAt: string;
   }
 
-  /** 套餐购买记录完整项（详情用） */
+  /** 套餐购买记录详情基础字段 */
   export interface IPackageRecordFullItem {
     /** 记录ID */
     id: number;
@@ -273,13 +320,29 @@ export namespace PackageRecord {
     /** 班级名称 */
     className: string;
     /** 套餐模板ID */
-    packageTemplateId: number;
+    packageTemplateId: number | null;
+    /** 平台套餐ID；普通套餐为空 */
+    platformPackageId: number | null;
+    /** 同一购买订单下的套餐记录ID列表 */
+    packageRecordIds: number[];
+    /** 主记录设备类型 */
+    deviceType: TDeviceTypeValue | null;
     /** 套餐名称 */
     packageName: string;
     /** 套餐编码 */
     packageCode: string;
     /** 套餐类型 */
     packageType: TPackageTypeValue;
+    /** 套餐归属 */
+    packageKind: TPackageKindValue;
+    /** 套餐归属中文文本 */
+    packageKindText: string;
+    /** 套餐来源 */
+    packageSource: TRefundPackageSourceValue;
+    /** 套餐来源中文文本 */
+    packageSourceText: string;
+    /** 平台套餐模块列表；普通套餐为空 */
+    modules: IPackageRecordModuleItem[];
     /** 购买价格 */
     purchasePrice: number;
     /** 购买时间 */
@@ -321,7 +384,7 @@ export namespace PackageRecord {
   /** 套餐购买记录详情 */
   export interface IPackageRecordDetail extends IPackageRecordFullItem {
     /** 套餐内容 */
-    packageContent: Record<string, any>;
+    packageContent: Record<string, unknown>;
     /** 套餐描述 */
     templateDescription: string;
     /** 使用规则 */
@@ -329,6 +392,9 @@ export namespace PackageRecord {
     /** 使用统计 */
     usageStats: IPackageUsageStats;
   }
+
+  /** 获取套餐购买记录详情 - 响应 data */
+  export type ResGetPackageRecordDetailApi = IPackageRecordDetail;
 
   /** 获取套餐购买记录列表 - 请求参数 */
   export interface ReqGetPackageRecordsApi {
@@ -344,6 +410,10 @@ export namespace PackageRecord {
     status?: TPackageRecordStatusValue;
     /** 套餐类型 */
     packageType?: TPackageTypeValue;
+    /** 套餐归属 */
+    packageKind?: TPackageKindValue;
+    /** 套餐来源兼容参数 */
+    packageSource?: TRefundPackageSourceValue;
     /** 开始日期 YYYY-MM-DD */
     startDate?: string;
     /** 结束日期 YYYY-MM-DD */
@@ -360,10 +430,10 @@ export namespace PackageRecord {
     gradeId?: number;
     /** 班级ID，-1表示全部 */
     classId?: number;
-    /** 页码 */
-    page: number;
-    /** 每页数量 */
-    pageSize: number;
+    /** 页码，默认1 */
+    page?: number;
+    /** 每页数量，默认20，最大100 */
+    pageSize?: number;
   }
 
   /** 获取套餐购买记录列表 - 响应 data */
@@ -382,6 +452,14 @@ export namespace PackageRecord {
 
   /** 获取导出套餐购买记录信息 - 请求参数 */
   export type ReqGetPackageRecordExportInfoApi = Omit<ReqGetPackageRecordsApi, "page" | "pageSize">;
+
+  /** 导出套餐购买记录 - 请求参数 */
+  export interface ReqGetPackageRecordsExportApi extends Omit<ReqGetPackageRecordsApi, "page" | "pageSize"> {
+    /** 页码，从1开始 */
+    page: number;
+    /** 每页数量，默认10000 */
+    pageSize?: number;
+  }
 
   /** 获取导出套餐购买记录信息 - 响应 data */
   export interface ResGetPackageRecordExportInfoApi {

@@ -88,6 +88,7 @@ const PATH_PERMISSION_RULES: Array<{ prefix: string; permission: PERMISSION_CODE
 
   // package
   { prefix: ROUTE_PACKAGE.REFUND, permission: permissionOf(PERMISSION_CODE.REFUND_LIST) },
+  { prefix: ROUTE_PACKAGE.PURCHASE, permission: permissionOf(PERMISSION_CODE.PACKAGE_RECORD_LIST) },
 
   // system
   { prefix: ROUTE_SYSTEM.TENANT, permission: permissionOf(PERMISSION_CODE.TENANT_LIST) },
@@ -1311,9 +1312,9 @@ const authMenuList = {
     ],
     package: [
       {
-        path: ROUTE_PACKAGE.MANAGE,
-        name: "platformPackageManage",
-        component: "/package/manage/index",
+        path: ROUTE_PACKAGE.PLATFORM,
+        name: "platformPackage",
+        redirect: ROUTE_PACKAGE.MANAGE,
         meta: {
           icon: "Goods",
           title: "平台套餐",
@@ -1322,21 +1323,51 @@ const authMenuList = {
           isFull: false,
           isAffix: false,
           isKeepAlive: false
-        }
-      },
-      {
-        path: ROUTE_PACKAGE.REFUND,
-        name: "platformPackageRefund",
-        component: "/package/refund/index",
-        meta: {
-          icon: "Tickets",
-          title: "平台套餐退款",
-          isLink: "",
-          isHide: false,
-          isFull: false,
-          isAffix: false,
-          isKeepAlive: false
-        }
+        },
+        children: [
+          {
+            path: ROUTE_PACKAGE.MANAGE,
+            name: "platformPackageManage",
+            component: "/package/manage/index",
+            meta: {
+              icon: "List",
+              title: "套餐列表",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_PACKAGE.REFUND,
+            name: "platformPackageRefund",
+            component: "/package/refund/index",
+            meta: {
+              icon: "Tickets",
+              title: "套餐退款",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          },
+          {
+            path: ROUTE_PACKAGE.PURCHASE,
+            name: "platformPackagePurchase",
+            component: "/fund/packagePurchase/index",
+            meta: {
+              icon: "Document",
+              title: "购买记录",
+              isLink: "",
+              isHide: false,
+              isFull: false,
+              isAffix: false,
+              isKeepAlive: false
+            }
+          }
+        ]
       },
       {
         path: ROUTE_PACKAGE.GLOBAL_CONFIG,

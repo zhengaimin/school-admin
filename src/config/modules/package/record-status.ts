@@ -1,48 +1,66 @@
-/** 套餐购买记录状态：1-待激活，2-已激活，3-已暂停，4-已过期，5-已取消 */
+/** 套餐购买记录状态 */
 export enum PACKAGE_RECORD_STATUS {
+  /** 待支付 */
+  PENDING_PAYMENT = 0,
   /** 待激活 */
   PENDING = 1,
   /** 已激活 */
   ACTIVATED = 2,
-  /** 已暂停 */
-  PAUSED = 3,
   /** 已过期 */
-  EXPIRED = 4,
+  EXPIRED = 3,
+  /** 已用完 */
+  USED_UP = 4,
+  /** 已退款 */
+  REFUNDED = 5,
   /** 已取消 */
-  CANCELLED = 5
+  CANCELLED = 6,
+  /** 申请退款中 */
+  REFUNDING = 7
 }
 
 export type TPackageRecordStatusValue = (typeof PACKAGE_RECORD_STATUS)[keyof typeof PACKAGE_RECORD_STATUS];
 
 export const PACKAGE_RECORD_STATUS_I18N: Record<TPackageRecordStatusValue, string> = {
+  [PACKAGE_RECORD_STATUS.PENDING_PAYMENT]: "待支付",
   [PACKAGE_RECORD_STATUS.PENDING]: "待激活",
   [PACKAGE_RECORD_STATUS.ACTIVATED]: "已激活",
-  [PACKAGE_RECORD_STATUS.PAUSED]: "已暂停",
   [PACKAGE_RECORD_STATUS.EXPIRED]: "已过期",
-  [PACKAGE_RECORD_STATUS.CANCELLED]: "已取消"
+  [PACKAGE_RECORD_STATUS.USED_UP]: "已用完",
+  [PACKAGE_RECORD_STATUS.REFUNDED]: "已退款",
+  [PACKAGE_RECORD_STATUS.CANCELLED]: "已取消",
+  [PACKAGE_RECORD_STATUS.REFUNDING]: "申请退款中"
 };
 
 export const PACKAGE_RECORD_STATUS_OPTIONS: Array<{ label: string; value: TPackageRecordStatusValue }> = [
+  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.PENDING_PAYMENT], value: PACKAGE_RECORD_STATUS.PENDING_PAYMENT },
   { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.PENDING], value: PACKAGE_RECORD_STATUS.PENDING },
   { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.ACTIVATED], value: PACKAGE_RECORD_STATUS.ACTIVATED },
-  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.PAUSED], value: PACKAGE_RECORD_STATUS.PAUSED },
   { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.EXPIRED], value: PACKAGE_RECORD_STATUS.EXPIRED },
-  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.CANCELLED], value: PACKAGE_RECORD_STATUS.CANCELLED }
+  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.USED_UP], value: PACKAGE_RECORD_STATUS.USED_UP },
+  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.REFUNDED], value: PACKAGE_RECORD_STATUS.REFUNDED },
+  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.CANCELLED], value: PACKAGE_RECORD_STATUS.CANCELLED },
+  { label: PACKAGE_RECORD_STATUS_I18N[PACKAGE_RECORD_STATUS.REFUNDING], value: PACKAGE_RECORD_STATUS.REFUNDING }
 ];
 
 /** 获取套餐购买记录状态的 Tag 类型 */
 export const getPackageRecordStatusTagType = (status: TPackageRecordStatusValue) => {
   switch (status) {
+    case PACKAGE_RECORD_STATUS.PENDING_PAYMENT:
+      return "warning";
     case PACKAGE_RECORD_STATUS.PENDING:
       return "warning";
     case PACKAGE_RECORD_STATUS.ACTIVATED:
       return "success";
-    case PACKAGE_RECORD_STATUS.PAUSED:
-      return "info";
     case PACKAGE_RECORD_STATUS.EXPIRED:
       return "danger";
+    case PACKAGE_RECORD_STATUS.USED_UP:
+      return "info";
+    case PACKAGE_RECORD_STATUS.REFUNDED:
+      return "info";
     case PACKAGE_RECORD_STATUS.CANCELLED:
       return "info";
+    case PACKAGE_RECORD_STATUS.REFUNDING:
+      return "warning";
     default:
       return "info";
   }

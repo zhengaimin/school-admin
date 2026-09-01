@@ -187,7 +187,7 @@ import {
   packagerecordsexportinfo
 } from "@/api/modules/InternalPage.js";
 import { useUserStore } from "@/stores/modules/user";
-import { DEVICE_TYPE } from "@/config/modules";
+import { DEVICE_TYPE, PACKAGE_KIND } from "@/config/modules";
 
 export default {
   data() {
@@ -246,6 +246,9 @@ export default {
         return `/admin/package-records/export`;
       }
     }
+  },
+  isPlatformPackagePurchase() {
+    return this.$route?.path === "/package/purchase";
   },
   watch: {
     schoolId: {
@@ -327,7 +330,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&studentKeyword=${this.filterForm.studentKeyword}&orderNo=${this.filterForm.orderNo}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&page=${this.page}&pageSize=${this.pageSize}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}${this.isPlatformPackagePurchase ? `&packageKind=${PACKAGE_KIND.PLATFORM}` : ""}`;
       packagerecordsList(params).then(res => {
         if (res.code == 0 && res.data && res.data.list) {
           this.carbonCk_list = res.data.list;
@@ -371,7 +374,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let params = `${deviceType ? `deviceType=${deviceType}&` : ""}schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}${this.isPlatformPackagePurchase ? `&packageKind=${PACKAGE_KIND.PLATFORM}` : ""}`;
       packagerecordsexportinfo(params).then(res => {
         if (res.code == 0 && res.data) {
           this.totalInfo = res.data.totalRecords;
@@ -385,7 +388,7 @@ export default {
       let gradeId = this.filterForm.gradeId ? this.filterForm.gradeId : -1;
       let departmentId = this.filterForm.departmentId ? this.filterForm.departmentId : -1;
       let classId = this.filterForm.classId ? this.filterForm.classId : -1;
-      let url = `${this.exportmessageUrl}?${deviceType ? `deviceType=${deviceType}&` : ""}page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}`;
+      let url = `${this.exportmessageUrl}?${deviceType ? `deviceType=${deviceType}&` : ""}page=${this.pageInfo}&pageSize=${this.pageSizeInfo}&schoolId=${this.schoolId}&startDate=${this.filterForm.startDate}&endDate=${this.filterForm.endDate}&gradeId=${gradeId}&departmentId=${departmentId}&classId=${classId}${this.isPlatformPackagePurchase ? `&packageKind=${PACKAGE_KIND.PLATFORM}` : ""}`;
       ElNotification({
         title: "提示",
         message: "数据导出中，请稍后",

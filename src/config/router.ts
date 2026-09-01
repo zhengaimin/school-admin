@@ -80,10 +80,14 @@ export const ROUTE_SYSTEM = {
 
 /** 套餐模块路由 */
 export const ROUTE_PACKAGE = {
-  /** 平台套餐 */
+  /** 平台套餐菜单 */
+  PLATFORM: "/package/platform",
+  /** 平台套餐列表 */
   MANAGE: "/package/manage",
   /** 平台套餐退款 */
   REFUND: "/package/refund",
+  /** 平台套餐购买记录 */
+  PURCHASE: "/package/purchase",
   /** 全局配置 */
   GLOBAL_CONFIG: "/package/globalConfig"
 } as const;

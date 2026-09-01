@@ -1,20 +1,25 @@
 import type { PlatformPackage } from "@/api/interface";
+import type { TPackageStatusValue } from "@/config/modules/package";
 import http from "@/api";
 
 const PREFIX = "/admin/platform-packages";
 
 export const getPlatformPackageListApi = (params: PlatformPackage.ListParams) =>
-  http.get<{ list: PlatformPackage.Item[]; total: number }>(PREFIX, params);
+  http.get<PlatformPackage.ResGetPlatformPackageListApi>(PREFIX, params);
 
-export const getPlatformPackageDetailApi = (id: number) => http.get<PlatformPackage.Detail>(`${PREFIX}/${id}`);
+export const getPlatformPackageDetailApi = (id: number | string) =>
+  http.get<PlatformPackage.ResGetPlatformPackageDetailApi>(`${PREFIX}/${id}`);
 
-export const createPlatformPackageApi = (data: PlatformPackage.SaveParams) => http.post(PREFIX, data);
+export const createPlatformPackageApi = (data: PlatformPackage.SaveParams) =>
+  http.post<PlatformPackage.ResPostPlatformPackageApi>(PREFIX, data);
 
-export const updatePlatformPackageApi = (id: number, data: PlatformPackage.SaveParams) => http.put(`${PREFIX}/${id}`, data);
+export const updatePlatformPackageApi = (id: number | string, data: PlatformPackage.SaveParams) =>
+  http.put<PlatformPackage.ResPutPlatformPackageApi>(`${PREFIX}/${id}`, data);
 
-export const updatePlatformPackageStatusApi = (id: number, status: number) => http.put(`${PREFIX}/${id}/status`, { status });
+export const updatePlatformPackageStatusApi = (id: number | string, status: TPackageStatusValue) =>
+  http.put<null>(`${PREFIX}/${id}/status`, { status });
 
 /** 删除平台套餐 */
-export const deletePlatformPackageApi = (id: number) => http.delete<null>(`${PREFIX}/${id}`);
+export const deletePlatformPackageApi = (id: number | string) => http.delete<null>(`${PREFIX}/${id}`);
 
-export const getPlatformPackageModulesApi = () => http.get<{ list: PlatformPackage.ModuleOption[] }>(`${PREFIX}/modules`);
+export const getPlatformPackageModulesApi = () => http.get<PlatformPackage.ResGetPlatformPackageModulesApi>(`${PREFIX}/modules`);

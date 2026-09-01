@@ -1,5 +1,5 @@
 import http from "@/api";
-import type { GradeGeneralPackage, GradePackage } from "@/api/interface";
+import type { GradeGeneralPackage } from "@/api/interface";
 
 /** 获取年级通用套餐配置列表 */
 export function getGradeGeneralPackagesApi(params: GradeGeneralPackage.ReqGetGradeGeneralPackagesApi) {
@@ -8,7 +8,7 @@ export function getGradeGeneralPackagesApi(params: GradeGeneralPackage.ReqGetGra
 
 /** 获取通用套餐模板详情 */
 export function getGradeGeneralPackageDetailApi(packageTemplateId: number | string) {
-  return http.get<GradePackage.ResGetGradeFixedPackageDetailApi>(`/admin/grade-general-packages/${packageTemplateId}`);
+  return http.get<GradeGeneralPackage.ResGetGradeGeneralPackageDetailApi>(`/admin/grade-general-packages/${packageTemplateId}`);
 }
 
 /** 创建年级通用套餐配置 */

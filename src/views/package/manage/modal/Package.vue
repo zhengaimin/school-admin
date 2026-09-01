@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { PlatformPackage } from "@/api/interface";
+import { PACKAGE_PRICING_MODE } from "@/config/modules/package";
+import type { TPackagePricingModeValue } from "@/config/modules/package";
 import type { FormInstance, FormRules } from "element-plus";
 
 import { computed, nextTick, reactive, ref } from "vue";
@@ -58,14 +60,16 @@ const dateRange = ref<[string, string] | null>(null);
 const ruleForm = reactive<{
   name: string;
   schoolIds: number[];
-  pricingMode: string;
+  pricingMode: TPackagePricingModeValue;
   monthlyPrice?: number;
+  firstMonthProration: boolean;
   description: string;
 }>({
   name: "",
   schoolIds: [],
-  pricingMode: "DECREASING",
+  pricingMode: PACKAGE_PRICING_MODE.DECREASING,
   monthlyPrice: undefined,
+  firstMonthProration: false,
   description: ""
 });
 
@@ -139,6 +143,13 @@ function isQuotaModule(moduleKey: string) {
   return (QUOTA_MODULE_KEYS as readonly string[]).includes(moduleKey);
 }
 
+/** 定价模式变更时，固定总价不支持首月按天折算 */
+function handlePricingModeChange(value: TPackagePricingModeValue) {
+  if (value === PACKAGE_PRICING_MODE.FIXED_TOTAL) {
+    ruleForm.firstMonthProration = false;
+  }
+}
+
 /** 获取学校选项 */
 async function fetchSchoolOptions() {
   schoolOptionsLoading.value = true;
@@ -183,8 +194,9 @@ async function fetchModuleOptions() {
 function resetForm() {
   ruleForm.name = "";
   ruleForm.schoolIds = [];
-  ruleForm.pricingMode = "DECREASING";
+  ruleForm.pricingMode = PACKAGE_PRICING_MODE.DECREASING;
   ruleForm.monthlyPrice = undefined;
+  ruleForm.firstMonthProration = false;
   ruleForm.description = "";
   dateRange.value = null;
   selectedModuleKeys.value = [];
@@ -197,6 +209,7 @@ function fillFormFromDetail(detail: PlatformPackage.Detail) {
   ruleForm.schoolIds = detail.schoolIds || [];
   ruleForm.pricingMode = detail.pricingMode;
   ruleForm.monthlyPrice = detail.monthlyPrice;
+  ruleForm.firstMonthProration = detail.firstMonthProration ?? false;
   ruleForm.description = detail.description || "";
   dateRange.value = detail.startDate && detail.endDate ? [detail.startDate, detail.endDate] : null;
   selectedModuleKeys.value = (detail.modules || []).map(item => item.moduleKey);
@@ -222,6 +235,7 @@ async function handleSubmitForm(formEl: FormInstance | undefined) {
     ),
     pricingMode: ruleForm.pricingMode,
     monthlyPrice: ruleForm.monthlyPrice as number,
+    firstMonthProration: ruleForm.pricingMode === PACKAGE_PRICING_MODE.DECREASING && ruleForm.firstMonthProration,
     startDate: dateRange.value?.[0] || "",
     endDate: dateRange.value?.[1] || "",
     description: ruleForm.description
@@ -321,7 +335,12 @@ defineExpose({ acceptParams });
         </el-col>
         <el-col :span="12">
           <el-form-item label="定价模式" prop="pricingMode">
-            <el-select v-model="ruleForm.pricingMode" class="w-full" placeholder="请选择定价模式">
+            <el-select
+              v-model="ruleForm.pricingMode"
+              class="w-full"
+              placeholder="请选择定价模式"
+              @change="handlePricingModeChange"
+            >
               <el-option label="按月递减" value="DECREASING" />
               <el-option label="固定总价" value="FIXED_TOTAL" />
             </el-select>
@@ -343,6 +362,11 @@ defineExpose({ acceptParams });
         <el-col :span="12">
           <el-form-item label="价格预览">
             <span>{{ priceHint || "--" }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="ruleForm.pricingMode === PACKAGE_PRICING_MODE.DECREASING" :span="12">
+          <el-form-item label="首月按天折算">
+            <el-switch v-model="ruleForm.firstMonthProration" inline-prompt active-text="开" inactive-text="关" />
           </el-form-item>
         </el-col>
 
