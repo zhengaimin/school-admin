@@ -3,10 +3,10 @@ import type { Grade, ResultData } from "@/api/interface";
 import type { FormInstance, FormRules } from "element-plus";
 import type { TGradeForm } from "../types";
 
-import { nextTick, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { getGradeDetailApi, postGradeApi, putUpdateGradeApi } from "@/api/modules";
-import { GRADE_GRADUATION_STATUS, GRADE_GRADUATION_STATUS_OPTIONS } from "@/config/modules";
+import { ENABLE_STATUS, ENABLE_STATUS_OPTIONS, GRADE_GRADUATION_STATUS, GRADE_GRADUATION_STATUS_OPTIONS } from "@/config/modules";
 import SchoolInfo from "@/components/Business/SchoolInfo/index.vue";
 import { useSchool } from "@/hooks/useSchool";
 import { buildPostGradePayload, buildPutGradePayload } from "../utils/payload";
@@ -32,6 +32,9 @@ const ruleFormRef = ref<FormInstance>();
 /** 表单数据 */
 const ruleForm = ref<TGradeForm>(getInitialFormData());
 
+/** 是否编辑 */
+const isEdit = computed(() => parameter.value.type === "Edit");
+
 /** 表单验证规则 */
 const rules: FormRules = {
   name: [{ required: true, message: "请输入年级名称", trigger: "blur" }],
@@ -48,7 +51,8 @@ function getInitialFormData(): TGradeForm {
     name: "",
     enrollYear: "",
     description: "",
-    isGraduated: GRADE_GRADUATION_STATUS.NOT_GRADUATED
+    isGraduated: GRADE_GRADUATION_STATUS.NOT_GRADUATED,
+    status: ENABLE_STATUS.ENABLED
   };
 }
 
@@ -171,6 +175,13 @@ defineExpose({ acceptParams });
                 :label="item.label"
                 :value="item.value"
               />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="isEdit" :span="12">
+          <el-form-item label="状态" prop="status">
+            <el-select v-model="ruleForm.status" placeholder="请选择状态" class="w-full">
+              <el-option v-for="item in ENABLE_STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>

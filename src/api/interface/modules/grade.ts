@@ -1,6 +1,7 @@
 import type { TGradeConfigTypeValue, TGradePackageTypeValue, TGradeServiceTypeValue } from "@/config/modules/grade";
 import type { TGradeGraduationStatusValue } from "@/config/modules/grade";
 import type { TDeviceTypeValue } from "@/config/modules/device/type";
+import type { TEnableStatusValue } from "@/config/modules/common";
 
 // 年级模块
 export namespace Grade {
@@ -27,7 +28,7 @@ export namespace Grade {
     /** 班级数量 */
     classCount: number;
     /** 状态：0-禁用，1-启用 */
-    status: number;
+    status: TEnableStatusValue;
     /** 是否毕业 */
     isGraduated: TGradeGraduationStatusValue;
     /** 创建时间 */
@@ -91,6 +92,8 @@ export namespace Grade {
     description?: string;
     /** 是否毕业 */
     isGraduated: TGradeGraduationStatusValue;
+    /** 状态：0-禁用，1-启用 */
+    status?: TEnableStatusValue;
   }
 
   /** 导出年级 - 请求参数 */

@@ -1,6 +1,8 @@
 import type { Grade } from "@/api/interface";
 import type { TGradeForm } from "../types";
 
+import { ENABLE_STATUS } from "@/config/modules";
+
 /** 构建新增年级参数 */
 export function buildPostGradePayload(form: TGradeForm, schoolId: number): Grade.ReqPostGradeApi {
   return {
@@ -19,6 +21,7 @@ export function buildPutGradePayload(form: TGradeForm): Grade.ReqPutUpdateGradeA
     enrollYear: Number(form.enrollYear),
     schoolId: form.schoolId,
     description: String(form.description || "").trim(),
-    isGraduated: form.isGraduated!
+    isGraduated: form.isGraduated!,
+    status: form.status ?? ENABLE_STATUS.ENABLED
   };
 }

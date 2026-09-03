@@ -9,6 +9,8 @@ import ProTable from "@/components/ProTable/index.vue";
 import GradeModal from "./modal/Grade.vue";
 import { deleteGradeApi, getGradesApi, postGradeExportApi } from "@/api/modules";
 import {
+  ENABLE_STATUS,
+  ENABLE_STATUS_I18N,
   GRADE_GRADUATION_STATUS_I18N,
   GRADE_GRADUATION_STATUS_OPTIONS,
   GRADE_GRADUATION_STATUS_TAG_TYPE
@@ -52,6 +54,7 @@ const columns: ColumnProps<Grade.IGradeItemVo>[] = [
     search: { el: "select", props: { placeholder: "请选择是否毕业" } }
   },
   { prop: "description", label: "描述", minWidth: 180 },
+  { prop: "status", label: "状态", width: 100, fixed: "right" },
   { prop: "createdAt", label: "创建时间", minWidth: 170 },
   { prop: "updatedAt", label: "更新时间", minWidth: 170 },
   { prop: "operation", label: "操作", width: 150, fixed: "right" }
@@ -156,6 +159,13 @@ watch(schoolId, () => refreshTableList());
       <template #isGraduated="{ row }">
         <el-tag :type="GRADE_GRADUATION_STATUS_TAG_TYPE[row.isGraduated]">
           {{ GRADE_GRADUATION_STATUS_I18N[row.isGraduated] || "--" }}
+        </el-tag>
+      </template>
+
+      <!-- 状态 -->
+      <template #status="{ row }">
+        <el-tag :type="row.status === ENABLE_STATUS.ENABLED ? 'success' : 'info'">
+          {{ ENABLE_STATUS_I18N[row.status] || "--" }}
         </el-tag>
       </template>
 

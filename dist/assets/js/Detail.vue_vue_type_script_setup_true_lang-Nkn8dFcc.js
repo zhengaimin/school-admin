@@ -1,0 +1,1 @@
+import n from"./Detail-Dk_wWnn5.js";import{k as s,l as f,e as l,o as m}from"./index-Cw1fXoyR.js";const u=s({__name:"Detail",setup(p,{expose:t}){const e=f();function c(a,o){var r;(r=e.value)==null||r.acceptParams(a,o)}return t({acceptParams:c}),(a,o)=>(m(),l(n,{ref_key:"modalRef",ref:e},null,512))}});export{u as _};
